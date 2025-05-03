@@ -1,6 +1,8 @@
 import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import BASE_URL from "../../Config";
 
 const StudentDetails = () => {
   const [show, setShow] = useState(false); // State for modal visibility
@@ -8,6 +10,7 @@ const StudentDetails = () => {
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
   const [selectedCourse, setSelectedCourse] = useState(""); // State for selected class
   const [selectedSection, setSelectedSection] = useState(""); // State for selected section
+  const [student, setStudentsData] = useState([]);
 
   // Sample student data
   const students = [
@@ -111,6 +114,17 @@ const StudentDetails = () => {
       mobile: "065758878",
     },
   ];
+  useEffect(() => {
+     const fetchData = async () => {
+       try {
+         const response = await axios.get(`${BASE_URL}/students`);
+         setStudentsData(response.data);
+       } catch (error) {
+         console.error(error);
+       }
+     }
+    
+  },[])
 
   // Function to handle search
   const filteredStudents = students.filter((student) => {
