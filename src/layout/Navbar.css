@@ -1,0 +1,122 @@
+/* Notification Icon */
+.notification-icon {
+  position: relative;
+  margin-right: 20px;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: red;
+  color: black;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+}
+
+/* Notification Dropdown */
+.notification-dropdown {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  width: 300px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  color: black;
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.notification-header h6 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.clear-all {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.clear-all:hover {
+  text-decoration: underline;
+}
+
+.notification-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.notification-item {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+/* Custom styles for the notification dropdown */
+.notification-dropdown {
+  width: 300px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.notification-item:hover {
+  background-color: #f8f9fa;
+}
+
+/* Adjust the navbar toggler icon color */
+.navbar-toggler {
+  border: none;
+}
+
+.navbar-toggler:focus {
+  box-shadow: none;
+}
+
+/* Profile dropdown icon size */
+.fa-circle-user {
+  font-size: 1.5rem;
+}
+@media (max-width: 820px) {
+  .nav-taggle-icon{
+    font-size: 20px;
+  }
+  .nav-content{
+    justify-content: space-between;
+   
+  }
+  img{
+    width: 20px;
+
+  }
+  .bell-icon{
+    font-size: 20px;
+    margin-right: start;
+  }
+  .fa-regular{
+    font-size: 20px;
+  }
+  img{
+   src: "";
+   alt:"Logo";
+  }
+ 
+   
+  
+}

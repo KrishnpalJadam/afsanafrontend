@@ -1,0 +1,101 @@
+/* App.css - BMU University Form Styles */
+
+body {
+    background-color: #f8f9fa;
+  
+    margin: 0;
+    padding: 0;
+}
+
+.application-form-container {
+    background-color: #ffffff;
+    padding: 30px;
+    margin: 30px auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    max-width: 1100px;
+    border: 1px solid #ddd;
+}
+
+.form-title {
+    font-size: 26px;
+    font-weight: bold;
+    color: #007bff;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.step-progress-bar {
+    height: 12px;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.step-progress-bar .progress-bar {
+    background-color: #28a745;
+}
+
+h4 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #f0f0f0;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.upload-card {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.upload-card:hover {
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.upload-button {
+    cursor: pointer;
+    max-width: 250px;
+}
+
+.navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.form-control {
+    border-radius: 6px;
+    padding: 10px;
+    border: 1px solid #ced4da;
+}
+
+.field-icon {
+    font-size: 18px;
+    margin-right: 6px;
+    color: #007bff;
+}

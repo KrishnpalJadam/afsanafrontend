@@ -1,0 +1,1121 @@
+* {
+  margin: 0px;
+  padding: 0px;
+  /* background-color: rgb(216, 216, 216); */
+}
+.container {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+@font-face {
+  font-family: "Unbanist";
+  src: url("path-to-your-font/Unbanist.woff2") format("woff2"),
+    url("path-to-your-font/Unbanist.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+body {
+ 
+  font-family: 'Poppins', sans-serif !important;
+  background-color: #f2f2f2;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+li {
+  list-style-type: none;
+}
+
+/* login */
+/* Base Styles */
+.login-main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Full viewport height */
+  padding: 20px; /* Add padding for smaller screens */
+  background-color: #f8f9fa; /* Light background */
+}
+
+.login-container {
+  background: white;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .login-main {
+    padding: 10px; /* Reduce padding for smaller screens */
+  }
+
+  .login-container {
+    padding: 20px; /* Reduce padding for smaller screens */
+  }
+
+  .buttons {
+    flex-direction: column; /* Stack buttons vertically on small screens */
+    gap: 10px; /* Add spacing between buttons */
+  }
+}
+
+/* Specific adjustments for very small screens (320px to 374px) */
+@media (min-width: 320px) and (max-width: 374px) {
+  .login-main {
+    padding: 10px;
+  }
+
+  .login-container {
+    padding: 15px;
+  }
+
+  .buttons {
+    width: 100%; /* Make buttons take full width */
+    flex-direction: column; /* Stack buttons vertically */
+    gap: 10px; /* Add spacing between buttons */
+  }
+}
+
+/* Adjustments for medium screens (375px to 768px) */
+@media (min-width: 375px) and (max-width: 768px) {
+  .login-main {
+    padding: 15px;
+  }
+
+  .login-container {
+    padding: 20px;
+  }
+}
+
+/* Adjustments for larger screens (768px and above) */
+@media (min-width: 768px) {
+  .login-main {
+    padding: 20px;
+  }
+
+  .login-container {
+    padding: 30px;
+  }
+}
+/* .login-container {
+  background: transparent;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+} */
+.login-container h1 {
+  font-weight: 600;
+
+  margin-bottom: 10px;
+}
+.req {
+  color: red;
+  font-weight: bold;
+  margin-left: 2px;
+}
+
+.btn-custom:hover {
+  background-color: gray !important;
+  color: white !important;
+}
+.custom-shadow {
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* .login-container .btn-primary {
+  
+} */
+
+/* .login-container .btn-primary:hover {
+ 
+} */
+
+.login-container .form-text {
+  margin-top: 10px;
+}
+
+.btn-outline-primary {
+  color: #578e7e;
+  border-color: #578e7e;
+  background-color: white;
+}
+
+.btn-outline-primary:hover {
+  background-color: #578e7e;
+  color: white;
+  border-color: #578e7e;
+}
+
+/* login end */
+/* signup */
+.signup-container {
+  max-width: 600px;
+  margin: 0 auto;
+  margin-top: 50px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+
+  text-align: center;
+}
+
+.app-title {
+  font-size: 40px;
+  font-weight: bold;
+  color: #4a766e;
+  margin-bottom: 10px;
+}
+
+.welcome-text {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+}
+
+.form-input {
+  flex: 1;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  height: 46px;
+}
+
+.form-input:focus {
+  border-color: #4a766e;
+}
+
+select.form-input {
+  background-color: #fff;
+  color: #666;
+  height: 50px;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.siignup-button,
+.loogin-button {
+  flex: 1;
+  padding: 10px;
+  font-size: 14px;
+  border: none;
+}
+
+.siignup-button {
+  background-color: #4a766e;
+  color: #fff;
+  box-shadow: 2px 2px 2px gray;
+}
+
+.loogin-button {
+  background-color: #fff;
+  color: #4a766e;
+  border: 1px solid gray;
+  margin-right: 380px;
+}
+
+.siignup-button:hover {
+  background-color: #3b6057;
+}
+
+.loogin-button:hover {
+  background-color: #f4f4f4;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .form-input {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .signup-container {
+    max-width: 90%;
+    padding: 15px;
+  }
+}
+
+@media (max-width: 580px) {
+  .app-title {
+    font-size: 20px;
+  }
+
+  .welcome-text {
+    font-size: 16px;
+  }
+
+  .form-input {
+    font-size: 10px;
+    padding: 6px;
+    width: 90%;
+  }
+
+  .siignup-button {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .loogin-button {
+    font-size: 12px;
+    padding: 8px;
+    margin-right: 120px;
+  }
+
+  select.form-input {
+    background-color: #fff;
+    color: #666;
+    height: 50px;
+    width: 95%;
+  }
+}
+
+.card {
+  background: #f0f0ff;
+}
+
+th, td {
+  text-align: center;
+}
+
+
+/* signup end */
+
+/* maindashbord start */
+.main-content {
+  display: flex;
+  padding: 0px;
+}
+
+/* maindashbord end */
+/* navbar start */
+.navbar {
+  height: 85px;
+  /* border-bottom: 1px solid #949494; */
+  position: fixed;
+  z-index: 5;
+  background-color: white;
+  width: 100%;
+}
+
+.nav-conte {
+  margin: 0px 30px;
+}
+
+.nav-brand {
+  line-height: 54.46px;
+  font-size: 45px;
+  font-weight: 700;
+ 
+}
+
+@media (max-width: 768px) {
+  .nav-brand {
+    font-size: 23px;
+  }
+
+  .nav-taggle-icon {
+    margin-left: 15px !important;
+  }
+
+  .nav-conte {
+    margin: 0 20px;
+  }
+}
+
+/* .nav-brand:hover {
+  color: #578e7e;
+} */
+
+.nav-content {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-bran {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.nav-taggle-icon {
+  margin-left: 35px;
+  font-size: 30px;
+}
+
+.nav-taggle-icon a {
+  color: #949494;
+}
+
+/* .nav-taggle-icon a:hover {
+  color: #578e7e;
+} */
+
+.nav-main-icon {
+  font-size: 30px;
+  font-size: 30px;
+  display: flex;
+  align-items: center;
+}
+
+.nav-main-icon i {
+  margin: 15px;
+}
+
+.bell-icon {
+  color: #949494;
+}
+
+.bell-icon:hover {
+  color: #949494;
+}
+
+.user-icon {
+  color: #949494;
+}
+
+.user-icon:hover {
+  color: #949494;
+}
+.full-width {
+  /* width: 100vw !important; Full viewport width */
+  margin-left: 0 !important;
+  padding-left: 0 !important; /* Remove left margin for sidebar */
+}
+
+/* navbar end  */
+/* right-side-content start*/
+.right-side-content {
+  width: 100%;
+  margin-top: 85px;
+  padding-left: 320px;
+  transition: all 0.3s ease-in-out;
+  /* background-color: #f2f2f2; */
+  /* height: 668px; */
+  /* overflow: scroll; */
+  transition: padding-left 0.3s;
+}
+
+@media (max-width: 820px) {
+  .right-side-content.collapsed {
+    padding-left: 0px !important;
+    /* margin-left: 80px; */
+  }
+  .right-side-content {
+    width: 100%;
+    margin-top: 85px;
+    padding-left: 0px;
+    /* background-color: #f2f2f2; */
+    /* height: 668px; */
+    /* overflow: scroll; */
+  }
+}
+
+.right-side-content.collapsed {
+  /* padding-left: 0px; */
+  padding-left: 90px;
+}
+
+/* right-side-content end */
+/* dashbord */
+.dashboardcard {
+  text-align: center;
+  padding: 5px 0px;
+  border-radius: 10px;
+  font-size: 1.2rem;
+}
+
+/* dashbord end */
+/* intake management */
+.portalcard {
+  text-align: center;
+  padding: 5px 0px;
+  border-radius: 10px;
+  font-size: 1.2rem;
+}
+
+.underline {
+  text-decoration-color: gray;
+}
+
+.myrequesteye {
+  color: #0d99ff;
+  cursor: pointer;
+}
+
+.myrequestedit {
+  color: #624de3;
+  cursor: pointer;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+/* intake management end */
+/* contract */
+.contrabtn a:hover {
+  color: white;
+}
+
+.contrabtn a {
+  color: white;
+}
+
+.contract-details-container {
+  max-width: 100%;
+  padding: 20px;
+  margin-top: 10px;
+}
+
+.contact {
+  margin-top: 10px;
+}
+
+.contract-info1 {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-top: 10px;
+}
+
+/* Header Styles */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.back-button {
+  background-color: #4a766e;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  height: 35px;
+  width: 102px;
+}
+
+.back-button:hover {
+  background-color: #3b6057;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.contract-id {
+  font-size: 16px;
+  color: #666;
+  margin: 0;
+}
+
+/* Contract Information Section */
+.contract-info {
+  margin-top: 30px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.info-item {
+  margin-bottom: 15px;
+}
+
+.info-item strong {
+  font-weight: bold;
+}
+
+.info-item p {
+  margin: 5px 0 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.info-item ul {
+  list-style-type: none;
+  padding-left: 0;
+  margin: 5px 0 0;
+}
+
+.info-item ul li {
+  font-size: 14px;
+  color: #333;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .contract-details-container {
+    padding: 15px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .back-button {
+    font-size: 5px;
+    padding: 8px 12px;
+    margin-left: 70%;
+    margin-top: -25px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .contract-id {
+    font-size: 14px;
+  }
+
+  .section-title {
+    font-size: 16px;
+  }
+
+  .info-item p,
+  .info-item ul li {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .back-button {
+    font-size: 10px;
+    padding: 6px 10px;
+  }
+
+  .title {
+    font-size: 18px;
+  }
+
+  .contract-id {
+    font-size: 12px;
+  }
+
+  .section-title {
+    font-size: 14px;
+  }
+
+  .info-item p,
+  .info-item ul li {
+    font-size: 10px;
+  }
+}
+
+/* contract */
+/* costsaving */
+.spendcard {
+  text-align: center;
+  padding: 5px 0px;
+  border-radius: 10px;
+  font-size: 1.2rem;
+}
+
+.sowcard {
+  text-align: center;
+  padding: 5px 0px;
+  border-radius: 10px;
+  font-size: 1.2rem;
+}
+
+/* costsaving */
+/* approvialworkfolw */
+.approvalico3 {
+  cursor: pointer;
+}
+
+.workflow-card {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 15px;
+  margin: 10px 0;
+  cursor: pointer;
+  transition: all 1s linear;
+}
+.fa-arrow-right {
+  content: "\f061";
+  position: relative;
+  left: -20px;
+  top: 80px;
+}
+@media screen and (min-width: 320px) and (max-width: 768px) {
+  .fa-arrow-right {
+    display: none;
+  }
+}
+.workflow-line {
+  width: 4px;
+  margin: auto;
+}
+.workflow-card:hover {
+  transform: scale(1.1);
+}
+.fa-check {
+  cursor: pointer;
+  transition: all 0.5 linear;
+}
+.fa-circle-check:hover {
+  color: green;
+  text-shadow: 1px 1px 20px green, 1px 1px 20px green;
+  transform: scale(1.5);
+}
+.fa-xmark {
+  cursor: pointer;
+  transition: all 0.5 linear;
+}
+.fa-xmark:hover {
+  color: red;
+  text-shadow: 1px 1px 20px red, 1px 1px 20px red;
+  transform: scale(1.5);
+}
+.p-dialog-title {
+  padding: 15px;
+  color: #578e7e;
+  font-weight: bold;
+}
+.p-dialog-content {
+  padding-left: 20px;
+}
+.p-dialog-footer {
+  padding: 20px !important;
+}
+.p-confirm-dialog-accept {
+  padding: 0px 10px;
+  border-radius: 5px;
+  background-color: #578e7e;
+  border: none;
+  margin-left: 5px;
+}
+.p-button-label {
+  color: black;
+}
+.workflow-card {
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  text-align: center;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.workflow-line i {
+  font-size: 1.5rem;
+}
+
+.workflow-card .fa-arrow-down {
+  margin-top: 10px;
+  color: #28a745;
+}
+/* approvialworkfolw */
+/* renewalmanage */
+.btn-renewal {
+  color: #ff6f00;
+
+  border: 1px solid #ff6f00;
+
+  background-color: transparent;
+
+  font-size: 0.875rem;
+
+  padding: 5px 10px;
+
+  border-radius: 6px;
+}
+
+.btn-renewal:hover {
+  background-color: #ff6f00;
+
+  color: #fff;
+  /* -webkit-box-shadow: 0px 0px 20px 0px #ff6f00; */
+}
+
+.renewaldownload {
+  color: green;
+  transition: all 0.5 linear;
+}
+
+.renewaldownload:hover {
+  color: green;
+  text-shadow: 1px 1px 20px green, 1px 1px 20px green;
+  transform: scale(1.5);
+}
+.fa-pen-to-square:hover {
+  color: #624de3 !important;
+  text-shadow: 1px 1px 20px #624de3, 1px 1px 20px #624de3;
+  transform: scale(1.5);
+}
+.fa-eye:hover {
+  color: rgb(13, 153, 255) !important;
+  text-shadow: 1px 1px 20px rgb(13, 153, 255), 1px 1px 20px rgb(13, 153, 255);
+  transform: scale(1.5);
+}
+.fa-comment:hover {
+  color: rgb(13, 153, 255) !important;
+  text-shadow: 1px 1px 20px rgb(13, 153, 255), 1px 1px 20px rgb(13, 153, 255);
+  transform: scale(1.5);
+}
+/* renewalmanage */
+/* contractmanage */
+.portalcard {
+  text-align: center;
+  padding: 5px 0px;
+  border-radius: 10px;
+  font-size: 1.2rem;
+}
+
+.myrequesteye {
+  color: #0d99ff;
+  cursor: pointer;
+}
+.activebadge {
+  background-color: #39bf1b;
+}
+.expiredbadge {
+  background-color: #ff0000;
+}
+.renewalbadge {
+  padding: 4px 30px !important;
+  background-color: #ff9318;
+}
+.terminatedbadge {
+  padding: 4px 40px !important;
+  background-color: #ff0000;
+}
+
+/* contractmanage */
+/* spendanalystic */
+.spendcard {
+  text-align: center;
+  padding: 5px 0px;
+  border-radius: 10px;
+  font-size: 1.2rem;
+}
+
+/* spendanalystic */
+/* renewalnoti */
+
+.notification-container {
+  max-width: 100%;
+  margin: 0 auto;
+  margin-top: 25px;
+  padding: 20px;
+  padding-top: 50px;
+  border-radius: 10px;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 30px;
+  justify-content: space-between;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.email-template-btn {
+  align-self: flex-end;
+  background-color: #4a766e;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: -55px;
+}
+
+.email-template-btn:hover {
+  background-color: #3b6057;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-label {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.form-select {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+}
+
+.toggle-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toggle-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toggle-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+}
+
+.toggle-item label {
+  font-size: 14px;
+  color: #333;
+}
+
+@media (max-width: 768px) {
+  .notifi-button-group {
+    padding: 0px !important;
+  }
+}
+
+.notifi-button-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 280px;
+  height: 30px;
+  width: 80%;
+  align-items: center;
+}
+
+.reset-button,
+.save-button {
+  flex: 1;
+  padding: 10px 15px;
+  font-size: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  align-items: center;
+}
+
+.reset-button {
+  background-color: #fff;
+  color: #4a766e;
+  border: 1px solid #4a766e;
+}
+
+.save-button {
+  background-color: #4a766e;
+  color: #fff;
+}
+
+.form-check-input:checked {
+  background-color: #76ee59;
+  border: none;
+}
+
+.reset-button:hover {
+  background-color: #f4f4f4;
+}
+
+.save-button:hover {
+  background-color: #3b6057;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .notification-container {
+    padding: 15px;
+  }
+
+  .email-template-btn {
+    align-self: center;
+    margin-bottom: 15px;
+    margin-top: 5px;
+  }
+
+  .button-group {
+    flex-direction: column;
+    display: contents;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 20px;
+  }
+
+  .form-label {
+    font-size: 14px;
+  }
+
+  .form-select {
+    font-size: 12px;
+  }
+
+  .toggle-item label {
+    font-size: 12px;
+  }
+
+  .reset-button,
+  .save-button {
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+}
+
+/* renewalnoti */
+.renual-top {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+
+a{
+  text-decoration: none !important;
+}
+.menu-text{
+  font-weight: 500 !important;
+}
+.submenu-item{
+  font-weight: 500 !important;
+}
+
+
+
+.student-form-container {
+  padding: 25px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  background-color: #fff;
+  margin: 30px auto;
+  max-width: 1000px;
+}
+
+.student-form-title {
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+
+}
+
+.student-form-group {
+  margin-bottom: 20px;
+}
+
+.student-form-label {
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.student-form-input {
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  padding: 10px 15px;
+  transition: all 0.3s ease;
+}
+
+.student-form-input:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.student-form-select {
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  padding: 10px 15px;
+  height: 45px;
+}
+
+.student-form-actions {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.student-form-btn {
+  padding: 10px 25px;
+  font-weight: 500;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.student-form-btn-primary {
+  background-color: #0d6efd;
+  border: none;
+  color: white;
+}
+
+.student-form-btn-primary:hover {
+  background-color: #0b5ed7;
+}
+
+.student-form-btn-secondary {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  color: #212529;
+}
+
+.student-form-btn-secondary:hover {
+  background-color: #e9ecef;
+}
