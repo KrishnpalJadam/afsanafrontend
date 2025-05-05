@@ -1,30 +1,47 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import BASE_URL from "../../Config";
+import axios from "axios";
+import Swal from "sweetalert2";
 
 const AddCounselor = ({ onAdd }) => {
+
+
+  const [userId, setUserId] = useState("");
   const [counselorName, setCounselorName] = useState("");
   const [counselorEmail, setCounselorEmail] = useState("");
   const [counselorPhone, setCounselorPhone] = useState("");
   const [university, setUniversity] = useState("");
   const [status, setStatus] = useState("Active");
-  const [counselors, setCounselors] = useState([
-    {
-      name: "John Doe",
-      email: "john@example.com",
-      phone: "123-456-7890",
-      date: "02/15/2025",
-      university: "Harvard University",
-      status: "Active",
-    },
-
-  ]);
+  const [counselors, setCounselors] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [editingCounselor, setEditingCounselor] = useState(null);
 
-  const handleAddCounselor = (e) => {
-    e.eventPreventdefault();
+  console.log("Counselor data:", editingCounselor);
+
+
+  const fetchCounseller = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}counselor`);
+      console.log("Counselor data:", response.data.data);
+      if (response.status !== 200) {
+        throw new Error("Failed to fetch counselors");
+      }
+      setCounselors(response.data.data);
+    } catch (error) {
+      console.error("Error fetching counselors:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCounseller();
+  }, []);
+
+  const handleAddCounselor = async (e) => {
+    e.preventDefault();
       const newCounselor = {
+        user_id: userId,
         name: counselorName,
         email: counselorEmail,
         phone: counselorPhone,
@@ -32,7 +49,30 @@ const AddCounselor = ({ onAdd }) => {
         university,
         status,
       };
-      setCounselors([...counselors, newCounselor]);
+
+      try {
+        const response = await axios.post(`${BASE_URL}counselor`, newCounselor);
+        if (response.status === 201) {
+            fetchCounseller();
+            Swal.fire({
+                title: 'Success!',
+                text: 'Follow-up added successfully.',
+                icon: 'success',
+                confirmButtonText: 'Ok',
+            }).then(() => {
+                handleCloseFollowUpModal();
+            });
+        }
+    } catch (error) {
+        console.error('Error adding Counsellor:', error);
+        Swal.fire({
+            title: 'Error!',
+            text: 'Unable to add Counsellor. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'Close',
+        });
+    }
+
       onAdd(newCounselor);
       setCounselorName("");
       setCounselorEmail("");
@@ -43,45 +83,94 @@ const AddCounselor = ({ onAdd }) => {
     
   };
 
-  const handleEditCounselor = (index) => {
-    const counselorToEdit = counselors[index];
-    setCounselorName(counselorToEdit.name);
-    setCounselorEmail(counselorToEdit.email);
-    setCounselorPhone(counselorToEdit.phone);
-    setUniversity(counselorToEdit.university);
-    setStatus(counselorToEdit.status);
-    setEditingCounselor(index);
+  const handleEditCounselor = async (counselor) => {
+    console.log("Editing counselor:", counselor);
+    // Only set the form data and show modal
+    setUserId(counselor.user_id);
+    setCounselorName(counselor.name);
+    setCounselorEmail(counselor.email);
+    setCounselorPhone(counselor.phone);
+    setUniversity(counselor.university);
+    setStatus(counselor.status);
+    setEditingCounselor(counselor.id); 
     setShowModal(true);
-  };
+};
 
-  const handleDeleteCounselor = (index) => {
-    const updatedCounselors = counselors.filter((_, i) => i !== index);
-    setCounselors(updatedCounselors);
-  };
-
-  const handleSaveEdit = () => {
+const handleSaveEdit = async () => {
     if (editingCounselor !== null) {
-      const updatedCounselors = counselors.map((counselor, index) =>
-        index === editingCounselor
-          ? {
-            ...counselor,
+        const updateCounselor = {
+            user_id: userId,
             name: counselorName,
             email: counselorEmail,
             phone: counselorPhone,
-            university,
-            status,
-          }
-          : counselor
-      );
-      setCounselors(updatedCounselors);
-      setEditingCounselor(null);
-      setCounselorName("");
-      setCounselorEmail("");
-      setCounselorPhone("");
-      setUniversity("");
-      setStatus("Active");
-      setShowModal(false);
+            date: new Date().toLocaleDateString(),
+            university: university,
+            status: status,
+        };
+
+        try {
+            const response = await axios.put(`${BASE_URL}counselor/${editingCounselor}`, updateCounselor);
+            if (response.status === 200) {
+                // Fetch updated list
+                fetchCounseller();
+                
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Counsellor updated successfully.',
+                    icon: 'success',
+                    confirmButtonText: 'Ok',
+                }).then(() => {
+                    // Reset form and close modal
+                    setEditingCounselor(null);
+                    setCounselorName("");
+                    setCounselorEmail("");
+                    setCounselorPhone("");
+                    setUserId("");
+                    setUniversity("");
+                    setStatus("Active");
+                    setShowModal(false);
+                });
+            }
+        } catch (error) {
+            console.error('Error updating counsellor:', error);
+            Swal.fire({
+                title: 'Error!',
+                text: 'Unable to update counsellor. Please try again.',
+                icon: 'error',
+                confirmButtonText: 'Close',
+            });
+        }
     }
+};
+
+  const handleDeleteCounselor = (index) => {
+
+    Swal.fire({
+      title: "Are you sure?", 
+
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Call the delete API here
+        axios
+          .delete(`${BASE_URL}counselor/${index}`)
+          .then((response) => {
+            if (response.status === 200) {
+              fetchCounseller();
+            }
+          })
+          .catch((error) => {
+            console.error("Error deleting counselor:", error);
+          });
+      }
+    });
+    // const updatedCounselors = counselors.filter((_, i) => i !== index);
+    setCounselors(updatedCounselors);
   };
 
   const filteredCounselors = counselors.filter((counselor) =>
@@ -158,6 +247,15 @@ const AddCounselor = ({ onAdd }) => {
               <div className="modal-body">
                 {/* Counselor Name and Email */}
                 <div className="row mb-3">
+                <div className="col-md-6 mb-3">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Enter Id ..."
+                      value={userId}
+                      onChange={(e) => setUserId(e.target.value)}
+                    />
+                  </div>
                   <div className="col-md-6 mb-3">
                     <input
                       type="text"
@@ -167,7 +265,12 @@ const AddCounselor = ({ onAdd }) => {
                       onChange={(e) => setCounselorName(e.target.value)}
                     />
                   </div>
-                  <div className="col-md-6">
+                  
+                </div>
+
+                {/* Counselor Phone and University */}
+                <div className="row mb-3">
+                <div className="col-md-6 mb-3">
                     <input
                       type="email"
                       className="form-control"
@@ -176,10 +279,6 @@ const AddCounselor = ({ onAdd }) => {
                       onChange={(e) => setCounselorEmail(e.target.value)}
                     />
                   </div>
-                </div>
-
-                {/* Counselor Phone and University */}
-                <div className="row mb-3">
                   <div className="col-md-6 mb-3">
                     <input
                       type="tel"
@@ -189,7 +288,12 @@ const AddCounselor = ({ onAdd }) => {
                       onChange={(e) => setCounselorPhone(e.target.value)}
                     />
                   </div>
-                  <div className="col-md-6">
+                 
+                </div>
+
+                {/* Status */}
+                <div className="row mb-3">
+                <div className="col-md-6 mb-3">
                     <input
                       type="text"
                       className="form-control"
@@ -198,11 +302,7 @@ const AddCounselor = ({ onAdd }) => {
                       onChange={(e) => setUniversity(e.target.value)}
                     />
                   </div>
-                </div>
-
-                {/* Status */}
-                <div className="row mb-3">
-                  <div className="col-md-6">
+                  <div className="col-md-6 ">
                     <select
                       className="form-control"
                       value={status}
@@ -260,22 +360,22 @@ const AddCounselor = ({ onAdd }) => {
               <tbody>
                 {filteredCounselors.map((c, index) => (
                   <tr className="text-nowrap" key={index}>
-                    <td>{c.name}</td>
-                    <td>{c.email}</td>
-                    <td>{c.phone}</td>
-                    <td>{c.university}</td>
-                    <td>{c.status}</td>
-                    <td>{c.date}</td>
+                    <td>{c?.name}</td>
+                    <td>{c?.email}</td>
+                    <td>{c?.phone}</td>
+                    <td>{c?.university}</td>
+                    <td>{c?.status}</td>
+                    <td>{c?.date}</td>
                     <td>
                       <button
                         className="btn btn-warning btn-sm"
-                        onClick={() => handleEditCounselor(index)}
+                        onClick={() => handleEditCounselor(c)}
                       >
                         Edit
                       </button>
                       <button
                         className="btn btn-danger btn-sm ms-2"
-                        onClick={() => handleDeleteCounselor(index)}
+                        onClick={() => handleDeleteCounselor(c.id)}
                       >
                         Delete
                       </button>
