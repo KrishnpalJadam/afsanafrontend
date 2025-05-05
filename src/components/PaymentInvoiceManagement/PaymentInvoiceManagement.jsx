@@ -254,37 +254,38 @@ const PaymentInvoiceMangament = () => {
                 required
               />
             </Form.Group>
-            <Form.Group controlId="formPrograms">
-              <Form.Label>Programs</Form.Label>
+            <Form.Group controlId="formPrograms" className="mb-3 mt-3">
+              <Form.Label>Programs</Form.Label><Button variant="secondary"   onClick={handleAddProgram} className="ms-4 btn-sm">
+                Add Program
+              </Button>
               {newUniversity.programs.map((program, index) => (
                 <Form.Control
                   key={index}
                   type="text"
                   value={program}
                   onChange={(e) => handleProgramChange(index, e.target.value)}
-                  className="mb-2"
+                  className="mb-2 mt-2"
                   required
                 />
               ))}
-              <Button variant="secondary" onClick={handleAddProgram}>
-                Add Program
-              </Button>
+              
             </Form.Group>
             <Form.Group controlId="formHighlights">
-              <Form.Label>Highlights</Form.Label>
+              <Form.Label>Highlights</Form.Label> <Button variant="secondary" onClick={handleAddHighlight} className="ms-4 btn-sm">
+                Add Highlight
+              </Button>
+              
               {newUniversity.highlights.map((highlight, index) => (
                 <Form.Control
                   key={index}
                   type="text"
                   value={highlight}
                   onChange={(e) => handleHighlightChange(index, e.target.value)}
-                  className="mb-2"
+                  className="mb-2 mt-2"
                   required
                 />
               ))}
-              <Button variant="secondary" onClick={handleAddHighlight}>
-                Add Highlight
-              </Button>
+             
             </Form.Group>
             <Form.Group controlId="formContactPhone">
               <Form.Label>Contact Phone</Form.Label>

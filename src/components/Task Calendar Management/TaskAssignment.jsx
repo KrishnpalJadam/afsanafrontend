@@ -1,414 +1,4 @@
-// import React, { useState } from "react";
-// import {
-//   Container,
-//   Table,
-//   Button,
-//   Form,
-//   Row,
-//   Col,
-//   Card,
-//   Alert,
-//   Modal,
-// } from "react-bootstrap";
-
-// const TaskManagement = () => {
-//   const [tasks, setTasks] = useState([]);
-//   const [taskTitle, setTaskTitle] = useState("");
-//   const [dueDate, setDueDate] = useState("");
-//   const [counselor, setCounselor] = useState("");
-//   const [student, setStudent] = useState("");
-//   const [description, setDescription] = useState("");
-//   const [descriptionError, setDescriptionError] = useState("");
-//   const [showSuccess, setShowSuccess] = useState(false);
-//   const [showModal, setShowModal] = useState(false);
-
-//   // New Fields
-//   const [priority, setPriority] = useState("");
-//   const [status, setStatus] = useState("");
-//   const [relatedTo, setRelatedTo] = useState("");
-//   const [relatedItem, setRelatedItem] = useState("");
-//   const [assignedTo, setAssignedTo] = useState("");
-//   const [assignedDate, setAssignedDate] = useState("");
-//   const [finishingDate, setFinishingDate] = useState("");
-//   const [file, setFile] = useState(null);
-
-//   const counselors = ["John Smith", "Jane Doe", "Emily Davis"];
-//   const students = ["Sanjana", "Kabir Singh", "Emily Davis"];
-
-//   const handleShowModal = () => setShowModal(true);
-//   const handleCloseModal = () => {
-//     setShowModal(false);
-//     setTaskTitle("");
-//     setDueDate("");
-//     setCounselor("");
-//     setStudent("");
-//     setDescription("");
-//     setDescriptionError("");
-//     setPriority("");
-//     setStatus("");
-//     setRelatedTo("");
-//     setRelatedItem("");
-//     setAssignedTo("");
-//     setAssignedDate("");
-//     setFinishingDate("");
-//     setFile(null);
-//   };
-
-//   const addTask = (e) => {
-//     e.preventDefault();
-
-//     if (
-//       !taskTitle ||
-//       !dueDate ||
-//       !counselor ||
-//       !student ||
-//       !description ||
-//       !priority ||
-//       !status ||
-//       !relatedTo ||
-//       !relatedItem ||
-//       !assignedTo ||
-//       !assignedDate ||
-//       !finishingDate
-//     ) {
-//       alert("Please fill all fields!");
-//       return;
-//     }
-
-//     if (description.length > 200) {
-//       setDescriptionError("Description cannot exceed 200 characters.");
-//       return;
-//     }
-
-//     const newTask = {
-//       id: Date.now(),
-//       title: taskTitle,
-//       dueDate,
-//       counselor,
-//       student,
-//       description,
-//       priority,
-//       status,
-//       relatedTo,
-//       relatedItem,
-//       assignedTo,
-//       assignedDate,
-//       finishingDate,
-//       file: file ? file.name : "",
-//       reminder: "",
-//     };
-
-//     setTasks([...tasks, newTask]);
-//     setShowSuccess(true);
-//     handleCloseModal();
-
-//     setTimeout(() => setShowSuccess(false), 3000);
-//   };
-
-//   const handleReminderChange = (id, value) => {
-//     setTasks(
-//       tasks.map((task) =>
-//         task.id === id ? { ...task, reminder: value } : task
-//       )
-//     );
-//   };
-
-//   const deleteTask = (id) => {
-//     setTasks(tasks.filter((task) => task.id !== id));
-//   };
-
-//   return (
-//     <Container className="mt-4">
-//       {showSuccess && (
-//         <Alert
-//           variant="success"
-//           onClose={() => setShowSuccess(false)}
-//           dismissible
-//           className="mb-3"
-//         >
-//           Task added successfully!
-//         </Alert>
-//       )}
-
-//       <div className="d-flex justify-content-between align-items-center mb-3">
-//         <h2>Task List</h2>
-//         <Button variant="secondary" onClick={handleShowModal}>
-//           <i className="bi bi-plus-circle me-2"></i> Add New Task
-//         </Button>
-//       </div>
-
-//       <Card className="p-3 shadow-sm">
-//         {tasks.length === 0 ? (
-//           <Alert variant="info">
-//             No tasks added yet. Click "Add New Task" to create one!
-//           </Alert>
-//         ) : (
-//           <Table className="text-center text-nowrap" striped bordered hover responsive>
-//             <thead className="table-white">
-//               <tr>
-//                 <th>Task Title</th>
-//                 <th>Due Date</th>
-//                 <th>Counselor</th>
-//                 <th>Student</th>
-//                 <th>Priority</th>
-//                 <th>Status</th>
-//                 <th>Description</th>
-//                 <th>Reminder</th>
-//                 <th>Actions</th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               {tasks.map((task) => (
-//                 <tr key={task.id}>
-//                   <td>{task.title}</td>
-//                   <td>{task.dueDate}</td>
-//                   <td>{task.counselor}</td>
-//                   <td>{task.student}</td>
-//                   <td>{task.priority}</td>
-//                   <td>{task.status}</td>
-//                   <td>
-//                     {task.description.length > 50
-//                       ? `${task.description.substring(0, 50)}...`
-//                       : task.description}
-//                   </td>
-//                   <td>
-//                     <Form.Select
-//                       value={task.reminder}
-//                       onChange={(e) => handleReminderChange(task.id, e.target.value)}
-//                       size="sm"
-//                     >
-//                       <option value="">Select Reminder</option>
-//                       <option value="Task Cancel">Task Cancel</option>
-//                       <option value="Upcoming">Upcoming</option>
-//                       <option value="Alert">Alert</option>
-//                     </Form.Select>
-//                   </td>
-//                   <td>
-//                     <Button
-//                       variant="danger"
-//                       size="sm"
-//                       onClick={() => deleteTask(task.id)}
-//                       className="me-2"
-//                     >
-//                       <i className="bi bi-trash"></i> Delete
-//                     </Button>
-//                   </td>
-//                 </tr>
-//               ))}
-//             </tbody>
-//           </Table>
-//         )}
-//       </Card>
-
-//       <Modal show={showModal} onHide={handleCloseModal} size="lg">
-//         <Modal.Header closeButton>
-//           <Modal.Title>Add New Task</Modal.Title>
-//         </Modal.Header>
-//         <Modal.Body>
-//           <Form onSubmit={addTask}>
-//             <Row className="g-3 mb-3">
-//               <Col md={6}>
-//                 <Form.Group>
-//                   <Form.Label>Task Title *</Form.Label>
-//                   <Form.Control
-//                     type="text"
-//                     placeholder="Enter task title"
-//                     value={taskTitle}
-//                     onChange={(e) => setTaskTitle(e.target.value)}
-//                     required
-//                   />
-//                 </Form.Group>
-//               </Col>
-//               <Col md={6}>
-//                 <Form.Group>
-//                   <Form.Label>Due Date *</Form.Label>
-//                   <Form.Control
-//                     type="date"
-//                     value={dueDate}
-//                     onChange={(e) => setDueDate(e.target.value)}
-//                     required
-//                   />
-//                 </Form.Group>
-//               </Col>
-//             </Row>
-
-//             <Row className="g-3 mb-3">
-//               <Col md={6}>
-//                 <Form.Group>
-//                   <Form.Label>Counselor *</Form.Label>
-//                   <Form.Select
-//                     value={counselor}
-//                     onChange={(e) => setCounselor(e.target.value)}
-//                     required
-//                   >
-//                     <option value="">Select Counselor</option>
-//                     {counselors.map((name, index) => (
-//                       <option key={index} value={name}>
-//                         {name}
-//                       </option>
-//                     ))}
-//                   </Form.Select>
-//                 </Form.Group>
-//               </Col>
-//               <Col md={6}>
-//                 <Form.Group>
-//                   <Form.Label>Student *</Form.Label>
-//                   <Form.Select
-//                     value={student}
-//                     onChange={(e) => setStudent(e.target.value)}
-//                     required
-//                   >
-//                     <option value="">Select Student</option>
-//                     {students.map((student, index) => (
-//                       <option key={index} value={student}>
-//                         {student}
-//                       </option>
-//                     ))}
-//                   </Form.Select>
-//                 </Form.Group>
-//               </Col>
-//             </Row>
-
-//             <Form.Group className="mb-4">
-//               <Form.Label>Description *</Form.Label>
-//               <Form.Control
-//                 as="textarea"
-//                 rows={4}
-//                 placeholder="Enter task description"
-//                 value={description}
-//                 onChange={(e) => {
-//                   setDescription(e.target.value);
-//                   setDescriptionError(e.target.value.length > 200
-//                     ? "Description cannot exceed 200 characters."
-//                     : "");
-//                 }}
-//                 required
-//                 className={descriptionError ? "is-invalid" : ""}
-//               />
-//               <div className="d-flex justify-content-between mt-1">
-//                 <small className="text-muted">
-//                   {description.length}/200 characters
-//                 </small>
-//                 {descriptionError && (
-//                   <small className="text-danger">{descriptionError}</small>
-//                 )}
-//               </div>
-//             </Form.Group>
-
-//             <Row className="g-3 mb-3">
-//               <Col md={6}>
-//                 <Form.Group>
-//                   <Form.Label>Priority *</Form.Label>
-//                   <Form.Select value={priority} onChange={(e) => setPriority(e.target.value)} required>
-//                     <option value="">Select Priority</option>
-//                     <option>Low</option>
-//                     <option>Medium</option>
-//                     <option>High</option>
-//                     <option>Urgent</option>
-//                   </Form.Select>
-//                 </Form.Group>
-//               </Col>
-//               <Col md={6}>
-//                 <Form.Group>
-//                   <Form.Label>Status *</Form.Label>
-//                   <Form.Select value={status} onChange={(e) => setStatus(e.target.value)} required>
-//                     <option value="">Select Status</option>
-//                     <option>New</option>
-//                     <option>In Progress</option>
-//                     <option>Completed</option>
-//                   </Form.Select>
-//                 </Form.Group>
-//               </Col>
-//             </Row>
-
-//             <Row className="g-3 mb-3">
-//               <Col md={6}>
-//                 <Form.Group>
-//                   <Form.Label>Related To *</Form.Label>
-//                   <Form.Select value={relatedTo} onChange={(e) => setRelatedTo(e.target.value)} required>
-//                     <option value="">Select</option>
-//                     <option>New Lead</option>
-//                     <option>Register Student</option>
-//                     <option>Project</option>
-//                     <option>Invoice</option>
-//                     <option>Student</option>
-//                   </Form.Select>
-//                 </Form.Group>
-//               </Col>
-//               <Col md={6}>
-//                 <Form.Group>
-//                   <Form.Label>Related Item *</Form.Label>
-//                   <Form.Control
-//                     type="text"
-//                     placeholder="Enter related item"
-//                     value={relatedItem}
-//                     onChange={(e) => setRelatedItem(e.target.value)}
-//                     required
-//                   />
-//                 </Form.Group>
-//               </Col>
-//             </Row>
-
-//             <Row className="g-3 mb-3">
-//               <Col md={6}>
-//                 <Form.Group>
-//                   <Form.Label>Assigned To *</Form.Label>
-//                   <Form.Control
-//                     type="text"
-//                     placeholder="Enter assignee name"
-//                     value={assignedTo}
-//                     onChange={(e) => setAssignedTo(e.target.value)}
-//                     required
-//                   />
-//                 </Form.Group>
-//               </Col>
-//               <Col md={3}>
-//                 <Form.Group>
-//                   <Form.Label>Assigned Date *</Form.Label>
-//                   <Form.Control
-//                     type="date"
-//                     value={assignedDate}
-//                     onChange={(e) => setAssignedDate(e.target.value)}
-//                     required
-//                   />
-//                 </Form.Group>
-//               </Col>
-//               <Col md={3}>
-//                 <Form.Group>
-//                   <Form.Label>Finishing Date *</Form.Label>
-//                   <Form.Control
-//                     type="date"
-//                     value={finishingDate}
-//                     onChange={(e) => setFinishingDate(e.target.value)}
-//                     required
-//                   />
-//                 </Form.Group>
-//               </Col>
-//             </Row>
-
-//             <Form.Group className="mb-3">
-//               <Form.Label>Attach File</Form.Label>
-//               <Form.Control type="file" onChange={(e) => setFile(e.target.files[0])} />
-//             </Form.Group>
-
-//             <div className="d-flex justify-content-end">
-//               <Button variant="danger" onClick={handleCloseModal} className="me-2">
-//                 Cancel
-//               </Button>
-//               <Button variant="secondary" type="submit">
-//                 Add Task
-//               </Button>
-//             </div>
-//           </Form>
-//         </Modal.Body>
-//       </Modal>
-//     </Container>
-//   );
-// };
-
-// export default TaskManagement;
-
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Table,
@@ -420,26 +10,40 @@ import {
   Badge,
   Modal,
 } from "react-bootstrap";
+import BASE_URL from "../../Config";
 
 const AdminTaskManager = () => {
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      student: "Rahul Sharma",
-      title: "Upload Passport Copy",
-      due: "2025-06-15",
-      status: "pending",
-    },
-    {
-      id: 2,
-      student: "Neha Verma",
-      title: "Submit SOP",
-      due: "2025-06-10",
-      status: "completed",
-    },
-  ]);
+  const [tasks ,setTasks] = useState([])  
 
-  const [form, setForm] = useState({ student: "", title: "", due: "" });
+useEffect(() => {
+  const fetchTasks = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}task`);
+      const data = await response.json();
+      setTasks(data);
+      console.log("data", data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
+    fetchTasks();
+  
+},[])
+  const [form, setForm] = useState({
+    student: "",
+    title: "",
+    due: "",
+    description: "",
+    priority: "",
+    status: "",
+    relatedTo: "",
+    relatedItem: "",
+    assignedTo: "",
+    assignedDate: "",
+    finishingDate: "",
+    attachment: "",
+  });
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState(null);
 
@@ -447,32 +51,112 @@ const AdminTaskManager = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form.student || !form.title || !form.due) return;
 
-    if (editId !== null) {
-      setTasks(
-        tasks.map((task) => (task.id === editId ? { ...task, ...form } : task))
-      );
-    } else {
-      setTasks([...tasks, { id: Date.now(), ...form, status: "pending" }]);
-    }
+    const user_id = localStorage.getItem("user_id"); // Assuming user_id is available in localStorage
 
-    setForm({ student: "", title: "", due: "" });
-    setEditId(null);
-    setShowModal(false);
+    const taskData = {
+      title: form.title,
+      user_id,
+      due_date: form.due,
+      counselor_id: 2, // Assuming a fixed counselor id, you can make it dynamic as per the form data
+      student_id: form.student, // Assuming the form contains the student ID
+      description: form.description, // Assuming the form contains a description field
+      priority:  form.priority, // Assuming the form contains a priority field
+      status:  form.status, // Assuming the form contains a status field
+      related_to: form.relatedTo, // Assuming the form contains the related field
+      related_item: form.relatedItem, // Assuming the form contains the related item field
+      assigned_to: form.assignedTo, // Assuming the form contains the assignee name
+      assigned_date: form.assignedDate, // Assuming the form contains the assigned date
+      finishing_date: form.finishingDate, // Assuming the form contains the finishing date
+      attachment: form.attachment, // Assuming the form contains an attachment field
+    };
+
+    try {
+      const response = await fetch(`${BASE_URL}task`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(taskData),
+      });
+
+      const data = await response.json();
+      console.log(data);
+
+      // After successful POST, update the state with the new task
+      if (response.ok) {
+        setTasks([
+          ...tasks,
+          {
+            id: Date.now(),
+            ...taskData, // Adding the task data to the state
+            status: "pending",
+          },
+        ]);
+
+        setForm({
+          student: "",
+          title: "",
+          due: "",
+          description: "",
+          priority: "",
+          status: "",
+          relatedTo: "",
+          relatedItem: "",
+          assignedTo: "",
+          assignedDate: "",
+          finishingDate: "",
+          attachment: "",
+        });
+        setEditId(null);
+        setShowModal(false);
+      } else {
+        console.error("Failed to create task:", data);
+      }
+    } catch (error) {
+      console.error("Error occurred while posting the task:", error);
+    }
   };
 
   const handleEdit = (task) => {
-    setForm({ student: task.student, title: task.title, due: task.due });
+    setForm({
+      student: task.student,
+      title: task.title,
+      due: task.due,
+      description: task.description,
+      priority: task.priority,
+      status: task.status,
+      relatedTo: task.related_to,
+      relatedItem: task.related_item,
+      assignedTo: task.assigned_to,
+      assignedDate: task.assigned_date,
+      finishingDate: task.finishing_date,
+      attachment: task.attachment,
+    });
     setEditId(task.id);
     setShowModal(true);
   };
 
   const handleDelete = (id) => {
-    if (window.confirm("Delete this task?")) {
-      setTasks(tasks.filter((t) => t.id !== id));
-    }
+    const deleteTask =  async () => {
+       try {
+         const response = await fetch(`${BASE_URL}task/${id}`, {
+           method: "DELETE",
+         });
+         const data = await response.json();
+         console.log(data);
+         if (response.ok) {
+           setTasks(tasks.filter((task) => task.id !== id));
+         } else {
+           console.error("Failed to delete task:", data);
+         }
+       } catch (error) {
+         console.error("Error occurred while deleting the task:", error);
+       }
+     }
+     deleteTask();
   };
 
   const handleStatusToggle = (id) => {
@@ -496,9 +180,7 @@ const AdminTaskManager = () => {
         <Card.Body>
           <Row>
             <Col>
-              <Button onClick={() => setShowModal(true)}>
-                Assign New Task
-              </Button>
+              <Button onClick={() => setShowModal(true)}>Assign New Task</Button>
             </Col>
           </Row>
         </Card.Body>
@@ -519,16 +201,18 @@ const AdminTaskManager = () => {
             </thead>
             <tbody>
               {tasks.map((task, index) => (
-                <tr key={task.id}>
+                <tr key={task?.id}>
                   <td>{index + 1}</td>
-                  <td>{task.student}</td>
-                  <td>{task.title}</td>
-                  <td>{task.due}</td>
+                  <td>{task?.student}</td>
+                  <td>{task?.title}</td>
+                  <td> 
+                  {new Date(task?.due_date).toLocaleDateString()}
+                  </td>
                   <td>
                     <Badge
-                      bg={task.status === "completed" ? "success" : "warning"}
+                      bg={task?.status ==1   ? "success" : "warning"}
                     >
-                      {task.status}
+                      {task?.status  ==1   ? "Completed" : "Pending"}
                     </Badge>
                   </td>
                   <td>
@@ -536,7 +220,7 @@ const AdminTaskManager = () => {
                       variant="success"
                       size="sm"
                       className="me-1"
-                      onClick={() => handleStatusToggle(task.id)}
+                      onClick={() => handleStatusToggle(task?.id)}
                     >
                       Toggle
                     </Button>
@@ -551,7 +235,7 @@ const AdminTaskManager = () => {
                     <Button
                       variant="danger"
                       size="sm"
-                      onClick={() => handleDelete(task.id)}
+                      onClick={() => handleDelete(task?.id)}
                     >
                       Delete
                     </Button>
@@ -571,12 +255,7 @@ const AdminTaskManager = () => {
       </Card>
 
       {/* Add/Edit Modal */}
-      <Modal
-        show={showModal}
-        onHide={() => setShowModal(false)}
-        size="lg"
-        centered
-      >
+      <Modal show={showModal} onHide={() => setShowModal(false)} size="lg" centered>
         <Modal.Header closeButton>
           <Modal.Title>{editId ? "Edit Task" : "Assign New Task"}</Modal.Title>
         </Modal.Header>
@@ -588,19 +267,30 @@ const AdminTaskManager = () => {
                 <Form.Control
                   type="text"
                   name="title"
+                  value={form.title}
+                  onChange={handleChange}
                   placeholder="Enter task title"
                 />
               </Col>
               <Col md={6}>
                 <Form.Label>Due Date *</Form.Label>
-                <Form.Control type="date" name="due" />
+                <Form.Control
+                  type="date"
+                  name="due"
+                  value={form.due}
+                  onChange={handleChange}
+                />
               </Col>
             </Row>
 
             <Row className="mb-3">
               <Col md={6}>
                 <Form.Label>Counselor *</Form.Label>
-                <Form.Select name="counselor">
+                <Form.Select
+                  name="counselor"
+                  value={form.counselor}
+                  onChange={handleChange}
+                >
                   <option>Select Counselor</option>
                   <option>Counselor 1</option>
                   <option>Counselor 2</option>
@@ -608,7 +298,11 @@ const AdminTaskManager = () => {
               </Col>
               <Col md={6}>
                 <Form.Label>Student *</Form.Label>
-                <Form.Select name="student">
+                <Form.Select
+                  name="student"
+                  value={form.student}
+                  onChange={handleChange}
+                >
                   <option>Select Student</option>
                   <option>Rahul Sharma</option>
                   <option>Neha Verma</option>
@@ -621,6 +315,9 @@ const AdminTaskManager = () => {
               <Form.Control
                 as="textarea"
                 rows={3}
+                name="description"
+                value={form.description}
+                onChange={handleChange}
                 placeholder="Enter task description"
                 maxLength={200}
               />
@@ -630,7 +327,11 @@ const AdminTaskManager = () => {
             <Row className="mb-3">
               <Col md={6}>
                 <Form.Label>Priority *</Form.Label>
-                <Form.Select>
+                <Form.Select
+                  name="priority"
+                  value={form.priority}
+                  onChange={handleChange}
+                >
                   <option>Select Priority</option>
                   <option>Low</option>
                   <option>Medium</option>
@@ -639,7 +340,11 @@ const AdminTaskManager = () => {
               </Col>
               <Col md={6}>
                 <Form.Label>Status *</Form.Label>
-                <Form.Select>
+                <Form.Select
+                  name="status"
+                  value={form.status}
+                  onChange={handleChange}
+                >
                   <option>Select Status</option>
                   <option>Pending</option>
                   <option>Completed</option>
@@ -650,7 +355,11 @@ const AdminTaskManager = () => {
             <Row className="mb-3">
               <Col md={6}>
                 <Form.Label>Related To *</Form.Label>
-                <Form.Select>
+                <Form.Select
+                  name="relatedTo"
+                  value={form.relatedTo}
+                  onChange={handleChange}
+                >
                   <option>Select</option>
                   <option>Application</option>
                   <option>Visa</option>
@@ -659,28 +368,54 @@ const AdminTaskManager = () => {
               </Col>
               <Col md={6}>
                 <Form.Label>Related Item *</Form.Label>
-                <Form.Control type="text" placeholder="Enter related item" />
+                <Form.Control
+                  type="text"
+                  name="relatedItem"
+                  value={form.relatedItem}
+                  onChange={handleChange}
+                  placeholder="Enter related item"
+                />
               </Col>
             </Row>
 
             <Row className="mb-3">
               <Col md={4}>
                 <Form.Label>Assigned To *</Form.Label>
-                <Form.Control type="text" placeholder="Enter assignee name" />
+                <Form.Control
+                  type="text"
+                  name="assignedTo"
+                  value={form.assignedTo}
+                  onChange={handleChange}
+                  placeholder="Enter assignee name"
+                />
               </Col>
               <Col md={4}>
                 <Form.Label>Assigned Date *</Form.Label>
-                <Form.Control type="date" />
+                <Form.Control
+                  type="date"
+                  name="assignedDate"
+                  value={form.assignedDate}
+                  onChange={handleChange}
+                />
               </Col>
               <Col md={4}>
                 <Form.Label>Finishing Date *</Form.Label>
-                <Form.Control type="date" />
+                <Form.Control
+                  type="date"
+                  name="finishingDate"
+                  value={form.finishingDate}
+                  onChange={handleChange}
+                />
               </Col>
             </Row>
 
             <Form.Group className="mb-3">
               <Form.Label>Attach File</Form.Label>
-              <Form.Control type="file" />
+              <Form.Control
+                type="file"
+                name="attachment"
+                onChange={handleChange}
+              />
             </Form.Group>
 
             <div className="d-flex justify-content-end">
@@ -691,7 +426,9 @@ const AdminTaskManager = () => {
               >
                 Cancel
               </Button>
-              <Button variant="dark">Add Task</Button>
+              <Button variant="dark" onClick={handleSave}>
+                {editId ? "Update Task" : "Add Task"}
+              </Button>
             </div>
           </Form>
         </Modal.Body>
