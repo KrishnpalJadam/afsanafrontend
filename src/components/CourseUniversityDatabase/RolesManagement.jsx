@@ -14,12 +14,6 @@ import { TagFill, TrashFill } from "react-bootstrap-icons";
 
 const RolesManagement = () => {
   const [roles, setRoles] = useState([
-
-
-
- 
-   
-    
     { name: "Counsellor", type: "Customer" },
    
     { name: "Student", type: "Customer" },

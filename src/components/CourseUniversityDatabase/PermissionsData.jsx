@@ -122,11 +122,7 @@ const PermissionsTable = () => {
       </Table>
 
       <div className="d-flex justify-content-end">
-        <button
-          className="btn btn-dark"
-          style={{ border: "none" }}
-          onClick={handleSave}
-        >
+        <button  className="btn btn-dark" style={{ border: "none" }} onClick={handleSave}>
           Save Permissions
         </button>
       </div>

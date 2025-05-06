@@ -15,6 +15,7 @@ import Swal from 'sweetalert2';
 import { ToastContainer, toast } from 'react-toastify';
 import TodaysInqiury from "./TodaysInqiury";
 import Followup from "./Followup";
+import api from "../../interceptors/axiosInterceptor";
 const Inquiry = () => {
   // Sample inquiry data
   const [inquiries, setInquiries] = useState({
@@ -232,7 +233,7 @@ const Inquiry = () => {
   
     try {
       // Send the request to the API
-      const response = await axios.post(`${BASE_URL}inquiries`, requestData);
+      const response = await api.post(`${BASE_URL}inquiries`, requestData);
   
       // Handle the response and update the UI
       if (response.status === 200) {
@@ -286,7 +287,7 @@ const Inquiry = () => {
  useEffect(() => {
   const fetchInquiries = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}inquiries`);
+      const response = await api.get(`inquiries`);
       setInquiries((prev) => ({
         ...prev,
         todayInquiries: response.data,
@@ -303,7 +304,7 @@ const Inquiry = () => {
   // Handle inquiry detail view
   const handleViewDetail = async (id) => {
     try {
-      const response = await axios.get(`${BASE_URL}inquiries/${id}`);
+      const response = await api.get(`${BASE_URL}inquiries/${id}`);
       setSelectedInquiry(response.data);
       setInquiryDetailsModal(true);
     } catch (error) {
@@ -316,7 +317,7 @@ const Inquiry = () => {
   // Handle delete inquiry
   const handleDeleteInquiry = async (id) => {
     try {
-      await axios.delete(`${BASE_URL}inquiries/${id}`);
+      await api.delete(`${BASE_URL}inquiries/${id}`);
       setInquiries({
         ...inquiries,
         todayInquiries: inquiries.todayInquiries.filter(
