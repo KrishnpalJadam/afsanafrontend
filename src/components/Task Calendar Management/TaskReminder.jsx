@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
-import api from "../../interceptors/axiosInterceptor"; // Assuming this is set up properly
+import { Container, Row, Col, Card, Form, Button, Alert } from "react-bootstrap";
+import api from "../../interceptors/axiosInterceptor";
 import BASE_URL from "../../Config";
+import dayjs from "dayjs"; // npm i dayjs
 
 const TaskReminderDashboard = () => {
   const [tasks, setTasks] = useState([]);
@@ -9,7 +10,7 @@ const TaskReminderDashboard = () => {
   const [reminders, setReminders] = useState([]);
   const [autoReminders, setAutoReminders] = useState(false);
 
-  // Fetch tasks from API
+  // Fetch tasks
   useEffect(() => {
     const fetchTasks = async () => {
       try {
@@ -22,10 +23,12 @@ const TaskReminderDashboard = () => {
     fetchTasks();
   }, []);
 
-  // Fetch reminders from API
+  // Fetch reminders
   const fetchReminders = async () => {
     try {
-      const response = await api.get(`https://cj2ww6qd-5000.inc1.devtunnels.ms/api/remainder`);
+      const response = await api.get(
+        `https://cj2ww6qd-5000.inc1.devtunnels.ms/api/remainder`
+      );
       setReminders(response.data);
     } catch (error) {
       console.error("Error fetching reminders:", error);
@@ -36,14 +39,17 @@ const TaskReminderDashboard = () => {
     fetchReminders();
   }, []);
 
-  // Add a new reminder
+  // Add reminder
   const handleAddReminder = async () => {
     if (reminder.name && reminder.date) {
       try {
-        await api.post(`https://cj2ww6qd-5000.inc1.devtunnels.ms/api/remainder`, {
-          task_name: reminder.name,
-          date: reminder.date,
-        });
+        await api.post(
+          `https://cj2ww6qd-5000.inc1.devtunnels.ms/api/remainder`,
+          {
+            task_name: reminder.name,
+            date: reminder.date,
+          }
+        );
         setReminder({ name: "", date: "" });
         fetchReminders();
       } catch (error) {
@@ -54,64 +60,134 @@ const TaskReminderDashboard = () => {
     }
   };
 
+  // Delete reminder
+  const handleDeleteReminder = async (id) => {
+    if (window.confirm("Are you sure you want to delete this reminder?")) {
+      try {
+        await api.delete(
+          `https://cj2ww6qd-5000.inc1.devtunnels.ms/api/remainder/${id}`
+        );
+        fetchReminders();
+      } catch (error) {
+        console.error("Error deleting reminder:", error);
+      }
+    }
+  };
+
+  // Filter reminders for Today/Tomorrow
+  const today = dayjs().format("YYYY-MM-DD");
+  const tomorrow = dayjs().add(1, "day").format("YYYY-MM-DD");
+
+  const alertReminders = reminders.filter(
+    (rem) => rem.date === today || rem.date === tomorrow
+  );
+  const otherReminders = reminders.filter(
+    (rem) => rem.date !== today && rem.date !== tomorrow
+  );
+
   return (
     <Container className="mt-4">
-      <Row>
-        {/* Reminders */}
-        <Col md={6}>
-          <h4>Manage Reminders</h4>
-          <Card className="p-3">
-            <Form.Group className="mb-2">
-              <Form.Select
-                value={reminder.name}
-                onChange={(e) => setReminder({ ...reminder, name: e.target.value })}>
-                <option value="">Select Task</option>
-                {tasks.map((task) => (
-                  <option key={task.id} value={task.title}>
-                    {task.title}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group>
+  <Row>
+    <Col md={12}>
+      <h3 className="mb-3">Task Reminder Dashboard</h3>
+    </Col>
+  </Row>
 
-            <Form.Group className="mb-2">
-              <Form.Control
-                type="date"
-                value={reminder.date}
-                onChange={(e) => setReminder({ ...reminder, date: e.target.value })}
-              />
-            </Form.Group>
-
-            <Button variant="danger" onClick={handleAddReminder} className="w-100">
-              Add Reminder
+  <Row>
+    {/* Alerts for today and tomorrow */}
+    <Col md={4}>
+      <h4>Alerts</h4>
+      {alertReminders.length > 0 ? (
+        alertReminders.map((rem) => (
+          <Alert key={rem.id} variant="warning" className="mb-3">
+            <h5>{rem.task_name}</h5>
+            <p>Due: <strong>{rem.date}</strong></p>
+            <Button
+              variant="outline-danger"
+              size="sm"
+              onClick={() => handleDeleteReminder(rem.id)}
+            >
+              Delete
             </Button>
+          </Alert>
+        ))
+      ) : (
+        <Alert variant="info">No reminders for today or tomorrow!</Alert>
+      )}
+    </Col>
 
-            <div className="mt-3 d-flex align-items-center">
-              <Form.Check
-                type="switch"
-                id="autoReminders"
-                label="Automate Reminders"
-                checked={autoReminders}
-                onChange={() => setAutoReminders(!autoReminders)}
-              />
-            </div>
+    {/* All other reminders */}
+    <Col md={4}>
+      <h4>Reminders</h4>
+      {otherReminders.length > 0 ? (
+        otherReminders.map((rem) => (
+          <Card key={rem.id} className="mb-3 p-2 bg-light">
+            <Card.Body>
+              <Card.Title>{rem.task_name}</Card.Title>
+              <Card.Text>Due: {rem.date}</Card.Text>
+              <Button
+                variant="outline-danger"
+                size="sm"
+                onClick={() => handleDeleteReminder(rem.id)}
+              >
+                Delete
+              </Button>
+            </Card.Body>
           </Card>
+        ))
+      ) : (
+        <Alert variant="secondary">No other reminders found.</Alert>
+      )}
+    </Col>
 
-          {/* Display Reminders */}
-          <div className="mt-4">
-            <h5>Reminders</h5>
-            {reminders.map((rem) => (
-              <Card key={rem.id} className="mb-3 p-3 bg-light">
-                <Card.Body>
-                  <Card.Title>{rem.task_name}</Card.Title>
-                  <Card.Text>Due: {rem.date}</Card.Text>
-                </Card.Body>
-              </Card>
+    {/* Add New Reminder */}
+    <Col md={4}>
+      <h4>Add New Reminder</h4>
+      <Card className="p-3">
+        <Form.Group className="mb-2">
+          <Form.Select
+            value={reminder.name}
+            onChange={(e) => setReminder({ ...reminder, name: e.target.value })}
+          >
+            <option value="">Select Task</option>
+            {tasks.map((task) => (
+              <option key={task.id} value={task.title}>
+                {task.title}
+              </option>
             ))}
-          </div>
-        </Col>
-      </Row>
-    </Container>
+          </Form.Select>
+        </Form.Group>
+
+        <Form.Group className="mb-2">
+          <Form.Control
+            type="date"
+            value={reminder.date}
+            onChange={(e) => setReminder({ ...reminder, date: e.target.value })}
+          />
+        </Form.Group>
+
+        <Button
+          variant="danger"
+          onClick={handleAddReminder}
+          className="w-100"
+        >
+          Add Reminder
+        </Button>
+
+        <div className="mt-3 d-flex align-items-center">
+          <Form.Check
+            type="switch"
+            id="autoReminders"
+            label="Automate Reminders"
+            checked={autoReminders}
+            onChange={() => setAutoReminders(!autoReminders)}
+          />
+        </div>
+      </Card>
+    </Col>
+  </Row>
+</Container>
+
   );
 };
 
