@@ -48,7 +48,7 @@ const Login = ({ setLogin }) => {
           } else if (role === "student") {
             navigate("/UniversityCards");
           } else if (role === "counselor") {
-            navigate("/counselor");
+            navigate("/councelor");
           }
         }, 300);
       } else {
