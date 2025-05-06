@@ -27,7 +27,7 @@ const TaskReminderDashboard = () => {
   const fetchReminders = async () => {
     try {
       const response = await api.get(
-        `https://cj2ww6qd-5000.inc1.devtunnels.ms/api/remainder`
+        `remainder`
       );
       setReminders(response.data);
     } catch (error) {
@@ -44,7 +44,7 @@ const TaskReminderDashboard = () => {
     if (reminder.name && reminder.date) {
       try {
         await api.post(
-          `https://cj2ww6qd-5000.inc1.devtunnels.ms/api/remainder`,
+          `remainder`,
           {
             task_name: reminder.name,
             date: reminder.date,
@@ -65,7 +65,7 @@ const TaskReminderDashboard = () => {
     if (window.confirm("Are you sure you want to delete this reminder?")) {
       try {
         await api.delete(
-          `https://cj2ww6qd-5000.inc1.devtunnels.ms/api/remainder/${id}`
+          `remainder/${id}`
         );
         fetchReminders();
       } catch (error) {
