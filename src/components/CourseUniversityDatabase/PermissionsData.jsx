@@ -5,27 +5,58 @@ import { useParams, Link } from "react-router-dom";
 // Feature modules (static across all roles)
 const permissionsData = [
   { module: "Dashboard", features: ["Dashboard"] },
-  { module: "Leads & inquiries", features: ["Contact", "Inquiry", "Lead", "Deal"] },
-  { module: "Student Managenement", features: ["Student Details", "Student Admission", "Communication"] },
-  { module: "Appication", features: ["Application Tracker", "Document Upload", "University Details", "Admission Decision"] },
-  { module: "Communication", features: ["Follow Up", "Reminder"] },
+  { module: "Leads & inquiries", features: ["Contact", "Inquiry", "Lead", "Admin Status"] },
+  { module: "Student Managenement", features: ["Student Details", "Communication"] },
+  { module: "Appication", features: ["Course & University","Application Tracker",   "Admission Decision"] },
   { module: "Tasks Management", features: ["Counselor", "Tasks", "Reminder"] },
   { module: "Roles Permission", features: ["Roles Permission"] },
   { module: "Reports & Analytics", features: ["Reports & Analytics"] },
   { module: "Payments & Invoices", features: ["Payments & Invoices"] },
-  { module: "User Management", features: ["User Management"] },
-  { module: "Settings", features: ["Settings"] },
+
+  
 ];
 
 // Default permissions for each role
 const roleDefaults = {
   "Super Admin": "all",
- 
+  "Admin": {
+    Dashboard: ["view"],
+    "Reports & Analytics": ["view"],
+    "User Management": ["add", "edit", "view"],
+    "Student Managenement": ["edit", "view"],
+    "Payments & Invoices": ["view"],
+    Settings: ["view"],
+  },
+  "Manager": {
+    Dashboard: ["view"],
+    "Leads & inquiries": ["view"],
+    "Student Managenement": ["view"],
+    "Reports & Analytics": ["view"],
+  },
+  "Assistant Manager": {
+    "Student Managenement": ["view"],
+    "Appication": ["view"],
+    "Reports & Analytics": ["view"]
+  },
+  "Admission Officer": {
+    "Student Managenement": ["view", "add", "edit"],
+    Appication: ["view", "edit"],
+  },
+  "Accounts Officer": {
+    "Payments & Invoices": ["view", "add", "edit"],
+    "Student Managenement": ["view"],
+  },
   "Counsellor": {
     "Student Managenement": ["view", "edit"],
     "Tasks Management": ["view", "add", "edit"],
   },
-  
+  "Lead Generator": {
+    "Leads & inquiries": ["view", "add", "edit"],
+  },
+  "Lead Generation Manager": {
+    "Leads & inquiries": ["view", "add", "edit"],
+    "Reports & Analytics": ["view"],
+  },
 };
 
 const PermissionsTable = () => {
@@ -122,7 +153,11 @@ const PermissionsTable = () => {
       </Table>
 
       <div className="d-flex justify-content-end">
-        <button  className="btn btn-dark" style={{ border: "none" }} onClick={handleSave}>
+        <button
+          className="btn btn-dark"
+          style={{ border: "none" }}
+          onClick={handleSave}
+        >
           Save Permissions
         </button>
       </div>
