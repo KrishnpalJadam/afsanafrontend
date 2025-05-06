@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.jpeg";
 import "../layout/Navbar.css"
 
@@ -11,11 +11,15 @@ const Navbar = ({ toggleSidebar }) => {
     "Reminder: Meeting at 3 PM",
   ]); // Sample notifications
 
+  const navigate = useNavigate();
   // Toggle notification dropdown
   const toggleNotifications = () => {
     setShowNotifications(!showNotifications);
   };
-
+  const logout = () => {
+    localStorage.removeItem("login");
+    navigate("/"); // This should redirect
+  };
   return (
     <>
       <nav
@@ -25,8 +29,8 @@ const Navbar = ({ toggleSidebar }) => {
           backgroundColor: "white",
           color: "black",
           width: "100%",
-        
-         
+
+
         }}
       >
         <div className="container-fluid nav-conter" >
@@ -70,7 +74,7 @@ const Navbar = ({ toggleSidebar }) => {
                 </a>
                 {/* Notification Dropdown */}
                 {showNotifications && (
-                  <div className="notification-dropdown" style={{marginRight:"-50px", marginTop:"20px"}}>
+                  <div className="notification-dropdown" style={{ marginRight: "-50px", marginTop: "20px" }}>
                     <div className="notification-header">
                       <h6>Notifications</h6>
                       <button
@@ -124,10 +128,14 @@ const Navbar = ({ toggleSidebar }) => {
                     <hr className="dropdown-divider" />
                   </li>
                   <li>
-                    <Link className="dropdown-item" to="/">
-                      Logout
-                    </Link>
+                    <li>
+                      <button className="dropdown-item" onClick={logout}>
+                        Logout
+                      </button>
+                    </li>
+
                   </li>
+
                 </ul>
               </div>
             </div>

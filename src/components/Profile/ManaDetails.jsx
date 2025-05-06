@@ -1,52 +1,34 @@
-import React, { useState } from "react";
+
+import React, { useState , useEffect} from "react";
 import { Row, Col, Card, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import BASE_URL from "../../Config";
 
 function ManaDetails() {
   const [show, setShow] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
-
+  const [student, setStudentsData] = useState([]);
   const handleShow = (student) => {
     setSelectedStudent(student);
     setShow(true);
   };
+  
+ useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}auth/getAllStudents`);
+        setStudentsData(response.data);
+        console.log("student", response.data);
+      } catch (error) {
+        console.error("Error fetching students:", error);
+      }
+    };
 
-  const students = [
-    {
-      admissionNo: 1001,
-      name: "hina Khan",
-      rollNo: "0201",
-      university: "Corvinus University of Budapest, Hungary",
-      fatherName: "Emrys",
-      dob: "02/06/2019",
-      gender: "Male",
-      category: "General",
-      mobile: "16514840184",
-    },
-    {
-      admissionNo: 1020,
-      name: "Marlie dubois",
-      rollNo: "0204",
-      university: "Eötvös Loránd University, Hungary",
-      fatherName: "Lester",
-      dob: "05/22/2019",
-      gender: "Female",
-      category: "General",
-      mobile: "6595084801",
-    },
-    {
-      admissionNo: 120036,
-      name: "sanjana patel",
-      rollNo: "23620",
-      university: "Pázmány Péter Catholic University, Hungary",
-      fatherName: "Abhinand",
-      dob: "10/15/2015",
-      gender: "Male",
-      category: "General",
-      mobile: "9067875674",
-    },
-  ];
+    fetchStudents();
 
+  }, [])
+ 
   return (
     <div className="container pt-3">
       <h2 className=" mb-3">Select Criteria</h2>
@@ -107,11 +89,11 @@ function ManaDetails() {
       /> */}
 
       <Row className="mt-4">
-        {students.map((student) => (
-          <Col md={12} key={student.admissionNo}>
+        {student?.map((student) => (
+          <Col md={12} key={student.id}>
             <Link
               to={{
-                pathname: `/studentProfile/${student.admissionNo}`,
+                pathname: `/studentProfile/${student?.id}`,
                 state: { selectedStudent: student },
               }}
               className="text-decoration-none"
@@ -119,23 +101,23 @@ function ManaDetails() {
               <Card className="mb-3 shadow-sm">
                 <Card.Body className="d-flex align-items-center">
                   <img
-                    src="https://randomuser.me/api/portraits/women/2.jpg"
+                    src={student?.photo}
                     alt="Profile"
                     className="rounded-circle border me-3"
                   />
                   <div className="flex-grow-1">
-                    <h5 className="text-primary">{student.name}</h5>
+                    <h5 className="text-primary">{student?.full_name}</h5>
                     <p className="mb-1">
-                      <strong>University:</strong> {student.university}
+                      <strong>University:</strong> {student?.university_name}
                     </p>
                     <p className="mb-1">
-                      <strong>Admission No:</strong> {student.admissionNo}
+                      <strong>Admission No:</strong> {student?.admission_no}
                     </p>
                     <p className="mb-1">
-                      <strong>Date of Birth:</strong> {student.dob}
+                      <strong>Date of Birth:</strong>  {new Date(student?.date_of_birth).toLocaleDateString()}
                     </p>
                     <p className="mb-1">
-                      <strong>Gender:</strong> {student.gender}
+                      <strong>Gender:</strong> {student?.gender}
                     </p>
                   </div>
                   <Button variant="secondary" style={{ border: "none" }}>
