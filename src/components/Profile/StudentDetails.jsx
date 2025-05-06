@@ -1,8 +1,10 @@
+import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import BASE_URL from "../../Config";
+import { FaTrash } from "react-icons/fa";
 
 const StudentDetails = () => {
   const [show, setShow] = useState(false); // State for modal visibility
@@ -11,146 +13,177 @@ const StudentDetails = () => {
   const [selectedCourse, setSelectedCourse] = useState(""); // State for selected class
   const [selectedSection, setSelectedSection] = useState(""); // State for selected section
   const [student, setStudentsData] = useState([]);
-
-  // Sample student data
-  const students = [
-    {
-      admissionNo: 1001,
-      name: "Hudson",
-      idNo: "0201",
-      course: "University of California, Berkeley",
-      fatherName: "Emrys",
-      dob: "02/06/2019",
-      gender: "Male",
-      category: "General",
-      mobile: "16514840184",
-    },
-    {
-      admissionNo: 1020,
-      name: "Marlie",
-      idNo: "0204",
-      course: "University of California, Berkeley",
-      fatherName: "Lester",
-      dob: "05/22/2019",
-      gender: "Female",
-      category: "General",
-      mobile: "6595084801",
-    },
-    {
-      admissionNo: 120036,
-      name: "Ayan Desai",
-      idNo: "23620",
-      course: "Massachusetts Institute of Technology",
-      fatherName: "Abhinand",
-      dob: "10/15/2015",
-      gender: "Male",
-      category: "General",
-      mobile: "9067875674",
-    },
-    {
-      admissionNo: 2152,
-      name: "Kaylen",
-      idNo: "0205",
-      course: "Massachusetts Institute of Technology",
-      fatherName: "Lyndon",
-      dob: "06/19/2019",
-      gender: "Female",
-      category: "General",
-      mobile: "54180185420",
-    },
-    {
-      admissionNo: 7663,
-      name: "Paul S. Bealer",
-      idNo: "6230",
-      course: "Stanford University",
-      fatherName: "McMahon",
-      dob: "08/13/2005",
-      gender: "Male",
-      category: "General",
-      mobile: "789067867",
-    },
-    {
-      admissionNo: 96302,
-      name: "Jacob Bethell",
-      idNo: "221002",
-      course: "Stanford University",
-      fatherName: "Brydon",
-      dob: "08/19/2016",
-      gender: "Male",
-      category: "General",
-      mobile: "065758878",
-    },
-    {
-      admissionNo: 96302,
-      name: "Jacob Bethell",
-      idNo: "221002",
-      course: "Stanford University",
-      fatherName: "Brydon",
-      dob: "08/19/2016",
-      gender: "Male",
-      category: "General",
-      mobile: "065758878",
-    },
-    {
-      admissionNo: 96302,
-      name: "Jacob Bethell",
-      idNo: "221002",
-      course: "Stanford University",
-      fatherName: "Brydon",
-      dob: "08/19/2016",
-      gender: "Male",
-      category: "General",
-      mobile: "065758878",
-    },
-    {
-      admissionNo: 96302,
-      name: "Jacob Bethell",
-      idNo: "221002",
-      course: "Stanford University",
-      fatherName: "Brydon",
-      dob: "08/19/2016",
-      gender: "Male",
-      category: "General",
-      mobile: "065758878",
-    },
-  ];
-  useEffect(() => {
-     const fetchData = async () => {
-       try {
-         const response = await axios.get(`${BASE_URL}/students`);
-         setStudentsData(response.data);
-       } catch (error) {
-         console.error(error);
-       }
-     }
-    
-  },[])
-
-  // Function to handle search
-  const filteredStudents = students.filter((student) => {
-    const matchesSearchQuery =
-      student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      student.idNo.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      student.admissionNo.toString().includes(searchQuery);
-
-    const matchesCourse = selectedCourse
-      ? student.course.includes(selectedCourse)
-      : true;
-    const matchesSection = selectedSection
-      ? student.course.includes(`(${selectedSection})`)
-      : true;
-
-    return matchesSearchQuery && matchesCourse && matchesSection;
+  const [isEditing, setIsEditing] = useState(false);
+const [editStudentId, setEditStudentId] = useState(null);
+const [universities, setUniversities] = useState([]);
+ 
+// Fetch universities
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}universities`);
+      console.log("university",response.data); // To check if data is correct
+      setUniversities(response.data); // Ensure the data is passed correctly
+    } catch (error) {
+      console.log("Error fetching universities:", error);
+    }
+  };
+  fetchData();
+}, []);
+  const user_id = localStorage.getItem("user_id")
+  const [formData, setFormData] = useState({
+    user_id: user_id,
+    student_name: "",
+    father_name: "",
+    admission_no: "",
+    id_no: "",
+    mobile_number: "",
+    university_id: "",
+    date_of_birth: "",
+    gender: "",
+    category: "",
+    address: "",
+    full_name: "",
+    role: "student",
+    password: "",
+    email: ""
   });
 
-  // Function to handle modal show
-  const handleShow = (student) => {
-    setSelectedStudent(student);
-    setShow(true);
+  const [photo, setPhoto] = useState(null);
+  const [documents, setDocuments] = useState([]);
+
+  const resetForm = () => {
+    setIsEditing(false);
+    setFormData({
+      user_id: "",
+      student_name: "",
+      father_name: "",
+      admission_no: "",
+      id_no: "",
+      mobile_number: "",
+      university_id: "",
+      date_of_birth: "",
+      gender: "",
+      category: "",
+      address: "",
+      full_name: "",
+      role: "",
+      password: "",
+      email: "",
+    });
+    setPhoto(null);
+    setDocuments([]);
+    setSelectedStudent(null);
   };
 
-  // Function to handle modal close
-  const handleClose = () => setShow(false);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    const formPayload = new FormData();
+    for (const key in formData) {
+      formPayload.append(key, formData[key]);
+    }
+  
+    if (photo) formPayload.append("photo", photo);
+    documents.forEach((doc) => formPayload.append("documents", doc));
+  
+    const url = isEditing
+      ? `${BASE_URL}auth/updateStudent/${editStudentId}`
+      : `${BASE_URL}auth/createStudent`;
+  
+    const method = isEditing ? "put" : "post";
+   
+    
+    try {
+       for (let [key, value] of formPayload.entries()) {
+        console.log(`${key}:`, value);
+      }
+      const res = await axios({
+        method,
+        url,
+        data: formPayload,
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+  
+      alert(isEditing ? "Student updated" : "Student created");
+      setFormData({
+        user_id:  user_id,
+        student_name: "",
+        father_name: "",
+        admission_no: "",
+        id_no: "",
+        mobile_number: "",
+        university_id: "",
+        date_of_birth: "",
+        gender: "",
+        category: "",
+        address: "",
+        full_name: "",
+        role: "student",
+        password: "",
+        email: "",
+      });
+      setPhoto(null);
+      setDocuments([]);
+      setIsEditing(false);
+      setEditStudentId(null);
+      setShow(false);
+      document.getElementById("studentFormModal").classList.remove("show");
+      document.getElementById("studentFormModal").style.display = "none";
+  
+      // Reload students
+      const { data } = await axios.get(`${BASE_URL}auth/getAllStudents`);
+      setStudentsData(data);
+  
+    } catch (err) {
+      console.error("Error:", err);
+      alert("Submission failed");
+    }
+  };
+  
+  
+  
+  const closeBootstrapModal = (modalId) => {
+    const modalElement = document.getElementById(modalId);
+    const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+    modal.hide();
+  };
+  
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}auth/getAllStudents`);
+        setStudentsData(response.data);
+        console.log("student", response.data);
+      } catch (error) {
+        console.error("Error fetching students:", error);
+      }
+    };
+
+    fetchStudents();
+
+  }, [])
+
+  const handleDelete = (id) => {
+    const deleteTask =  async () => {
+       try {
+         const response = await fetch(`${BASE_URL}auth/deleteStudent/${id}`, {
+           method: "DELETE",
+         });
+         const data = await response.json();
+         console.log(data);
+         if (response.ok) {
+           setStudentsData(student.filter((task) => task.id !== id));
+         } else {
+           console.error("Failed to delete task:", data);
+         }
+       } catch (error) {
+         console.error("Error occurred while deleting the task:", error);
+       }
+     }
+     deleteTask();
+  };
+
 
   return (
     <div className="container pt-3">
@@ -245,35 +278,49 @@ const StudentDetails = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredStudents.map((student, index) => (
+            {student?.map((student, index) => (
               <tr key={index} className="text-nowrap">
                 <td>
                   <Link
                     to={{
-                      pathname: `/studentProfile/${student.admissionNo}`,
+                      pathname: `/studentProfile/${student?.id}`,
                       state: { selectedStudent: student },
                     }}
                     className="text-decoration-none text-nowrap"
                   >
-                    {student.name}
+                    {student?.full_name}
                   </Link>
                 </td>
-                <td>{student.admissionNo}</td>
-                <td>{student.idNo}</td>
-                <td>{student.course}</td>
-                <td>{student.fatherName}</td>
-                <td>{student.dob}</td>
-                <td>{student.gender}</td>
-                <td>{student.category}</td>
-                <td>{student.mobile}</td>
+                <td>{student?.admission_no}</td>
+                <td>{student?.id_no}</td>
+                <td>{student?.university_id}</td>
+                <td>{student?.father_name}</td>
+                <td>{new Date(student?.date_of_birth).toLocaleDateString()}</td>
+                <td>{student?.gender}</td>
+                <td>{student?.category}</td>
+                <td>{student?.mobile_number}</td>
                 <td>
-                  <button
+                  {/* <button
                     className="btn btn-light btn-sm me-1"
                     onClick={() => handleShow(student)}
                   >
                     ☰
-                  </button>
-                  <button className="btn btn-light btn-sm me-1">✎</button>
+                  </button> */}
+                  <button className="btn btn-light btn-sm me-1"
+                  onClick={() => {
+                    setFormData({
+                      ...student
+                    });
+                    setEditStudentId(student.id);
+                    setIsEditing(true);
+                    setPhoto(null);
+                    setDocuments([]);
+                    setShow(true);
+                    document.getElementById("studentFormModal").classList.add("show");
+                    document.getElementById("studentFormModal").style.display = "block";
+                  }}
+                  >✎</button>
+                  <button className="btn btn-light btn-sm me-1" onClick={()=>{handleDelete(student?.id)}}> <FaTrash /></button>
                 </td>
               </tr>
             ))}
@@ -281,48 +328,7 @@ const StudentDetails = () => {
         </table>
       </div>
 
-      {/* Modal for student details (if needed) */}
-      {selectedStudent && (
-        <div
-          className={`modal ${show ? "show" : ""}`}
-          style={{ display: show ? "block" : "none" }}
-        >
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">
-                  {selectedStudent.name}'s Details
-                </h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={handleClose}
-                ></button>
-              </div>
-              <div className="modal-body">
-                <p>Admission No: {selectedStudent.admissionNo}</p>
-                <p>Roll No: {selectedStudent.rollNo}</p>
-                <p>Class: {selectedStudent.course}</p>
-                <p>Father's Name: {selectedStudent.fatherName}</p>
-                <p>Date of Birth: {selectedStudent.dob}</p>
-                <p>Gender: {selectedStudent.gender}</p>
-                <p>Category: {selectedStudent.category}</p>
-                <p>Mobile: {selectedStudent.mobile}</p>
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={handleClose}
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-      <>
+       <>
         {/* Modal */}
         <div
           className="modal fade"
@@ -348,7 +354,7 @@ const StudentDetails = () => {
                 />
               </div>
               <div className="modal-body">
-                <form className="student-form">
+                <form className="student-form" onSubmit={handleSubmit} encType="multipart/form-data">
                   <div className="row">
                     <div className="col-md-6 student-form-group">
                       <label htmlFor="studentName" className="student-form-label">
@@ -359,6 +365,10 @@ const StudentDetails = () => {
                         className="form-control student-form-input"
                         id="studentName"
                         placeholder="Enter student name"
+                        value={formData.student_name}
+                        onChange={(e) =>
+                          setFormData({ ...formData, student_name: e.target.value, full_name: e.target.value })
+                        }
                       />
                     </div>
                     <div className="col-md-6 student-form-group">
@@ -370,6 +380,36 @@ const StudentDetails = () => {
                         className="form-control student-form-input"
                         id="fatherName"
                         placeholder="Enter father name"
+                        value={formData.father_name}
+                        onChange={(e) => setFormData({ ...formData, father_name: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col-md-6 student-form-group">
+                      <label htmlFor="studentName" className="student-form-label">
+                        Email
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control student-form-input"
+                        id="email"
+                        placeholder="Enter student's email"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      />
+                    </div>
+                    <div className="col-md-6 student-form-group">
+                      <label htmlFor="fatherName" className="student-form-label">
+                        Enter Pasword
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control student-form-input"
+                        id="password"
+                        placeholder="Enter Password"
+                        value={formData.password}
+                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                       />
                     </div>
                   </div>
@@ -383,6 +423,8 @@ const StudentDetails = () => {
                         className="form-control student-form-input"
                         id="admissionNo"
                         placeholder="Enter admission number"
+                        value={formData.admission_no}
+                        onChange={(e) => setFormData({ ...formData, admission_no: e.target.value })}
                       />
                     </div>
                     <div className="col-md-4 student-form-group">
@@ -394,6 +436,8 @@ const StudentDetails = () => {
                         className="form-control student-form-input"
                         id="idNo"
                         placeholder="Enter ID number"
+                        value={formData.id_no}
+                        onChange={(e) => setFormData({ ...formData, id_no: e.target.value })}
                       />
                     </div>
                     <div className="col-md-4 student-form-group">
@@ -405,6 +449,8 @@ const StudentDetails = () => {
                         className="form-control student-form-input"
                         id="mobileNumber"
                         placeholder="Enter mobile number"
+                        value={formData.mobile_number}
+                        onChange={(e) => setFormData({ ...formData, mobile_number: e.target.value })}
                       />
                     </div>
                   </div>
@@ -416,20 +462,18 @@ const StudentDetails = () => {
                       <select
                         className="form-select student-form-select"
                         id="university"
+                        value={formData.university_id}
+                        onChange={(e) => setFormData({ ...formData, university_id: e.target.value })}
                       >
-                        <option selected="" disabled="">
+                        <option value="" disabled>
+
                           Select university
                         </option>
-                        <option value="University of California, Berkeley">
-                          University of California, Berkeley
-                        </option>
-                        <option value="Massachusetts Institute of Technology">
-                          Massachusetts Institute of Technology
-                        </option>
-                        <option value="Stanford University">
-                          Stanford University
-                        </option>
-                        <option value="other">Other</option>
+                          {universities ?.map((uni) => (
+                            <option key={uni.id} value={uni.id}>
+                              {uni.name}
+                            </option>
+                          ))}
                       </select>
                     </div>
                     <div className="col-md-6 student-form-group">
@@ -440,6 +484,8 @@ const StudentDetails = () => {
                         type="date"
                         className="form-control student-form-input"
                         id="dob"
+                        value={formData.date_of_birth}
+                        onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
                       />
                     </div>
                   </div>
@@ -447,42 +493,22 @@ const StudentDetails = () => {
                     <div className="col-md-6 student-form-group">
                       <label className="student-form-label">Gender</label>
                       <div>
-                        <div className="form-check form-check-inline">
-                          <input
-                            className="form-check-input"
-                            type="radio"
-                            name="gender"
-                            id="genderMale"
-                            defaultValue="Male"
-                          />
-                          <label className="form-check-label" htmlFor="genderMale">
-                            Male
-                          </label>
-                        </div>
-                        <div className="form-check form-check-inline">
-                          <input
-                            className="form-check-input"
-                            type="radio"
-                            name="gender"
-                            id="genderFemale"
-                            defaultValue="Female"
-                          />
-                          <label className="form-check-label" htmlFor="genderFemale">
-                            Female
-                          </label>
-                        </div>
-                        <div className="form-check form-check-inline">
-                          <input
-                            className="form-check-input"
-                            type="radio"
-                            name="gender"
-                            id="genderOther"
-                            defaultValue="Other"
-                          />
-                          <label className="form-check-label" htmlFor="genderOther">
-                            Other
-                          </label>
-                        </div>
+
+
+                        {["Male", "Female", "Other"].map((g) => (
+                          <div key={g} className="form-check form-check-inline">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="gender"
+                              value={g}
+                              checked={formData.gender === g}
+                              onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                            />
+                            <label className="form-check-label">{g}</label>
+                          </div>
+                        ))}
+
                       </div>
                     </div>
                     <div className="col-md-6 student-form-group">
@@ -492,6 +518,8 @@ const StudentDetails = () => {
                       <select
                         className="form-select student-form-select"
                         id="category"
+                        value={formData.category}
+                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                       >
                         <option selected="" disabled="">
                           Select category
@@ -514,7 +542,8 @@ const StudentDetails = () => {
                         id="address"
                         rows={3}
                         placeholder="Enter complete address"
-                        defaultValue={""}
+                        value={formData.address}
+                        onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                       />
                     </div>
                   </div>
@@ -527,6 +556,7 @@ const StudentDetails = () => {
                         type="file"
                         className="form-control student-form-input"
                         id="photo"
+                        onChange={(e) => setPhoto(e.target.files[0])}
                       />
                     </div>
                     <div className="col-md-6 student-form-group">
@@ -537,7 +567,8 @@ const StudentDetails = () => {
                         type="file"
                         className="form-control student-form-input"
                         id="documents"
-                        multiple=""
+                        multiple
+                        onChange={(e) => setDocuments(Array.from(e.target.files))}
                       />
                       <div className="form-text">
                         You can upload multiple documents
@@ -551,15 +582,21 @@ const StudentDetails = () => {
                         type="button"
                         className="btn student-form-btn student-form-btn-secondary"
                         data-bs-dismiss="modal"
+                         onClick={resetForm}
                       >
                         Cancel
                       </button>
-                      <button
+                        {isEditing==true?<button
                         type="submit"
                         className="btn student-form-btn btn-primary"
                       >
-                        Submit
-                      </button>
+                        update
+                      </button>:<button
+                          type="submit"
+                          className="btn student-form-btn btn-primary"
+                        >
+                          Submit
+                          </button>}
                     </div>
                   </div>
                 </form>
