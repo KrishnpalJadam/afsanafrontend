@@ -19,6 +19,7 @@ import gyor from "../assets/gyor.webp";
 import devre from "../assets/debre.webp";
 import wek from "../assets/wekerle.webp";
 import PaymentFormModal from "./PaymentFormModal";
+import UniversityCards from "../components/PaymentInvoiceManagement/UniversityCards";
 
 const App = () => {
   const [showInquiryModal, setShowInquiryModal] = useState(false);
@@ -319,10 +320,10 @@ const App = () => {
       {/* Featured Courses */}
 
       <Container className="py-5" id="courses">
-        <h2 className="text-center fw-bold mb-5">
+        {/* <h2 className="text-center fw-bold mb-5">
           Top International Universities
-        </h2>
-        <Row className="g-4">
+        </h2> */}
+        {/* <Row className="g-4">
           {universities.map((university, index) => (
             <Col key={index} md={4} className="mb-4">
               <Card className="h-100">
@@ -374,7 +375,9 @@ const App = () => {
               </Card>
             </Col>
           ))}
-        </Row>
+        </Row> */}
+<UniversityCards/>
+        
       </Container>
       {/* Top-rated Courses */}
       <Container className="py-5" id="about">

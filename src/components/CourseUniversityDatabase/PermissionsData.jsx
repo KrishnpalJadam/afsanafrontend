@@ -20,44 +20,12 @@ const permissionsData = [
 // Default permissions for each role
 const roleDefaults = {
   "Super Admin": "all",
-  "Admin": {
-    Dashboard: ["view"],
-    "Reports & Analytics": ["view"],
-    "User Management": ["add", "edit", "view"],
-    "Student Managenement": ["edit", "view"],
-    "Payments & Invoices": ["view"],
-    Settings: ["view"],
-  },
-  "Manager": {
-    Dashboard: ["view"],
-    "Leads & inquiries": ["view"],
-    "Student Managenement": ["view"],
-    "Reports & Analytics": ["view"],
-  },
-  "Assistant Manager": {
-    "Student Managenement": ["view"],
-    "Appication": ["view"],
-    "Reports & Analytics": ["view"]
-  },
-  "Admission Officer": {
-    "Student Managenement": ["view", "add", "edit"],
-    Appication: ["view", "edit"],
-  },
-  "Accounts Officer": {
-    "Payments & Invoices": ["view", "add", "edit"],
-    "Student Managenement": ["view"],
-  },
+ 
   "Counsellor": {
     "Student Managenement": ["view", "edit"],
     "Tasks Management": ["view", "add", "edit"],
   },
-  "Lead Generator": {
-    "Leads & inquiries": ["view", "add", "edit"],
-  },
-  "Lead Generation Manager": {
-    "Leads & inquiries": ["view", "add", "edit"],
-    "Reports & Analytics": ["view"],
-  },
+  
 };
 
 const PermissionsTable = () => {

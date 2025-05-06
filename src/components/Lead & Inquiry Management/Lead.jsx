@@ -13,12 +13,7 @@ import axios from "axios";
 import BASE_URL from "../../Config"; // Assuming BASE_URL is already set
 
 const Lead = () => {
-  const [counselors] = useState([
-    { id: 1, name: "Sarah Wilson" },
-    { id: 2, name: "Michael Johnson" },
-    { id: 3, name: "Emily Davis" },
-    { id: 4, name: "David Thompson" },
-  ]);
+
 
   const [leads, setLeads] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -26,12 +21,15 @@ const Lead = () => {
   const [selectedLead, setSelectedLead] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentLeadId, setCurrentLeadId] = useState(null);
+  const [counselors, setCounselors] = useState([]);
+
+
   const [newLead, setNewLead] = useState({
     name: "",
     phone: "",
     email: "",
     counselor: "", // Fixed field name from 'counselor' to 'counselor'
-    followUpDate: "",
+    follow_up_date: "",
     notes: "",
     preferred_countries: "",
     source: "",
@@ -44,6 +42,7 @@ const Lead = () => {
   const [filterStatus, setFilterStatus] = useState("");
   const [filterSource, setFilterSource] = useState("");
   const [filteredLeads, setFilteredLeads] = useState(null);
+ 
 
   // Fetch Leads
   useEffect(() => {
@@ -57,6 +56,26 @@ const Lead = () => {
     };
     fetchLeads();
   }, []);
+
+
+  useEffect(() => {
+    fetchCounseller();
+  }, []);
+  
+  const fetchCounseller = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}counselor`);
+      if (response.status === 200) {
+        setCounselors(response.data.data); // Assuming the response data is under `data.data`
+      } else {
+        console.error("Failed to fetch counselors");
+      }
+    } catch (error) {
+      console.error("Error fetching counselors:", error);
+    }
+  };
+  
+
 
   // Handle Filter
   const handleFilter = () => {
@@ -90,8 +109,8 @@ const Lead = () => {
       name: "",
       phone: "",
       email: "",
-      counselor: "", // Ensure this matches your API field
-      followUpDate: "",
+      counselor_name: "", // Ensure this matches your API field
+      follow_up_date: "",
       notes: "",
       preferred_countries: "",
       source: "",
@@ -113,8 +132,8 @@ const Lead = () => {
       name: lead.name,
       phone: lead.phone,
       email: lead.email,
-      counselor: lead.counselor, // Update to match the API's field
-      followUpDate: lead.followUpDate,
+      counselor: lead.counselor_name, // Update to match the API's field
+      follow_up_date: lead.follow_up_date,
       notes: lead.notes,
       preferred_countries: lead.preferred_countries,
       source: lead.source,
@@ -124,16 +143,18 @@ const Lead = () => {
     setShowModal(true);
   };
 
-  // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewLead({
       ...newLead,
-      [name]: value,
+      [name]: name === "counselor" ? parseInt(value) : value,
     });
+    console.log(newLead); // Check if all fields are populated correctly
   };
+  
+  
 
-  // Handle "Add / Edit" Form Submission
+
   const handleSaveLead = async (e) => {
     e.preventDefault();
     if (isEditMode) {
@@ -142,6 +163,7 @@ const Lead = () => {
         const response = await axios.put(`${BASE_URL}lead/${currentLeadId}`, newLead);
         const updatedLeads = leads.map((lead) => lead.id === currentLeadId ? response.data : lead);
         setLeads(updatedLeads);
+        alert("Updated Successfully Please Refresh This.")
       } catch (error) {
         console.error("Error updating lead:", error);
       }
@@ -156,6 +178,9 @@ const Lead = () => {
     }
     handleCloseModal();
   };
+  
+ 
+  
 
   // Delete Lead
   const handleDeleteLead = async (leadId) => {
@@ -222,7 +247,7 @@ const Lead = () => {
           <tr>
             <th>Name</th>
             <th>Contact</th>
-            <th>counselor</th>
+            <th>Asign Counselor</th>
             <th>Status</th>
             <th>Actions</th>
           </tr>
@@ -233,7 +258,7 @@ const Lead = () => {
               <tr key={lead.id}>
                 <td>{lead.name}</td>
                 <td>{lead.phone}</td>
-                <td>{lead.counselor || "Uncounselor"}</td>
+                <td>{lead.counselor_name  || "Unassigned"}</td>
                 <td>
                   <Badge bg={lead.status === "In Progress" ? "primary" : "success"}>
                     {lead.status}
@@ -272,7 +297,7 @@ const Lead = () => {
               <p><strong>Email:</strong> {selectedLead.email}</p>
               <p><strong>Phone:</strong> {selectedLead.phone}</p>
               <p><strong>counselor:</strong> {selectedLead.counselor}</p>
-              <p><strong>Follow-up Date:</strong> {selectedLead.followUpDate}</p>
+              <p><strong>Follow-up Date:</strong> {selectedLead.follow_up_date}</p>
               <p><strong>Source:</strong> {selectedLead.source}</p>
               <p><strong>Status:</strong> {selectedLead.status}</p>
               <p><strong>Preferred Countries:</strong> {selectedLead.preferred_countries}</p>
@@ -338,21 +363,28 @@ const Lead = () => {
               </div>
 
               <div className="col-md-6">
-                <Form.Group className="mb-3">
-                  <Form.Label>counselor Counselor</Form.Label>
-                  <Form.Select
-                    name="counselor"
-                    value={newLead.counselor}
-                    onChange={handleInputChange}
-                  >
-                    <option value="">Select Counselor</option>
-                    {counselors.map((counselor) => (
-                      <option key={counselor.id} value={counselor.name}>
-                        {counselor.name}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
+              <Form.Group className="mb-3">
+  <Form.Label>Counselor</Form.Label>
+  <Form.Select
+  name="counselor"
+  value={newLead.counselor}
+  onChange={handleInputChange}
+>
+  <option value="">Select Counselor</option>
+  {counselors.length > 0 ? (
+    counselors.map((counselor) => (
+      <option key={counselor.id} value={counselor.id}>
+        {counselor.name}
+      </option>
+    ))
+  ) : (
+    <option disabled>No counselors available</option>
+  )}
+</Form.Select>
+
+
+</Form.Group>
+
               </div>
 
               <div className="col-md-6">
@@ -360,8 +392,8 @@ const Lead = () => {
                   <Form.Label>Follow-up Date</Form.Label>
                   <Form.Control
                     type="date"
-                    name="followUpDate"
-                    value={newLead.followUpDate}
+                    name="follow_up_date"
+                    value={newLead.follow_up_date}
                     onChange={handleInputChange}
                   />
                 </Form.Group>

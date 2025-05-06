@@ -14,15 +14,14 @@ import { TagFill, TrashFill } from "react-bootstrap-icons";
 
 const RolesManagement = () => {
   const [roles, setRoles] = useState([
-    { name: "Super Admin", type: "System" },
-    { name: "Admin", type: "System" },
-    { name: "Manager", type: "System" },
-    { name: "Assistant Manager", type: "System" },
-    { name: "Admission Officer", type: "Customer" },
-    { name: "Accounts Officer", type: "Customer" },
+
+
+
+ 
+   
+    
     { name: "Counsellor", type: "Customer" },
-    { name: "Lead Generation Manager", type: "Customer" },
-    { name: "Lead Generator", type: "Customer" },
+   
     { name: "Student", type: "Customer" },
   ]);
 
@@ -47,35 +46,10 @@ const RolesManagement = () => {
   return (
     <Container className="p-4">
       <Row>
-        {/* Left Side - Role Form */}
-        <Col md={4} sm={12} className="mb-3">
-          <h4>Create Role</h4>
-          <Form>
-            <Form.Group controlId="roleName">
-              <Form.Label>
-                Name <span className="text-danger">*</span>
-              </Form.Label>
-              <Form.Control
-                type="text"
-                value={newRole}
-                onChange={(e) => setNewRole(e.target.value)}
-                placeholder="Enter role name"
-                className="mb-3"
-              />
-            </Form.Group>
-            <Button
-              className="w-100"
-              variant="secondary"
-              onClick={handleAddRole}
-              style={{ border: "none" }}
-            >
-              Save Role
-            </Button>
-          </Form>
-        </Col>
+        
 
         {/* Right Side - Role List */}
-        <Col md={8} sm={12}>
+        <Col md={12} sm={12}>
           <h4>Manage Roles</h4>
           <InputGroup className="mb-4">
             <Form.Control
@@ -101,16 +75,16 @@ const RolesManagement = () => {
                   <td>{role.type}</td>
                   <td>
                     <Link to={`/permissions/${encodeURIComponent(role.name)}`}>
-                      <TagFill
-                        className="text-dark me-2"
+                    <button>
+                      Select Role
+                    <TagFill
+                        className="text-dark ms-3 fs-5"
                         style={{ cursor: "pointer" }}
                       />
+                    </button>
+                    
                     </Link>
-                    <TrashFill
-                      className="text-danger"
-                      style={{ cursor: "pointer" }}
-                      onClick={() => handleDeleteRole(index)}
-                    />
+                   
                   </td>
                 </tr>
               ))}

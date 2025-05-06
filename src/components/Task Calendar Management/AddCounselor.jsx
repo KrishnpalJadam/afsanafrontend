@@ -1,119 +1,160 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import BASE_URL from "../../Config";
+import axios from "axios";
+import Swal from "sweetalert2";
+import { Form } from "react-bootstrap";
 
-const AddCounselor = ({ onAdd }) => {
-  const [counselorName, setCounselorName] = useState("");
-  const [counselorEmail, setCounselorEmail] = useState("");
-  const [counselorPhone, setCounselorPhone] = useState("");
-  const [university, setUniversity] = useState("");
-  const [status, setStatus] = useState("Active");
-  const [counselors, setCounselors] = useState([
-    {
-      name: "John Doe",
-      email: "john@example.com",
-      phone: "123-456-7890",
-      date: "02/15/2025",
-      university: "Harvard University",
-      status: "Active",
-    },
-
-  ]);
-  const [showModal, setShowModal] = useState(false);
+const AddCounselor = () => {
+  const [counselors, setCounselors] = useState([]);
+  const [universities, setUniversities] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [editingCounselor, setEditingCounselor] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [editingId, setEditingId] = useState(null);
 
-  const handleAddCounselor = (e) => {
-    e.eventPreventdefault();
-      const newCounselor = {
-        name: counselorName,
-        email: counselorEmail,
-        phone: counselorPhone,
-        date: new Date().toLocaleDateString(),
-        university,
-        status,
-      };
-      setCounselors([...counselors, newCounselor]);
-      onAdd(newCounselor);
-      setCounselorName("");
-      setCounselorEmail("");
-      setCounselorPhone("");
-      setUniversity("");
-      setStatus("Active");
-      setShowModal(false);
-    
-  };
+  const [formData, setFormData] = useState({
+    full_name: "",
+    email: "",
+    phone: "",
+    password: "",
+    university_id: "",
+    status: "active",
+  });
 
-  const handleEditCounselor = (index) => {
-    const counselorToEdit = counselors[index];
-    setCounselorName(counselorToEdit.name);
-    setCounselorEmail(counselorToEdit.email);
-    setCounselorPhone(counselorToEdit.phone);
-    setUniversity(counselorToEdit.university);
-    setStatus(counselorToEdit.status);
-    setEditingCounselor(index);
-    setShowModal(true);
-  };
-
-  const handleDeleteCounselor = (index) => {
-    const updatedCounselors = counselors.filter((_, i) => i !== index);
-    setCounselors(updatedCounselors);
-  };
-
-  const handleSaveEdit = () => {
-    if (editingCounselor !== null) {
-      const updatedCounselors = counselors.map((counselor, index) =>
-        index === editingCounselor
-          ? {
-            ...counselor,
-            name: counselorName,
-            email: counselorEmail,
-            phone: counselorPhone,
-            university,
-            status,
-          }
-          : counselor
-      );
-      setCounselors(updatedCounselors);
-      setEditingCounselor(null);
-      setCounselorName("");
-      setCounselorEmail("");
-      setCounselorPhone("");
-      setUniversity("");
-      setStatus("Active");
-      setShowModal(false);
+  const fetchCounselors = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}counselor`);
+      // console.log("counsoler data : ",res.data)
+      setCounselors(res.data);
+    } catch (err) {
+      console.error("Failed to fetch counselors", err);
     }
   };
 
-  const filteredCounselors = counselors.filter((counselor) =>
-    counselor.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const fetchUniversities = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}universities`);
+      setUniversities(res.data);
+    } catch (err) {
+      console.error("Failed to fetch universities", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchCounselors();
+    fetchUniversities();
+  }, []);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "university_id" ? parseInt(value) : value,
+    }));
+  };
+
+  const handleAddOrUpdate = async (e) => {
+    e.preventDefault();
+
+    const payload = {
+      ...formData,
+      user_id: 1,
+      university_id: parseInt(formData.university_id),
+      role: "counselor",
+    };
+
+    try {
+      if (editingId) {
+        await axios.put(`${BASE_URL}counselor/${editingId}`, payload);
+        Swal.fire("Updated!", "Counselor updated successfully", "success");
+      } else {
+        await axios.post(`${BASE_URL}counselor`, payload);
+        Swal.fire("Added!", "Counselor added successfully", "success");
+      }
+      fetchCounselors();
+      setShowModal(false);
+      resetForm();
+    } catch (err) {
+      Swal.fire("Error", "Operation failed", "error");
+    }
+  };
+
+  const handleEdit = (counselor) => {
+    setFormData({
+      full_name: counselor.full_name,
+      email: counselor.email,
+      phone: counselor.phone,
+      password: "", // keep password blank for security
+      university_id: "", // you can’t prefill a string with an ID, leave user to select again
+      status: counselor.status,
+    });
+    setEditingId(counselor.id);
+    setShowModal(true);
+  };
+
+  const handleDelete = (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "This will delete the counselor.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#aaa",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axios.delete(`${BASE_URL}counselor/${id}`);
+          Swal.fire("Deleted!", "Counselor deleted.", "success");
+          fetchCounselors();
+        } catch (err) {
+          Swal.fire("Error", "Failed to delete", "error");
+        }
+      }
+    });
+  };
+
+  const resetForm = () => {
+    setFormData({
+      full_name: "",
+      email: "",
+      phone: "",
+      password: "",
+      university_id: "",
+      status: "active",
+    });
+    setEditingId(null);
+  };
+
+  const filtered = Array.isArray(counselors)
+    ? counselors.filter((c) =>
+      c.full_name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    : [];
 
   return (
-    <div className="container p-3">
-      {/* Search input and Add button */}
-
-
-      <div className="mb-3 d-flex" style={{ justifyContent: "space-between" }}>
+    <div className="container py-4">
+      <div className="d-flex justify-content-between mb-3">
         <div>
-          <h2 className=" mb-4">Counselor List</h2>
-        </div>
-        <div className="d-flex">
 
-          <div className="me-4">
+          <h3>Counselor Management</h3>
+        </div>
+        <div className="d-flex gap-2">
+          <div>
             <input
-              type="text"
-              className="form-control me-3"
-              placeholder="Search by name..."
+              className="form-control"
+              placeholder="Search by name"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <div>
             <button
-              variant="secondary"
-              className="btn btn-secondary w-100 w-md-auto p-2"
-              onClick={() => setShowModal(true)}
-              style={{ border: "none" }}
+              className="btn btn-primary mt-1"
+              onClick={() => {
+                resetForm();
+                setShowModal(true);
+              }}
             >
               + Add Counselor
             </button>
@@ -122,168 +163,155 @@ const AddCounselor = ({ onAdd }) => {
         </div>
       </div>
 
+      <div className="table-responsive mt-5">
+        <table className="table table-bordered table-striped">
+          <thead className="table-light">
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>University</th>
+              <th>Status</th>
+              <th>Date Added</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map((c) => (
+              <tr key={c.id}>
+                <td>{c.full_name}</td>
+                <td>{c.email}</td>
+                <td>{c.phone}</td>
+                <td>{c.university || "N/A"}</td>
+                <td>{c.status}</td>
+                <td>
+                  {c.created_at
+                    ? new Date(c.created_at).toLocaleDateString()
+                    : "N/A"}
+                </td>
+                <td>
+                  <button
+                    className="btn btn-warning btn-sm me-2"
+                    onClick={() => handleEdit(c)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="btn btn-danger btn-sm"
+                    onClick={() => handleDelete(c.id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-
-
-
-      {/* Modal for adding/editing counselor */}
       {showModal && (
         <div
           className="modal show"
-          tabIndex="-1"
-          style={{
-            display: "block",
-            position: "fixed",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            zIndex: 1050,
-          }}
-          aria-hidden="false"
+          style={{ display: "block", background: "#00000055" }}
         >
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">
-                  {editingCounselor !== null
-                    ? "Edit Counselor"
-                    : "Add New Counselor"}
-                </h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => setShowModal(false)}
-                ></button>
-              </div>
-              <div className="modal-body">
-                {/* Counselor Name and Email */}
-                <div className="row mb-3">
-                  <div className="col-md-6 mb-3">
+              <form onSubmit={handleAddOrUpdate}>
+                <div className="modal-header">
+                  <h5 className="modal-title">
+                    {editingId ? "Edit" : "Add"} Counselor
+                  </h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={() => setShowModal(false)}
+                  ></button>
+                </div>
+                <div className="modal-body">
+                  <div className="mb-3">
                     <input
                       type="text"
                       className="form-control"
-                      placeholder="Enter counselor name..."
-                      value={counselorName}
-                      onChange={(e) => setCounselorName(e.target.value)}
+                      name="full_name"
+                      placeholder="Full Name"
+                      value={formData.full_name}
+                      onChange={handleInputChange}
+                      required
                     />
                   </div>
-                  <div className="col-md-6">
+                  <div className="mb-3">
                     <input
                       type="email"
                       className="form-control"
-                      placeholder="Enter counselor email..."
-                      value={counselorEmail}
-                      onChange={(e) => setCounselorEmail(e.target.value)}
+                      name="email"
+                      placeholder="Email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      required
                     />
                   </div>
-                </div>
-
-                {/* Counselor Phone and University */}
-                <div className="row mb-3">
-                  <div className="col-md-6 mb-3">
+                  <div className="mb-3">
                     <input
                       type="tel"
                       className="form-control"
-                      placeholder="Enter counselor phone..."
-                      value={counselorPhone}
-                      onChange={(e) => setCounselorPhone(e.target.value)}
+                      name="phone"
+                      placeholder="Phone"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      required
                     />
                   </div>
-                  <div className="col-md-6">
+                  <div className="mb-3">
                     <input
-                      type="text"
+                      type="password"
                       className="form-control"
-                      placeholder="Enter university name..."
-                      value={university}
-                      onChange={(e) => setUniversity(e.target.value)}
+                      name="password"
+                      placeholder="Password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      required={!editingId} // optional during edit
                     />
                   </div>
-                </div>
-
-                {/* Status */}
-                <div className="row mb-3">
-                  <div className="col-md-6">
-                    <select
-                      className="form-control"
-                      value={status}
-                      onChange={(e) => setStatus(e.target.value)}
+                  <div className="mb-3">
+                    <Form.Select
+                      name="university_id"
+                      value={formData.university_id}
+                      onChange={handleInputChange}
+                      required
                     >
-                      <option value="Active">Active</option>
-                      <option value="Inactive">Inactive</option>
-                    </select>
+                      <option value="">Select University</option>
+                      {universities.map((uni) => (
+                        <option key={uni.id} value={uni.id}>
+                          {uni.name}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </div>
+                  <div className="mb-3">
+                    <Form.Select
+                      name="status"
+                      value={formData.status}
+                      onChange={handleInputChange}
+                    >
+                      <option value="active">Active</option>
+                      <option value="inactive">Inactive</option>
+                    </Form.Select>
                   </div>
                 </div>
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => setShowModal(false)}
-                >
-                  Close
-                </button>
-                <button
-                  style={{ backgroundColor: "gray", color: "black", border: "none" }}
-                  type="button"
-                  className="btn btn-success"
-                  onClick={
-                    editingCounselor !== null
-                      ? handleSaveEdit
-                      : handleAddCounselor
-                  }
-                >
-                  {editingCounselor !== null ? "Save Changes" : "Add Counselor"}
-                </button>
-              </div>
+                <div className="modal-footer">
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => setShowModal(false)}
+                    type="button"
+                  >
+                    Cancel
+                  </button>
+                  <button className="btn btn-success" type="submit">
+                    {editingId ? "Save Changes" : "Add Counselor"}
+                  </button>
+                </div>
+              </form>
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* Counselors Table */}
-      {filteredCounselors.length > 0 && (
-        <div className="mt-4">
-
-          <div className="table-responsive">
-            <table className="table table-striped table-bordered">
-              <thead>
-                <tr className="text-nowrap">
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>University</th>
-                  <th>Status</th>
-                  <th>Date Added</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredCounselors.map((c, index) => (
-                  <tr className="text-nowrap" key={index}>
-                    <td>{c.name}</td>
-                    <td>{c.email}</td>
-                    <td>{c.phone}</td>
-                    <td>{c.university}</td>
-                    <td>{c.status}</td>
-                    <td>{c.date}</td>
-                    <td>
-                      <button
-                        className="btn btn-warning btn-sm"
-                        onClick={() => handleEditCounselor(index)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="btn btn-danger btn-sm ms-2"
-                        onClick={() => handleDeleteCounselor(index)}
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
           </div>
         </div>
       )}
