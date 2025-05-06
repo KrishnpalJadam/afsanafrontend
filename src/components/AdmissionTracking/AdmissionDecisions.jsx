@@ -33,17 +33,29 @@ const AdmissionDecisions = () => {
   const [sortByDate, setSortByDate] = useState("asc");
 
   const user_id = localStorage.getItem("user_id");
+  useEffect(() => {
+    const fetchDecisions = async () => {
+      try {
+        const res = await api.get(`${BASE_URL}admissiondecision`);
+        const decisionData = Array.isArray(res.data)
+          ? res.data
+          : res.data.data || []; // fallback in case it's wrapped in "data"
+        console.log("admisiondata", res.data.data)
+        setDecisions(decisionData);
+        console.log("Fetched decisions:", res.data.data);
+        setDecisions(res.data.data); // Update state
+        
+        console.log("Filtered Decisions:", filteredDecisions);
+        console.log("Sorted Decisions:", sortedDecisions);
+      } catch (err) {
+        console.error("Error fetching decisions:", err);
+      }
+    };
 
-useEffect(() => {
-  api.get(`${BASE_URL}admissiondecision`)
-    .then((res) => {
-      console.log("Admission decisions response:", res.data);
-      setDecisions(Array.isArray(res.data) ? res.data : res.data.data || []);
-    })
-    .catch((err) => console.error("Error fetching decisions:", err));
-}, []);
+    fetchDecisions();
+  }, []);
 
-
+ 
   // Fetch students
   useEffect(() => {
     api.get(`${BASE_URL}auth/getAllStudents`)
@@ -59,11 +71,19 @@ useEffect(() => {
   }, []);
 
   const filteredDecisions = decisions.filter((dec) => {
+    console.log("Decision Data: ", dec); // Check the structure of each decision
     const statusMatch = filterStatus === "all" || dec.status === filterStatus;
-    const studentMatch = dec.student?.toLowerCase().includes(searchTerm.toLowerCase());
-    const universityMatch = dec.university?.toLowerCase().includes(searchTerm.toLowerCase());
+  
+    // Check if student and university are accessible and correct the property names
+    const studentMatch = dec.student_name && dec.student_name.toLowerCase().includes(searchTerm.toLowerCase());
+    const universityMatch = dec.university_name && dec.university_name.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    console.log("Student Match:", studentMatch, "University Match:", universityMatch);
+  
     return (studentMatch || universityMatch) && statusMatch;
   });
+  
+  
 
   const sortedDecisions = [...filteredDecisions].sort((a, b) =>
     sortByDate === "asc"
@@ -93,8 +113,13 @@ useEffect(() => {
   
     try {
       await api.post(`${BASE_URL}admissiondecision`, payload);
+  
+      // Fetch the updated decisions
       const refresh = await api.get(`${BASE_URL}admissiondecision`);
-      setDecisions(refresh.data.data);
+  
+      // Ensure the response is an array before setting it
+      const decisionData = Array.isArray(refresh.data) ? refresh.data : refresh.data.data || [];
+      setDecisions(decisionData); // Update the state with the correct array format
       setNewDecision({ student_id: "", university_id: "", status: "accepted", date: "" });
       setShowModal(false);
     } catch (err) {
@@ -102,6 +127,7 @@ useEffect(() => {
     }
   };
   
+
 
   const updateDecisionStatus = async (id, newStatus) => {
     try {
@@ -180,11 +206,12 @@ useEffect(() => {
           </tr>
         </thead>
         <tbody>
+          
           {sortedDecisions.length > 0 ? (
             sortedDecisions.map((dec) => (
               <tr key={dec.id}>
-                <td>{dec.student}</td>
-                <td>{dec.university}</td>
+                <td>{dec.student_name}</td>
+                <td>{dec.university_name}</td>
                 <td>
                   <Form.Select
                     value={dec.status}
