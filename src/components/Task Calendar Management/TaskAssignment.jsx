@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import {
   Container,
   Table,
@@ -200,7 +200,7 @@ useEffect(() => {
               </tr>
             </thead>
             <tbody>
-              {tasks.map((task, index) => (
+              {tasks?.map((task, index) => (
                 <tr key={task?.id}>
                   <td>{index + 1}</td>
                   <td>{task?.student}</td>
@@ -209,9 +209,7 @@ useEffect(() => {
                   {new Date(task?.due_date).toLocaleDateString()}
                   </td>
                   <td>
-                    <Badge
-                      bg={task?.status ==1   ? "success" : "warning"}
-                    >
+                    <Badge bg={task?.status ==1   ? "success" : "warning"}>
                       {task?.status  ==1   ? "Completed" : "Pending"}
                     </Badge>
                   </td>
