@@ -279,7 +279,10 @@ const UniversityCards = () => {
                       </div>
                     </div>
 
-                    <Link to={`/university/${university.id}`} className="btn btn-primary w-100">
+                    {/* <Link to={`/university/${university.id}`} className="btn btn-primary w-100">
+                      Apply Now
+                    </Link> */}
+                      <Link to="#" className="btn btn-primary w-100">
                       Apply Now
                     </Link>
                     {role === "admin" && (
