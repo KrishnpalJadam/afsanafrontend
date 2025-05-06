@@ -199,10 +199,10 @@ const UniversityCards = () => {
       });
     }
   };
+ 
 
   return (
     <div className="container">
-
       <div className="p-4">
         <h2 className="text-center ">Top International Universities</h2>
       </div>
@@ -217,21 +217,25 @@ const UniversityCards = () => {
                 <div className="card shadow-sm">
                   <div className="card-body">
                     <div className="d-flex align-items-center mb-4">
-                      <img
-                        src={`${BASE_URL}${university.logo_url}`} // Ensure the logo URL is correctly concatenated
-                        alt={`${university.name} Logo`}
-                        className="rounded-circle"
-                        style={{
-                          width: "50px",
-                          height: "50px",
-                          objectFit: "cover",
-                          padding: "5px",
-                        }}
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = "/default-logo.png"; // Provide a default image if failed
-                        }}
-                      />
+                    <img
+  src={university.logo_url}
+  alt={`${university.name} Logo`}
+  className="rounded-circle"
+  style={{
+    width: "50px",
+    height: "50px",
+    objectFit: "cover",
+    padding: "5px",
+  }}
+  onError={(e) => {
+    e.target.onerror = null;
+    e.target.src = "/default-logo.png";
+  }}
+/>
+
+
+
+
                       <h5 className="ml-3">{university.name}</h5>
                     </div>
 

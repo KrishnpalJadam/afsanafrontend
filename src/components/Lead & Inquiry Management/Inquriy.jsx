@@ -1,15 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-import {
-  Table,
-  Button,
-  Form,
-  Badge,
-  Modal,
-  Pagination,
-  Row,
-  Col,
-} from "react-bootstrap";
+import { Table, Button, Form, Badge, Modal, Pagination, Row, Col,} from "react-bootstrap";
 import BASE_URL from "../../Config";
 import Swal from 'sweetalert2';
 import { ToastContainer, toast } from 'react-toastify';
@@ -337,7 +328,6 @@ const Inquiry = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentInquiries = (inquiries.todayInquiries || []).slice(indexOfFirstItem, indexOfLastItem);
   
-
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
