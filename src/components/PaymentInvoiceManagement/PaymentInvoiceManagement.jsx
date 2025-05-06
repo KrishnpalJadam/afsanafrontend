@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import AdminUniversity from "./AdminUniversity";
 import { Modal, Button, Form } from "react-bootstrap";
-import axios from "axios";
+
 import BASE_URL from "../../Config";
 import Swal from "sweetalert2";
+import api from "../../interceptors/axiosInterceptor";
 
 const PaymentInvoiceMangament = () => {
   const [universities, setUniversities] = useState([]);
@@ -97,7 +98,7 @@ const PaymentInvoiceMangament = () => {
     });
 
     try {
-      const response = await axios.post(`${BASE_URL}universities`, formData, {
+      const response = await api.post(`${BASE_URL}universities`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -139,7 +140,7 @@ const PaymentInvoiceMangament = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}universities`);
+        const response = await api.get(`${BASE_URL}universities`);
         console.log(response.data); // To check if data is correct
         setUniversities(response.data); // Ensure the data is passed correctly
       } catch (error) {

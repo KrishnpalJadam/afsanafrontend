@@ -2,8 +2,9 @@ import React from "react";
 import { useSpring, animated } from "react-spring";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "react-bootstrap";
-import axios from "axios";
+
 import BASE_URL from "../../Config";
+import api from "../../interceptors/axiosInterceptor";
 
 const AdminUniversity = ({ university }) => {
   const role = localStorage.getItem("login");
@@ -22,7 +23,7 @@ const AdminUniversity = ({ university }) => {
 
   const handleDeleteUniversity = async (id) => {
     try {
-      const response = await axios.delete(`${BASE_URL}universities/${id}`);
+      const response = await api.delete(`${BASE_URL}universities/${id}`);
       console.log('Delete response:', response);
       alert("Deleted successfully. Please refresh this.");
       // After successful delete, filter out the deleted university from the list

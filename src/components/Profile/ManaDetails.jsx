@@ -2,8 +2,9 @@
 import React, { useState , useEffect} from "react";
 import { Row, Col, Card, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import axios from "axios";
+
 import BASE_URL from "../../Config";
+import api from "../../interceptors/axiosInterceptor";
 
 function ManaDetails() {
   const [show, setShow] = useState(false);
@@ -17,7 +18,7 @@ function ManaDetails() {
  useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}auth/getAllStudents`);
+        const response = await api.get(`${BASE_URL}auth/getAllStudents`);
         setStudentsData(response.data);
         console.log("student", response.data);
       } catch (error) {

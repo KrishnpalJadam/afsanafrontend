@@ -2,9 +2,10 @@ import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+
 import BASE_URL from "../../Config";
 import { FaTrash } from "react-icons/fa";
+import api from "../../interceptors/axiosInterceptor";
 
 const StudentDetails = () => {
   const [show, setShow] = useState(false); // State for modal visibility
@@ -21,7 +22,7 @@ const [universities, setUniversities] = useState([]);
 useEffect(() => {
   const fetchData = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}universities`);
+      const response = await api.get(`${BASE_URL}universities`);
       console.log("university",response.data); // To check if data is correct
       setUniversities(response.data); // Ensure the data is passed correctly
     } catch (error) {
@@ -98,7 +99,7 @@ useEffect(() => {
        for (let [key, value] of formPayload.entries()) {
         console.log(`${key}:`, value);
       }
-      const res = await axios({
+      const res = await api({
         method,
         url,
         data: formPayload,
@@ -132,7 +133,7 @@ useEffect(() => {
       document.getElementById("studentFormModal").style.display = "none";
   
       // Reload students
-      const { data } = await axios.get(`${BASE_URL}auth/getAllStudents`);
+      const { data } = await api.get(`${BASE_URL}auth/getAllStudents`);
       setStudentsData(data);
   
     } catch (err) {
@@ -152,7 +153,7 @@ useEffect(() => {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}auth/getAllStudents`);
+        const response = await api.get(`${BASE_URL}auth/getAllStudents`);
         setStudentsData(response.data);
         console.log("student", response.data);
       } catch (error) {

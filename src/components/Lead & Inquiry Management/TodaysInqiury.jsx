@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+
 import {
   Table,
   Button,
@@ -13,6 +13,7 @@ import {
 import Swal from "sweetalert2";
 import { ToastContainer, toast } from "react-toastify";
 import BASE_URL from "../../Config";
+import api from "../../interceptors/axiosInterceptor";
 
 const TodaysInqiury = () => {
   const [inquiries, setInquiries] = useState({
@@ -54,7 +55,7 @@ const TodaysInqiury = () => {
   useEffect(() => {
     const fetchInquiries = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}inquiries`);
+        const response = await api.get(`${BASE_URL}inquiries`);
         setInquiries({ todayInquiries: response.data });
       } catch (error) {
         console.error("Error fetching inquiries:", error);
@@ -76,7 +77,7 @@ const TodaysInqiury = () => {
   // Fetch and view a single inquiry by its ID
   const handleViewDetail = async (id) => {
     try {
-      const response = await axios.get(`${BASE_URL}inquiries/${id}`);
+      const response = await api.get(`${BASE_URL}inquiries/${id}`);
       setSelectedInquiry(response.data);
       setShowInquiryModal(true);
     } catch (error) {
@@ -110,7 +111,7 @@ const TodaysInqiury = () => {
     };
 
     try {
-      const response = await axios.post(`${BASE_URL}inquiries`, requestData);
+      const response = await api.post(`${BASE_URL}inquiries`, requestData);
       if (response.status === 200) {
         // Show success alert and reset the form
         Swal.fire({
@@ -140,7 +141,7 @@ const TodaysInqiury = () => {
   // Handle delete inquiry
   const handleDeleteInquiry = async (id) => {
     try {
-      await axios.delete(`${BASE_URL}inquiries/${id}`);
+      await api.delete(`${BASE_URL}inquiries/${id}`);
       setInquiries({
         ...inquiries,
         todayInquiries: inquiries.todayInquiries.filter(
