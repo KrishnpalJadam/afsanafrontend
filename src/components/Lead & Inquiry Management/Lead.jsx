@@ -9,8 +9,9 @@ import {
   InputGroup,
 } from "react-bootstrap";
 import { FaSearch, FaPlus, FaEdit, FaTrash, FaEye } from "react-icons/fa";
-import axios from "axios";
+
 import BASE_URL from "../../Config"; // Assuming BASE_URL is already set
+import api from "../../interceptors/axiosInterceptor";
 
 const Lead = () => {
 
@@ -48,7 +49,7 @@ const Lead = () => {
   useEffect(() => {
     const fetchLeads = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}lead`);
+        const response = await api.get(`${BASE_URL}lead`);
         setLeads(response.data);
       } catch (error) {
         console.error("Error fetching leads:", error);
@@ -64,9 +65,10 @@ const Lead = () => {
   
   const fetchCounseller = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}counselor`);
+      const response = await api.get(`${BASE_URL}counselor`);
       if (response.status === 200) {
-        setCounselors(response.data.data); // Assuming the response data is under `data.data`
+
+        setCounselors(response.data); // Assuming the response data is under `data.data`
       } else {
         console.error("Failed to fetch counselors");
       }
@@ -109,7 +111,7 @@ const Lead = () => {
       name: "",
       phone: "",
       email: "",
-      counselor_name: "", // Ensure this matches your API field
+      counselor: "", // Ensure this matches your API field
       follow_up_date: "",
       notes: "",
       preferred_countries: "",
@@ -147,10 +149,10 @@ const Lead = () => {
     const { name, value } = e.target;
     setNewLead({
       ...newLead,
-      [name]: name === "counselor" ? parseInt(value) : value,
+      [name]: name === "counselor" ? value : value, // Set name as value here for counselor
     });
-    console.log(newLead); // Check if all fields are populated correctly
   };
+  
   
   
 
@@ -160,7 +162,7 @@ const Lead = () => {
     if (isEditMode) {
       // Update lead
       try {
-        const response = await axios.put(`${BASE_URL}lead/${currentLeadId}`, newLead);
+        const response = await api.put(`${BASE_URL}lead/${currentLeadId}`, newLead);
         const updatedLeads = leads.map((lead) => lead.id === currentLeadId ? response.data : lead);
         setLeads(updatedLeads);
         alert("Updated Successfully Please Refresh This.")
@@ -170,7 +172,7 @@ const Lead = () => {
     } else {
       // Add new lead
       try {
-        const response = await axios.post(`${BASE_URL}lead`, newLead);
+        const response = await api.post(`${BASE_URL}lead`, newLead);
         setLeads([...leads, response.data]);
       } catch (error) {
         console.error("Error adding lead:", error);
@@ -185,7 +187,7 @@ const Lead = () => {
   // Delete Lead
   const handleDeleteLead = async (leadId) => {
     try {
-      await axios.delete(`${BASE_URL}lead/${leadId}`);
+      await api.delete(`${BASE_URL}lead/${leadId}`);
       setLeads(leads.filter((lead) => lead.id !== leadId));
     } catch (error) {
       console.error("Error deleting lead:", error);
@@ -256,12 +258,13 @@ const Lead = () => {
           {displayLeads.length > 0 ? (
             displayLeads.map((lead) => (
               <tr key={lead.id}>
-                <td>{lead.name}</td>
-                <td>{lead.phone}</td>
-                <td>{lead.counselor_name  || "Unassigned"}</td>
+                <td>{lead?.name}</td>
+                <td>{lead?.phone}</td>
+                <td>{lead?.counselor_name || "Unassigned"}</td>
+
                 <td>
                   <Badge bg={lead.status === "In Progress" ? "primary" : "success"}>
-                    {lead.status}
+                    {lead?.status}
                   </Badge>
                 </td>
                 <td>
@@ -293,15 +296,15 @@ const Lead = () => {
         <Modal.Body>
           {selectedLead && (
             <div>
-              <p><strong>Name:</strong> {selectedLead.name}</p>
-              <p><strong>Email:</strong> {selectedLead.email}</p>
-              <p><strong>Phone:</strong> {selectedLead.phone}</p>
-              <p><strong>counselor:</strong> {selectedLead.counselor}</p>
-              <p><strong>Follow-up Date:</strong> {selectedLead.follow_up_date}</p>
-              <p><strong>Source:</strong> {selectedLead.source}</p>
-              <p><strong>Status:</strong> {selectedLead.status}</p>
-              <p><strong>Preferred Countries:</strong> {selectedLead.preferred_countries}</p>
-              <p><strong>Notes:</strong> {selectedLead.notes}</p>
+              <p><strong>Name:</strong> {selectedLead?.name}</p>
+              <p><strong>Email:</strong> {selectedLead?.email}</p>
+              <p><strong>Phone:</strong> {selectedLead?.phone}</p>
+              <p><strong>counselor:</strong> {selectedLead?.counselor}</p>
+              <p><strong>Follow-up Date:</strong> {selectedLead?.follow_up_date}</p>
+              <p><strong>Source:</strong> {selectedLead?.source}</p>
+              <p><strong>Status:</strong> {selectedLead?.status}</p>
+              <p><strong>Preferred Countries:</strong> {selectedLead?.preferred_countries}</p>
+              <p><strong>Notes:</strong> {selectedLead?.notes}</p>
             </div>
           )}
         </Modal.Body>
@@ -373,7 +376,7 @@ const Lead = () => {
   <option value="">Select Counselor</option>
   {counselors.length > 0 ? (
     counselors.map((counselor) => (
-      <option key={counselor.id} value={counselor.id}>
+      <option key={counselor.id} value={counselor.name}>
         {counselor.name}
       </option>
     ))
@@ -381,6 +384,7 @@ const Lead = () => {
     <option disabled>No counselors available</option>
   )}
 </Form.Select>
+
 
 
 </Form.Group>

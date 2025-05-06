@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Table, Form, Modal, Badge } from 'react-bootstrap';
-import axios from 'axios';
+// import axios from 'axios';
 import Swal from 'sweetalert2';
 import BASE_URL from '../../Config'; // Assuming BASE_URL is already set
+import api from '../../interceptors/axiosInterceptor';
 
 const Followup = () => {
     const [followUps, setFollowUps] = useState([]); // For storing follow-up data
@@ -24,7 +25,7 @@ const Followup = () => {
     // Fetch all follow-ups on component load
     const fetchFollowUps = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}followUp`);
+            const response = await api.get(`${BASE_URL}followUp`);
             setFollowUps(response.data);
         } catch (error) {
             console.error('Error fetching follow-ups:', error);
@@ -65,7 +66,7 @@ const Followup = () => {
         };
 
         try {
-            const response = await axios.post(`${BASE_URL}followUp`, requestData);
+            const response = await api.post(`${BASE_URL}followUp`, requestData);
             if (response.status === 201) {
                 // On success, fetch the updated follow-up list
                 fetchFollowUps();
@@ -92,7 +93,7 @@ const Followup = () => {
     // Delete follow-up
     const handleDeleteFollowUp = async (id) => {
         try {
-            const response = await axios.delete(`${BASE_URL}followUp/${id}`);
+            const response = await api.delete(`${BASE_URL}followUp/${id}`);
             if (response.status === 200) {
                 setFollowUps(followUps.filter(followUp => followUp.id !== id)); // Update state
                 Swal.fire({
@@ -116,7 +117,7 @@ const Followup = () => {
     // Get follow-up details by ID
     const handleViewFollowUpDetail = async (id) => {
         try {
-            const response = await axios.get(`${BASE_URL}followUp/${id}`);
+            const response = await api.get(`${BASE_URL}followUp/${id}`);
             const followUpDetail = response.data;
             console.log('Follow-up details:', followUpDetail);
             // You can open a modal with the detailed info here if needed

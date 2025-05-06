@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import BASE_URL from "../../Config";
-import axios from "axios";
+
 import Swal from "sweetalert2";
 import { Form } from "react-bootstrap";
+import api from "../../interceptors/axiosInterceptor";
 
 const AddCounselor = () => {
   const [counselors, setCounselors] = useState([]);
@@ -23,7 +24,7 @@ const AddCounselor = () => {
 
   const fetchCounselors = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}counselor`);
+      const res = await api.get(`${BASE_URL}counselor`);
       // console.log("counsoler data : ",res.data)
       setCounselors(res.data);
     } catch (err) {
@@ -33,7 +34,7 @@ const AddCounselor = () => {
 
   const fetchUniversities = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}universities`);
+      const res = await api.get(`${BASE_URL}universities`);
       setUniversities(res.data);
     } catch (err) {
       console.error("Failed to fetch universities", err);
@@ -65,10 +66,10 @@ const AddCounselor = () => {
 
     try {
       if (editingId) {
-        await axios.put(`${BASE_URL}counselor/${editingId}`, payload);
+        await api.put(`${BASE_URL}counselor/${editingId}`, payload);
         Swal.fire("Updated!", "Counselor updated successfully", "success");
       } else {
-        await axios.post(`${BASE_URL}counselor`, payload);
+        await api.post(`${BASE_URL}counselor`, payload);
         Swal.fire("Added!", "Counselor added successfully", "success");
       }
       fetchCounselors();
@@ -104,7 +105,7 @@ const AddCounselor = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`${BASE_URL}counselor/${id}`);
+          await api.delete(`${BASE_URL}counselor/${id}`);
           Swal.fire("Deleted!", "Counselor deleted.", "success");
           fetchCounselors();
         } catch (err) {

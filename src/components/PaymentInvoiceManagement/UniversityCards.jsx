@@ -143,9 +143,10 @@ import React, { useState, useEffect } from "react";
 import { useSpring, animated } from "react-spring";
 import { Link } from "react-router-dom";
 import { Button } from "react-bootstrap";
-import axios from "axios";
+
 import Swal from "sweetalert2";
 import BASE_URL from "../../Config";
+import api from "../../interceptors/axiosInterceptor";
 
 const UniversityCards = () => {
   const [universities, setUniversities] = useState([]);
@@ -163,8 +164,7 @@ const UniversityCards = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}universities`);
-        console.log(response.data)
+        const response = await api.get(`${BASE_URL}universities`);
         setUniversities(response.data); // Set fetched universities to state
       } catch (error) {
         console.log("Error fetching universities:", error);
@@ -177,7 +177,7 @@ const UniversityCards = () => {
   // Handle delete action for university
   const handleDeleteUniversity = async (id) => {
     try {
-      const response = await axios.delete(`${BASE_URL}universities/${id}`);
+      const response = await api.delete(`${BASE_URL}universities/${id}`);
       console.log('Delete response:', response);
       Swal.fire({
         title: "Deleted Successfully!",

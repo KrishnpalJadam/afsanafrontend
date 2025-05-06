@@ -9,8 +9,9 @@ import {
   Col,
 } from "react-bootstrap";
 import { FaPlus, FaTrash, FaEye } from "react-icons/fa";
-import axios from "axios";
+
 import BASE_URL from "../../Config";
+import api from "../../interceptors/axiosInterceptor";
 
 const AdmissionDecisions = () => {
   const [decisions, setDecisions] = useState([]);
@@ -33,23 +34,26 @@ const AdmissionDecisions = () => {
 
   const user_id = localStorage.getItem("user_id");
 
-  // Fetch all decisions
-  useEffect(() => {
-    axios.get(`${BASE_URL}admissiondecision`)
-      .then((res) => setDecisions(res.data.data))
-      .catch((err) => console.error("Error fetching decisions:", err));
-  }, []);
+useEffect(() => {
+  api.get(`${BASE_URL}admissiondecision`)
+    .then((res) => {
+      console.log("Admission decisions response:", res.data);
+      setDecisions(Array.isArray(res.data) ? res.data : res.data.data || []);
+    })
+    .catch((err) => console.error("Error fetching decisions:", err));
+}, []);
+
 
   // Fetch students
   useEffect(() => {
-    axios.get(`${BASE_URL}auth/getAllStudents`)
+    api.get(`${BASE_URL}auth/getAllStudents`)
       .then((res) => setStudentsData(res.data))
       .catch((err) => console.error("Error fetching students:", err));
   }, []);
 
   // Fetch universities
   useEffect(() => {
-    axios.get(`${BASE_URL}universities`)
+    api.get(`${BASE_URL}universities`)
       .then((res) => setUniversities(res.data))
       .catch((err) => console.error("Error fetching universities:", err));
   }, []);
@@ -88,8 +92,8 @@ const AdmissionDecisions = () => {
     };
   
     try {
-      await axios.post(`${BASE_URL}admissiondecision`, payload);
-      const refresh = await axios.get(`${BASE_URL}admissiondecision`);
+      await api.post(`${BASE_URL}admissiondecision`, payload);
+      const refresh = await api.get(`${BASE_URL}admissiondecision`);
       setDecisions(refresh.data.data);
       setNewDecision({ student_id: "", university_id: "", status: "accepted", date: "" });
       setShowModal(false);
@@ -101,7 +105,7 @@ const AdmissionDecisions = () => {
 
   const updateDecisionStatus = async (id, newStatus) => {
     try {
-      await axios.patch(`${BASE_URL}admissiondecision/${id}`, { status: newStatus });
+      await api.patch(`${BASE_URL}admissiondecision/${id}`, { status: newStatus });
       setDecisions(
         decisions.map((dec) => (dec.id === id ? { ...dec, status: newStatus } : dec))
       );
@@ -112,7 +116,7 @@ const AdmissionDecisions = () => {
 
   const deleteDecision = async (id) => {
     try {
-      await axios.delete(`${BASE_URL}admissiondecision/${id}`);
+      await api.delete(`${BASE_URL}admissiondecision/${id}`);
       setDecisions(decisions.filter((d) => d.id !== id));
     } catch (err) {
       console.error("Error deleting decision:", err);

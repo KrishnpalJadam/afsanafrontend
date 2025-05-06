@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Form, Row, Col, Modal, Button } from "react-bootstrap";
-import axios from "axios"; // Ensure axios is imported correctly
+ // Ensure axios is imported correctly
 import Swal from 'sweetalert2'; // For SweetAlert messages
 import BASE_URL from "../Config";
+import api from "../interceptors/axiosInterceptor";
 const InquiryForm = () => {
   const [showInquiryModal, setShowInquiryModal] = useState(false);
   const [newInquiry, setNewInquiry] = useState({
@@ -106,7 +107,7 @@ const InquiryForm = () => {
     };
 
     try {
-      const response = await axios.post(`${BASE_URL}inquiries`, requestData);
+      const response = await api.post(`${BASE_URL}inquiries`, requestData);
       if (response.status === 200) {
         Swal.fire({
           title: 'Success!',

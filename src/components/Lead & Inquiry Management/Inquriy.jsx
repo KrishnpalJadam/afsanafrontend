@@ -1,4 +1,4 @@
-import axios from "axios";
+
 import React, { useEffect, useState } from "react";
 import { Table, Button, Form, Badge, Modal, Pagination, Row, Col,} from "react-bootstrap";
 import BASE_URL from "../../Config";

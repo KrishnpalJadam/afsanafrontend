@@ -11,27 +11,54 @@ import {
   Modal,
 } from "react-bootstrap";
 import BASE_URL from "../../Config";
+import api from "../../interceptors/axiosInterceptor";
 
 const AdminTaskManager = () => {
   const [tasks ,setTasks] = useState([])  
-
+ const [studentdata, setStudentsData] = useState([]);
+   const [counselors, setCounselors] = useState([]);
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const response = await api.get(`${BASE_URL}auth/getAllStudents`);
+        setStudentsData(response.data);
+        console.log("student", response.data);
+      } catch (error) {
+        console.error("Error fetching students:", error);
+      }
+    };
+    fetchStudents();
+  }, [])
+  useEffect(() => {
+    const fetchCounselors = async () => {
+      try {
+        const res = await api.get(`${BASE_URL}counselor`);
+        console.log("counselor data : ", res.data);
+        setCounselors(res.data);
+      } catch (err) {
+        console.error("Failed to fetch counselors", err);
+      }
+    };
+  
+    fetchCounselors();
+  }, []);
+  
 useEffect(() => {
   const fetchTasks = async () => {
     try {
-      const response = await fetch(`${BASE_URL}task`);
-      const data = await response.json();
-      setTasks(data);
-      console.log("data", data);
+      const response = await api.get(`${BASE_URL}task`);
+    
+      setTasks(response.data);
+      console.log("data", response.data);
     } catch (error) {
       console.log(error);
     }
   };
-  
     fetchTasks();
-  
 },[])
   const [form, setForm] = useState({
     student: "",
+    counselor: "",
     title: "",
     due: "",
     description: "",
@@ -60,31 +87,28 @@ useEffect(() => {
       title: form.title,
       user_id,
       due_date: form.due,
-      counselor_id: 2, // Assuming a fixed counselor id, you can make it dynamic as per the form data
-      student_id: form.student, // Assuming the form contains the student ID
-      description: form.description, // Assuming the form contains a description field
-      priority:  form.priority, // Assuming the form contains a priority field
-      status:  form.status, // Assuming the form contains a status field
-      related_to: form.relatedTo, // Assuming the form contains the related field
-      related_item: form.relatedItem, // Assuming the form contains the related item field
-      assigned_to: form.assignedTo, // Assuming the form contains the assignee name
-      assigned_date: form.assignedDate, // Assuming the form contains the assigned date
-      finishing_date: form.finishingDate, // Assuming the form contains the finishing date
-      attachment: form.attachment, // Assuming the form contains an attachment field
+      counselor_id: form.counselor, // dynamic counselor_id
+      student_id: form.student,
+      description: form.description,
+      priority: form.priority,
+      status: form.status,
+      related_to: form.relatedTo,
+      related_item: form.relatedItem,
+      assigned_to: form.assignedTo,
+      assigned_date: form.assignedDate,
+      finishing_date: form.finishingDate,
+      attachment: form.attachment,
     };
-
+    
     try {
-      const response = await fetch(`${BASE_URL}task`, {
-        method: "POST",
+      const response = await api.post(`${BASE_URL}task`, taskData, {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(taskData),
       });
-
-      const data = await response.json();
-      console.log(data);
-
+    
+      console.log(response.data);
+    
       // After successful POST, update the state with the new task
       if (response.ok) {
         setTasks([
@@ -203,7 +227,7 @@ useEffect(() => {
               {tasks?.map((task, index) => (
                 <tr key={task?.id}>
                   <td>{index + 1}</td>
-                  <td>{task?.student}</td>
+                  <td>{task?.student_name}</td>
                   <td>{task?.title}</td>
                   <td> 
                   {new Date(task?.due_date).toLocaleDateString()}
@@ -285,27 +309,35 @@ useEffect(() => {
               <Col md={6}>
                 <Form.Label>Counselor *</Form.Label>
                 <Form.Select
-                  name="counselor"
-                  value={form.counselor}
-                  onChange={handleChange}
-                >
-                  <option>Select Counselor</option>
-                  <option>Counselor 1</option>
-                  <option>Counselor 2</option>
-                </Form.Select>
+  name="counselor"
+  value={form.counselor}
+  onChange={handleChange}
+>
+  <option value="">Select Counselor</option>
+  {counselors.map((counselor) => (
+    <option key={counselor.id} value={counselor.id}>
+      {counselor.full_name}
+    </option>
+  ))}
+</Form.Select>
+
               </Col>
               <Col md={6}>
-                <Form.Label>Student *</Form.Label>
-                <Form.Select
-                  name="student"
-                  value={form.student}
-                  onChange={handleChange}
-                >
-                  <option>Select Student</option>
-                  <option>Rahul Sharma</option>
-                  <option>Neha Verma</option>
-                </Form.Select>
-              </Col>
+  <Form.Label>Student *</Form.Label>
+  <Form.Select
+  name="student"
+  value={form.student}
+  onChange={handleChange}
+>
+  <option value="">Select Student</option>
+  {studentdata.map((student) => (
+    <option key={student.id} value={student.id}>
+      {student.full_name}
+    </option>
+  ))}
+</Form.Select>
+</Col>
+
             </Row>
 
             <Form.Group className="mb-3">

@@ -1,12 +1,13 @@
  import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BASE_URL from "../Config";
-import axios from 'axios';
+// import axios from 'axios';
 import Swal from 'sweetalert2';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FaUser, FaLock } from "react-icons/fa";
 import { IoChevronBackCircleSharp } from "react-icons/io5";
+import api from "../interceptors/axiosInterceptor";
 const Login = ({ setLogin }) => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ const Login = ({ setLogin }) => {
     }
 
     try {
-      const response = await axios.post(`${BASE_URL}auth/login`, formData);
+      const response = await api.post(`${BASE_URL}auth/login`, formData);
       const { token, user } = response.data;
       const role = user.role;
 
