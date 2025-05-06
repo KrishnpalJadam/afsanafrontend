@@ -47,7 +47,6 @@ useEffect(() => {
   const fetchTasks = async () => {
     try {
       const response = await api.get(`${BASE_URL}task`);
-    
       setTasks(response.data);
       console.log("data", response.data);
     } catch (error) {
