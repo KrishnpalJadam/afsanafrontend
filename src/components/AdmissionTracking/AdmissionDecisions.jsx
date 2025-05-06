@@ -40,13 +40,9 @@ const AdmissionDecisions = () => {
         const decisionData = Array.isArray(res.data)
           ? res.data
           : res.data.data || []; // fallback in case it's wrapped in "data"
-        console.log("admisiondata", res.data.data)
+      
         setDecisions(decisionData);
-        console.log("Fetched decisions:", res.data.data);
-        setDecisions(res.data.data); // Update state
         
-        console.log("Filtered Decisions:", filteredDecisions);
-        console.log("Sorted Decisions:", sortedDecisions);
       } catch (err) {
         console.error("Error fetching decisions:", err);
       }
@@ -71,14 +67,14 @@ const AdmissionDecisions = () => {
   }, []);
 
   const filteredDecisions = decisions.filter((dec) => {
-    console.log("Decision Data: ", dec); // Check the structure of each decision
+   
     const statusMatch = filterStatus === "all" || dec.status === filterStatus;
   
     // Check if student and university are accessible and correct the property names
     const studentMatch = dec.student_name && dec.student_name.toLowerCase().includes(searchTerm.toLowerCase());
     const universityMatch = dec.university_name && dec.university_name.toLowerCase().includes(searchTerm.toLowerCase());
     
-    console.log("Student Match:", studentMatch, "University Match:", universityMatch);
+    
   
     return (studentMatch || universityMatch) && statusMatch;
   });
@@ -142,12 +138,27 @@ const AdmissionDecisions = () => {
 
   const deleteDecision = async (id) => {
     try {
-      await api.delete(`${BASE_URL}admissiondecision/${id}`);
-      setDecisions(decisions.filter((d) => d.id !== id));
+      // Ensure the correct URL and data format
+      console.log(`Deleting decision with ID: ${id}`);
+      
+      // Perform delete request
+      const response = await api.delete(`${BASE_URL}admissiondecision/${id}`);
+      
+      // Check the response to ensure successful deletion
+      console.log('Response from delete:', response);
+      
+      // Update the state after deleting the decision
+      if (response.status === 200) {
+        setDecisions(decisions.filter((d) => d.id !== id));
+      } else {
+        console.error('Delete failed, response:', response);
+      }
     } catch (err) {
+      // Log any errors during the request
       console.error("Error deleting decision:", err);
     }
   };
+  
 
   const handleViewLeadDetails = (lead) => {
     setSelectedLead(lead);
@@ -249,11 +260,11 @@ const AdmissionDecisions = () => {
         <Modal.Body>
           {selectedLead && (
             <>
-              <p><strong>Student:</strong> {selectedLead.student}</p>
-              <p><strong>University:</strong> {selectedLead.university}</p>
+              <p><strong>Student:</strong> {selectedLead.student_name}</p>
+              <p><strong>University:</strong> {selectedLead.university_name}</p>
               <p><strong>Status:</strong> {selectedLead.status}</p>
               <p><strong>Decision Date:</strong> {new Date(selectedLead.decision_date).toLocaleDateString()}</p>
-              <p><strong>Notes:</strong> {selectedLead.notes || "N/A"}</p>
+             
             </>
           )}
         </Modal.Body>
