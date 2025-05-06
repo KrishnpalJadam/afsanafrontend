@@ -3,69 +3,45 @@ import { Table, Form, Container } from "react-bootstrap";
 import { useParams, Link } from "react-router-dom";
 
 // Feature modules (static across all roles)
-const permissionsData = [
+const permissionsDataStudent = [
   { module: "Dashboard", features: ["Dashboard"] },
-  { module: "Leads & inquiries", features: ["Contact", "Inquiry", "Lead", "Admin Status"] },
-  { module: "Student Managenement", features: ["Student Details", "Communication"] },
-  { module: "Appication", features: ["Course & University","Application Tracker",   "Admission Decision"] },
-  { module: "Tasks Management", features: ["Counselor", "Tasks", "Reminder"] },
-  { module: "Roles Permission", features: ["Roles Permission"] },
-  { module: "Reports & Analytics", features: ["Reports & Analytics"] },
+  { module: "Student Managenement", features: ["Student Details", "Student Programs", "Communication"] },
+  { module: "Appication Managment", features: ["Appication Managment"] },
+  { module: "Tasks Management", features: ["Tasks Management"] },
   { module: "Payments & Invoices", features: ["Payments & Invoices"] },
-
-  
+  { module: "Course & University", features: ["Course & University"] },
+];
+const permissionsDataCounselor = [
+  { module: "Dashboard", features: ["Dashboard"] },
+  { module: "Leads & Inquiries", features: ["Inquiry", "Lead", "Status", "Task"] },
+  { module: "Student Managenement", features: ["Student Details", "Communication"] },
+  { module: "Course & University", features: ["Course & University"] },
 ];
 
 // Default permissions for each role
 const roleDefaults = {
-  "Super Admin": "all",
-  "Admin": {
-    Dashboard: ["view"],
-    "Reports & Analytics": ["view"],
-    "User Management": ["add", "edit", "view"],
-    "Student Managenement": ["edit", "view"],
-    "Payments & Invoices": ["view"],
-    Settings: ["view"],
-  },
-  "Manager": {
-    Dashboard: ["view"],
-    "Leads & inquiries": ["view"],
-    "Student Managenement": ["view"],
-    "Reports & Analytics": ["view"],
-  },
-  "Assistant Manager": {
-    "Student Managenement": ["view"],
-    "Appication": ["view"],
-    "Reports & Analytics": ["view"]
-  },
-  "Admission Officer": {
-    "Student Managenement": ["view", "add", "edit"],
-    Appication: ["view", "edit"],
-  },
-  "Accounts Officer": {
-    "Payments & Invoices": ["view", "add", "edit"],
-    "Student Managenement": ["view"],
-  },
   "Counsellor": {
     "Student Managenement": ["view", "edit"],
     "Tasks Management": ["view", "add", "edit"],
   },
-  "Lead Generator": {
-    "Leads & inquiries": ["view", "add", "edit"],
-  },
-  "Lead Generation Manager": {
-    "Leads & inquiries": ["view", "add", "edit"],
-    "Reports & Analytics": ["view"],
+  "Student": {
+    "Dashboard": ["view"],
+    "Student Managenement": ["view"],
   },
 };
 
 const PermissionsTable = () => {
-  const { role } = useParams();
+  const { role } = useParams();  // Get role from route
   const [permissions, setPermissions] = useState([]);
 
   // Load role-based permissions on mount
   useEffect(() => {
-    const defaults = roleDefaults[role];
+    let permissionsData;
+    if (role === "Student") {
+      permissionsData = permissionsDataStudent;  // Student data
+    } else if (role === "Counsellor") {
+      permissionsData = permissionsDataCounselor;  // Counselor data
+    }
 
     const updated = permissionsData.map((mod) => {
       return {
@@ -73,11 +49,12 @@ const PermissionsTable = () => {
         features: mod.features.map((feat) => {
           const perms = { name: feat, view: false, add: false, edit: false, delete: false };
 
-          if (defaults === "all") {
+          // Check if role has full access to this module
+          if (roleDefaults[role] === "all") {
             return { ...perms, view: true, add: true, edit: true, delete: true };
           }
 
-          const access = defaults?.[mod.module] || [];
+          const access = roleDefaults[role]?.[mod.module] || [];
           access.forEach((type) => {
             perms[type] = true;
           });
