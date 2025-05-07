@@ -1,381 +1,173 @@
-// import React, { useState } from "react";
-// import {
-//   Container,
-//   Card,
-//   Table,
-//   Button,
-//   Badge,
-//   Row,
-//   Col,
-//   Alert,
-//   Form,
-// } from "react-bootstrap";
+  import React, { useEffect, useState } from "react";
+  import {
+    Container,
+    Card,
+    Table,
+    Button,
+    Badge,
+    Form,
+  } from "react-bootstrap";
+  import api from "../../interceptors/axiosInterceptor";
 
-// const MyTasks = () => {
-//   const [tasks, setTasks] = useState([
-//     { id: 1, title: "Upload Academic Documents", status: "pending" },
-//     { id: 2, title: "Complete Profile Section", status: "completed" },
-//     { id: 3, title: "Pay Application Fee", status: "pending" },
-//     { id: 4, title: "Check Email for Offer Letter", status: "completed" },
-//     { id: 5, title: "Join WhatsApp Student Group", status: "pending" },
-//   ]);
+  const MyTasks = () => {
+    const [studentid, setStudentId] = useState("");
+    const [tasksData, setTasksData] = useState([]);
+    const [notesData, setNotesData] = useState({}); // to store notes locally by task id
 
-//   const [filter, setFilter] = useState("all");
+    useEffect(() => {
+      const is_id = localStorage.getItem("student_id");
+      if (is_id) {
+        setStudentId(is_id);
+      }
+    }, []);
 
-//   const [alerts, setAlerts] = useState([
-//     { id: 1, type: "info", message: "New university added in UK list." },
-//     {
-//       id: 2,
-//       type: "warning",
-//       message: "Visa deadline approaching: 20 June 2025.",
-//     },
-//     { id: 3, type: "success", message: "Your application has been reviewed." },
-//   ]);
+    useEffect(() => {
+      if (studentid) {
+        fetchTasks();
+      }
+    }, [studentid]);
 
-//   const handleToggleStatus = (taskId) => {
-//     const updated = tasks.map((task) =>
-//       task.id === taskId
-//         ? {
-//             ...task,
-//             status: task.status === "pending" ? "completed" : "pending",
-//           }
-//         : task
-//     );
-//     setTasks(updated);
-//   };
+    const fetchTasks = async () => {
+      try {
+        const response = await api.get(`student_task/${studentid}`);
+        setTasksData(response.data);
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      }
+    };
 
-//   const filteredTasks = tasks.filter((task) =>
-//     filter === "all" ? true : task.status === filter
-//   );
+    const handleNoteChange = (taskId, value) => {
+      setNotesData((prevNotes) => ({
+        ...prevNotes,
+        [taskId]: value,
+      }));
+    };
 
-//   return (
-//     <Container className="mt-4">
-//       <h3 className="mb-4">My Tasks</h3>
+    const handleNoteSend = async (taskId) => {
+      try {
+        const noteValue = notesData[taskId] || "";
+        console.log(`Sending PATCH to task/${taskId} with notes: ${noteValue}`);
+    
+        await api.patch(`update_task/${taskId}`, {
+          notes: noteValue,
+        });
+    
+        alert("Notes sent successfully.");
+    
+        // 🧹 Clear the note input for this task
+        setNotesData((prevNotes) => {
+          const newNotes = { ...prevNotes };
+          delete newNotes[taskId];
+          return newNotes;
+        });
+    
+        fetchTasks();
+      } catch (error) {
+        console.error("Error sending notes:", error);
+        alert("Failed to send notes.");
+      }
+    };
+    
+    
 
-//       {/* Alerts Section */}
-//       <Row className="mb-3">
-//         {alerts.map((alert) => (
-//           <Col md={12} key={alert.id}>
-//             <Alert variant={alert.type}>{alert.message}</Alert>
-//           </Col>
-//         ))}
-//       </Row>
-
-//       {/* Filter */}
-//       <Card className="mb-3">
-//         <Card.Body>
-//           <Form>
-//             <Form.Group as={Row} controlId="taskFilter">
-//               <Form.Label column sm="3">
-//                 Filter Tasks:
-//               </Form.Label>
-//               <Col sm="9">
-//                 <Form.Select
-//                   value={filter}
-//                   onChange={(e) => setFilter(e.target.value)}
-//                 >
-//                   <option value="all">All</option>
-//                   <option value="pending">Pending</option>
-//                   <option value="completed">Completed</option>
-//                 </Form.Select>
-//               </Col>
-//             </Form.Group>
-//           </Form>
-//         </Card.Body>
-//       </Card>
-
-//       {/* Task List */}
-//       <Card>
-//         <Card.Body>
-//           <Table bordered hover responsive>
-//             <thead>
-//               <tr>
-//                 <th>#</th>
-//                 <th>Task</th>
-//                 <th>Status</th>
-//                 <th>Toggle</th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               {filteredTasks.map((task, index) => (
-//                 <tr key={task.id}>
-//                   <td>{index + 1}</td>
-//                   <td>{task.title}</td>
-//                   <td>
-//                     <Badge
-//                       bg={task.status === "completed" ? "success" : "warning"}
-//                     >
-//                       {task.status}
-//                     </Badge>
-//                   </td>
-//                   <td>
-//                     <Button
-//                       variant={
-//                         task.status === "completed" ? "secondary" : "primary"
-//                       }
-//                       size="sm"
-//                       onClick={() => handleToggleStatus(task.id)}
-//                     >
-//                       Mark as{" "}
-//                       {task.status === "completed" ? "Pending" : "Completed"}
-//                     </Button>
-//                   </td>
-//                 </tr>
-//               ))}
-//               {filteredTasks.length === 0 && (
-//                 <tr>
-//                   <td colSpan="4" className="text-center">
-//                     No tasks found.
-//                   </td>
-//                 </tr>
-//               )}
-//             </tbody>
-//           </Table>
-//         </Card.Body>
-//       </Card>
-//     </Container>
-//   );
-// };
-
-// export default MyTasks;
-
-import React, { useState } from "react";
-import {
-  Container,
-  Card,
-  Table,
-  Button,
-  Badge,
-  Row,
-  Col,
-  Alert,
-  Form,
-} from "react-bootstrap";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-
-const MyTasks = () => {
-  const [filter, setFilter] = useState("all");
-  const [tasks, setTasks] = useState([
-    {
-      id: "1",
-      title: "Upload Academic Documents",
-      status: "pending",
-      due: "2025-06-10",
-      file: null,
-    },
-    {
-      id: "2",
-      title: "Complete Profile Section",
-      status: "completed",
-      due: "2025-06-05",
-      file: null,
-    },
-    {
-      id: "3",
-      title: "Pay Application Fee",
-      status: "pending",
-      due: "2025-06-15",
-      file: null,
-    },
-    {
-      id: "4",
-      title: "Check Email for Offer Letter",
-      status: "completed",
-      due: "2025-06-01",
-      file: null,
-    },
-    {
-      id: "5",
-      title: "Join WhatsApp Group",
-      status: "pending",
-      due: "2025-06-12",
-      file: null,
-    },
-  ]);
-
-  const [alerts] = useState([
-    { id: 1, type: "info", message: "New program added for Canada 2025." },
-    {
-      id: 2,
-      type: "danger",
-      message: "Visa Application deadline: 20 June 2025",
-    },
-  ]);
-
-  const handleToggleStatus = (id) => {
-    const updated = tasks.map((task) =>
-      task.id === id
-        ? {
-            ...task,
-            status: task.status === "pending" ? "completed" : "pending",
-          }
-        : task
-    );
-    setTasks(updated);
-  };
-
-  const handleFileUpload = (e, id) => {
-    const updated = tasks.map((task) =>
-      task.id === id ? { ...task, file: e.target.files[0] } : task
-    );
-    setTasks(updated);
-  };
-
-  const filteredTasks = tasks.filter((task) =>
-    filter === "all" ? true : task.status === filter
-  );
-
-  const getDueStatus = (dueDate) => {
-    const today = new Date();
-    const due = new Date(dueDate);
-    const diff = (due - today) / (1000 * 60 * 60 * 24);
-    if (diff < 0) return <Badge bg="danger">Overdue</Badge>;
-    if (diff < 3) return <Badge bg="warning">Due Soon</Badge>;
-    return <Badge bg="secondary">Upcoming</Badge>;
-  };
-
-  const onDragEnd = (result) => {
-    if (!result.destination) return;
-    const items = Array.from(filteredTasks);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-
-    // reorder in original task list too
-    const newOrder = tasks.map(
-      (task) => items.find((i) => i.id === task.id) || task
-    );
-
-    setTasks(newOrder);
-  };
-
-  return (
-    <Container className="mt-4">
-      <h3 className="mb-4">My Tasks</h3>
-
-      {/* Alerts Section */}
-      <Row className="mb-3">
-        {alerts.map((alert) => (
-          <Col md={12} key={alert.id}>
-            <Alert variant={alert.type}>{alert.message}</Alert>
-          </Col>
-        ))}
-      </Row>
-
-      {/* Filter */}
-      <Card className="mb-3">
-        <Card.Body>
-          <Form.Group as={Row}>
-            <Form.Label column sm={3}>
-              Filter Tasks
-            </Form.Label>
-            <Col sm={9}>
-              <Form.Select
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-              >
-                <option value="all">All</option>
-                <option value="pending">Pending</option>
-                <option value="completed">Completed</option>
-              </Form.Select>
-            </Col>
-          </Form.Group>
-        </Card.Body>
-      </Card>
-
-      {/* Task List with Drag + Drop */}
-      <Card>
-        <Card.Body>
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="tasks">
-              {(provided) => (
-                <Table
-                  bordered
-                  hover
-                  responsive
-                  {...provided.droppableProps}
-                  ref={provided.innerRef}
-                >
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Task</th>
-                      <th>Status</th>
-                      <th>Due</th>
-                      <th>File Upload</th>
-                      <th>Toggle</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredTasks.map((task, index) => (
-                      <Draggable
-                        key={task.id}
-                        draggableId={task.id}
-                        index={index}
-                      >
-                        {(provided) => (
-                          <tr
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                          >
-                            <td>{index + 1}</td>
-                            <td>{task.title}</td>
-                            <td>
-                              <Badge
-                                bg={
-                                  task.status === "completed"
-                                    ? "success"
-                                    : "warning"
-                                }
-                              >
-                                {task.status}
-                              </Badge>
-                            </td>
-                            <td>
-                              {task.due} {getDueStatus(task.due)}
-                            </td>
-                            <td>
-                              <Form.Control
-                                type="file"
-                                size="sm"
-                                onChange={(e) => handleFileUpload(e, task.id)}
-                              />
-                              {task.file && (
-                                <span className="text-success small d-block mt-1">
-                                  {task.file.name}
-                                </span>
-                              )}
-                            </td>
-                            <td>
-                              <Button
-                                variant={
-                                  task.status === "completed"
-                                    ? "secondary"
-                                    : "primary"
-                                }
-                                size="sm"
-                                onClick={() => handleToggleStatus(task.id)}
-                              >
-                                Mark as{" "}
-                                {task.status === "completed"
-                                  ? "Pending"
-                                  : "Completed"}
-                              </Button>
-                            </td>
-                          </tr>
+    return (
+      <Container className="mt-4">
+        <h3 className="mb-4">My Tasks</h3>
+        <Card>
+          <Card.Body>
+            <Table bordered hover responsive className="text-center">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Title</th>
+                  <th>Description</th>
+                  <th>Due Date</th>
+                  <th>Priority</th>
+                  <th>Status</th>
+                  <th>Notes</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tasksData.length > 0 ? (
+                  tasksData.map((task, index) => (
+                    <tr key={task.id}>
+                      <td>{index + 1}</td>
+                      <td>{task.title}</td>
+                      <td>{task.description}</td>
+                      <td>{new Date(task.due_date).toLocaleDateString()}</td>
+                      <td>
+                        <Badge
+                          bg={
+                            task.priority === "High"
+                              ? "danger"
+                              : task.priority === "Medium"
+                              ? "warning"
+                              : "info"
+                          }
+                        >
+                          {task.priority}
+                        </Badge>
+                      </td>
+                      <td>
+                        <Badge
+                          bg={
+                            task.status === "Completed"
+                              ? "success"
+                              : task.status === "Pending"
+                              ? "secondary"
+                              : task.status === "In Progress"
+                              ? "primary"
+                              : task.status === "Pending Approval"
+                              ? "warning"
+                              : "danger"
+                          }
+                        >
+                          {task.status}
+                        </Badge>
+                      </td>
+                      <td>
+                        {task.status === "Pending" ? (
+                          <Form.Control
+                            type="text"
+                            placeholder="Write your note..."
+                            value={notesData[task.id] || ""}
+                            onChange={(e) =>
+                              handleNoteChange(task.id, e.target.value)
+                            }
+                          />
+                        ) : (
+                          task.notes || "-"
                         )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </tbody>
-                </Table>
-              )}
-            </Droppable>
-          </DragDropContext>
-        </Card.Body>
-      </Card>
-    </Container>
-  );
-};
+                      </td>
+                      <td>
+                        {task.status === "Pending" ? (
+                          <Button
+                            size="sm"
+                            variant="primary"
+                            onClick={() => handleNoteSend(task.id)}
+                          >
+                            Mark as Complete
+                          </Button>
+                        ) : (
+                          <Badge bg="success">Completed</Badge>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="8" className="text-center">
+                      No tasks found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </Table>
+          </Card.Body>
+        </Card>
+      </Container>
+    );
+  };
 
-export default MyTasks;
+  export default MyTasks;
