@@ -128,8 +128,7 @@ const TaskReminderDashboard = () => {
               <Button
                 variant="outline-danger"
                 size="sm"
-                onClick={() => handleDeleteReminder(rem.id)}
-              >
+                onClick={() => handleDeleteReminder(rem.id)}>
                 Delete
               </Button>
             </Card.Body>
@@ -147,8 +146,7 @@ const TaskReminderDashboard = () => {
         <Form.Group className="mb-2">
           <Form.Select
             value={reminder.name}
-            onChange={(e) => setReminder({ ...reminder, name: e.target.value })}
-          >
+            onChange={(e) => setReminder({ ...reminder, name: e.target.value })}>
             <option value="">Select Task</option>
             {tasks.map((task) => (
               <option key={task.id} value={task.title}>
@@ -162,26 +160,19 @@ const TaskReminderDashboard = () => {
           <Form.Control
             type="date"
             value={reminder.date}
-            onChange={(e) => setReminder({ ...reminder, date: e.target.value })}
-          />
+            onChange={(e) => setReminder({ ...reminder, date: e.target.value })}/>
         </Form.Group>
 
-        <Button
-          variant="danger"
-          onClick={handleAddReminder}
-          className="w-100"
-        >
+        <Button variant="danger" onClick={handleAddReminder} className="w-100">
           Add Reminder
         </Button>
 
         <div className="mt-3 d-flex align-items-center">
-          <Form.Check
-            type="switch"
+          <Form.Check  type="switch"
             id="autoReminders"
             label="Automate Reminders"
             checked={autoReminders}
-            onChange={() => setAutoReminders(!autoReminders)}
-          />
+            onChange={() => setAutoReminders(!autoReminders)}/>
         </div>
       </Card>
     </Col>

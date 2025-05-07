@@ -16,6 +16,7 @@ const Login = ({ setLogin }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -26,6 +27,7 @@ const Login = ({ setLogin }) => {
 
     try {
       const response = await api.post(`${BASE_URL}auth/login`, formData);
+      console.log(response.data.user)
       const { token, user } = response.data;
       const role = user.role;
 
@@ -33,8 +35,8 @@ const Login = ({ setLogin }) => {
         setLogin(role);
         localStorage.setItem("login", role);
         localStorage.setItem("authToken", token);
-        console.log(user);
         localStorage.setItem("user_id",user.id);
+        localStorage.setItem("login_detail",user.id);
 
         Swal.fire({
           title: 'Success!',
@@ -152,8 +154,7 @@ const Login = ({ setLogin }) => {
                   padding: "10px 10px 10px 40px",
                   borderRadius: "8px",
                   border: "1px solid #ccc",
-                  outline: "none"
-                }}
+                  outline: "none"}}
                 required
               />
             </div>
@@ -176,8 +177,7 @@ const Login = ({ setLogin }) => {
             marginTop: "20px",
             textAlign: "center",
             fontSize: "14px",
-            color: "#666"
-          }}>
+            color: "#666"}}>
            
          
             {/* <p style={{ marginTop: "15px" }}>
@@ -190,10 +190,9 @@ const Login = ({ setLogin }) => {
               backgroundColor: "#1d4ed8",
               color: "#fff",
               border: "none",
-          
               cursor: "pointer"
             }}> 
-        <IoChevronBackCircleSharp /> Back To Home
+          <IoChevronBackCircleSharp /> Back To Home
             </Link>
           </div>
         </div>

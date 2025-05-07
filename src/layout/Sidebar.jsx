@@ -211,7 +211,6 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
           ) : (
             ""
           )}
-
           {login == "counselor" ? (
             <li
               className={`menu-item ${
@@ -743,7 +742,6 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
           ) : (
             ""
           )}
-
           {/* Roles Permissions */}
           {login == "admin" ? (
             <li
@@ -768,7 +766,6 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
           ) : (
             ""
           )}
-
           {/* Reporting & Analytics */}
           {login == "admin" ? (
             <li
@@ -839,30 +836,6 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
             ""
           )}
 
-          {/* Course & University*/}
-          {/* {login == "admin" ? (
-            <li
-              className={`menu-item ${
-                isActive("/PaymentInvoiceManagement") ? "active" : ""
-              }`}
-            >
-              <div
-                className="menu-link menu-i"
-                onClick={() => {
-                  navigate("/PaymentInvoiceManagement");
-                  // menuItemClick();
-                }}
-              >
-                <i
-                  onClick={() => toggleSidebar()}
-                  className="fa-solid fa-university "
-                ></i>
-                <span className="menu-text">Course & University</span>
-              </div>
-            </li>
-          ) : (
-            ""
-          )} */}
           {login == "student" ? (
             <li
               className={`menu-item ${
