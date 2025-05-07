@@ -156,7 +156,7 @@ function StudentDetailsPage() {
     }
   };
 
-
+console.log(":");
   return (
     <div className="container mt-5">
       {/* Profile Header */}
