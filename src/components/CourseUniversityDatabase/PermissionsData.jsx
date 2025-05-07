@@ -1,70 +1,83 @@
 import React, { useState, useEffect } from "react";
 import { Table, Form, Container } from "react-bootstrap";
 import { useParams, Link } from "react-router-dom";
+import api from "../../interceptors/axiosInterceptor";
 
-// Feature modules (static across all roles)
+// Permissions data for Student and Counselor
 const permissionsDataStudent = [
-  { module: "Dashboard", features: ["Dashboard"] },
-  { module: "Student Managenement", features: ["Student Details", "Student Programs", "Communication"] },
-  { module: "Appication Managment", features: ["Appication Managment"] },
-  { module: "Tasks Management", features: ["Tasks Management"] },
-  { module: "Payments & Invoices", features: ["Payments & Invoices"] },
-  { module: "Course & University", features: ["Course & University"] },
-];
-const permissionsDataCounselor = [
-  { module: "Dashboard", features: ["Dashboard"] },
-  { module: "Leads & Inquiries", features: ["Inquiry", "Lead", "Status", "Task"] },
-  { module: "Student Managenement", features: ["Student Details", "Communication"] },
-  { module: "Course & University", features: ["Course & University"] },
+  { module: "Dashboard", features: [{ name: "Dashboard" }] },
+  { module: "Student Managenement", features: [{ name: "Student Details" }, { name: "Student Programs" }, { name: "Communication" }] },
+  { module: "Application Management", features: [{ name: "Application Management" }] },
+  { module: "Tasks Management", features: [{ name: "Tasks Management" }] },
+  { module: "Payments & Invoices", features: [{ name: "Payments & Invoices" }] },
+  { module: "Course & University", features: [{ name: "Course & University" }] },
 ];
 
-// Default permissions for each role
-const roleDefaults = {
-  "Counsellor": {
-    "Student Managenement": ["view", "edit"],
-    "Tasks Management": ["view", "add", "edit"],
-  },
-  "Student": {
-    "Dashboard": ["view"],
-    "Student Managenement": ["view"],
-  },
-};
+const permissionsDataCounselor = [
+  { module: "Dashboard", features: [{ name: "Dashboard" }] },
+  { module: "Leads & Inquiries", features: [{ name: "Inquiry" }, { name: "Lead" }, { name: "Status" }, { name: "Task" }] },
+  { module: "Student Managenement", features: [{ name: "Student Details" }, { name: "Communication" }] },
+  { module: "Course & University", features: [{ name: "Course & University" }] },
+];
 
 const PermissionsTable = () => {
-  const { role } = useParams();  // Get role from route
+  const { role } = useParams(); // Get role from route
   const [permissions, setPermissions] = useState([]);
+  console.log(role)
 
   // Load role-based permissions on mount
   useEffect(() => {
     let permissionsData;
     if (role === "Student") {
-      permissionsData = permissionsDataStudent;  // Student data
-    } else if (role === "Counsellor") {
-      permissionsData = permissionsDataCounselor;  // Counselor data
+      permissionsData = permissionsDataStudent; // Student data
+    } else if (role === "Counselor") {
+      permissionsData = permissionsDataCounselor; // Counselor data
     }
 
-    const updated = permissionsData.map((mod) => {
-      return {
-        module: mod.module,
-        features: mod.features.map((feat) => {
-          const perms = { name: feat, view: false, add: false, edit: false, delete: false };
+    // Fetch role-specific permissions from the backend
+    const fetchPermissions = async () => {
+      try {
+        const response = await api.get(`permission?role_name=${role}`);
+        const backendPermissions = response.data;
 
-          // Check if role has full access to this module
-          if (roleDefaults[role] === "all") {
-            return { ...perms, view: true, add: true, edit: true, delete: true };
-          }
+        // Map backend data to permissions structure
+        const updatedPermissions = permissionsData.map((mod) => {
+          return {
+            module: mod.module,
+            features: mod.features.map((feat) => {
+              // Initialize permissions for the feature
+              const perms = {
+                name: feat.name,
+                view: false,
+                add: false,
+                edit: false,
+                delete: false,
+              };
 
-          const access = roleDefaults[role]?.[mod.module] || [];
-          access.forEach((type) => {
-            perms[type] = true;
-          });
+              // Find matching permission from backend data
+              const matchedPermission = backendPermissions.find(
+                (permission) => permission.permission_name === feat.name
+              );
 
-          return perms;
-        }),
-      };
-    });
+              if (matchedPermission) {
+                perms.view = matchedPermission.view_permission === 1;
+                perms.add = matchedPermission.add_permission === 1;
+                perms.edit = matchedPermission.edit_permission === 1;
+                perms.delete = matchedPermission.delete_permission === 1;
+              }
 
-    setPermissions(updated);
+              return perms;
+            }),
+          };
+        });
+
+        setPermissions(updatedPermissions);
+      } catch (error) {
+        console.error("Error fetching permissions:", error);
+      }
+    };
+
+    fetchPermissions();
   }, [role]);
 
   const handleCheckboxChange = (moduleIndex, featureIndex, permissionType) => {
@@ -74,10 +87,10 @@ const PermissionsTable = () => {
     setPermissions(updatedPermissions);
   };
 
-  const handleSave = () => {
-    console.log(JSON.stringify(permissions, null, 2));
-    alert("Permissions saved to console (mock). You can now integrate API.");
-  };
+  // const handleSave = () => {
+  //   console.log(JSON.stringify(permissions, null, 2));
+  //   alert("Permissions saved to console (mock). You can now integrate API.");
+  // };
 
   return (
     <Container className="mt-4">
@@ -107,6 +120,7 @@ const PermissionsTable = () => {
                   <strong>{module.module}</strong>
                 </td>
               </tr>
+
               {module.features.map((feature, featureIndex) => (
                 <tr key={featureIndex}>
                   <td>{feature.name}</td>
@@ -128,15 +142,11 @@ const PermissionsTable = () => {
         </tbody>
       </Table>
 
-      <div className="d-flex justify-content-end">
-        <button
-          className="btn btn-dark"
-          style={{ border: "none" }}
-          onClick={handleSave}
-        >
+      {/* <div className="d-flex justify-content-end">
+        <button className="btn btn-dark" style={{ border: "none" }} onClick={handleSave}>
           Save Permissions
         </button>
-      </div>
+      </div> */}
     </Container>
   );
 };

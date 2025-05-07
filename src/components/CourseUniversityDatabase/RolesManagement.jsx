@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import {
   Table,
@@ -14,7 +14,7 @@ import { TagFill, TrashFill } from "react-bootstrap-icons";
 
 const RolesManagement = () => {
   const [roles, setRoles] = useState([
-    { name: "Counsellor", type: "Customer" },
+    { name: "Counselor", type: "Customer" },
    
     { name: "Student", type: "Customer" },
   ]);
@@ -36,6 +36,7 @@ const RolesManagement = () => {
   const filteredRoles = roles.filter((role) =>
     role.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  
 
   return (
     <Container className="p-4">
