@@ -56,7 +56,6 @@ const AdmissionTracking = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
     alert("Form submitted successfully!");
   };
 

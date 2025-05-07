@@ -70,7 +70,7 @@ function App() {
   const [login, setLogin] = useState(localStorage.getItem("login") || "");
 
   useEffect(() => {
-    console.log("Current login state:", login);
+   
     if (login) {
       localStorage.setItem("login", login);
     }
@@ -131,11 +131,7 @@ function App() {
         >
           <LeadProvider>
             <Routes>
-              {/* this is VB routes for all the university  */}
-              <Route
-                path="/university"
-                element={<BmuUniversity></BmuUniversity>}
-              ></Route>
+           
               <Route
                 path="/university/GyorUniversity"
                 element={<GyorUniversity></GyorUniversity>}
@@ -250,7 +246,7 @@ function App() {
               ></Route>
               {/* student detail single page */}
               <Route
-                path="/studentProfile/:admissionNo"
+                path="/studentProfile/:studentId"
                 element={<StudentDetailsPage></StudentDetailsPage>}
               ></Route>
 
@@ -288,7 +284,11 @@ function App() {
                 path="/university"
                 element={<UniversitySubmissions></UniversitySubmissions>}
               ></Route>
-
+   {/* this is VB routes for all the university  */}
+   <Route
+                path="/university/:id"
+                element={<BmuUniversity></BmuUniversity>}
+              ></Route>
               {/* Admission decisions */}
               <Route
                 path="/applications"

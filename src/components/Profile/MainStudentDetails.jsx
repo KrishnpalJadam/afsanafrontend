@@ -12,15 +12,16 @@ import {
   Tab,
   Tabs,
 } from "react-bootstrap";
+import api from "../../interceptors/axiosInterceptor";
+import BASE_URL from "../../Config";
 
 const Profile = () => {
   const [student, setStudent] = useState(null);
   console.log(student);
   useEffect(() => {
     const id = localStorage.getItem('user_id')
-    axios.get(`https://cj2ww6qd-5000.inc1.devtunnels.ms/api/auth/getStudentById/${id}`)
+    api.get(`${BASE_URL}auth/getStudentById/${id}`)
       .then(response => {
-
         setStudent(response.data);
       })
       .catch(err => {
@@ -28,18 +29,26 @@ const Profile = () => {
       });
   }, []);
 
+
+
+
+  console.log("Student Photo:", student?.photo);
+
+
+
+
   return (
     <Container className="mt-4">
       <Card className="shadow mb-4">
         <Card.Body>
           <Row>
             <Col md={2} className="text-center">
-              <Image
-                style={{ height: "150px", width: "150px", objectFit: "cover" }}
+              <img
                 src={student?.photo}
-                roundedCircle
-                fluid
+                alt="Student Photo" crossorigin="anonymous"
+                style={{ height: "150px", width: "150px", objectFit: "cover", borderRadius: "50%" }}
               />
+             
             </Col>
             <Col md={10} className="text-center mt-3">
               <h3>{student?.full_name}</h3>

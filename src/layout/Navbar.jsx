@@ -17,7 +17,7 @@ const Navbar = ({ toggleSidebar }) => {
     setShowNotifications(!showNotifications);
   };
   const logout = () => {
-    localStorage.removeItem("login");
+      localStorage.clear()    
     navigate("/"); // This should redirect
   };
   return (

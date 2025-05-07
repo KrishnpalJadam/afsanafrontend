@@ -17,7 +17,6 @@ import {
 import { ProgressBar, Card, Row, Col, Button, Badge } from "react-bootstrap";
 import React from "react";
 
-
 const students = [
   {
     studentId: 1001,
@@ -102,7 +101,7 @@ const student = {
 function StudentDetailsPage() {
   const [student , setStudent ] = useState()
   const { studentId } = useParams();
-  console.log("ID1",studentId)
+  console.log("studentId", studentId);
    
   // const selectedStudent = students.find(
   //   (student) => student.studentId.toString() === studentId
@@ -111,23 +110,34 @@ function StudentDetailsPage() {
   // if (!selectedStudent) {
   //   return <div>Student not found</div>;
   // }
- useEffect(() => {
+  const authToken = localStorage.getItem('authToken')
+  console.log("authToken", authToken);
+  useEffect(() => {
+     
+  
     const fetchStudentData = async () => {
       try {
-        const response = await fetch(
-          `${BASE_URL}auth/getStudentById/${studentId}`
-        );
+        const response = await fetch(`${BASE_URL}auth/getStudentById/${studentId}`, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
+  
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+  
         const data = await response.json();
         setStudent(data);
-        console.log("Student data:", data);
+        console.log("data", data);
       } catch (error) {
         console.error("Error fetching student data:", error);
       }
     };
-
+  
     fetchStudentData();
-  }, [studentId]);
-  console.log("student",student)
+  }, [studentId]); // ✅ include authToken in dependency array
+  
   // Badge colors based on status
   const getBadge = (status) => {
     switch (status) {
@@ -146,7 +156,7 @@ function StudentDetailsPage() {
     }
   };
 
-
+console.log(":");
   return (
     <div className="container mt-5">
       {/* Profile Header */}

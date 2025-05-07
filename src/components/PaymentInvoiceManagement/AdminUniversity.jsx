@@ -57,6 +57,7 @@ const AdminUniversity = ({ university }) => {
               src={`${university.logo_url}`}
               alt={`${university.name} Logo`}
               className="rounded-circle"
+              crossorigin="anonymous"
               style={{
                 width: "50px",
                 height: "50px",
@@ -117,11 +118,11 @@ const AdminUniversity = ({ university }) => {
             Apply Now
           </Link>
           {role === "admin" && (
-          <div>
-            <Button variant="danger" onClick={() => handleDeleteUniversity(university.id)} className="mt-2 w-100">
-              Delete
-            </Button>
-          </div>
+            <div>
+              <Button variant="danger" onClick={() => handleDeleteUniversity(university.id)} className="mt-2 w-100">
+                Delete
+              </Button>
+            </div>
           )}
 
         </div>

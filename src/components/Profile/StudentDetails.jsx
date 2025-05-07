@@ -75,6 +75,7 @@ useEffect(() => {
     setPhoto(null);
     setDocuments([]);
     setSelectedStudent(null);
+    window.location.reload(true);
   };
 
   const handleSubmit = async (e) => {
@@ -135,19 +136,12 @@ useEffect(() => {
       // Reload students
       const { data } = await api.get(`${BASE_URL}auth/getAllStudents`);
       setStudentsData(data);
+      window.location.reload(true);
   
     } catch (err) {
       console.error("Error:", err);
       alert("Submission failed");
     }
-  };
-  
-  
-  
-  const closeBootstrapModal = (modalId) => {
-    const modalElement = document.getElementById(modalId);
-    const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
-    modal.hide();
   };
   
   useEffect(() => {
@@ -184,7 +178,7 @@ useEffect(() => {
      }
      deleteTask();
   };
-
+console.log(student)
 
   return (
     <div className="container pt-3">
@@ -352,6 +346,8 @@ useEffect(() => {
                   className="btn-close"
                   data-bs-dismiss="modal"
                   aria-label="Close"
+                  onClick={resetForm}
+                
                 />
               </div>
               <div className="modal-body">
