@@ -102,7 +102,6 @@ const student = {
 function StudentDetailsPage() {
   const [student , setStudent ] = useState()
   const { studentId } = useParams();
-  console.log("ID1",studentId)
    
   // const selectedStudent = students.find(
   //   (student) => student.studentId.toString() === studentId
@@ -119,7 +118,6 @@ function StudentDetailsPage() {
         );
         const data = await response.json();
         setStudent(data);
-        console.log("Student data:", data);
       } catch (error) {
         console.error("Error fetching student data:", error);
       }
@@ -127,7 +125,6 @@ function StudentDetailsPage() {
 
     fetchStudentData();
   }, [studentId]);
-  console.log("student",student)
   // Badge colors based on status
   const getBadge = (status) => {
     switch (status) {

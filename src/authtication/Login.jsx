@@ -33,7 +33,7 @@ const Login = ({ setLogin }) => {
         setLogin(role);
         localStorage.setItem("login", role);
         localStorage.setItem("authToken", token);
-        console.log(user);
+         
         localStorage.setItem("user_id",user.id);
 
         Swal.fire({

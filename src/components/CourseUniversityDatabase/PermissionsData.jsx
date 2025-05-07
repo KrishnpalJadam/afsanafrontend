@@ -75,7 +75,6 @@ const PermissionsTable = () => {
   };
 
   const handleSave = () => {
-    console.log("Saved Permissions for", role);
     console.log(JSON.stringify(permissions, null, 2));
     alert("Permissions saved to console (mock). You can now integrate API.");
   };
