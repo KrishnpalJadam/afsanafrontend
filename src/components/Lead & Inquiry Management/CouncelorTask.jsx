@@ -126,8 +126,7 @@ const CounselorTask = () => {
                     <Button
                       variant="info"
                       size="sm"
-                      onClick={() => handleCheckNotes(task)}
-                    >
+                      onClick={() => handleCheckNotes(task)}>
                       Check Notes
                     </Button>
                   </td>
@@ -140,8 +139,7 @@ const CounselorTask = () => {
                         size="sm"
                         onClick={() =>
                           handleStatusToggle(task.id, task.status)
-                        }
-                      >
+                        }>
                         Mark Complete
                       </Button>
                     )}
