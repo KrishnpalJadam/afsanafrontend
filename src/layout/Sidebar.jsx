@@ -3,14 +3,30 @@ import { useNavigate, useLocation } from "react-router-dom";
 import "./Sidebar.css";
 import { FaUsers, FaRegFileAlt } from "react-icons/fa"; // FontAwesome
 import { BsFillPersonLinesFill } from "react-icons/bs"; // Bootstrap
+import api from "../interceptors/axiosInterceptor";
+
 
 const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
   const [openSubmenu, setOpenSubmenu] = useState(null); // Tracks the open submenu
   const navigate = useNavigate();
   const location = useLocation();
+  const [permissions , setPermissions] = useState()
+  const role = localStorage.getItem("login");
+  
+ useEffect(()=>{
+     const fetchData = async()=>{
+      try {
+        const response = await api.get(`permission?role_name=${role}`);
+        setPermissions(response.data)
+       } catch (error) {
+         console.log(error)
+       }
+     }
+     fetchData();
+       
 
+ },[])
   useEffect(() => {
-    console.log("Updated Login State:", login);
     if (!login) {
       navigate("/login"); // Agar login nahi hai toh login page par bhejo
     }
@@ -29,7 +45,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
   const isSubmenuActive = (paths) => {
     return paths.some((path) => location.pathname.startsWith(path));
   };
-
+  console.log(permissions)
   return (
     <div className={`sidebar-container ${collapsed ? "collapsed" : ""}`}>
       <div className="sidebar">

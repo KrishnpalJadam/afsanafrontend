@@ -6,9 +6,9 @@ import api from "../../interceptors/axiosInterceptor";
 // Permissions data for Student and Counselor
 const permissionsDataStudent = [
   { module: "Dashboard", features: [{ name: "Dashboard" }] },
-  { module: "Student Managenement", features: [{ name: "Student Details" }, { name: "Student Programs" }, { name: "Communication" }] },
+  { module: "Student Management", features: [{ name: "Student Details" }, { name: "Student Programs" }, { name: "Communication" }] },
   { module: "Application Management", features: [{ name: "Application Management" }] },
-  { module: "Tasks Management", features: [{ name: "Tasks Management" }] },
+  { module: "Task Management", features: [{ name: "Task Management" }] },
   { module: "Payments & Invoices", features: [{ name: "Payments & Invoices" }] },
   { module: "Course & University", features: [{ name: "Course & University" }] },
 ];
@@ -16,14 +16,14 @@ const permissionsDataStudent = [
 const permissionsDataCounselor = [
   { module: "Dashboard", features: [{ name: "Dashboard" }] },
   { module: "Leads & Inquiries", features: [{ name: "Inquiry" }, { name: "Lead" }, { name: "Status" }, { name: "Task" }] },
-  { module: "Student Managenement", features: [{ name: "Student Details" }, { name: "Communication" }] },
+  { module: "Student Management", features: [{ name: "Student Details" }, { name: "Communication" }] },
   { module: "Course & University", features: [{ name: "Course & University" }] },
 ];
 
 const PermissionsTable = () => {
   const { role } = useParams(); // Get role from route
   const [permissions, setPermissions] = useState([]);
-  console.log(role)
+  const [roles, setRoles] = useState([]);
 
   // Load role-based permissions on mount
   useEffect(() => {
@@ -52,6 +52,7 @@ const PermissionsTable = () => {
                 add: false,
                 edit: false,
                 delete: false,
+                id: null, // Store permission ID for updating
               };
 
               // Find matching permission from backend data
@@ -64,6 +65,7 @@ const PermissionsTable = () => {
                 perms.add = matchedPermission.add_permission === 1;
                 perms.edit = matchedPermission.edit_permission === 1;
                 perms.delete = matchedPermission.delete_permission === 1;
+                perms.id = matchedPermission.id; // Store the permission ID
               }
 
               return perms;
@@ -80,17 +82,33 @@ const PermissionsTable = () => {
     fetchPermissions();
   }, [role]);
 
-  const handleCheckboxChange = (moduleIndex, featureIndex, permissionType) => {
+  const handleCheckboxChange = async (moduleIndex, featureIndex, permissionType) => {
     const updatedPermissions = [...permissions];
-    updatedPermissions[moduleIndex].features[featureIndex][permissionType] =
-      !updatedPermissions[moduleIndex].features[featureIndex][permissionType];
-    setPermissions(updatedPermissions);
-  };
+    const feature = updatedPermissions[moduleIndex].features[featureIndex];
+    const newValue = !feature[permissionType];
+    feature[permissionType] = newValue;
 
-  // const handleSave = () => {
-  //   console.log(JSON.stringify(permissions, null, 2));
-  //   alert("Permissions saved to console (mock). You can now integrate API.");
-  // };
+    setPermissions(updatedPermissions);
+
+    // Prepare the updated permissions data
+    const permissionData = {
+      view_permission: feature.view,
+      add_permission: feature.add,
+      edit_permission: feature.edit,
+      delete_permission: feature.delete,
+    };
+
+    // Send the updated permission to the backend
+    try {
+      await api.put(`/permission/${feature.id}`, permissionData);
+      console.log(`Permission for ${feature.name} updated successfully.`);
+    } catch (error) {
+      console.error("Error updating permission:", error);
+      // If the update fails, revert the change
+      feature[permissionType] = !newValue;
+      setPermissions(updatedPermissions);
+    }
+  };
 
   return (
     <Container className="mt-4">
@@ -141,12 +159,6 @@ const PermissionsTable = () => {
           ))}
         </tbody>
       </Table>
-
-      {/* <div className="d-flex justify-content-end">
-        <button className="btn btn-dark" style={{ border: "none" }} onClick={handleSave}>
-          Save Permissions
-        </button>
-      </div> */}
     </Container>
   );
 };
