@@ -70,7 +70,7 @@ function App() {
   const [login, setLogin] = useState(localStorage.getItem("login") || "");
 
   useEffect(() => {
-    console.log("Current login state:", login);
+   
     if (login) {
       localStorage.setItem("login", login);
     }
@@ -250,7 +250,7 @@ function App() {
               ></Route>
               {/* student detail single page */}
               <Route
-                path="/studentProfile/:admissionNo"
+                path="/studentProfile/:studentId"
                 element={<StudentDetailsPage></StudentDetailsPage>}
               ></Route>
 
@@ -285,7 +285,7 @@ function App() {
 
               {/* university details */}
               <Route
-                path="/university"
+                path="/university/:id"
                 element={<UniversitySubmissions></UniversitySubmissions>}
               ></Route>
 

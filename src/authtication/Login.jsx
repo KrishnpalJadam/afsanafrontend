@@ -36,6 +36,8 @@ const Login = ({ setLogin }) => {
         console.log(user);
         localStorage.setItem("user_id",user.student_id);
         console.log(user.id);
+         
+    
 
         Swal.fire({
           title: 'Success!',
