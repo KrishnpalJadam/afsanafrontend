@@ -199,7 +199,7 @@ const UniversityCards = () => {
       });
     }
   };
- 
+
 
   return (
     <div className="container">
@@ -217,25 +217,22 @@ const UniversityCards = () => {
                 <div className="card shadow-sm">
                   <div className="card-body">
                     <div className="d-flex align-items-center mb-4">
-                    <img
-  src={university.logo_url}
-  alt={`${university.name} Logo`}
-  className="rounded-circle"
-  style={{
-    width: "50px",
-    height: "50px",
-    objectFit: "cover",
-    padding: "5px",
-  }}
-  onError={(e) => {
-    e.target.onerror = null;
-    e.target.src = "/default-logo.png";
-  }}
-/>
-
-
-
-
+                      <img
+                        src={university.logo_url}
+                        alt={`${university.name} Logo`}
+                        className="rounded-circle"
+                        crossorigin="anonymous"
+                        style={{
+                          width: "50px",
+                          height: "50px",
+                          objectFit: "cover",
+                          padding: "5px",
+                        }}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "/default-logo.png";
+                        }}
+                      />
                       <h5 className="ml-3">{university.name}</h5>
                     </div>
 
@@ -282,7 +279,7 @@ const UniversityCards = () => {
                     {/* <Link to={`/university/${university.id}`} className="btn btn-primary w-100">
                       Apply Now
                     </Link> */}
-                      <Link to="#" className="btn btn-primary w-100">
+                    <Link to="#" className="btn btn-primary w-100">
                       Apply Now
                     </Link>
                     {role === "admin" && (
