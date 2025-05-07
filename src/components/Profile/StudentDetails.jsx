@@ -178,7 +178,7 @@ useEffect(() => {
      }
      deleteTask();
   };
-
+console.log(student)
 
   return (
     <div className="container pt-3">
