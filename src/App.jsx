@@ -131,11 +131,7 @@ function App() {
         >
           <LeadProvider>
             <Routes>
-              {/* this is VB routes for all the university  */}
-              <Route
-                path="/university"
-                element={<BmuUniversity></BmuUniversity>}
-              ></Route>
+           
               <Route
                 path="/university/GyorUniversity"
                 element={<GyorUniversity></GyorUniversity>}
@@ -285,10 +281,14 @@ function App() {
 
               {/* university details */}
               <Route
-                path="/university/:id"
+                path="/university"
                 element={<UniversitySubmissions></UniversitySubmissions>}
               ></Route>
-
+   {/* this is VB routes for all the university  */}
+   <Route
+                path="/university/:id"
+                element={<BmuUniversity></BmuUniversity>}
+              ></Route>
               {/* Admission decisions */}
               <Route
                 path="/applications"

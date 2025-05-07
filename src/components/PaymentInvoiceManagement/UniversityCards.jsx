@@ -75,25 +75,22 @@ const UniversityCards = () => {
                 <div className="card shadow-sm">
                   <div className="card-body">
                     <div className="d-flex align-items-center mb-4">
-                    <img
-  src={university.logo_url}
-  alt={`${university.name} Logo`}
-  className="rounded-circle"
-  style={{
-    width: "50px",
-    height: "50px",
-    objectFit: "cover",
-    padding: "5px",
-  }}
-  onError={(e) => {
-    e.target.onerror = null;
-    e.target.src = "/default-logo.png";
-  }}
-/>
-
-
-
-
+                      <img
+                        src={university.logo_url}
+                        alt={`${university.name} Logo`}
+                        className="rounded-circle"
+                        style={{
+                          width: "50px",
+                          height: "50px",
+                          objectFit: "cover",
+                          padding: "5px",
+                        }}
+                        crossorigin="anonymous"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "/default-logo.png";
+                        }}
+                      />
                       <h5 className="ml-3">{university.name}</h5>
                     </div>
 
@@ -136,17 +133,17 @@ const UniversityCards = () => {
                         <p>📧 {university.contact_email || 'N/A'}</p>
                       </div>
                     </div>
- {
-  role=="student"
-  ?
-              <Link to={`/university/${university.id}`} className="btn btn-primary w-100">
-                Apply Now
-              </Link>
-            :
-            <Link to={"/login"} className="btn btn-primary w-100">
-            Apply Now
-          </Link>
-           }
+                    {
+                      (role == "student" || role == "counselor")
+                        ?
+                        <Link to={`/university/${university.id}`} className="btn btn-primary w-100">
+                          Apply Now
+                        </Link>
+                        :
+                        <Link to={"/login"} className="btn btn-primary w-100">
+                          Apply Now
+                        </Link>
+                    }
                     {role === "admin" && (
                       <div>
                         <Button

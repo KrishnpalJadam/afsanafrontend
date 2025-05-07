@@ -105,6 +105,13 @@ function ManaDetails() {
                     src={student?.photo}
                     alt="Profile"
                     className="rounded-circle border me-3"
+                    crossorigin="anonymous"
+                    style={{
+                      width: "100px",
+                      height: "100px",
+                      objectFit: "cover",
+                      padding: "5px",
+                    }}
                   />
                   <div className="flex-grow-1">
                     <h5 className="text-primary">{student?.full_name}</h5>
