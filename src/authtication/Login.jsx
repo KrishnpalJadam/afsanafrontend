@@ -38,7 +38,6 @@ const Login = ({ setLogin }) => {
         localStorage.setItem("login_detail", JSON.stringify(response.data.user));
         localStorage.setItem("counselor_id", user.counselor_id);
         localStorage.setItem("student_id", user.student_id);
-        console.log(user);
         localStorage.setItem("user_id",user.student_id);
         const permissionsResponse = await api.get(`permission?role_name=${role}`);
         localStorage.setItem("permissions", JSON.stringify(permissionsResponse.data));
