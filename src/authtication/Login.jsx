@@ -27,7 +27,6 @@ const Login = ({ setLogin }) => {
 
     try {
       const response = await api.post(`${BASE_URL}auth/login`, formData);
-      console.log(response.data)
       const { token, user } = response.data;
       const role = user.role;
 
@@ -42,7 +41,6 @@ const Login = ({ setLogin }) => {
         console.log(user);
         localStorage.setItem("user_id",user.student_id);
         const permissionsResponse = await api.get(`permission?role_name=${role}`);
-        console.log("fyh",permissionsResponse)
         localStorage.setItem("permissions", JSON.stringify(permissionsResponse.data));
          
     
