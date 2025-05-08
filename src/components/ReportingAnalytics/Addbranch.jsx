@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import api from '../../interceptors/axiosInterceptor'
 import BASE_URL from '../../Config'
 import { useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
-import { Button } from 'react-bootstrap'
+import { Button, Card, Table } from 'react-bootstrap'
 
 const Addbranch = () => {
     const [form, setForm] = useState({
@@ -12,6 +12,7 @@ const Addbranch = () => {
         branch_phone: "",
         branch_address: "",
     })
+    const [getData, setData] = useState([])
     const navigate = useNavigate();
     const handelChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -47,6 +48,24 @@ const Addbranch = () => {
         }
     }
 
+    useEffect(() => {
+        const branchData = async () => {
+            try {
+                const responce = await api.get(`${BASE_URL}branch`)
+                setData(responce.data)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        branchData()
+    }, [])
+
+    const handledelete = async (id) => {
+        const deleteData = await api.delete(`${BASE_URL}branch/${id}`)
+        setData(deleteData)
+        console.log(id)
+    }
+
     return (
         <div className='p-4'>
             <div className='d-flex' style={{ justifyContent: "space-between" }}>
@@ -61,51 +80,56 @@ const Addbranch = () => {
 
 
 
-            <Card>
-        <Card.Body>
-          <Table bordered hover responsive className="text-center text-nowrap">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Student</th>
-                <th>Task</th>
-                <th>Due Date</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-             
-                <tr key={task?.id}>
-                  <td>{index + 1}</td>
-                  <td>{task?.student_name}</td>
-                  <td>{task?.title}</td>
-                  
-                  <td>
-                   
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      className="me-1"
-                      
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      
-                    >
-                      Delete
-                    </Button>
-                  </td>
-                </tr>
-           
-             
-            </tbody>
-          </Table>
-        </Card.Body>
-      </Card>
+            <Card className='mt-4'>
+                <Card.Body>
+                    <Table bordered hover responsive className="text-center text-nowrap">
+                        <thead>
+                            <tr>
+                                <th>Sr.</th>
+                                <th>Branch Name</th>
+                                <th>Branch Email</th>
+                                <th>Branch Address</th>
+                                <th>Branch Phone</th>
+
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {getData?.map((item, index) => {
+                                return (
+                                    <tr>
+                                        <td>{index + 1}</td>
+                                        <td>{item?.branch_name}</td>
+                                        <td>{item?.branch_email}</td>
+                                        <td>{item?.branch_address}</td>
+                                        <td>{item?.branch_phone}</td>
+
+                                        <td>
+                                            <Button
+                                                variant="primary"
+                                                size="sm"
+                                                className="me-1"
+                                            >
+                                                Edit
+                                            </Button>
+                                            <Button
+                                                variant="danger"
+                                                size="sm"
+                                                onClick={() => handledelete(item.id)}
+                                            >
+                                                Delete
+                                            </Button>
+                                        </td>
+                                    </tr>
+                                )
+                            })}
+
+
+
+                        </tbody>
+                    </Table>
+                </Card.Body>
+            </Card>
 
 
             <div class="modal" id="myModal">
