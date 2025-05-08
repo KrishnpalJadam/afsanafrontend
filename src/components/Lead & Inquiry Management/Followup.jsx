@@ -4,6 +4,7 @@ import { Button, Table, Form, Modal, Badge } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import BASE_URL from '../../Config'; // Assuming BASE_URL is already set
 import api from '../../interceptors/axiosInterceptor';
+import { hasPermission } from '../../authtication/permissionUtils';
 
 const Followup = () => {
     const [followUps, setFollowUps] = useState([]); // For storing follow-up data
@@ -176,7 +177,8 @@ const Followup = () => {
                  {/* Today's Follow-ups */}
             <h4 className="mt-3">Today's Follow-ups</h4>
             <div>
-            <Button variant="secondary" className='mt-2' onClick={() => setShowFollowUpModal(true)}>
+            <Button variant="secondary" className='mt-2' onClick={() => setShowFollowUpModal(true)}           disabled={!hasPermission("Inquiry","add")}
+            utton>
                 Add Follow-up
             </Button>
             </div>
@@ -215,7 +217,10 @@ const Followup = () => {
                                 {/* <Button variant="info" size="sm" onClick={() => handleViewFollowUpDetail(followUp.id)}>
                                     View
                                 </Button> */}
-                                <Button variant="danger" size="sm" onClick={() => handleDeleteFollowUp(followUp.id)} className="ms-2">
+                                <Button variant="danger" size="sm" onClick={() => handleDeleteFollowUp(followUp.id)} className="ms-2"
+                                              disabled={!hasPermission("Inquiry","delete")}
+                                    
+                                    >
                                     Delete
                                 </Button>
                             </td>

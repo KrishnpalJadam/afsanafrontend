@@ -2,6 +2,7 @@ import React from "react";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import { FaWhatsapp, FaPhoneAlt, FaEnvelope, FaComments } from "react-icons/fa";
 import TawkMessenger from "../../TawkMessenger";
+import { hasPermission } from "../../authtication/permissionUtils";
 
 const ContactSupport = () => {
   const openChat = () => {
@@ -31,6 +32,7 @@ const ContactSupport = () => {
                   variant="primary"
                   //   onClick={() => alert("Opening chat...")}
                   onClick={openChat}
+                  disabled={!hasPermission("Communication","add")}
                 >
                   Start Chat
                 </Button>
@@ -45,7 +47,7 @@ const ContactSupport = () => {
                 <FaEnvelope size={40} className="mb-3 text-danger" />
                 <Card.Title>Email Us</Card.Title>
                 <Card.Text>Send us an email and we'll reply shortly.</Card.Text>
-                <Button variant="danger" href="mailto:support@yourdomain.com">
+                <Button variant="danger" href="mailto:support@yourdomain.com" disabled={!hasPermission("Communication","add")}>
                   Send Email
                 </Button>
               </Card.Body>
@@ -63,6 +65,7 @@ const ContactSupport = () => {
                   variant="success"
                   href="https://wa.me/919999999999"
                   target="_blank"
+                  disabled={!hasPermission("Communication","add")}
                 >
                   Chat on WhatsApp
                 </Button>
@@ -77,7 +80,9 @@ const ContactSupport = () => {
                 <FaPhoneAlt size={40} className="mb-3 text-info" />
                 <Card.Title>Call Us</Card.Title>
                 <Card.Text>Reach out via phone during working hours.</Card.Text>
-                <Button variant="info" href="tel:+919999999999">
+                <Button variant="info" href="tel:+919999999999"
+                disabled={!hasPermission("Communication","add")}
+                >
                   Call Now
                 </Button>
               </Card.Body>

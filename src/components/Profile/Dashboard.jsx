@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useEffect} from "react";
 import { Container, Row, Col, Card, ProgressBar } from "react-bootstrap";
 import { Line, Pie } from "react-chartjs-2";
 import { Link } from "react-router-dom";
@@ -12,6 +12,8 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import api from "../../interceptors/axiosInterceptor";
+import { hasPermission } from "../../authtication/permissionUtils";
 
 ChartJS.register(
   LineElement,
@@ -68,6 +70,20 @@ const Dashboard = () => {
       },
     },
   };
+   const role = localStorage.getItem("login")
+    useEffect(() => {
+      const fetchPermissions = async () => {
+        try {
+          const permissionsResponse = await api.get(`permission?role_name=${role}`);
+          console.log("fyh", permissionsResponse);
+          localStorage.setItem("permissions", JSON.stringify(permissionsResponse.data));
+        } catch (error) {
+          console.error("Error fetching permissions:", error);
+        }
+      };
+    
+      fetchPermissions();
+    }, [role]);
 
   // Add this options for Line chart as well (optional, to be consistent)
   const lineOptions = {
@@ -80,6 +96,12 @@ const Dashboard = () => {
       },
     },
   };
+  
+   
+    if(  !hasPermission("Dashboard","view")){
+      return <div> You doesn't have accessed for Dashboard</div>
+    }
+  
 
   return (
     <Container fluid className="mt-4">
