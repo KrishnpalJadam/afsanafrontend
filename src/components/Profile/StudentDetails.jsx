@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import BASE_URL from "../../Config";
 import { FaTrash } from "react-icons/fa";
 import api from "../../interceptors/axiosInterceptor";
+import { hasPermission } from "../../authtication/permissionUtils";
 
 const StudentDetails = () => {
   const [show, setShow] = useState(false); // State for modal visibility
@@ -190,7 +191,7 @@ console.log(student)
         </div>
         <div>
           {/* <!-- Trigger Button --> */}
-          <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#studentFormModal">
+          <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#studentFormModal" disabled={!hasPermission("Student Details","add")}>
             + Add Student
           </button>
         </div>
@@ -314,8 +315,9 @@ console.log(student)
                     document.getElementById("studentFormModal").classList.add("show");
                     document.getElementById("studentFormModal").style.display = "block";
                   }}
+                  disabled={!hasPermission("Student Details","edit")}
                   >✎</button>
-                  <button className="btn btn-light btn-sm me-1" onClick={()=>{handleDelete(student?.id)}}> <FaTrash /></button>
+                  <button className="btn btn-light btn-sm me-1" onClick={()=>{handleDelete(student?.id)}} disabled={!hasPermission("Student Details","delete")}> <FaTrash /></button>
                 </td>
               </tr>
             ))}
