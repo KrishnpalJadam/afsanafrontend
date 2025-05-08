@@ -33,9 +33,10 @@ const Login = ({ setLogin }) => {
         setLogin(role);
         localStorage.setItem("login", role);
         localStorage.setItem("authToken", token);
-        console.log(user);
         localStorage.setItem("user_id",user.student_id);
-        console.log(user.id);
+        const permissionsResponse = await api.get(`permission?role_name=${role}`);
+        console.log("fyh",permissionsResponse)
+        localStorage.setItem("permissions", JSON.stringify(permissionsResponse.data));
          
     
 

@@ -3,29 +3,15 @@ import { useNavigate, useLocation } from "react-router-dom";
 import "./Sidebar.css";
 import { FaUsers, FaRegFileAlt } from "react-icons/fa"; // FontAwesome
 import { BsFillPersonLinesFill } from "react-icons/bs"; // Bootstrap
-import api from "../interceptors/axiosInterceptor";
+import { hasPermission } from "../authtication/permissionUtils";
 
 
 const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
   const [openSubmenu, setOpenSubmenu] = useState(null); // Tracks the open submenu
   const navigate = useNavigate();
   const location = useLocation();
-  const [permissions , setPermissions] = useState()
-  const role = localStorage.getItem("login");
   
- useEffect(()=>{
-     const fetchData = async()=>{
-      try {
-        const response = await api.get(`permission?role_name=${role}`);
-        setPermissions(response.data)
-       } catch (error) {
-         console.log(error)
-       }
-     }
-     fetchData();
-       
-
- },[])
+ 
   useEffect(() => {
     if (!login) {
       navigate("/login"); // Agar login nahi hai toh login page par bhejo
@@ -45,7 +31,6 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
   const isSubmenuActive = (paths) => {
     return paths.some((path) => location.pathname.startsWith(path));
   };
-  console.log(permissions)
   return (
     <div className={`sidebar-container ${collapsed ? "collapsed" : ""}`}>
       <div className="sidebar">
@@ -71,7 +56,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
               </div>
             </li>
           )}
-          {login == "counselor" && (
+          {login == "counselor" && hasPermission("Dashboard","view") && (
             <li
               className={`menu-item ${isActive("/councelor") ? "active" : ""}`}
             >
@@ -91,7 +76,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
               </div>
             </li>
           )}
-          {login == "student" && (
+          {login == "student" &&  hasPermission("Dashboard", "view") && (
             <li
               className={`menu-item ${
                 isActive("/studentProfile") ? "active" : ""
@@ -262,9 +247,9 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                 ></i>
               </div>
 
-              {openSubmenu === "leadInquiry" && (
+              {openSubmenu === "leadInquiry" &&(
                 <ul className={`submenu `}>
-                  <li
+                 { hasPermission("Inquiry","view") &&  <li
                     className={`menu-item submenu-item ${
                       isActive("/inquiry") ? "active" : ""
                     }`}
@@ -274,8 +259,8 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                     }}
                   >
                     Inquiry
-                  </li>
-                  <li
+                  </li>}
+                  {hasPermission("Lead","view") &&<li
                     className={`menu-item submenu-item ${
                       isActive("/leadCouncelor") ? "active" : ""
                     }`}
@@ -285,8 +270,8 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                     }}
                   >
                     Lead
-                  </li>
-                  <li
+                  </li>}
+                  {hasPermission("Status","view")&&<li
                     className={`menu-item submenu-item ${
                       isActive("/status") ? "active" : ""
                     }`}
@@ -296,15 +281,15 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                     }}
                   >
                     Status
-                  </li>
-                  <li
+                  </li>}
+                  {hasPermission("Task","view")&&<li
                     className={`menu-item submenu-item ${
                       isActive("/councelorTask") ? "active" : ""
                     }`}
                     onClick={() => navigate("/councelorTask")}
                   >
                     Task
-                  </li>
+                  </li>}
                   {/* <li
                     className={`menu-item submenu-item ${
                       isActive("/deal") ? "active" : ""
@@ -445,7 +430,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
 
               {openSubmenu === "student" && (
                 <ul className={`submenu `}>
-                  <li
+                  {hasPermission("Student Details","view")&&<li
                     className={`menu-item submenu-item ${
                       isActive("/studentDetails") ? "active" : ""
                     }`}
@@ -455,7 +440,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                     }}
                   >
                     Student Details
-                  </li>
+                  </li>}
                   {/* <li
                     className={`menu-item submenu-item ${
                       isActive("/admission") ? "active" : ""
@@ -467,7 +452,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   >
                     Student Admission
                   </li> */}
-                  <li
+                  {hasPermission("Communication","view")&&<li
                     className={`menu-item submenu-item ${
                       isActive("/communication") ? "active" : ""
                     }`}
@@ -477,14 +462,14 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                     }}
                   >
                     Communication
-                  </li>
+                  </li>}
                 </ul>
               )}
             </li>
           ) : (
             ""
           )}
-          {login == "student" ? (
+          {login == "student"  ? (
             <li
               className={`menu-item ${
                 isSubmenuActive([
@@ -516,9 +501,9 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                 ></i>
               </div>
 
-              {openSubmenu === "student" && (
+              {openSubmenu === "student"  && (
                 <ul className={`submenu `}>
-                  <li
+                  {hasPermission("Student Details", "view") && <li
                     className={`menu-item submenu-item ${
                       isActive("/MainStudentDetails") ? "active" : ""
                     }`}
@@ -528,9 +513,9 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                     }}
                   >
                     Student Details
-                  </li>
+                  </li>}
 
-                  <li
+                  {hasPermission("Student Programs", "view") && <li
                     className={`menu-item submenu-item ${
                       isActive("/Searchprograms") ? "active" : ""
                     }`}
@@ -540,9 +525,9 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                     }}
                   >
                     Student Programs
-                  </li>
+                  </li>}
 
-                  <li
+                  {hasPermission("Communication", "view")&&<li
                     className={`menu-item submenu-item ${
                       isActive("/ContactSupport") ? "active" : ""
                     }`}
@@ -552,7 +537,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                     }}
                   >
                     Communication
-                  </li>
+                  </li>}
                 </ul>
               )}
             </li>
@@ -645,7 +630,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
             ""
           )}
 
-          {login == "student" ? (
+          {login == "student" && hasPermission( "Application Management", "view")? (
             <li
               className={`menu-item ${
                 isActive("/myapplication") ? "active" : ""
@@ -736,7 +721,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
             ""
           )}
 
-          {login == "student" ? (
+          {login == "student" && hasPermission("Task Management","view") ? (
             <li
               className={`menu-item ${
                 isActive("/studenttasks") ? "active" : ""
@@ -835,7 +820,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
             ""
           )}
 
-          {login == "student" ? (
+          {login == "student" && hasPermission("Payments & Invoices", "view") ? (
             <li className={`menu-item ${isActive("/payment") ? "active" : ""}`}>
               <div
                 className="menu-link menu-i"
@@ -879,7 +864,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
           ) : (
             ""
           )} */}
-          {login == "student" ? (
+          {login == "student" && hasPermission("Course & University","view") ? (
             <li
               className={`menu-item ${
                 isActive("/UniversityCards") ? "active" : ""
@@ -902,7 +887,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
           ) : (
             ""
           )}
-          {login == "counselor" ? (
+          {login == "counselor" && hasPermission("Course & University","view") ? (
             <li
               className={`menu-item ${
                 isActive("/UniversityCards") ? "active" : ""

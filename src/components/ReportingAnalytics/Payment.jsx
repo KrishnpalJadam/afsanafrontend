@@ -9,6 +9,7 @@ import {
   Modal,
   Alert,
 } from "react-bootstrap";
+import { hasPermission } from "../../authtication/permissionUtils";
 
 const Payment = () => {
   const [key, setKey] = useState("due");
@@ -104,6 +105,7 @@ const Payment = () => {
                           variant="success"
                           size="sm"
                           onClick={() => handlePayNow(item)}
+                          disabled={!hasPermission("Payments & Invoices","add")}
                         >
                           Pay Now
                         </Button>
