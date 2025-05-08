@@ -13,7 +13,7 @@ const StudentDetails = () => {
   const [selectedStudent, setSelectedStudent] = useState(null); // State for selected student
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
   const [selectedCourse, setSelectedCourse] = useState(""); // State for selected class
-  const [selectedSection, setSelectedSection] = useState(""); // State for selected section
+  // const [selectedSection, setSelectedSection] = useState(""); // State for selected section
   const [student, setStudentsData] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
 const [editStudentId, setEditStudentId] = useState(null);
@@ -179,15 +179,18 @@ useEffect(() => {
      }
      deleteTask();
   };
-console.log(student)
-
+  const filtered_student = student.filter((item)=>{
+       return item?.full_name.toLowerCase().includes(searchQuery.toLowerCase())
+  })
+  
+ 
   return (
     <div className="container pt-3">
       <div style={{ display: "flex", justifyContent: "space-between" }}>
 
 
         <div>
-          <h2 className="mb-3">Select Criteria</h2>
+          <h2 className="mb-3">All Students</h2>
         </div>
         <div>
           {/* <!-- Trigger Button --> */}
@@ -208,12 +211,13 @@ console.log(student)
             onChange={(e) => setSelectedCourse(e.target.value)}
           >
             <option value="">All University</option>
-            <option>University of California, Berkeley</option>
-            <option>University of California, Berkeley</option>
-            <option>Massachusetts Institute of Technology	</option>
-            <option>Massachusetts Institute of Technology	</option>
-            <option>Stanford University</option>
-            <option>Stanford University</option>
+            {
+              universities?.map((item)=>{
+       return <option key={item?.id} value={item?.id}>{item?.name}</option>
+              })
+            }
+            
+             
           </select>
         </div>
 
@@ -223,7 +227,7 @@ console.log(student)
           <input
             type="text"
             className="form-control"
-            placeholder="Search By Student Name, Roll Number, Enroll Number, etc."
+            placeholder="Search By Student Name"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -274,7 +278,7 @@ console.log(student)
             </tr>
           </thead>
           <tbody>
-            {student?.map((student, index) => (
+            {filtered_student?.map((student, index) => (
               <tr key={index} className="text-nowrap">
                 <td>
                   <Link
