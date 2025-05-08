@@ -27,7 +27,7 @@ const TaskReminderDashboard = () => {
   const fetchReminders = async () => {
     try {
       const response = await api.get(
-        `https://cj2ww6qd-5000.inc1.devtunnels.ms/api/remainder`
+        `remainder`
       );
       setReminders(response.data);
     } catch (error) {
@@ -44,7 +44,7 @@ const TaskReminderDashboard = () => {
     if (reminder.name && reminder.date) {
       try {
         await api.post(
-          `https://cj2ww6qd-5000.inc1.devtunnels.ms/api/remainder`,
+          `remainder`,
           {
             task_name: reminder.name,
             date: reminder.date,
@@ -65,7 +65,7 @@ const TaskReminderDashboard = () => {
     if (window.confirm("Are you sure you want to delete this reminder?")) {
       try {
         await api.delete(
-          `https://cj2ww6qd-5000.inc1.devtunnels.ms/api/remainder/${id}`
+          `remainder/${id}`
         );
         fetchReminders();
       } catch (error) {
@@ -128,8 +128,7 @@ const TaskReminderDashboard = () => {
               <Button
                 variant="outline-danger"
                 size="sm"
-                onClick={() => handleDeleteReminder(rem.id)}
-              >
+                onClick={() => handleDeleteReminder(rem.id)}>
                 Delete
               </Button>
             </Card.Body>
@@ -147,8 +146,7 @@ const TaskReminderDashboard = () => {
         <Form.Group className="mb-2">
           <Form.Select
             value={reminder.name}
-            onChange={(e) => setReminder({ ...reminder, name: e.target.value })}
-          >
+            onChange={(e) => setReminder({ ...reminder, name: e.target.value })}>
             <option value="">Select Task</option>
             {tasks.map((task) => (
               <option key={task.id} value={task.title}>
@@ -162,26 +160,19 @@ const TaskReminderDashboard = () => {
           <Form.Control
             type="date"
             value={reminder.date}
-            onChange={(e) => setReminder({ ...reminder, date: e.target.value })}
-          />
+            onChange={(e) => setReminder({ ...reminder, date: e.target.value })}/>
         </Form.Group>
 
-        <Button
-          variant="danger"
-          onClick={handleAddReminder}
-          className="w-100"
-        >
+        <Button variant="danger" onClick={handleAddReminder} className="w-100">
           Add Reminder
         </Button>
 
         <div className="mt-3 d-flex align-items-center">
-          <Form.Check
-            type="switch"
+          <Form.Check  type="switch"
             id="autoReminders"
             label="Automate Reminders"
             checked={autoReminders}
-            onChange={() => setAutoReminders(!autoReminders)}
-          />
+            onChange={() => setAutoReminders(!autoReminders)}/>
         </div>
       </Card>
     </Col>

@@ -16,6 +16,7 @@ const Login = ({ setLogin }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -26,6 +27,7 @@ const Login = ({ setLogin }) => {
 
     try {
       const response = await api.post(`${BASE_URL}auth/login`, formData);
+      console.log(response.data)
       const { token, user } = response.data;
       const role = user.role;
 
@@ -33,6 +35,11 @@ const Login = ({ setLogin }) => {
         setLogin(role);
         localStorage.setItem("login", role);
         localStorage.setItem("authToken", token);
+        localStorage.setItem("user_id",user.id);
+        localStorage.setItem("login_detail", JSON.stringify(response.data.user));
+        localStorage.setItem("counselor_id", user.counselor_id);
+        localStorage.setItem("student_id", user.student_id);
+        console.log(user);
         localStorage.setItem("user_id",user.student_id);
         const permissionsResponse = await api.get(`permission?role_name=${role}`);
         console.log("fyh",permissionsResponse)
@@ -72,42 +79,29 @@ const Login = ({ setLogin }) => {
       backgroundColor: "#b4ccf0",
       alignItems: "center",
       justifyContent: "center",
-     
-    }}>
-      <div style={{
-        backgroundColor: "#fff",
+     }}>
+      <div style={{ backgroundColor: "#fff",
         width: "90%",
         maxWidth: "1000px",
         display: "flex",
         borderRadius: "20px",
         overflow: "hidden",
-        boxShadow: "0 8px 16px rgba(0,0,0,0.1)"
-      }}>
+        boxShadow: "0 8px 16px rgba(0,0,0,0.1)"}}>
         {/* Left Image Section */}
-        <div style={{
-          flex: 1,
+        <div style={{  flex: 1,
           backgroundColor: "#eef3fc",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          padding: "40px"
-        }}>
+          padding: "40px"}}>
           <img
             src="https://abcschool.institute.org.in/assets/images/student-login-2.svg"
             alt="Student"
-            style={{ maxWidth: "100%", height: "auto" }}
-          />
+            style={{ maxWidth: "100%", height: "auto" }}/>
         </div>
 
         {/* Right Form Section */}
-        <div style={{
-          flex: 1,
-          padding: "40px",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center"
-        }}>
-         
+        <div style={{  flex: 1,  padding: "40px",  display: "flex",  flexDirection: "column",  justifyContent: "center"}}>
           <h2 style={{ color: "#1d4ed8", marginBottom: "10px" }}>Student Recruitment</h2>
           <p style={{ marginBottom: "20px", color: "#555" }}>Enter your details to login to your account</p>
 
@@ -118,33 +112,24 @@ const Login = ({ setLogin }) => {
                 left: "12px",
                 top: "50%",
                 transform: "translateY(-50%)",
-                color: "#888"
-              }} />
-              <input
-                type="email"
-                name="email"
+                color: "#888" }} />
+              <input  type="email"  name="email"
                 placeholder="Enter your username/email"
                 value={formData.email}
                 onChange={handleChange}
-                style={{
-                  width: "100%",
+                style={{  width: "100%",
                   padding: "10px 10px 10px 40px",
                   borderRadius: "8px",
                   border: "1px solid #ccc",
-                  outline: "none"
-                }}
-                required
-              />
+                  outline: "none"}} required/>
             </div>
 
             <div style={{ marginBottom: "20px", position: "relative" }}>
               <FaLock style={{
-                position: "absolute",
-                left: "12px",
+                position: "absolute", left: "12px",
                 top: "50%",
                 transform: "translateY(-50%)",
-                color: "#888"
-              }} />
+                color: "#888"}} />
               <input
                 type="password"
                 name="password"
@@ -156,32 +141,19 @@ const Login = ({ setLogin }) => {
                   padding: "10px 10px 10px 40px",
                   borderRadius: "8px",
                   border: "1px solid #ccc",
-                  outline: "none"
-                }}
+                  outline: "none"}}
                 required
               />
             </div>
 
-            <button type="submit" style={{
-              width: "100%",
-              padding: "10px",
-              borderRadius: "8px",
-              backgroundColor: "#1d4ed8",
-              color: "#fff",
-              border: "none",
+            <button type="submit" style={{ width: "100%",  padding: "10px",  borderRadius: "8px",
+              backgroundColor: "#1d4ed8",  color: "#fff",  border: "none",
               fontWeight: "bold",
-              cursor: "pointer"
-            }}>
-              Login In
-            </button>
+              cursor: "pointer" }}>Login In </button>
           </form>
 
-          <div style={{
-            marginTop: "20px",
-            textAlign: "center",
-            fontSize: "14px",
-            color: "#666"
-          }}>
+          <div style={{ marginTop: "20px",
+            textAlign: "center", fontSize: "14px", color: "#666"}}>
            
          
             {/* <p style={{ marginTop: "15px" }}>
@@ -194,15 +166,13 @@ const Login = ({ setLogin }) => {
               backgroundColor: "#1d4ed8",
               color: "#fff",
               border: "none",
-          
               cursor: "pointer"
             }}> 
-        <IoChevronBackCircleSharp /> Back To Home
+          <IoChevronBackCircleSharp />  Back To Home
             </Link>
           </div>
         </div>
       </div>
-
       <ToastContainer />
     </main>
   );

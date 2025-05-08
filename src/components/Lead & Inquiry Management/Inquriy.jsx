@@ -9,70 +9,7 @@ import Followup from "./Followup";
 import api from "../../interceptors/axiosInterceptor";
 const Inquiry = () => {
   // Sample inquiry data
-  const [inquiries, setInquiries] = useState({
-    todayInquiries: [
-      {
-        id: 1,
-        name: "Raja",
-        email: "raja@email.com",
-        phone: "123456789",
-        city: "Indore",
-        address: "Vijay Nagar",
-        course: "Maths",
-        source: "Whatsapp",
-        inquiryType: "studentVisa",
-        branch: "dhaka",
-        assignee: "counselor1",
-        country: "India",
-        dateOfInquiry: "2023-05-15",
-        presentAddress: "Vijay Nagar, Indore",
-        education: ["SSC", "HSC"],
-        englishProficiency: ["Reading", "Writing"],
-        jobExperience: {
-          company: "ABC Corp",
-          jobTitle: "Developer",
-          duration: "2 years",
-        },
-        preferredCountries: ["Germany", "Canada"],
-      },
-    ],
-    todayFollowUps: [
-      {
-        id: 2,
-        name: "John Doe",
-        title: "Service Inquiry",
-        followUpDate: new Date().toISOString().split("T")[0],
-        status: "New",
-        urgency: "WhatsApp",
-        department: "Lead Inquiry",
-        responsible: "👤",
-      },
-      {
-        id: 3,
-        name: "Jane Smith",
-        title: "Course Information",
-        followUpDate: new Date().toISOString().split("T")[0],
-        status: "In Progress",
-        urgency: "Email",
-        department: "Admissions",
-        responsible: "👥",
-      },
-    ],
-    thisWeekFollowUps: [
-      {
-        id: 4,
-        name: "Emily Johnson",
-        title: "Follow-up Tasks",
-        followUpDate: new Date(Date.now() + 86400000 * 2)
-          .toISOString()
-          .split("T")[0], // 2 days from now
-        status: "In Progress",
-        urgency: "Email",
-        department: "Lead Follow-ups",
-        responsible: "👤",
-      },
-    ],
-  });
+  const [inquiries, setInquiries] = useState({});
 
   // State for modals
   const [showInquiryModal, setShowInquiryModal] = useState(false);
@@ -104,7 +41,14 @@ const Inquiry = () => {
     },
     preferredCountries: [],
   });
-
+  const [councolerid,setCouncolerId]= useState("")
+  
+  useEffect(()=>{
+    const is_id=localStorage.getItem("user_id")
+    if(is_id){
+      setCouncolerId(is_id)
+    }
+  },[])
   // State for new follow-up form data
   const [newFollowUp, setNewFollowUp] = useState({
     name: "",
@@ -201,7 +145,7 @@ const Inquiry = () => {
   
     // Prepare the request payload in the required format
     const requestData = {
-      user_id: 1, // You can set the actual user_id if required
+      counselor_id: councolerid, // You can set the actual user_id if required
       inquiry_type: newInquiry.inquiryType,
       source: newInquiry.source,
       branch: newInquiry.branch,
@@ -279,17 +223,27 @@ const Inquiry = () => {
   const fetchInquiries = async () => {
     try {
       const response = await api.get(`inquiries`);
+      const allInquiries = response.data;
+      const userRole = localStorage.getItem("login");
+
+      const filteredInquiries = userRole === "admin"
+        ? allInquiries
+        : allInquiries.filter(inquiry => inquiry.counselor_id == councolerid);
+
       setInquiries((prev) => ({
         ...prev,
-        todayInquiries: response.data,
+        todayInquiries: filteredInquiries,
       }));
-      
+
     } catch (error) {
       console.error("Error fetching inquiries:", error);
     }
   };
-  fetchInquiries();
-}, []);
+
+  if (councolerid) {  // jab tak counselor id nahi aati tab api mat call karo
+    fetchInquiries();
+  }
+}, [councolerid]);
 
 
   // Handle inquiry detail view
@@ -302,8 +256,6 @@ const Inquiry = () => {
       console.error("Error fetching inquiry details:", error);
     }
   };
-
-  
 
   // Handle delete inquiry
   const handleDeleteInquiry = async (id) => {
@@ -320,9 +272,6 @@ const Inquiry = () => {
     }
   };
 
-
-
-
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -335,29 +284,18 @@ const Inquiry = () => {
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Today's Inquiries</h2>
         <div>
-          <Button
-            variant="secondary"
-            className="me-2"
-            onClick={handleShowInquiryModal}
-            style={{ border: "none" }}
-          >
-            Add Inquiry
-          </Button>
-        
+          <Button variant="secondary" className="me-2"  onClick={handleShowInquiryModal} style={{ border: "none" }} >
+            Add Inquiry </Button>
         </div>
       </div>
 
       {/* Header Section */}
       <div className="d-flex justify-content-between mb-3">
-        <Form.Control
-          type="text"
-          placeholder="Search inquiries"
-          className="w-50"
-        />
+        <Form.Control type="text"
+          placeholder="Search inquiries" className="w-50"/>
       </div>
 
       {/* Today's Inquiries */}
-
       <Table striped bordered hover responsive>
         <thead>
           <tr>
@@ -380,19 +318,12 @@ const Inquiry = () => {
               <td>{inq.course_name}</td>
               <td>{inq.source}</td>
               <td>
-                <Button
-                  variant="info"
-                  size="sm"
-                  onClick={() => handleViewDetail(inq.id)}
-                >
-                  View
-                </Button>
-                <Button
-                  variant="danger"
+                <Button variant="info" size="sm"
+                  onClick={() => handleViewDetail(inq.id)}>View </Button>
+                <Button variant="danger"
                   size="sm"
                   onClick={() => handleDeleteInquiry(inq.id)}
-                  className="ms-2"
-                >
+                  className="ms-2">
                   Delete
                 </Button>
               </td>
@@ -400,9 +331,6 @@ const Inquiry = () => {
           ))}
         </tbody>
       </Table>
-
-
-      
       <Followup/>
 
   
@@ -423,12 +351,10 @@ const Inquiry = () => {
   
 
       {/* Modal for Adding New Inquiry */}
-      <Modal
-        show={showInquiryModal}
+      <Modal show={showInquiryModal}
         onHide={handleCloseInquiryModal}
         centered
-        size="lg "
-      >
+        size="lg">
         <Modal.Header closeButton>
           <Modal.Title>New Inquiry Form</Modal.Title>
         </Modal.Header>
@@ -443,8 +369,7 @@ const Inquiry = () => {
                     name="inquiryType"
                     value={newInquiry.inquiryType}
                     onChange={handleInquiryInputChange}
-                    required
-                  >
+                    required>
                     <option value="">Select Inquiry Type</option>
                     <option value="studentVisa">Student Visa</option>
                     <option value="touristVisa">Visit Visa</option>
@@ -460,8 +385,7 @@ const Inquiry = () => {
                     name="source"
                     value={newInquiry.source}
                     onChange={handleInquiryInputChange}
-                    required
-                  >
+                    required>
                     <option value="Whatsapp">WhatsApp</option>
                     <option value="Facebook">Facebook</option>
                     <option value="Website">Website</option>
@@ -475,8 +399,7 @@ const Inquiry = () => {
                     name="branch"
                     value={newInquiry.branch}
                     onChange={handleInquiryInputChange}
-                    required
-                  >
+                    required>
                     <option value="">Select Branch</option>
                     <option value="dhaka">Dhaka</option>
                     <option value="sylhet">Sylhet</option>
@@ -497,8 +420,7 @@ const Inquiry = () => {
                     name="name"
                     value={newInquiry.name}
                     onChange={handleInquiryInputChange}
-                    required
-                  />
+                    required/>
                 </Form.Group>
               </Col>
               <Col md={3}>
@@ -517,14 +439,12 @@ const Inquiry = () => {
               <Col md={3}>
                 <Form.Group controlId="email">
                   <Form.Label>Email</Form.Label>
-                  <Form.Control
-                    type="email"
+                  <Form.Control type="email"
                     placeholder="Enter email"
                     name="email"
                     value={newInquiry.email}
                     onChange={handleInquiryInputChange}
-                    required
-                  />
+                    required/>
                 </Form.Group>
               </Col>
               <Col md={3}>
@@ -536,8 +456,7 @@ const Inquiry = () => {
                     name="course"
                     value={newInquiry.course}
                     onChange={handleInquiryInputChange}
-                    required
-                  />
+                    required/>
                 </Form.Group>
               </Col>
             </Row>

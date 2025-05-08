@@ -1,26 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, Table, Button, Container, Row, Col } from "react-bootstrap";
 import { Pie, Bar } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-} from "chart.js";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, BarElement, CategoryScale, LinearScale,} from "chart.js";
 import { Link } from "react-router-dom";
 import CounselorProfile from "./CounselorProfile"; // Import the profile component
-
-ChartJS.register(
-  ArcElement,
-  Tooltip,
-  Legend,
-  BarElement,
-  CategoryScale,
-  LinearScale
-);
+ChartJS.register( ArcElement, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
 
 // Dummy leads
 const dummyLeads = [
@@ -67,12 +51,20 @@ const counselorProfile = {
   email: "sarah.williams@example.com",
   phone: "999-888-7777",
   role: "Senior Counselor",
-  imageUrl: "https://via.placeholder.com/200", // or your local image
-  activeSince: "2023-01-01", // used to calculate how many days they've been active
+  imageUrl: "https://via.placeholder.com/200", 
+  activeSince: "2023-01-01", 
 };
 
 const CounselorDashboard = () => {
   const [leads, setLeads] = useState(dummyLeads);
+  const [counselorProfile,setCounselorProfile]= useState([])
+
+  useEffect(()=>{
+    const loginDetail=localStorage.getItem("login_detail")
+    if(loginDetail){
+      setCounselorProfile(JSON.parse(loginDetail))
+    }
+  },[])
 
   // Count how many leads have each status
   const statusCounts = {
@@ -111,7 +103,7 @@ const CounselorDashboard = () => {
   return (
     <Container className="mt-4">
       <div className="mb-4 px-2">
-        <h5 className="fw-bold">Hello, Sarah Williams</h5>
+        <h5 className="fw-bold">Hello, {counselorProfile.full_name}</h5>
       </div>
       {/* -- Profile Section with ProgressBar for completed leads -- */}
       <Row>
@@ -119,8 +111,7 @@ const CounselorDashboard = () => {
           <CounselorProfile
             counselor={counselorProfile}
             totalLeads={totalLeads}
-            completedLeads={completedLeads}
-          />
+            completedLeads={completedLeads} />
         </Col>
       </Row>
 
@@ -157,10 +148,8 @@ const CounselorDashboard = () => {
       {/* Charts */}
       <Row className="mb-5">
         <Col md={6}>
-          <Card
-            className="p-4 text-center shadow-lg"
-            style={{ height: "650px" }}
-          >
+          <Card className="p-4 text-center shadow-lg"
+            style={{ height: "650px" }}>
             <h5>Lead Distribution</h5>
             <Pie style={{ height: "500px" }} data={pieChartData} />
           </Card>
@@ -168,8 +157,7 @@ const CounselorDashboard = () => {
         <Col md={6}>
           <Card
             className="p-4 text-center shadow-lg"
-            style={{ height: "650px" }}
-          >
+            style={{ height: "650px" }}>
             <h5>Lead Status Overview</h5>
             <Bar style={{ height: "500px" }} data={barChartData} />
           </Card>

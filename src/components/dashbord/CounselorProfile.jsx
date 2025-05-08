@@ -45,10 +45,8 @@ const CounselorProfile = ({ counselor, totalLeads, completedLeads }) => {
             <strong>Role:</strong> {counselor.role}
           </p>
           <p className="text-muted mb-2">
-            <strong>Active Since:</strong> {counselor.activeSince} ({daysActive}{" "}
-            days)
+            <strong>University Name:</strong> {counselor.university_name}
           </p>
-
           {/* Progress Bar for Completed Leads */}
           <div className="mt-4">
             <strong>Lead Completion: </strong>

@@ -212,7 +212,6 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
           ) : (
             ""
           )}
-
           {login == "counselor" ? (
             <li
               className={`menu-item ${
@@ -744,7 +743,6 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
           ) : (
             ""
           )}
-
           {/* Roles Permissions */}
           {login == "admin" ? (
             <li
@@ -769,7 +767,6 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
           ) : (
             ""
           )}
-
           {/* Reporting & Analytics */}
           {login == "admin" ? (
             <li
