@@ -167,6 +167,7 @@ console.log(":");
              src={student?.photo}
             alt="Profile"
             className="img-fluid rounded-circle shadow-sm"
+            crossOrigin=''
           />
         </Col>
         <Col md={6}>
