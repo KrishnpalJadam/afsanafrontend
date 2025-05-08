@@ -286,8 +286,7 @@ const Inquiry = () => {
         <h2>Today's Inquiries</h2>
         <div>
           <Button variant="secondary" className="me-2"  onClick={handleShowInquiryModal} style={{ border: "none" }} 
-          disabled={!hasPermission("Inquiry","add")}
-          >
+          disabled={!hasPermission("Inquiry","add")}>
             Add Inquiry </Button>
         </div>
       </div>

@@ -98,13 +98,10 @@ const Navbar = ({ toggleSidebar }) => {
                 <div
                   className="me-2 fw-bold p-1 rounded-4 profile d-flex align-items-center"
                   style={{ cursor: "pointer" }}
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
+                  data-bs-toggle="dropdown"  aria-expanded="false">
                   <div className="profile-element">
                     <div className="avatar online">
-                      <i
-                        className="fa-solid user-icon fa-circle-user"
+                      <i className="fa-solid user-icon fa-circle-user"
                         style={{ color: "black" }}
                       ></i>
                       <span className="text-dark ms-2"></span>
@@ -112,12 +109,8 @@ const Navbar = ({ toggleSidebar }) => {
                   </div>
                 </div>
                 <ul className="dropdown-menu dropdown-menu-end">
-                  <li>
-                    <Link className="dropdown-item" to="/profile">
-                     Profile
-                    </Link>
-                  </li>
-               
+                  <li><Link className="dropdown-item" to="/profile"> Profile </Link> </li>
+                  <li><Link className="dropdown-item" to="/change-password"> Change Password </Link> </li>
                   <li>
                     <hr className="dropdown-divider" />
                   </li>
@@ -127,9 +120,7 @@ const Navbar = ({ toggleSidebar }) => {
                         Logout
                       </button>
                     </li>
-
                   </li>
-
                 </ul>
               </div>
             </div>
