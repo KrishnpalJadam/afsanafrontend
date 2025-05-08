@@ -32,7 +32,7 @@ const AdmissionDecisions = () => {
   const [filterStatus, setFilterStatus] = useState("all");
   const [sortByDate, setSortByDate] = useState("asc");
 
-  const user_id = localStorage.getItem("user_id");
+  const user_id = localStorage.getItem("student_id");
   useEffect(() => {
     const fetchDecisions = async () => {
       try {

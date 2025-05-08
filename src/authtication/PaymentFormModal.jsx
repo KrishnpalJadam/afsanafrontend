@@ -33,6 +33,7 @@ const PaymentFormModal = ({ show, handleClose }) => {
   });
 
   const [universities, setUniversities] = useState([]);
+  const [branchData, setBranchdata] = useState([])
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
     setFormData({
@@ -54,9 +55,10 @@ const PaymentFormModal = ({ show, handleClose }) => {
   }, []);
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const formDataToSubmit = new FormData();
-    formDataToSubmit.append("branch", 1);  // Default value of 1 for branch
+    formDataToSubmit.append("branch", formData.branch);
+
     formDataToSubmit.append("name", formData.name);
     formDataToSubmit.append("whatsapp", formData.whatsapp);
     formDataToSubmit.append("email", formData.email);
@@ -71,23 +73,23 @@ const PaymentFormModal = ({ show, handleClose }) => {
     formDataToSubmit.append("paymentTypeOther", formData.paymentTypeOther);
     formDataToSubmit.append("assistant", formData.assistant);
     formDataToSubmit.append("note", formData.note);
-  
+
     if (formData.file) {
       formDataToSubmit.append("file", formData.file); // Append file if it exists
     }
-  
+
     try {
       const response = await api.post(`${BASE_URL}payments`, formDataToSubmit, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-  
+
       Swal.fire({
         title: 'Success!',
         text: 'Payment details submitted successfully!',
         icon: 'success',
         confirmButtonText: 'OK',
       });
-  
+
       handleClose();
     } catch (error) {
       console.error("Payment Form Submission Error:", error);
@@ -99,8 +101,18 @@ const PaymentFormModal = ({ show, handleClose }) => {
       });
     }
   };
-  
 
+  useEffect(() => {
+    const branch = async () => {
+      try {
+        const responce = await api.get(`${BASE_URL}branch`)
+        setBranchdata(responce.data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    branch()
+  }, [])
 
   return (
     <Modal show={show} onHide={handleClose} size="lg">
@@ -112,10 +124,12 @@ const PaymentFormModal = ({ show, handleClose }) => {
           <Row className="mb-3">
             <Col md={6}>
               <Form.Label>Branch *</Form.Label>
-              <Form.Select name="branch" onChange={handleChange} required>
-                <option value="">Select Branch</option>
-                <option>Dhaka</option>
-                <option>Sylhet</option>
+              <Form.Select name="branch" onChange={handleChange} value={formData.branch} required>
+
+                <option>Select Branch</option>
+                {branchData.map((item) => (
+                  <option key={item.id} value={item.id}>{item.branch_name}</option>
+                ))}
               </Form.Select>
             </Col>
             <Col md={6}>

@@ -376,8 +376,8 @@ const App = () => {
             </Col>
           ))}
         </Row> */}
-<UniversityCards/>
-        
+        <UniversityCards />
+
       </Container>
       {/* Top-rated Courses */}
       <Container className="py-5" id="about">
@@ -398,17 +398,16 @@ const App = () => {
                 <Card.Body>
                   <div className="category-badge">
                     <i
-                      className={`fas fa-${
-                        course.category === "Physics"
+                      className={`fas fa-${course.category === "Physics"
                           ? "atom"
                           : course.category === "Computer Science"
-                          ? "laptop-code"
-                          : course.category === "Literature"
-                          ? "book"
-                          : course.category === "History"
-                          ? "landmark"
-                          : "language"
-                      }`}
+                            ? "laptop-code"
+                            : course.category === "Literature"
+                              ? "book"
+                              : course.category === "History"
+                                ? "landmark"
+                                : "language"
+                        }`}
                     ></i>
                     {course.category}
                   </div>
@@ -469,17 +468,31 @@ const App = () => {
               <Form className="newsletter-form">
                 <Row className="justify-content-center">
                   <Col md={6}>
-                    <div className="input-group">
-                      <Form.Control
+                    <form
+                      action="https://api.web3forms.com/submit"
+                      method="POST"
+                      className="input-group"
+                    >
+                      <input
+                        type="hidden"
+                        name="access_key"
+                        value="295df667-5bb4-4c46-a599-bef4f4e754f3"
+                      />
+
+                      <input
                         type="email"
                         placeholder="Enter your email address"
-                        className="newsletter-input"
+                        name="email"
+                        required
+                        className="form-control newsletter-input"
                       />
-                      <Button className="subscribe-btn">
+
+                      <button type="submit" className="btn btn-primary subscribe-btn">
                         <i className="fas fa-paper-plane me-2"></i>
                         Subscribe Now
-                      </Button>
-                    </div>
+                      </button>
+                    </form>
+
                   </Col>
                 </Row>
               </Form>
