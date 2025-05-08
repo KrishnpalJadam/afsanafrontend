@@ -29,8 +29,6 @@ const Navbar = ({ toggleSidebar }) => {
           backgroundColor: "white",
           color: "black",
           width: "100%",
-
-
         }}
       >
         <div className="container-fluid nav-conter" >
@@ -115,15 +113,11 @@ const Navbar = ({ toggleSidebar }) => {
                 </div>
                 <ul className="dropdown-menu dropdown-menu-end">
                   <li>
-                    <Link className="dropdown-item" to="/">
-                      Update Profile
+                    <Link className="dropdown-item" to="/profile">
+                     Profile
                     </Link>
                   </li>
-                  <li>
-                    <Link className="dropdown-item" to="/changepassword">
-                      Change Password
-                    </Link>
-                  </li>
+               
                   <li>
                     <hr className="dropdown-divider" />
                   </li>

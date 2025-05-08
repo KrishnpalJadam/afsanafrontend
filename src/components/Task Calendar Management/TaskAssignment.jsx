@@ -232,25 +232,30 @@ useEffect(() => {
                   {new Date(task?.due_date).toLocaleDateString()}
                   </td>
                   <td>
-                    <Badge bg={task?.status ==1   ? "success" : "warning"}>
-                      {task?.status  ==1   ? "Completed" : "Pending"}
-                    </Badge>
-                  </td>
+  <Badge
+    bg={
+      task?.status === "completed"
+        ? "success"
+        : task?.status === "pending"
+        ? "warning"
+        : "secondary"
+    }
+  >
+    {task?.status === "Completed" ? "Completed" : "Pending"}
+  </Badge>
+</td>
+
                   <td>
-                    <Button
-                      variant="success"
-                      size="sm"
+                    <Button  variant="success" size="sm"
                       className="me-1"
-                      onClick={() => handleStatusToggle(task?.id)}
-                    >
+                      onClick={() => handleStatusToggle(task?.id)}>
                       Toggle
                     </Button>
                     <Button
                       variant="primary"
                       size="sm"
                       className="me-1"
-                      onClick={() => handleEdit(task)}
-                    >
+                      onClick={() => handleEdit(task)}>
                       Edit
                     </Button>
                     <Button
