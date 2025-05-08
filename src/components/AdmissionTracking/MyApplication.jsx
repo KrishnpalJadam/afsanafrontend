@@ -10,6 +10,7 @@ import {
   Form,
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { hasPermission } from "../../authtication/permissionUtils";
 
 const MyApplication = () => {
   const [showMessageModal, setShowMessageModal] = useState(false);
@@ -143,6 +144,7 @@ const MyApplication = () => {
                         variant="info"
                         className="mt-1"
                         onClick={() => navigate(`/timeline/${app.id}`)}
+                        disabled={!hasPermission("Application Management","add")}
                       >
                         View Timeline
                       </Button>
@@ -154,13 +156,14 @@ const MyApplication = () => {
                       variant="secondary"
                       className="mt-1 me-1"
                       onClick={() => handleMessage(app.university)}
+                      disabled={!hasPermission("Application Management","add")}
                     >
                       Message Counselor
                     </Button>
 
                     {/* Schedule Visa */}
                     {app.status === "Approved" && (
-                      <Button size="sm" variant="success" className="mt-1">
+                      <Button size="sm" variant="success" className="mt-1" disabled={!hasPermission("Application Management","add")}>
                         Book Visa Appointment
                       </Button>
                     )}

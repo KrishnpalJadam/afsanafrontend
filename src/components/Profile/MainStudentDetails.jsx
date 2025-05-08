@@ -14,6 +14,7 @@ import {
 } from "react-bootstrap";
 import api from "../../interceptors/axiosInterceptor";
 import BASE_URL from "../../Config";
+import { hasPermission } from "../../authtication/permissionUtils";
 
 const Profile = () => {
   const [student, setStudent] = useState(null);
@@ -54,7 +55,7 @@ const Profile = () => {
               <h3>{student?.full_name}</h3>
               <p>Email: {student?.email}</p>
               <p>Phone: {student?.mobile_number}</p>
-              <Button variant="outline-primary" size="sm">
+              <Button variant="outline-primary" size="sm" disabled={!hasPermission("Student Details","add")}>
                 Edit Profile
               </Button>
             </Col>

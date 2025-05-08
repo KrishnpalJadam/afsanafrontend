@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   Button,
@@ -7,6 +8,9 @@ import {
   Col,
   Alert,
 } from "react-bootstrap";
+import BASE_URL from "../Config";
+import api from "../interceptors/axiosInterceptor";
+import Swal from "sweetalert2";
 
 const PaymentFormModal = ({ show, handleClose }) => {
   const [formData, setFormData] = useState({
@@ -28,6 +32,7 @@ const PaymentFormModal = ({ show, handleClose }) => {
     note: "",
   });
 
+  const [universities, setUniversities] = useState([]);
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
     setFormData({
@@ -35,13 +40,67 @@ const PaymentFormModal = ({ show, handleClose }) => {
       [name]: type === "file" ? files[0] : value,
     });
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await api.get(`${BASE_URL}universities`);
+        setUniversities(response.data); // Set fetched universities to state
+      } catch (error) {
+        console.log("Error fetching universities:", error);
+      }
+    };
 
-  const handleSubmit = (e) => {
+    fetchData();
+  }, []);
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Payment Form Submitted:", formData);
-    alert("Payment details submitted successfully!");
-    handleClose();
+  
+    const formDataToSubmit = new FormData();
+    formDataToSubmit.append("branch", 1);  // Default value of 1 for branch
+    formDataToSubmit.append("name", formData.name);
+    formDataToSubmit.append("whatsapp", formData.whatsapp);
+    formDataToSubmit.append("email", formData.email);
+    formDataToSubmit.append("groupName", formData.groupName);
+    formDataToSubmit.append("university", formData.university);
+    formDataToSubmit.append("universityOther", formData.universityOther);
+    formDataToSubmit.append("country", formData.country);
+    formDataToSubmit.append("countryOther", formData.countryOther);
+    formDataToSubmit.append("paymentMethod", formData.paymentMethod);
+    formDataToSubmit.append("paymentMethodOther", formData.paymentMethodOther);
+    formDataToSubmit.append("paymentType", formData.paymentType);
+    formDataToSubmit.append("paymentTypeOther", formData.paymentTypeOther);
+    formDataToSubmit.append("assistant", formData.assistant);
+    formDataToSubmit.append("note", formData.note);
+  
+    if (formData.file) {
+      formDataToSubmit.append("file", formData.file); // Append file if it exists
+    }
+  
+    try {
+      const response = await api.post(`${BASE_URL}payments`, formDataToSubmit, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+  
+      Swal.fire({
+        title: 'Success!',
+        text: 'Payment details submitted successfully!',
+        icon: 'success',
+        confirmButtonText: 'OK',
+      });
+  
+      handleClose();
+    } catch (error) {
+      console.error("Payment Form Submission Error:", error);
+      Swal.fire({
+        title: 'Error!',
+        text: 'There was an issue submitting the payment details.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+    }
   };
+  
+
 
   return (
     <Modal show={show} onHide={handleClose} size="lg">
@@ -102,14 +161,19 @@ const PaymentFormModal = ({ show, handleClose }) => {
           <Row className="mb-3">
             <Col md={6}>
               <Form.Label>University *</Form.Label>
-              <Form.Select name="university" onChange={handleChange} required>
+              <Form.Select
+                name="university"
+                value={formData.university}
+                onChange={handleChange}
+                required
+              >
                 <option value="">Select University</option>
-                <option>Budapest Metropolitan University</option>
-                <option>Gyor University</option>
-                <option>Wekerle Business School</option>
-                <option>University of Debrecen</option>
-                <option>Pecs University Hungary</option>
-                <option>Other</option>
+                {universities.map((university) => (
+                  <option key={university.id} value={university.id}>
+                    {university.name}
+                  </option>
+                ))}
+                <option value="Other">Other</option>
               </Form.Select>
               {formData.university === "Other" && (
                 <Form.Control

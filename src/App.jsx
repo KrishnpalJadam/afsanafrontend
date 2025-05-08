@@ -65,6 +65,7 @@ import MyApplication from "./components/AdmissionTracking/MyApplication";
 import CounselorApplications from "./components/AdmissionTracking/CounselorApplications";
 import ApplicationTimeline from "./components/AdmissionTracking/ApplicationTimeline";
 import MyProfile from "./MyProfile/MyProfile";
+import Addbranch from "./components/ReportingAnalytics/Addbranch";
 
 function App() {
   //show details to admin
@@ -358,6 +359,7 @@ function App() {
                 path="/ReportingAnalytics"
                 element={<ReportingAnalytics />}/>
 
+              <Route path="/addbranch" element={<Addbranch/>}></Route>
               <Route path="/payment" element={<Payment></Payment>}></Route>
 
               {/* PaymentInvoiceManagement */}
@@ -367,7 +369,9 @@ function App() {
               ></Route>
               <Route
                 path="/PaymentInvoiceManagement"
-                element={<PaymentInvoiceMangament />}
+                element={<PaymentInvoiceMangament />
+                  
+                }
               />
 
               {/* chatbox route */}

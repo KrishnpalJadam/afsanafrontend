@@ -15,7 +15,7 @@ const Login = ({ setLogin }) => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
+ 
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -27,7 +27,6 @@ const Login = ({ setLogin }) => {
 
     try {
       const response = await api.post(`${BASE_URL}auth/login`, formData);
-      console.log(response.data)
       const { token, user } = response.data;
       const role = user.role;
 
@@ -39,9 +38,9 @@ const Login = ({ setLogin }) => {
         localStorage.setItem("login_detail", JSON.stringify(response.data.user));
         localStorage.setItem("counselor_id", user.counselor_id);
         localStorage.setItem("student_id", user.student_id);
-        console.log(user);
-        // localStorage.setItem("user_id",user.student_id); 
-        console.log(user.id);
+       
+        const permissionsResponse = await api.get(`permission?role_name=${role}`);
+        localStorage.setItem("permissions", JSON.stringify(permissionsResponse.data));
          
     
 

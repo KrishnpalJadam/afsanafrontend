@@ -4,6 +4,8 @@ import { Pie, Bar } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, BarElement, CategoryScale, LinearScale,} from "chart.js";
 import { Link } from "react-router-dom";
 import CounselorProfile from "./CounselorProfile"; // Import the profile component
+import api from "../../interceptors/axiosInterceptor";
+import { hasPermission } from "../../authtication/permissionUtils";
 ChartJS.register( ArcElement, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
 
 // Dummy leads
@@ -58,7 +60,22 @@ const counselorProfile = {
 const CounselorDashboard = () => {
   const [leads, setLeads] = useState(dummyLeads);
   const [counselorProfile,setCounselorProfile]= useState([])
-
+  const role = localStorage.getItem("login")
+  useEffect(() => {
+    const fetchPermissions = async () => {
+      try {
+        const permissionsResponse = await api.get(`permission?role_name=${role}`);
+        console.log("fyh", permissionsResponse);
+        localStorage.setItem("permissions", JSON.stringify(permissionsResponse.data));
+      } catch (error) {
+        console.error("Error fetching permissions:", error);
+      }
+    };
+  
+    fetchPermissions();
+  }, [role]);
+  
+ 
   useEffect(()=>{
     const loginDetail=localStorage.getItem("login_detail")
     if(loginDetail){
@@ -99,7 +116,9 @@ const CounselorDashboard = () => {
       },
     ],
   };
-
+ if(  !hasPermission("Dashboard","view")){
+      return <div> You doesn't have access for Dashboard</div>
+    }
   return (
     <Container className="mt-4">
       <div className="mb-4 px-2">

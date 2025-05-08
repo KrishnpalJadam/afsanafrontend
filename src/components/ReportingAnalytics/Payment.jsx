@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {
   Container,
   Tab,
@@ -9,11 +9,15 @@ import {
   Modal,
   Alert,
 } from "react-bootstrap";
+import { hasPermission } from "../../authtication/permissionUtils";
+import api from "../../interceptors/axiosInterceptor";
+import BASE_URL from "../../Config";
 
 const Payment = () => {
   const [key, setKey] = useState("due");
   const [showModal, setShowModal] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState(null);
+  const [payments,setPayments] = useState([])
 
   const duePayments = [
     {
@@ -67,7 +71,25 @@ const Payment = () => {
     const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
     return `⏳ ${days} day(s) remaining`;
   };
+  const user = JSON.parse(localStorage.getItem("login_detail"))
+  console.log(user)
+  const fetchPayments = async (email) => {
+    try {
+      const response = await api.get(`${BASE_URL}payments/${email}`);
+      if (response?.data) {
+        setPayments(response.data); // Storing the fetched payments in the state
+        console.log("Payments:", response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching payments:", error);
+    }
+  };
+  
 
+  useEffect(() => {
+    fetchPayments(user?.email);
+  }, []);
+console.log(payments)
   return (
     <Container className="mt-4">
       <h3 className="mb-4">Payments & Transactions</h3>
@@ -86,24 +108,32 @@ const Payment = () => {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Description</th>
-                    <th>Amount</th>
-                    <th>Due Date</th>
+                    <th>Email</th>
+                    <th>university Id</th>
+                    <th>Country</th>
+                    <th>Payment method</th>
+                    {/* <th>Amount</th> */}
+                    {/* <th>Due Date</th> */}
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {duePayments.map((item, index) => (
+                  {payments?.map((item, index) => (
                     <tr key={index}>
-                      <td>{item.id}</td>
-                      <td>{item.description}</td>
-                      <td>{item.amount}</td>
-                      <td>{item.dueDate}</td>
+                      <td>{index+1}</td>
+                      <td>{item?.email}</td>
+                      <td>{item?.university}</td>
+                      <td>{item?.country}</td>
+                      <td>{item?.payment_method}</td>
+
+                      {/* <td>{item?.amount}</td>
+                      <td>{item?.dueDate}</td> */}
                       <td>
                         <Button
                           variant="success"
                           size="sm"
                           onClick={() => handlePayNow(item)}
+                          disabled={!hasPermission("Payments & Invoices","add")}
                         >
                           Pay Now
                         </Button>
@@ -120,7 +150,7 @@ const Payment = () => {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Description</th>
+                    <th>University	</th>
                     <th>Amount</th>
                     <th>Paid On</th>
                     <th>Action</th>

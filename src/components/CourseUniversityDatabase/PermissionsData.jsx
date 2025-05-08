@@ -1,82 +1,113 @@
 import React, { useState, useEffect } from "react";
 import { Table, Form, Container } from "react-bootstrap";
 import { useParams, Link } from "react-router-dom";
+import api from "../../interceptors/axiosInterceptor";
 
-// Feature modules (static across all roles)
+// Permissions data for Student and Counselor
 const permissionsDataStudent = [
-  { module: "Dashboard", features: ["Dashboard"] },
-  { module: "Student Managenement", features: ["Student Details", "Student Programs", "Communication"] },
-  { module: "Appication Managment", features: ["Appication Managment"] },
-  { module: "Tasks Management", features: ["Tasks Management"] },
-  { module: "Payments & Invoices", features: ["Payments & Invoices"] },
-  { module: "Course & University", features: ["Course & University"] },
-];
-const permissionsDataCounselor = [
-  { module: "Dashboard", features: ["Dashboard"] },
-  { module: "Leads & Inquiries", features: ["Inquiry", "Lead", "Status", "Task"] },
-  { module: "Student Managenement", features: ["Student Details", "Communication"] },
-  { module: "Course & University", features: ["Course & University"] },
+  { module: "Dashboard", features: [{ name: "Dashboard" }] },
+  { module: "Student Management", features: [{ name: "Student Details" }, { name: "Student Programs" }, { name: "Communication" }] },
+  { module: "Application Management", features: [{ name: "Application Management" }] },
+  { module: "Task Management", features: [{ name: "Task Management" }] },
+  { module: "Payments & Invoices", features: [{ name: "Payments & Invoices" }] },
+  { module: "Course & University", features: [{ name: "Course & University" }] },
 ];
 
-// Default permissions for each role
-const roleDefaults = {
-  "Counsellor": {
-    "Student Managenement": ["view", "edit"],
-    "Tasks Management": ["view", "add", "edit"],
-  },
-  "Student": {
-    "Dashboard": ["view"],
-    "Student Managenement": ["view"],
-  },
-};
+const permissionsDataCounselor = [
+  { module: "Dashboard", features: [{ name: "Dashboard" }] },
+  { module: "Leads & Inquiries", features: [{ name: "Inquiry" }, { name: "Lead" }, { name: "Status" }, { name: "Task" }] },
+  { module: "Student Management", features: [{ name: "Student Details" }, { name: "Communication" }] },
+  { module: "Course & University", features: [{ name: "Course & University" }] },
+];
 
 const PermissionsTable = () => {
-  const { role } = useParams();  // Get role from route
+  const { role } = useParams(); // Get role from route
   const [permissions, setPermissions] = useState([]);
+  const [roles, setRoles] = useState([]);
 
   // Load role-based permissions on mount
   useEffect(() => {
     let permissionsData;
     if (role === "Student") {
-      permissionsData = permissionsDataStudent;  // Student data
-    } else if (role === "Counsellor") {
-      permissionsData = permissionsDataCounselor;  // Counselor data
+      permissionsData = permissionsDataStudent; // Student data
+    } else if (role === "Counselor") {
+      permissionsData = permissionsDataCounselor; // Counselor data
     }
 
-    const updated = permissionsData.map((mod) => {
-      return {
-        module: mod.module,
-        features: mod.features.map((feat) => {
-          const perms = { name: feat, view: false, add: false, edit: false, delete: false };
+    // Fetch role-specific permissions from the backend
+    const fetchPermissions = async () => {
+      try {
+        const response = await api.get(`permission?role_name=${role}`);
+        const backendPermissions = response.data;
 
-          // Check if role has full access to this module
-          if (roleDefaults[role] === "all") {
-            return { ...perms, view: true, add: true, edit: true, delete: true };
-          }
+        // Map backend data to permissions structure
+        const updatedPermissions = permissionsData.map((mod) => {
+          return {
+            module: mod.module,
+            features: mod.features.map((feat) => {
+              // Initialize permissions for the feature
+              const perms = {
+                name: feat.name,
+                view: false,
+                add: false,
+                edit: false,
+                delete: false,
+                id: null, // Store permission ID for updating
+              };
 
-          const access = roleDefaults[role]?.[mod.module] || [];
-          access.forEach((type) => {
-            perms[type] = true;
-          });
+              // Find matching permission from backend data
+              const matchedPermission = backendPermissions.find(
+                (permission) => permission.permission_name === feat.name
+              );
 
-          return perms;
-        }),
-      };
-    });
+              if (matchedPermission) {
+                perms.view = matchedPermission.view_permission === 1;
+                perms.add = matchedPermission.add_permission === 1;
+                perms.edit = matchedPermission.edit_permission === 1;
+                perms.delete = matchedPermission.delete_permission === 1;
+                perms.id = matchedPermission.id; // Store the permission ID
+              }
 
-    setPermissions(updated);
+              return perms;
+            }),
+          };
+        });
+
+        setPermissions(updatedPermissions);
+      } catch (error) {
+        console.error("Error fetching permissions:", error);
+      }
+    };
+
+    fetchPermissions();
   }, [role]);
 
-  const handleCheckboxChange = (moduleIndex, featureIndex, permissionType) => {
+  const handleCheckboxChange = async (moduleIndex, featureIndex, permissionType) => {
     const updatedPermissions = [...permissions];
-    updatedPermissions[moduleIndex].features[featureIndex][permissionType] =
-      !updatedPermissions[moduleIndex].features[featureIndex][permissionType];
-    setPermissions(updatedPermissions);
-  };
+    const feature = updatedPermissions[moduleIndex].features[featureIndex];
+    const newValue = !feature[permissionType];
+    feature[permissionType] = newValue;
 
-  const handleSave = () => {
-    console.log(JSON.stringify(permissions, null, 2));
-    alert("Permissions saved to console (mock). You can now integrate API.");
+    setPermissions(updatedPermissions);
+
+    // Prepare the updated permissions data
+    const permissionData = {
+      view_permission: feature.view,
+      add_permission: feature.add,
+      edit_permission: feature.edit,
+      delete_permission: feature.delete,
+    };
+
+    // Send the updated permission to the backend
+    try {
+      await api.put(`/permission/${feature.id}`, permissionData);
+      console.log(`Permission for ${feature.name} updated successfully.`);
+    } catch (error) {
+      console.error("Error updating permission:", error);
+      // If the update fails, revert the change
+      feature[permissionType] = !newValue;
+      setPermissions(updatedPermissions);
+    }
   };
 
   return (
@@ -107,6 +138,7 @@ const PermissionsTable = () => {
                   <strong>{module.module}</strong>
                 </td>
               </tr>
+
               {module.features.map((feature, featureIndex) => (
                 <tr key={featureIndex}>
                   <td>{feature.name}</td>
@@ -127,16 +159,6 @@ const PermissionsTable = () => {
           ))}
         </tbody>
       </Table>
-
-      <div className="d-flex justify-content-end">
-        <button
-          className="btn btn-dark"
-          style={{ border: "none" }}
-          onClick={handleSave}
-        >
-          Save Permissions
-        </button>
-      </div>
     </Container>
   );
 };

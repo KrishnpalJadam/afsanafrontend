@@ -7,6 +7,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import TodaysInqiury from "./TodaysInqiury";
 import Followup from "./Followup";
 import api from "../../interceptors/axiosInterceptor";
+import { hasPermission } from "../../authtication/permissionUtils";
 const Inquiry = () => {
   // Sample inquiry data
   const [inquiries, setInquiries] = useState({});
@@ -284,7 +285,9 @@ const Inquiry = () => {
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Today's Inquiries</h2>
         <div>
-          <Button variant="secondary" className="me-2"  onClick={handleShowInquiryModal} style={{ border: "none" }} >
+          <Button variant="secondary" className="me-2"  onClick={handleShowInquiryModal} style={{ border: "none" }} 
+          disabled={!hasPermission("Inquiry","add")}
+          >
             Add Inquiry </Button>
         </div>
       </div>
@@ -323,7 +326,9 @@ const Inquiry = () => {
                 <Button variant="danger"
                   size="sm"
                   onClick={() => handleDeleteInquiry(inq.id)}
-                  className="ms-2">
+                  className="ms-2"
+                  disabled={!hasPermission("Inquiry","delete")}
+                  >
                   Delete
                 </Button>
               </td>

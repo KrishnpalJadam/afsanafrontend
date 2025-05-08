@@ -480,7 +480,312 @@
 // };
 
 // export default Payments;
-import React, { useState } from "react";
+
+
+
+
+
+
+// import React, { useState } from "react";
+// import {
+//   Container,
+//   Table,
+//   Button,
+//   Card,
+//   Form,
+//   Row,
+//   Col,
+//   Badge,
+//   Modal,
+//   Pagination,
+// } from "react-bootstrap";
+// import * as XLSX from "xlsx";
+// import { saveAs } from "file-saver";
+
+// const AdminPayments = () => {
+//   const [filter, setFilter] = useState("all");
+//   const [search, setSearch] = useState("");
+//   const [sortField, setSortField] = useState("");
+//   const [showModal, setShowModal] = useState(false);
+//   const [selectedPaymentId, setSelectedPaymentId] = useState(null);
+//   const [currentPage, setCurrentPage] = useState(1);
+//   const itemsPerPage = 5;
+
+//   const [payments, setPayments] = useState([
+//     {
+//       id: 1,
+//       student: "Rahul Sharma",
+//       description: "Tuition Fee",
+//       amount: 1200,
+//       status: "Due",
+//       date: "2025-06-15",
+//     },
+//     {
+//       id: 2,
+//       student: "Neha Verma",
+//       description: "Library Fee",
+//       amount: 100,
+//       status: "Paid",
+//       date: "2025-04-10",
+//     },
+//     {
+//       id: 3,
+//       student: "Aman Singh",
+//       description: "Hostel Fee",
+//       amount: 500,
+//       status: "Due",
+//       date: "2025-06-20",
+//     },
+//     {
+//       id: 4,
+//       student: "Priya Kapoor",
+//       description: "Application Fee",
+//       amount: 150,
+//       status: "Paid",
+//       date: "2025-03-28",
+//     },
+//     {
+//       id: 5,
+//       student: "Ravi Mehra",
+//       description: "Exam Fee",
+//       amount: 200,
+//       status: "Due",
+//       date: "2025-07-01",
+//     },
+//     {
+//       id: 6,
+//       student: "Sonal Joshi",
+//       description: "Mess Charges",
+//       amount: 350,
+//       status: "Paid",
+//       date: "2025-04-15",
+//     },
+//     {
+//       id: 7,
+//       student: "Tina Rawal",
+//       description: "Late Fee",
+//       amount: 50,
+//       status: "Due",
+//       date: "2025-06-18",
+//     },
+//   ]);
+
+//   const handleMarkAsPaid = () => {
+//     setPayments(
+//       payments.map((item) =>
+//         item.id === selectedPaymentId ? { ...item, status: "Paid" } : item
+//       )
+//     );
+//     setShowModal(false);
+//   };
+
+//   const handleExport = () => {
+//     const ws = XLSX.utils.json_to_sheet(filteredPayments);
+//     const wb = XLSX.utils.book_new();
+//     XLSX.utils.book_append_sheet(wb, ws, "Payments");
+//     const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+//     const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+//     saveAs(blob, "student_payments.xlsx");
+//   };
+
+//   const filteredPayments = payments
+//     .filter((item) => filter === "all" || item.status === filter)
+//     .filter((item) =>
+//       item.student.toLowerCase().includes(search.toLowerCase())
+//     );
+
+//   const sortedPayments = [...filteredPayments].sort((a, b) => {
+//     if (sortField === "date") return new Date(a.date) - new Date(b.date);
+//     if (sortField === "amount") return a.amount - b.amount;
+//     return 0;
+//   });
+
+//   const indexOfLastItem = currentPage * itemsPerPage;
+//   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+//   const currentItems = sortedPayments.slice(indexOfFirstItem, indexOfLastItem);
+//   const totalPages = Math.ceil(sortedPayments.length / itemsPerPage);
+
+//   return (
+//     <Container className="mt-4">
+//       <h3 className="mb-4">Admin - All Student Payments</h3>
+
+//       <Card className="mb-3">
+//         <Card.Body>
+//           <Row className="align-items-end g-3">
+//             <Col md={3}>
+//               <Form.Group>
+//                 <Form.Label>Status Filter</Form.Label>
+//                 <Form.Select
+//                   value={filter}
+//                   onChange={(e) => setFilter(e.target.value)}
+//                 >
+//                   <option value="all">All</option>
+//                   <option value="Due">Due</option>
+//                   <option value="Paid">Paid</option>
+//                 </Form.Select>
+//               </Form.Group>
+//             </Col>
+//             <Col md={3}>
+//               <Form.Group>
+//                 <Form.Label>Search by Student</Form.Label>
+//                 <Form.Control
+//                   type="text"
+//                   placeholder="Enter name"
+//                   value={search}
+//                   onChange={(e) => setSearch(e.target.value)}
+//                 />
+//               </Form.Group>
+//             </Col>
+//             <Col md={3}>
+//               <Form.Group>
+//                 <Form.Label>Sort by</Form.Label>
+//                 <Form.Select
+//                   value={sortField}
+//                   onChange={(e) => setSortField(e.target.value)}
+//                 >
+//                   <option value="">None</option>
+//                   <option value="date">Date</option>
+//                   <option value="amount">Amount</option>
+//                 </Form.Select>
+//               </Form.Group>
+//             </Col>
+//             <Col md={3}>
+//               <Button
+//                 className="mt-2 w-100"
+//                 variant="outline-primary"
+//                 onClick={handleExport}
+//               >
+//                 Export to Excel
+//               </Button>
+//             </Col>
+//           </Row>
+//         </Card.Body>
+//       </Card>
+
+//       <Card>
+//         <Card.Body>
+//           <Table striped bordered hover responsive>
+//             <thead>
+//               <tr>
+//                 <th>#</th>
+//                 <th>Student</th>
+//                 <th>Description</th>
+//                 <th>Amount ($)</th>
+//                 <th>Status</th>
+//                 <th>Date</th>
+//                 <th>Action</th>
+//               </tr>
+//             </thead>
+//             <tbody>
+//               {currentItems.map((item, index) => (
+//                 <tr key={item.id}>
+//                   <td>{indexOfFirstItem + index + 1}</td>
+//                   <td>{item.student}</td>
+//                   <td>{item.description}</td>
+//                   <td>{item.amount}</td>
+//                   <td>
+//                     <Badge bg={item.status === "Paid" ? "success" : "warning"}>
+//                       {item.status}
+//                     </Badge>
+//                   </td>
+//                   <td>{item.date}</td>
+//                   <td>
+//                     {item.status === "Due" ? (
+//                       <Button
+//                         size="sm"
+//                         variant="success"
+//                         onClick={() => {
+//                           setSelectedPaymentId(item.id);
+//                           setShowModal(true);
+//                         }}
+//                       >
+//                         Mark as Paid
+//                       </Button>
+//                     ) : (
+//                       <Button
+//                         size="sm"
+//                         variant="info"
+//                         onClick={() => alert("Viewing receipt")}
+//                       >
+//                         View Receipt
+//                       </Button>
+//                     )}
+//                   </td>
+//                 </tr>
+//               ))}
+//               {currentItems.length === 0 && (
+//                 <tr>
+//                   <td colSpan="7" className="text-center">
+//                     No records found.
+//                   </td>
+//                 </tr>
+//               )}
+//             </tbody>
+//           </Table>
+
+//           {/* Pagination */}
+//           {totalPages > 1 && (
+//             <Pagination className="justify-content-end">
+//               {[...Array(totalPages)].map((_, page) => (
+//                 <Pagination.Item
+//                   key={page}
+//                   active={page + 1 === currentPage}
+//                   onClick={() => setCurrentPage(page + 1)}
+//                 >
+//                   {page + 1}
+//                 </Pagination.Item>
+//               ))}
+//             </Pagination>
+//           )}
+//         </Card.Body>
+//       </Card>
+
+//       {/* Confirmation Modal */}
+//       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+//         <Modal.Header closeButton>
+//           <Modal.Title>Mark as Paid</Modal.Title>
+//         </Modal.Header>
+//         <Modal.Body>
+//           Are you sure you want to mark this payment as paid?
+//         </Modal.Body>
+//         <Modal.Footer>
+//           <Button variant="secondary" onClick={() => setShowModal(false)}>
+//             Cancel
+//           </Button>
+//           <Button variant="success" onClick={handleMarkAsPaid}>
+//             Confirm
+//           </Button>
+//         </Modal.Footer>
+//       </Modal>
+//     </Container>
+//   );
+// };
+
+// export default AdminPayments;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Table,
@@ -495,6 +800,9 @@ import {
 } from "react-bootstrap";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import BASE_URL from "../../Config";
+import api from "../../interceptors/axiosInterceptor";
+import { Link } from "react-router-dom";
 
 const AdminPayments = () => {
   const [filter, setFilter] = useState("all");
@@ -505,64 +813,7 @@ const AdminPayments = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  const [payments, setPayments] = useState([
-    {
-      id: 1,
-      student: "Rahul Sharma",
-      description: "Tuition Fee",
-      amount: 1200,
-      status: "Due",
-      date: "2025-06-15",
-    },
-    {
-      id: 2,
-      student: "Neha Verma",
-      description: "Library Fee",
-      amount: 100,
-      status: "Paid",
-      date: "2025-04-10",
-    },
-    {
-      id: 3,
-      student: "Aman Singh",
-      description: "Hostel Fee",
-      amount: 500,
-      status: "Due",
-      date: "2025-06-20",
-    },
-    {
-      id: 4,
-      student: "Priya Kapoor",
-      description: "Application Fee",
-      amount: 150,
-      status: "Paid",
-      date: "2025-03-28",
-    },
-    {
-      id: 5,
-      student: "Ravi Mehra",
-      description: "Exam Fee",
-      amount: 200,
-      status: "Due",
-      date: "2025-07-01",
-    },
-    {
-      id: 6,
-      student: "Sonal Joshi",
-      description: "Mess Charges",
-      amount: 350,
-      status: "Paid",
-      date: "2025-04-15",
-    },
-    {
-      id: 7,
-      student: "Tina Rawal",
-      description: "Late Fee",
-      amount: 50,
-      status: "Due",
-      date: "2025-06-18",
-    },
-  ]);
+  const [payments, setPayments] = useState([]);
 
   const handleMarkAsPaid = () => {
     setPayments(
@@ -585,11 +836,11 @@ const AdminPayments = () => {
   const filteredPayments = payments
     .filter((item) => filter === "all" || item.status === filter)
     .filter((item) =>
-      item.student.toLowerCase().includes(search.toLowerCase())
+      item?.name?.toLowerCase().includes(search.toLowerCase())  // Fixed name to item.name
     );
 
   const sortedPayments = [...filteredPayments].sort((a, b) => {
-    if (sortField === "date") return new Date(a.date) - new Date(b.date);
+    if (sortField === "date") return new Date(a.created_at) - new Date(b.created_at);
     if (sortField === "amount") return a.amount - b.amount;
     return 0;
   });
@@ -599,9 +850,33 @@ const AdminPayments = () => {
   const currentItems = sortedPayments.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(sortedPayments.length / itemsPerPage);
 
+  const fetchPayments = async () => {
+    try {
+      const response = await api.get(`${BASE_URL}payments`);
+      if (response?.data) {
+        setPayments(response.data); // Storing the fetched payments in the state
+        console.log("Payments:", response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching payments:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPayments();
+  }, []);
+
   return (
     <Container className="mt-4">
-      <h3 className="mb-4">Admin - All Student Payments</h3>
+      <div className="d-flex p-3" style={{justifyContent: "space-between"}}>
+        <div>
+        <h3 className="mb-4">Admin - All Student Payments</h3>
+        </div>
+        <div>
+          <Link to="/addbranch" className="btn btn-secondary">+ Add Branch</Link>
+        </div>
+      </div>
+   
 
       <Card className="mb-3">
         <Card.Body>
@@ -663,48 +938,53 @@ const AdminPayments = () => {
               <tr>
                 <th>#</th>
                 <th>Student</th>
-                <th>Description</th>
-                <th>Amount ($)</th>
-                <th>Status</th>
+                <th>Email</th>
+                <th>Whatsapp</th>
+                <th>University</th>
+                <th>country</th>
+                <th>Payment method</th>
+                <th>Payment proof</th>
                 <th>Date</th>
-                <th>Action</th>
+               
               </tr>
             </thead>
             <tbody>
               {currentItems.map((item, index) => (
                 <tr key={item.id}>
                   <td>{indexOfFirstItem + index + 1}</td>
-                  <td>{item.student}</td>
-                  <td>{item.description}</td>
-                  <td>{item.amount}</td>
+                  <td>{item.name}</td> {/* Fixed name */}
+                  <td>{item.email}</td>
+                  <td>{item.whatsapp}</td>
+                  <td>{item.university}</td>
+                  <td>{item.country}</td>
+                  <td>{item.payment_method}</td>
                   <td>
+                    {item.file?.match(/\.(jpg|jpeg|png|gif)$/i) ? (
+                      <img
+                        style={{ width: "100px", height: "100px" }}
+                        src={item.file}
+                        alt=""
+                        crossOrigin=""
+                      />
+                    ) : (
+                      <a
+                        href={item.file}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-sm btn-primary"
+                      >
+                        View File
+                      </a>
+                    )}
+                  </td>
+
+                  {/* <td>
                     <Badge bg={item.status === "Paid" ? "success" : "warning"}>
                       {item.status}
                     </Badge>
-                  </td>
-                  <td>{item.date}</td>
-                  <td>
-                    {item.status === "Due" ? (
-                      <Button
-                        size="sm"
-                        variant="success"
-                        onClick={() => {
-                          setSelectedPaymentId(item.id);
-                          setShowModal(true);
-                        }}
-                      >
-                        Mark as Paid
-                      </Button>
-                    ) : (
-                      <Button
-                        size="sm"
-                        variant="info"
-                        onClick={() => alert("Viewing receipt")}
-                      >
-                        View Receipt
-                      </Button>
-                    )}
-                  </td>
+                  </td> */}
+                  <td>{new Date(item.created_at).toLocaleDateString()}</td>
+               
                 </tr>
               ))}
               {currentItems.length === 0 && (
