@@ -117,7 +117,7 @@ const CounselorDashboard = () => {
     ],
   };
  if(  !hasPermission("Dashboard","view")){
-      return <div> You doesn't have accessed for Dashboard</div>
+      return <div> You doesn't have access for Dashboard</div>
     }
   return (
     <Container className="mt-4">

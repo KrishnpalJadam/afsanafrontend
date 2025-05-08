@@ -56,7 +56,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
               </div>
             </li>
           )}
-          {login == "counselor" && hasPermission("Dashboard","view") && (
+          {login == "counselor"  && (
             <li
               className={`menu-item ${isActive("/councelor") ? "active" : ""}`}
             >
@@ -76,7 +76,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
               </div>
             </li>
           )}
-          {login == "student" &&  hasPermission("Dashboard", "view") && (
+          {login == "student"  && (
             <li
               className={`menu-item ${
                 isActive("/studentProfile") ? "active" : ""

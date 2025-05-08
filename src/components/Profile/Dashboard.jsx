@@ -48,6 +48,8 @@ const Dashboard = () => {
       },
     ],
   };
+  const user = JSON.parse(localStorage.getItem("login_detail"))
+  console.log(user)
 
   const pieData = {
     labels: ["Paid", "Due"],
@@ -98,8 +100,8 @@ const Dashboard = () => {
   };
   
    
-    if(  !hasPermission("Dashboard","view")){
-      return <div> You doesn't have accessed for Dashboard</div>
+    if(!hasPermission("Dashboard","view")){
+      return <div> You doesn't have access for Dashboard</div>
     }
   
 
@@ -110,10 +112,10 @@ const Dashboard = () => {
           <h4>
             Welcome,
             <Link to={"/MainStudentDetails"} className="text-decoration-none">
-              John Smith
+              {user.full_name}
             </Link>
           </h4>
-          <span>Last login: Today at 9:45 AM</span>
+          {/* <span>Last login: Today at 9:45 AM</span> */}
         </div>
         <ProgressBar
           className="step-progress-bar"
