@@ -64,6 +64,7 @@ import TawkMessenger from "./TawkMessenger";
 import MyApplication from "./components/AdmissionTracking/MyApplication";
 import CounselorApplications from "./components/AdmissionTracking/CounselorApplications";
 import ApplicationTimeline from "./components/AdmissionTracking/ApplicationTimeline";
+import Addbranch from "./components/ReportingAnalytics/Addbranch";
 
 function App() {
   //show details to admin
@@ -359,6 +360,7 @@ function App() {
                 element={<ReportingAnalytics />}
               />
 
+              <Route path="/addbranch" element={<Addbranch/>}></Route>
               <Route path="/payment" element={<Payment></Payment>}></Route>
 
               {/* PaymentInvoiceManagement */}
