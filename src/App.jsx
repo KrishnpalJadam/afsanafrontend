@@ -64,6 +64,7 @@ import TawkMessenger from "./TawkMessenger";
 import MyApplication from "./components/AdmissionTracking/MyApplication";
 import CounselorApplications from "./components/AdmissionTracking/CounselorApplications";
 import ApplicationTimeline from "./components/AdmissionTracking/ApplicationTimeline";
+import MyProfile from "./MyProfile/MyProfile";
 
 function App() {
   //show details to admin
@@ -350,14 +351,12 @@ function App() {
               {/* reports & analytics */}
               <Route
                 path="/CourseUniversityDatabase"
-                element={<CourseUniversityDatabase></CourseUniversityDatabase>}
-              ></Route>
+                element={<CourseUniversityDatabase></CourseUniversityDatabase>} ></Route>
 
               {/* payment & invoices*/}
               <Route
                 path="/ReportingAnalytics"
-                element={<ReportingAnalytics />}
-              />
+                element={<ReportingAnalytics />}/>
 
               <Route path="/payment" element={<Payment></Payment>}></Route>
 
@@ -373,6 +372,7 @@ function App() {
 
               {/* chatbox route */}
               <Route path="/chatbox" element={<ChatBox />} />
+              <Route path="/profile" element={<MyProfile />} />
             </Routes>
           </LeadProvider>
         </div>

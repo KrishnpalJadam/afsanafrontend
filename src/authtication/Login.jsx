@@ -40,7 +40,7 @@ const Login = ({ setLogin }) => {
         localStorage.setItem("counselor_id", user.counselor_id);
         localStorage.setItem("student_id", user.student_id);
         console.log(user);
-        localStorage.setItem("user_id",user.student_id);
+        // localStorage.setItem("user_id",user.student_id); 
         console.log(user.id);
          
     
@@ -76,8 +76,7 @@ const Login = ({ setLogin }) => {
       minHeight: "100vh",
       backgroundColor: "#b4ccf0",
       alignItems: "center",
-      justifyContent: "center",
-     }}>
+      justifyContent: "center", }}>
       <div style={{ backgroundColor: "#fff",
         width: "90%",
         maxWidth: "1000px",
@@ -92,9 +91,7 @@ const Login = ({ setLogin }) => {
           alignItems: "center",
           justifyContent: "center",
           padding: "40px"}}>
-          <img
-            src="https://abcschool.institute.org.in/assets/images/student-login-2.svg"
-            alt="Student"
+          <img  src="https://abcschool.institute.org.in/assets/images/student-login-2.svg"  alt="Student"
             style={{ maxWidth: "100%", height: "auto" }}/>
         </div>
 

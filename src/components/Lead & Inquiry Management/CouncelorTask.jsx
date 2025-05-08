@@ -24,6 +24,7 @@ const CounselorTask = () => {
   const fetchTasks = async () => {
     try {
       const response = await api.get(`task/${counselorId}`);
+      console.log(response.data)
       setTasksData(response.data);
     } catch (error) {
       console.error("Error fetching tasks:", error);
@@ -157,8 +158,23 @@ const CounselorTask = () => {
           <Modal.Title>Task Notes</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p><strong>Notes:</strong> {selectedTask?.notes || "No notes available"}</p>
-          <p><strong>Status:</strong> {selectedTask?.status}</p>
+        {selectedTask?.image ? (
+  <div style={{ marginBottom: "10px" }}>
+    <strong>Image:</strong><br />
+    <img
+      src={selectedTask.image}
+      alt="Task"
+        crossOrigin="anonymous"
+      style={{ width: "200px", height: "auto", borderRadius: "6px", marginTop: "8px" }}
+    />
+  </div>
+) : (
+  <p><strong>Image:</strong> No image available</p>
+)}
+
+<p><strong>Notes:</strong> {selectedTask?.notes || "No notes available"}</p>
+<p><strong>Status:</strong> {selectedTask?.status}</p>
+
         </Modal.Body>
         <Modal.Footer>
           <Button
