@@ -15,12 +15,13 @@ import {
 } from "@mui/material";
 import api from "../../interceptors/axiosInterceptor";
 import { useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const steps = ["Application", "Interview", "Visa Process"];
 
 const UniversityStepper = () => {
   const [activeStep, setActiveStep] = useState(0);
-  const [status,setStatus]= useState(false)
+  const [status, setStatus] = useState(false)
   const [applicationId, setApplicationId] = useState(null)
   const student_id = parseInt(localStorage.getItem("student_id"));
   const university_id = useParams("university.id");
@@ -65,11 +66,11 @@ const UniversityStepper = () => {
     arrivalInCountry: "",
     residencePermitForm: null,
     emailSentForSubmission: "",
-    Application_stage:"0"
+    Application_stage: "0"
 
   });
 
-   
+
   const handleFileChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.files[0] });
   };
@@ -122,24 +123,30 @@ const UniversityStepper = () => {
   formDataToSubmit.append("Visa_process", 0);
 
 
-useEffect(()=>{
-      const getApplication = async()=>{
-        try {
-          const res = api.get(`/application/${student_id}/${university_id.id}`)
-          res.then((data) => {
-            // console.log(data.data);  // 'data' will be the resolved value of the promise
-            setStatus(data.data.status);
-            setApplicationId(data?.data?.data[0]?.id)
-            // console.log("Aid",data?.data?.data[0]?.id)
-          })
-           
-          
-        } catch (error) {
-          console.log(error)
-        }
-      }  
-      getApplication()
-},[])
+  useEffect(() => {
+    const getApplication = async () => {
+      try {
+        const res = api.get(`/application/${student_id}/${university_id.id}`)
+        res.then((data) => {
+          // console.log(data.data);  // 'data' will be the resolved value of the promise
+          setStatus(data.data.status);
+          setApplicationId(data?.data?.data[0]?.id)
+          Swal.fire({
+            title: 'Success!',
+            text: 'Data submitted successfully!',
+            icon: 'success',
+            confirmButtonText: 'OK',
+          });
+          // console.log("Aid",data?.data?.data[0]?.id)
+        })
+
+
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getApplication()
+  }, [])
 
 
 
@@ -1181,12 +1188,12 @@ useEffect(()=>{
               >
                 Back
               </Button>
-              <Button variant="contained" onClick={handleNext} disabled={ !status }>
+              <Button variant="contained" onClick={handleNext} disabled={!status}>
                 Next
               </Button>
-              {status===false?<Button variant="contained" onClick={handleSubmit}>
+              {status === false ? <Button variant="contained" onClick={handleSubmit}>
                 Submit Application
-              </Button>: <Button variant="contained" onClick={()=>{handleUpdate(applicationId)}}>
+              </Button> : <Button variant="contained" onClick={() => { handleUpdate(applicationId) }}>
                 Submit
               </Button>}
             </Box>
