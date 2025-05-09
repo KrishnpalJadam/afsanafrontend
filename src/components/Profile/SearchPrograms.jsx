@@ -1,240 +1,174 @@
-import React, { useState } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Form,
-  Card,
-  Button,
-  ListGroup,
-} from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { useSpring, animated } from "react-spring";
 import { Link } from "react-router-dom";
+import { Button, Form } from "react-bootstrap";
+import Swal from "sweetalert2";
+import BASE_URL from "../../Config";
+import api from "../../interceptors/axiosInterceptor";
 
 const SearchPrograms = () => {
-  const [filters, setFilters] = useState({
-    destination: "",
-    university: "",
-    programLevel: "",
-    fieldOfStudy: "",
-    intake: "",
+  const [universities, setUniversities] = useState([]);
+  const [filteredUniversities, setFilteredUniversities] = useState([]);
+  const [selectedUniversity, setSelectedUniversity] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState("");
+
+  // Spring animation
+  const animation = useSpring({
+    opacity: 1,
+    transform: "translateY(0)",
+    from: { opacity: 0, transform: "translateY(20px)" },
+    config: { tension: 200, friction: 20 },
   });
 
-  // Updated universities object with destinations and their universities
-  const universities = {
-    Canada: ["University of Toronto", "UBC"],
-    Hungary: ["Széchenyi István University"],
-    UK: ["University of Oxford", "University of Cambridge"],
-    // Add more as needed
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await api.get(`${BASE_URL}universities`);
+        setUniversities(response.data);
+        setFilteredUniversities(response.data);
+      } catch (error) {
+        console.log("Error fetching universities:", error);
+      }
+    };
 
-  const handleChange = (e) => {
-    setFilters({ ...filters, [e.target.name]: e.target.value });
-  };
+    fetchData();
+  }, []);
 
-  const [results, setResults] = useState([]);
+  // Unique university names and locations for select options
+  const universityNames = [...new Set(universities.map(u => u.name))];
+  const locations = [...new Set(universities.map(u => u.location))];
 
-  const handleSearch = () => {
-    // Dummy Data to show after search
-    const dummyResults = [
-      {
-        university: "University of Toronto",
-        program: "Bachelor of Science in Computer Science",
-        intake: "Fall Semester 2025/2026",
-      },
-      {
-        university: "University of Oxford",
-        program: "Master of Engineering in Civil Engineering",
-        intake: "Spring Semester 2025/2026",
-      },
-      {
-        university: "UBC",
-        program: "Master of Business Administration",
-        intake: "Fall Semester 2026/2027",
-      },
-    ];
+  // Handle filtering
+  useEffect(() => {
+    let filtered = universities;
 
-    setResults(dummyResults); // Show dummy results after clicking "Search"
-  };
+    if (selectedUniversity) {
+      filtered = filtered.filter(u => u.name === selectedUniversity);
+    }
 
-  // const handleSearch = () => {
-  // Dummy Data based on selected filters
+    if (selectedLocation) {
+      filtered = filtered.filter(u => u.location === selectedLocation);
+    }
 
-  // Simulate search filter matching and update results
-  //   const filteredResults = searchResults.filter((result) => {
-  //     return (
-  //       (filters.destination === "" ||
-  //         result.university.includes(filters.destination)) &&
-  //       (filters.programLevel === "" ||
-  //         result.program.includes(filters.programLevel)) &&
-  //       (filters.intake === "" || result.intake.includes(filters.intake))
-  //     );
-  //   });
-
-  //   setResults(filteredResults);
-  // };
+    setFilteredUniversities(filtered);
+  }, [selectedUniversity, selectedLocation, universities]);
 
   return (
-    <Container className="mt-4">
-      <h3 className="mb-4">Search Programs & Schools</h3>
-      <Card className="mb-4">
-        <Card.Body>
-          <Form>
-            <Row className="mb-3">
-              <Col md={6}>
-                <Form.Group controlId="destination">
-                  <Form.Label>Destination</Form.Label>
-                  <Form.Select
-                    name="destination"
-                    value={filters.destination}
-                    onChange={handleChange}
-                  >
-                    <option value="">Select Country</option>
-                    <option>Hungary</option>
-                    <option>Cyprus</option>
-                    <option>Canada</option>
-                    <option>Malaysia</option>
-                    <option>UK</option>
-                    <option>Netherlands</option>
-                    <option>Germany</option>
-                    <option>Malta</option>
-                    <option>Switzerland</option>
-                  </Form.Select>
-                </Form.Group>
-              </Col>
+    <div className="container">
+      <div className="p-4">
+        <h2 className="text-center">Search Programs & Schools</h2>
+      </div>
 
-              <Col md={6}>
-                <Form.Group controlId="university">
-                  <Form.Label>University</Form.Label>
-                  <Form.Select
-                    name="university"
-                    value={filters.university}
-                    onChange={handleChange}
-                    disabled={!filters.destination} // Disable if no destination is selected
-                  >
-                    <option value="">Select University</option>
-                    {(universities[filters.destination] || []).map(
-                      (uni, idx) => (
-                        <option key={idx}>{uni}</option>
-                      )
-                    )}
-                  </Form.Select>
-                </Form.Group>
-              </Col>
-            </Row>
+      <div className="row mb-4">
+        <div className="col-md-6">
+          <Form.Group controlId="selectUniversity">
+            <Form.Label>Select University</Form.Label>
+            <Form.Select
+              value={selectedUniversity}
+              onChange={(e) => setSelectedUniversity(e.target.value)}
+            >
+              <option value="">All Universities</option>
+              {universityNames.map((name, index) => (
+                <option key={index} value={name}>
+                  {name}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+        </div>
 
-            <Row className="mb-3">
-              <Col md={6}>
-                <Form.Group controlId="programLevel">
-                  <Form.Label>Program Level</Form.Label>
-                  <Form.Select
-                    name="programLevel"
-                    value={filters.programLevel}
-                    onChange={handleChange}
-                  >
-                    <option value="">Select Level</option>
-                    <option>Foundation</option>
-                    <option>Bachelor's</option>
-                    <option>Master's</option>
-                    <option>Double Degree</option>
-                    <option>Doctoral</option>
-                  </Form.Select>
-                </Form.Group>
-              </Col>
+        <div className="col-md-6">
+          <Form.Group controlId="selectLocation">
+            <Form.Label>Select Location</Form.Label>
+            <Form.Select
+              value={selectedLocation}
+              onChange={(e) => setSelectedLocation(e.target.value)}
+            >
+              <option value="">All Locations</option>
+              {locations.map((loc, index) => (
+                <option key={index} value={loc}>
+                  {loc}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+        </div>
+      </div>
 
-              <Col md={6}>
-                <Form.Group controlId="fieldOfStudy">
-                  <Form.Label>Field of Study</Form.Label>
-                  <Form.Select
-                    name="fieldOfStudy"
-                    value={filters.fieldOfStudy}
-                    onChange={handleChange}
-                  >
-                    <option value="">Select Field</option>
-                    <option>
-                      Faculty of Architecture, Civil Engineering and Transport
-                      Sciences
-                    </option>
-                    <option>
-                      Kautz Gyula Faculty of Business and Economics
-                    </option>
-                    <option>
-                      Apáczai Csere János Faculty of Humanities, Education and
-                      Social Sciences
-                    </option>
-                    <option>
-                      Audi Hungaria Faculty of Automotive Engineering
-                    </option>
-                    <option>
-                      Faculty of Mechanical Engineering, Informatics and
-                      Electrical Engineering
-                    </option>
-                  </Form.Select>
-                </Form.Group>
-              </Col>
-            </Row>
+      <div className="row">
+        {filteredUniversities.length > 0 ? (
+          filteredUniversities.map((university, index) => {
+            const programs = Array.isArray(university.programs) ? university.programs : [];
+            const highlights = Array.isArray(university.highlights) ? university.highlights : [];
 
-            <Row className="mb-3">
-              <Col md={6}>
-                <Form.Group controlId="intake">
-                  <Form.Label>Intake</Form.Label>
-                  <Form.Select
-                    name="intake"
-                    value={filters.intake}
-                    onChange={handleChange}
-                  >
-                    <option value="">Select Intake</option>
-                    <option>Spring Semester 2025/2026</option>
-                    <option>Fall Semester 2026/2027</option>
-                  </Form.Select>
-                </Form.Group>
-              </Col>
-            </Row>
+            return (
+              <animated.div key={index} className="col-md-4 mb-4" style={animation}>
+                <div className="card shadow-sm">
+                  <div className="card-body">
+                    <div className="d-flex align-items-center mb-4">
+                      <img
+                        src={university.logo_url}
+                        alt={`${university.name} Logo`}
+                        className="rounded-circle"
+                         crossorigin="anonymous"
+                        style={{ width: "50px", height: "50px", objectFit: "cover", padding: "5px" }}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "/default-logo.png";
+                        }}
+                      />
+                      <h5 className="ml-3">{university.name}</h5>
+                    </div>
 
-            <Button variant="primary" onClick={handleSearch}>
-              Search
-            </Button>
-          </Form>
-        </Card.Body>
-      </Card>
+                    <div className="mb-3">
+                      <div className="d-flex align-items-center text-muted mb-2">
+                        📬 <span className="ml-2">{university.location}</span>
+                      </div>
+                    </div>
 
-      {/* Search Results */}
-      <Card className="mt-4">
-        <Card.Body>
-          <h5 className="mb-3">Search Results</h5>
-          <Row>
-            {results.length > 0 ? (
-              results.map((result, index) => (
-                <Col md={4} key={index} className="mb-4">
-                  <Card>
-                    <Card.Body>
-                      <Card.Title>{result.university}</Card.Title>
-                      <Card.Subtitle className="mb-2 text-muted">
-                        {result.program}
-                      </Card.Subtitle>
-                      <Card.Text>
-                        <strong>Intake:</strong> {result.intake}
-                      </Card.Text>
-                      <Button variant="primary">
-                        <Link
-                          to={"/university"}
-                          className="text-white text-decoration-none"
-                        >
-                          Apply Now
-                        </Link>
-                      </Button>
-                    </Card.Body>
-                  </Card>
-                </Col>
-              ))
-            ) : (
-              <Col>
-                <p>Click "Search" to view available programs.</p>
-              </Col>
-            )}
-          </Row>
-        </Card.Body>
-      </Card>
-    </Container>
+                    <div className="mb-3">
+                      <h6 className="font-weight-bold">Popular Programs:</h6>
+                      <ul className="text-muted">
+                        {programs.length > 0 ? (
+                          programs.map((program, idx) => <li key={idx}>• {program}</li>)
+                        ) : (
+                          <li>No programs available</li>
+                        )}
+                      </ul>
+                    </div>
+
+                    <div className="mb-3">
+                      <h6 className="font-weight-bold">Key Highlights:</h6>
+                      <ul className="text-muted">
+                        {highlights.length > 0 ? (
+                          highlights.map((highlight, idx) => <li key={idx}>• {highlight}</li>)
+                        ) : (
+                          <li>No highlights available</li>
+                        )}
+                      </ul>
+                    </div>
+
+                    <div className="mb-4">
+                      <h6 className="font-weight-bold">Contact:</h6>
+                      <div className="text-muted">
+                        <p>📞 {university.contact_phone || "N/A"}</p>
+                        <p>📧 {university.contact_email || "N/A"}</p>
+                      </div>
+                    </div>
+
+                    <Link to={`/university/${university.id}`} className="btn btn-primary w-100">
+                      Apply Now
+                    </Link>
+                  </div>
+                </div>
+              </animated.div>
+            );
+          })
+        ) : (
+          <p>No universities available</p>
+        )}
+      </div>
+    </div>
   );
 };
 
