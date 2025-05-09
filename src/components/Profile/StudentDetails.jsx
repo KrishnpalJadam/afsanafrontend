@@ -293,7 +293,7 @@ useEffect(() => {
                 </td>
                 <td>{student?.admission_no}</td>
                 <td>{student?.id_no}</td>
-                <td>{student?.university_id}</td>
+                <td>{student?.university_name}</td>
                 <td>{student?.father_name}</td>
                 <td>{new Date(student?.date_of_birth).toLocaleDateString()}</td>
                 <td>{student?.gender}</td>

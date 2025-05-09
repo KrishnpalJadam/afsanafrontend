@@ -99,10 +99,10 @@ const student = {
 };
 
 function StudentDetailsPage() {
-  const [student , setStudent ] = useState()
+  const [student, setStudent] = useState()
   const { studentId } = useParams();
   console.log("studentId", studentId);
-   
+
   // const selectedStudent = students.find(
   //   (student) => student.studentId.toString() === studentId
   // );
@@ -113,8 +113,8 @@ function StudentDetailsPage() {
   const authToken = localStorage.getItem('authToken')
   console.log("authToken", authToken);
   useEffect(() => {
-     
-  
+
+
     const fetchStudentData = async () => {
       try {
         const response = await fetch(`${BASE_URL}auth/getStudentById/${studentId}`, {
@@ -122,11 +122,11 @@ function StudentDetailsPage() {
             Authorization: `Bearer ${authToken}`,
           },
         });
-  
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-  
+
         const data = await response.json();
         setStudent(data);
         console.log("data", data);
@@ -134,10 +134,10 @@ function StudentDetailsPage() {
         console.error("Error fetching student data:", error);
       }
     };
-  
+
     fetchStudentData();
   }, [studentId]); // ✅ include authToken in dependency array
-  
+
   // Badge colors based on status
   const getBadge = (status) => {
     switch (status) {
@@ -156,30 +156,22 @@ function StudentDetailsPage() {
     }
   };
 
-console.log(":");
+  console.log(":");
   return (
     <div className="container mt-5">
       {/* Profile Header */}
       <Row className="mb-4 align-items-center">
-        <Col md={6} className="text-center mb-3 mb-md-0">
+        <Col md={12} className="text-center mb-3 mb-md-0">
           <img
             style={{ height: "150px", width: "150px", objectFit: "cover" }}
-             src={student?.photo}
+            src={student?.photo}
             alt="Profile"
             className="img-fluid rounded-circle shadow-sm"
             crossOrigin=''
           />
-        </Col>
-        <Col md={6}>
           <h2 className="font-weight-bold text-primary">{student?.full_name}</h2>
-          {/* <p className="text-muted">Last login: Today at 9:45 AM</p> */}
-          <ProgressBar
-            className="step-progress-bar"
-            now={75}
-            label={`Profile Completeness: 75%`}
-            variant="info"
-          />
         </Col>
+
       </Row>
 
       {/* Personal Information, Education & Progress */}

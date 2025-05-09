@@ -120,11 +120,11 @@ const PaymentInvoiceMangament = () => {
       // Show success alert
       Swal.fire({
         title: "Success!",
-        text: "University added successfully.",
+        text: "University added successfully. Please refresh this page.",
         icon: "success",
         confirmButtonText: "Ok",
       });
-
+ 
     } catch (error) {
       console.log("Error adding university:", error);
       Swal.fire({
@@ -142,7 +142,7 @@ const PaymentInvoiceMangament = () => {
       try {
         const response = await api.get(`${BASE_URL}universities`);
         console.log(response.data); // To check if data is correct
-        setUniversities(response.data); // Ensure the data is passed correctly
+        setUniversities(response.data); 
       } catch (error) {
         console.log("Error fetching universities:", error);
       }
