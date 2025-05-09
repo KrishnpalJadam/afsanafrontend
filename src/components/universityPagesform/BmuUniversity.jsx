@@ -19,7 +19,7 @@ const steps = ["Application", "Interview", "Visa Process"];
 
 const UniversityStepper = () => {
   const [activeStep, setActiveStep] = useState(0);
-  const user_id = localStorage.getItem("user_id");
+  const user_id = localStorage.getItem("student_id");
   const [formData, setFormData] = useState({
     registrationFeePayment: "",
     registration: "",
@@ -59,6 +59,8 @@ const UniversityStepper = () => {
     onlineEnrollmentCompleted: "",
     accommodationConfirmationReceived: "",
     arrivalInCountry: "",
+    residencePermitForm: null,
+    emailSentForSubmission: ""
   });
  
 //  const [testForm , setTestForm] = useState(
@@ -72,8 +74,68 @@ const UniversityStepper = () => {
   };
   const formDataToSubmit = new FormData();
   formDataToSubmit.append("student_id", user_id);
-  formDataToSubmit.append("registration_fee_payment",formData.registrationFeePayment);
+  formDataToSubmit.append("registration_fee_payment", formData.registrationFeePayment);
   formDataToSubmit.append("registration_date", formData.registration);
+  formDataToSubmit.append("application_submission_date", formData.applicationSubmission);
+  formDataToSubmit.append("application_fee_payment", formData.applicationFeePayment);
+  formDataToSubmit.append("fee_confirmation_document", formData.applicationFeeConfirmation);
+
+  formDataToSubmit.append("university_interview_date", formData.interviewDate);
+
+  formDataToSubmit.append("university_interview_outcome", formData.interviewOutcome);
+
+  formDataToSubmit.append("conditional_offer_letter", formData.conditionalOfferLetter);
+  formDataToSubmit.append("invoice_with_conditional_offer", formData.invoiceWithOfferLetter);
+  formDataToSubmit.append("tuition_fee_transfer_proof", formData.tuitionFeeTransferProof);
+
+  formDataToSubmit.append("final_university_offer_letter", formData.finalOfferLetter);
+  formDataToSubmit.append("offer_letter_service_charge_paid", formData.offerLetterServiceCharge);
+
+  formDataToSubmit.append("university_offer_letter_received", formData.universityOfferLetterReceived);
+  formDataToSubmit.append("appendix_form_completed", formData.appendixFormCompleted);
+  formDataToSubmit.append("passport_copy_prepared", formData.passportCopy);
+  formDataToSubmit.append("email_sent_for_documentation", formData.emailSentForSubmission); //----------
+  formDataToSubmit.append("financial_support_declaration", formData.financialSupportDeclaration);
+  formDataToSubmit.append("final_offer_letter", formData.validOfferLetter);
+  formDataToSubmit.append("proof_of_relationship", formData.relationshipProofWithSponsor);
+  formDataToSubmit.append("english_language_proof", formData.englishProof);
+  formDataToSubmit.append("residence_permit_form", formData.residencePermitForm);
+  formDataToSubmit.append("proof_of_income", formData.incomeProof);
+  formDataToSubmit.append("airplane_ticket_booking", formData.airplaneTicket);
+
+  formDataToSubmit.append("police_clearance_certificate", formData.policeClearance);
+
+  formDataToSubmit.append("europass_cv", formData.europassCV);
+
+  formDataToSubmit.append("birth_certificate", formData.birthCertificate);
+
+  formDataToSubmit.append("accommodation_proof", formData.accommodationProof);
+  formDataToSubmit.append("motivation_letter", formData.motivationLetter);
+
+  formDataToSubmit.append("previous_studies_certificates", formData.previousCertificates);
+
+  formDataToSubmit.append("travel_insurance", formData.travelInsurance);
+
+  formDataToSubmit.append("health_insurance", formData.healthInsurance);
+  formDataToSubmit.append("european_photo", formData.europeanPhoto);
+
+  formDataToSubmit.append("visa_decision", formData.visaDecision);
+
+  formDataToSubmit.append("visa_service_charge_paid", formData.visaServiceChargePaid);
+
+  formDataToSubmit.append("flight_booking_confirmed", formData.flightBookingConfirmed);
+
+  formDataToSubmit.append("online_enrollment_completed", formData.onlineEnrollmentCompleted);
+  formDataToSubmit.append("accommodation_confirmation", formData.accommodationConfirmationReceived);
+  formDataToSubmit.append("arrival_country", formData.arrivalInCountry);
+  formDataToSubmit.append("bank_statement", formData.bankStatement);
+  formDataToSubmit.append("appointment_date", formData.appointmentDateConfirmation);
+  formDataToSubmit.append("visa_interview_date", formData.visaInterviewDate);
+
+
+
+
+
 
 
 
@@ -88,7 +150,7 @@ const UniversityStepper = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  const handleSubmit = async() => {
+  const handleSubmit = async () => {
     console.log("Form Data Submitted:", formDataToSubmit);
     try {
       const response = await api.post("/application", formDataToSubmit);
@@ -128,9 +190,10 @@ const UniversityStepper = () => {
               fullWidth
               margin="normal"
               InputLabelProps={{ shrink: true }}
-              value={formData.registration}
+              value={formData.registration || ""}
               onChange={handleChange}
             />
+
 
             {/* 3. Application Submission Date */}
             <TextField
@@ -378,10 +441,10 @@ const UniversityStepper = () => {
               type="date"
               fullWidth
               margin="normal"
-              InputLabelProps={{ shrink: true }}
-              value={formData.universityOfferLetterReceived}
+              value={formData.universityOfferLetterReceived || ""}
               onChange={handleChange}
             />
+
 
             {/* Appendix Form Completed */}
             <Box
@@ -427,14 +490,14 @@ const UniversityStepper = () => {
               <Typography>Passport Copy Prepared</Typography>
               <input
                 type="file"
-                name="passportCopyPrepared"
+                name="passportCopy"
                 onChange={handleFileChange}
                 accept=".pdf,.jpg,.jpeg,.png"
                 style={{ maxWidth: 250 }}
               />
-              {formData.passportCopyPrepared && (
+              {formData.passportCopy && (
                 <Typography variant="body2" color="text.secondary">
-                  {formData.passportCopyPrepared.name}
+                  {formData.passportCopy.name}
                 </Typography>
               )}
             </Box>
@@ -447,9 +510,10 @@ const UniversityStepper = () => {
               fullWidth
               margin="normal"
               InputLabelProps={{ shrink: true }}
-              value={formData.emailSentForSubmission}
+              value={formData.emailSentForSubmission || ""}
               onChange={handleChange}
             />
+
 
             {/* Appointment Date Confirmation */}
             <TextField
@@ -586,7 +650,7 @@ const UniversityStepper = () => {
             {/* Add other fields in the same way for the remaining documents */}
 
             {/* Visa Interview Date Scheduled */}
-            <TextField
+            {/* <TextField
               label="Visa Interview Date"
               name="visaInterviewDate"
               type="date"
@@ -595,7 +659,7 @@ const UniversityStepper = () => {
               InputLabelProps={{ shrink: true }}
               value={formData.visaInterviewDate}
               onChange={handleChange}
-            />
+            /> */}
 
             {/* Residence Permit Form */}
             <Box
@@ -1019,8 +1083,8 @@ const UniversityStepper = () => {
                 value={formData.flightBookingConfirmed}
                 onChange={handleChange}
               >
-                <MenuItem value="Confirmed">Confirmed</MenuItem>
-                <MenuItem value="Pending">Pending</MenuItem>
+                <MenuItem value="1">Confirmed</MenuItem>
+                <MenuItem value="0">Pending</MenuItem>
               </Select>
             </FormControl>
 
@@ -1032,8 +1096,8 @@ const UniversityStepper = () => {
                 value={formData.onlineEnrollmentCompleted}
                 onChange={handleChange}
               >
-                <MenuItem value="Completed">Completed</MenuItem>
-                <MenuItem value="Pending">Pending</MenuItem>
+                <MenuItem value="1">Completed</MenuItem>
+                <MenuItem value="0">Pending</MenuItem>
               </Select>
             </FormControl>
 
@@ -1045,8 +1109,8 @@ const UniversityStepper = () => {
                 value={formData.accommodationConfirmationReceived}
                 onChange={handleChange}
               >
-                <MenuItem value="Received">Received</MenuItem>
-                <MenuItem value="Pending">Pending</MenuItem>
+                <MenuItem value="1">Received</MenuItem>
+                <MenuItem value="0">Pending</MenuItem>
               </Select>
             </FormControl>
 
@@ -1099,10 +1163,10 @@ const UniversityStepper = () => {
                 Back
               </Button>
               <Button variant="contained" onClick={handleNext} disabled={activeStep === steps.length - 1}>
-                 Next
+                Next
               </Button>
               <Button variant="contained" onClick={handleSubmit}>
-  Submit Application
+                Submit Application
               </Button>
             </Box>
           </>
