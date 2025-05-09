@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Stepper,
@@ -14,12 +14,16 @@ import {
   MenuItem,
 } from "@mui/material";
 import api from "../../interceptors/axiosInterceptor";
+import { useParams } from "react-router-dom";
 
 const steps = ["Application", "Interview", "Visa Process"];
 
 const UniversityStepper = () => {
   const [activeStep, setActiveStep] = useState(0);
-  const user_id = localStorage.getItem("student_id");
+  const [status,setStatus]= useState(false)
+  const [applicationId, setApplicationId] = useState(null)
+  const student_id = parseInt(localStorage.getItem("student_id"));
+  const university_id = useParams("university.id");
   const [formData, setFormData] = useState({
     registrationFeePayment: "",
     registration: "",
@@ -33,7 +37,7 @@ const UniversityStepper = () => {
     tuitionFeeTransferProof: null,
     finalOfferLetter: null,
     offerLetterServiceCharge: "",
-    universityOfferLetterReceived: "",
+    universityOfferLetterReceived: null,
     appendixFormCompleted: null,
     passportCopy: null,
     financialSupportDeclaration: null,
@@ -60,37 +64,29 @@ const UniversityStepper = () => {
     accommodationConfirmationReceived: "",
     arrivalInCountry: "",
     residencePermitForm: null,
-    emailSentForSubmission: ""
+    emailSentForSubmission: "",
+    Application_stage:"0"
+
   });
 
-  //  const [testForm , setTestForm] = useState(
-  //   {
-  //     registrationFeePayment : "",
-  //     student_id:user_id
-  //   }
-  //  )
+   
   const handleFileChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.files[0] });
   };
   const formDataToSubmit = new FormData();
-  formDataToSubmit.append("student_id", user_id);
+  formDataToSubmit.append("student_id", student_id);
   formDataToSubmit.append("registration_fee_payment", formData.registrationFeePayment);
   formDataToSubmit.append("registration_date", formData.registration);
   formDataToSubmit.append("application_submission_date", formData.applicationSubmission);
   formDataToSubmit.append("application_fee_payment", formData.applicationFeePayment);
   formDataToSubmit.append("fee_confirmation_document", formData.applicationFeeConfirmation);
-
   formDataToSubmit.append("university_interview_date", formData.interviewDate);
-
   formDataToSubmit.append("university_interview_outcome", formData.interviewOutcome);
-
   formDataToSubmit.append("conditional_offer_letter", formData.conditionalOfferLetter);
   formDataToSubmit.append("invoice_with_conditional_offer", formData.invoiceWithOfferLetter);
   formDataToSubmit.append("tuition_fee_transfer_proof", formData.tuitionFeeTransferProof);
-
   formDataToSubmit.append("final_university_offer_letter", formData.finalOfferLetter);
   formDataToSubmit.append("offer_letter_service_charge_paid", formData.offerLetterServiceCharge);
-
   formDataToSubmit.append("university_offer_letter_received", formData.universityOfferLetterReceived);
   formDataToSubmit.append("appendix_form_completed", formData.appendixFormCompleted);
   formDataToSubmit.append("passport_copy_prepared", formData.passportCopy);
@@ -102,36 +98,48 @@ const UniversityStepper = () => {
   formDataToSubmit.append("residence_permit_form", formData.residencePermitForm);
   formDataToSubmit.append("proof_of_income", formData.incomeProof);
   formDataToSubmit.append("airplane_ticket_booking", formData.airplaneTicket);
-
   formDataToSubmit.append("police_clearance_certificate", formData.policeClearance);
-
   formDataToSubmit.append("europass_cv", formData.europassCV);
-
   formDataToSubmit.append("birth_certificate", formData.birthCertificate);
-
   formDataToSubmit.append("accommodation_proof", formData.accommodationProof);
   formDataToSubmit.append("motivation_letter", formData.motivationLetter);
-
   formDataToSubmit.append("previous_studies_certificates", formData.previousCertificates);
-
   formDataToSubmit.append("travel_insurance", formData.travelInsurance);
-
   formDataToSubmit.append("health_insurance", formData.healthInsurance);
   formDataToSubmit.append("european_photo", formData.europeanPhoto);
-
   formDataToSubmit.append("visa_decision", formData.visaDecision);
-
   formDataToSubmit.append("visa_service_charge_paid", formData.visaServiceChargePaid);
-
   formDataToSubmit.append("flight_booking_confirmed", formData.flightBookingConfirmed);
-
   formDataToSubmit.append("online_enrollment_completed", formData.onlineEnrollmentCompleted);
   formDataToSubmit.append("accommodation_confirmation", formData.accommodationConfirmationReceived);
   formDataToSubmit.append("arrival_country", formData.arrivalInCountry);
   formDataToSubmit.append("bank_statement", formData.bankStatement);
   formDataToSubmit.append("appointment_date", formData.appointmentDateConfirmation);
   formDataToSubmit.append("visa_interview_date", formData.visaInterviewDate);
+  formDataToSubmit.append("university_id", university_id.id);
+  formDataToSubmit.append("Application_stage", formData.Application_stage);
+  formDataToSubmit.append("interview", 0);
+  formDataToSubmit.append("Visa_process", 0);
 
+
+useEffect(()=>{
+      const getApplication = async()=>{
+        try {
+          const res = api.get(`/application/${student_id}/${university_id.id}`)
+          res.then((data) => {
+            // console.log(data.data);  // 'data' will be the resolved value of the promise
+            setStatus(data.data.status);
+            setApplicationId(data?.data?.data[0]?.id)
+            // console.log("Aid",data?.data?.data[0]?.id)
+          })
+           
+          
+        } catch (error) {
+          console.log(error)
+        }
+      }  
+      getApplication()
+},[])
 
 
 
@@ -151,9 +159,20 @@ const UniversityStepper = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
   const handleSubmit = async () => {
+    setFormData({ ...formData, Application_stage: 1 });
+    formDataToSubmit.append("Application_stage", 1);
     console.log("Form Data Submitted:", formDataToSubmit);
     try {
       const response = await api.post("/application", formDataToSubmit);
+      console.log("Form submitted successfully:", response.data);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
+  const handleUpdate = async (id) => {
+    console.log("Form Data Submitted:", formDataToSubmit);
+    try {
+      const response = await api.put(`/application/${id}`, formDataToSubmit);
       console.log("Form submitted successfully:", response.data);
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -190,7 +209,7 @@ const UniversityStepper = () => {
               fullWidth
               margin="normal"
               InputLabelProps={{ shrink: true }}
-              value={formData.registration || ""}
+              value={formData.registration}
               onChange={handleChange}
             />
 
@@ -270,7 +289,7 @@ const UniversityStepper = () => {
               fullWidth
               margin="normal"
               InputLabelProps={{ shrink: true }}
-              value={formData.interviewDate}
+              value={formData.interviewDate || ""}
               onChange={handleChange}
             />
 
@@ -1162,12 +1181,14 @@ const UniversityStepper = () => {
               >
                 Back
               </Button>
-              <Button variant="contained" onClick={handleNext} disabled={activeStep === steps.length - 1}>
+              <Button variant="contained" onClick={handleNext} disabled={ !status }>
                 Next
               </Button>
-              <Button variant="contained" onClick={handleSubmit}>
+              {status===false?<Button variant="contained" onClick={handleSubmit}>
                 Submit Application
-              </Button>
+              </Button>: <Button variant="contained" onClick={()=>{handleUpdate(applicationId)}}>
+                Submit
+              </Button>}
             </Box>
           </>
         )}
