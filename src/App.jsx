@@ -66,6 +66,7 @@ import CounselorApplications from "./components/AdmissionTracking/CounselorAppli
 import ApplicationTimeline from "./components/AdmissionTracking/ApplicationTimeline";
 import MyProfile from "./MyProfile/MyProfile";
 import Addbranch from "./components/ReportingAnalytics/Addbranch";
+import ChangePassword from "./MyProfile/ChangePassword";
 
 function App() {
   //show details to admin
@@ -377,6 +378,7 @@ function App() {
               {/* chatbox route */}
               <Route path="/chatbox" element={<ChatBox />} />
               <Route path="/profile" element={<MyProfile />} />
+              <Route path="/change-password" element={<ChangePassword />} />
             </Routes>
           </LeadProvider>
         </div>

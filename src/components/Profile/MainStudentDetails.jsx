@@ -20,7 +20,7 @@ const Profile = () => {
   const [student, setStudent] = useState(null);
   console.log(student);
   useEffect(() => {
-    const id = localStorage.getItem('user_id')
+    const id = localStorage.getItem('student_id')
     api.get(`${BASE_URL}auth/getStudentById/${id}`)
       .then(response => {
         setStudent(response.data);

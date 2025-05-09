@@ -60,11 +60,31 @@ const Addbranch = () => {
         branchData()
     }, [])
 
-    const handledelete = async (id) => {
-        const deleteData = await api.delete(`${BASE_URL}branch/${id}`)
-        setData(deleteData)
-        console.log(id)
-    }
+    const handleDelete = async (id) => {
+        Swal.fire({
+          title: 'Are you sure?',
+          text: 'Do you want to delete this branch?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Yes, delete it!'
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            try {
+              await api.delete(`${BASE_URL}branch/${id}`);
+              // 🟢 Update state immediately
+              setData(prev => prev.filter(item => item._id !== id));
+      
+              Swal.fire('Deleted!', 'The branch has been deleted.', 'success');
+            } catch (err) {
+              console.error("Delete failed", err);
+              Swal.fire('Error!', 'Failed to delete branch.', 'error');
+            }
+          }
+        });
+      };
+      
 
     return (
         <div className='p-4'>
@@ -115,7 +135,7 @@ const Addbranch = () => {
                                             <Button
                                                 variant="danger"
                                                 size="sm"
-                                                onClick={() => handledelete(item.id)}
+                                                onClick={() => handleDelete(item.id)}
                                             >
                                                 Delete
                                             </Button>
