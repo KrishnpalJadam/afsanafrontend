@@ -194,7 +194,7 @@ useEffect(() => {
         </div>
         <div>
           {/* <!-- Trigger Button --> */}
-          <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#studentFormModal" disabled={!hasPermission("Student Details","add")}>
+          <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#studentFormModal">
             + Add Student
           </button>
         </div>
@@ -319,9 +319,9 @@ useEffect(() => {
                     document.getElementById("studentFormModal").classList.add("show");
                     document.getElementById("studentFormModal").style.display = "block";
                   }}
-                  disabled={!hasPermission("Student Details","edit")}
+                  
                   >✎</button>
-                  <button className="btn btn-light btn-sm me-1" onClick={()=>{handleDelete(student?.id)}} disabled={!hasPermission("Student Details","delete")}> <FaTrash /></button>
+                  <button className="btn btn-light btn-sm me-1" onClick={()=>{handleDelete(student?.id)}}> <FaTrash /></button>
                 </td>
               </tr>
             ))}
