@@ -19,7 +19,7 @@ const steps = ["Application", "Interview", "Visa Process"];
 
 const UniversityStepper = () => {
   const [activeStep, setActiveStep] = useState(0);
-  const user_id = localStorage.getItem("user_id");
+  const user_id = localStorage.getItem("student_id");
   const [formData, setFormData] = useState({
     registrationFeePayment: "",
     registration: "",
