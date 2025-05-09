@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import {
   Container,
   Button,
@@ -24,7 +24,6 @@ const Lead = () => {
   const [currentLeadId, setCurrentLeadId] = useState(null);
   const [counselors, setCounselors] = useState([]);
 
-
   const [newLead, setNewLead] = useState({
     name: "",
     phone: "",
@@ -40,35 +39,31 @@ const Lead = () => {
 
   // Search & Filter States
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("");
-  const [filterSource, setFilterSource] = useState("");
-  const [filteredLeads, setFilteredLeads] = useState(null);
- 
-
   // Fetch Leads
-  useEffect(() => {
-    const fetchLeads = async () => {
-      try {
-        const response = await api.get(`${BASE_URL}lead`);
-        setLeads(response.data);
-      } catch (error) {
-        console.error("Error fetching leads:", error);
-      }
-    };
-    fetchLeads();
-  }, []);
+const fetchLeads = async () => {
+  try {
+    const response = await api.get(`${BASE_URL}lead`);
+    setLeads(response.data);
+  } catch (error) {
+    console.error("Error fetching leads:", error);
+  }
+};
 
+// Fetch Leads initially
+useEffect(() => {
+  fetchLeads();
+}, []);
+const filteredLeads = leads?.filter((lead) =>
+  lead.name.toLowerCase().includes(searchTerm.toLowerCase())
+);
 
-  useEffect(() => {
-    fetchCounseller();
-  }, []);
-  
   const fetchCounseller = async () => {
     try {
-      const response = await api.get(`${BASE_URL}counselor`);
+      const response = await api.get(`counselor`);
+ 
       if (response.status === 200) {
-
-        setCounselors(response.data); // Assuming the response data is under `data.data`
+      setCounselors(response.data);
+      
       } else {
         console.error("Failed to fetch counselors");
       }
@@ -77,31 +72,9 @@ const Lead = () => {
     }
   };
   
-
-
-  // Handle Filter
-  const handleFilter = () => {
-    const filtered = leads.filter((lead) => {
-      const statusMatch = filterStatus === "" || lead.status === filterStatus;
-      const sourceMatch = filterSource === "" || lead.source === filterSource;
-      const searchMatch =
-        searchTerm === "" ||
-        lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        lead.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        lead.phone.toLowerCase().includes(searchTerm.toLowerCase());
-      return statusMatch && sourceMatch && searchMatch;
-    });
-    setFilteredLeads(filtered);
-  };
-
-  const handleResetFilter = () => {
-    setFilterStatus("");
-    setFilterSource("");
-    setSearchTerm("");
-    setFilteredLeads(null);
-  };
-
-  const displayLeads = filteredLeads !== null ? filteredLeads : leads;
+  useEffect(() => {
+    fetchCounseller();
+  }, []);
 
   // Open "Add Lead" Modal
   const handleShowModal = () => {
@@ -134,13 +107,13 @@ const Lead = () => {
       name: lead.name,
       phone: lead.phone,
       email: lead.email,
-      counselor: lead.counselor_name, // Update to match the API's field
+      counselor: lead.counselor.id, 
       follow_up_date: lead.follow_up_date,
       notes: lead.notes,
       preferred_countries: lead.preferred_countries,
       source: lead.source,
       status: lead.status,
-      user_id: 1, // Ensure user_id is included
+      user_id: 1,
     });
     setShowModal(true);
   };
@@ -152,9 +125,6 @@ const Lead = () => {
       [name]: name === "counselor" ? value : value, // Set name as value here for counselor
     });
   };
-  
-  
-  
 
 
   const handleSaveLead = async (e) => {
@@ -163,9 +133,7 @@ const Lead = () => {
       // Update lead
       try {
         const response = await api.put(`${BASE_URL}lead/${currentLeadId}`, newLead);
-        const updatedLeads = leads.map((lead) => lead.id === currentLeadId ? response.data : lead);
-        setLeads(updatedLeads);
-        alert("Updated Successfully Please Refresh This.")
+         fetchLeads()
       } catch (error) {
         console.error("Error updating lead:", error);
       }
@@ -173,7 +141,7 @@ const Lead = () => {
       // Add new lead
       try {
         const response = await api.post(`${BASE_URL}lead`, newLead);
-        setLeads([...leads, response.data]);
+        fetchLeads();      
       } catch (error) {
         console.error("Error adding lead:", error);
       }
@@ -181,9 +149,6 @@ const Lead = () => {
     handleCloseModal();
   };
   
- 
-  
-
   // Delete Lead
   const handleDeleteLead = async (leadId) => {
     try {
@@ -209,7 +174,6 @@ const Lead = () => {
     <Container fluid className="py-3">
       {/* Filter Section */}
       <div className="mt-2">
-
       <h2>Leads Management</h2>
       </div>
       <div className="d-flex justify-content-between mb-3 pt-3">
@@ -233,13 +197,7 @@ const Lead = () => {
             />
           </InputGroup>
           </div>
-        
-          <Button variant="outline-secondary" onClick={handleFilter}>
-            Apply Filters
-          </Button>
-          <Button variant="outline-secondary" onClick={handleResetFilter}>
-            Reset Filters
-          </Button>
+  
         </div>
       </div>
 
@@ -255,8 +213,8 @@ const Lead = () => {
           </tr>
         </thead>
         <tbody>
-          {displayLeads.length > 0 ? (
-            displayLeads.map((lead) => (
+          {filteredLeads?.length > 0 ? (
+            filteredLeads?.map((lead) => (
               <tr key={lead.id}>
                 <td>{lead?.name}</td>
                 <td>{lead?.phone}</td>
@@ -368,25 +326,18 @@ const Lead = () => {
               <div className="col-md-6">
               <Form.Group className="mb-3">
   <Form.Label>Counselor</Form.Label>
-  <Form.Select
-  name="counselor"
-  value={newLead.counselor}
-  onChange={handleInputChange}
->
+  <Form.Select  name="counselor" value={newLead.counselor} onChange={handleInputChange}>
   <option value="">Select Counselor</option>
   {counselors.length > 0 ? (
     counselors.map((counselor) => (
-      <option key={counselor.id} value={counselor.name}>
-        {counselor.name}
+      <option key={counselor.id} value={counselor.id}>
+        {counselor.full_name}
       </option>
     ))
   ) : (
     <option disabled>No counselors available</option>
   )}
 </Form.Select>
-
-
-
 </Form.Group>
 
               </div>

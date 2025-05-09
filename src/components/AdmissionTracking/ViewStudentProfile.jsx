@@ -53,12 +53,12 @@ const StudentProfile = () => {
         <Col md={6}>
           <h2 className="font-weight-bold text-primary">Sanjana patel</h2>
           <p className="text-muted">Last login: Today at 9:45 AM</p>
-          <ProgressBar
+          {/* <ProgressBar
             className="step-progress-bar"
             now={75}
             label={`Profile Completeness: 75%`}
             variant="info"
-          />
+          /> */}
         </Col>
       </Row>
 

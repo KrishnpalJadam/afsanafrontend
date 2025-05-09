@@ -138,23 +138,11 @@ const AdmissionDecisions = () => {
 
   const deleteDecision = async (id) => {
     try {
-      // Ensure the correct URL and data format
-      console.log(`Deleting decision with ID: ${id}`);
-      
-      // Perform delete request
       const response = await api.delete(`${BASE_URL}admissiondecision/${id}`);
-      
-      // Check the response to ensure successful deletion
-      console.log('Response from delete:', response);
-      
-      // Update the state after deleting the decision
-      if (response.status === 200) {
-        setDecisions(decisions.filter((d) => d.id !== id));
-      } else {
-        console.error('Delete failed, response:', response);
-      }
+      setDecisions(response)
+      alert("deleted successfully")
+  
     } catch (err) {
-      // Log any errors during the request
       console.error("Error deleting decision:", err);
     }
   };
