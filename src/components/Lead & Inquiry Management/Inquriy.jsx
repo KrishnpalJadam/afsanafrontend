@@ -286,7 +286,6 @@ const Inquiry = () => {
         <h2>Today's Inquiries</h2>
         <div>
           <Button variant="secondary" className="me-2"  onClick={handleShowInquiryModal} style={{ border: "none" }} 
-          disabled={!hasPermission("Inquiry","add")}
           >
             Add Inquiry </Button>
         </div>
@@ -327,7 +326,6 @@ const Inquiry = () => {
                   size="sm"
                   onClick={() => handleDeleteInquiry(inq.id)}
                   className="ms-2"
-                  disabled={!hasPermission("Inquiry","delete")}
                   >
                   Delete
                 </Button>
