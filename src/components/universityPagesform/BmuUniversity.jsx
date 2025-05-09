@@ -15,7 +15,6 @@ import {
 } from "@mui/material";
 import api from "../../interceptors/axiosInterceptor";
 import { useParams } from "react-router-dom";
-import Swal from "sweetalert2";
 
 const steps = ["Application", "Interview", "Visa Process"];
 
@@ -131,12 +130,7 @@ const UniversityStepper = () => {
           // console.log(data.data);  // 'data' will be the resolved value of the promise
           setStatus(data.data.status);
           setApplicationId(data?.data?.data[0]?.id)
-          Swal.fire({
-            title: 'Success!',
-            text: 'Data submitted successfully!',
-            icon: 'success',
-            confirmButtonText: 'OK',
-          });
+          
           // console.log("Aid",data?.data?.data[0]?.id)
         })
 
