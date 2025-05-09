@@ -13,6 +13,7 @@ import { FaPlus, FaTrash, FaEye } from "react-icons/fa";
 import BASE_URL from "../../Config";
 import api from "../../interceptors/axiosInterceptor";
 
+
 const AdmissionDecisions = () => {
   const [decisions, setDecisions] = useState([]);
   const [students, setStudentsData] = useState([]);
@@ -139,11 +140,38 @@ const AdmissionDecisions = () => {
   const deleteDecision = async (id) => {
     try {
       const response = await api.delete(`${BASE_URL}admissiondecision/${id}`);
-      setDecisions(response)
-      alert("deleted successfully")
+      
+      // Check if the response status is OK (status code 200)
+      if (response.status === 200) {
+        // Update the state by removing the deleted decision from the list
+        setDecisions((prevDecisions) => prevDecisions.filter((dec) => dec.id !== id));
   
+        // Show a success message using SweetAlert
+        Swal.fire({
+          title: "Success!",
+          text: "Decision deleted successfully.",
+          icon: "success",
+          confirmButtonText: "OK",
+        });
+      } else {
+        // If there's an issue with the deletion, show an error message
+        Swal.fire({
+          title: "Error!",
+          text: "Failed to delete the decision.",
+          icon: "error",
+          confirmButtonText: "Close",
+        });
+      }
     } catch (err) {
       console.error("Error deleting decision:", err);
+      
+      // If an error occurs during the request, show an error message
+      Swal.fire({
+        title: "Error!",
+        text: "An error occurred while deleting the decision.",
+        icon: "error",
+        confirmButtonText: "Close",
+      });
     }
   };
   
