@@ -133,7 +133,7 @@ console.log(payments)
                           variant="success"
                           size="sm"
                           onClick={() => handlePayNow(item)}
-                          disabled={!hasPermission("Payments & Invoices","add")}
+                          disabled={hasPermission("Payments & Invoices","add")}
                         >
                           Pay Now
                         </Button>

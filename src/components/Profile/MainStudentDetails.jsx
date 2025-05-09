@@ -55,7 +55,7 @@ const Profile = () => {
               <h3>{student?.full_name}</h3>
               <p>Email: {student?.email}</p>
               <p>Phone: {student?.mobile_number}</p>
-              <Button variant="outline-primary" size="sm" disabled={!hasPermission("Student Details","add")}>
+              <Button variant="outline-primary" size="sm" disabled={hasPermission("Student Details","add")}>
                 Edit Profile
               </Button>
             </Col>

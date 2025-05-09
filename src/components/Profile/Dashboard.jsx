@@ -85,7 +85,7 @@ const Dashboard = () => {
       };
     
       fetchPermissions();
-    }, [role]);
+    }, []);
 
   // Add this options for Line chart as well (optional, to be consistent)
   const lineOptions = {
