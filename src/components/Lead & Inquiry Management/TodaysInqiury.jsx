@@ -1,12 +1,5 @@
 import { useState, useEffect } from "react";
-
-import {
-  Table,
-  Button,
-  Form,
-  Badge,
-  Modal,
-  Row,
+import {Table, Button, Form, Badge, Modal, Row,
   Col,
 } from "react-bootstrap";
 
@@ -50,6 +43,21 @@ const TodaysInqiury = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+
+  const [getData, setData] = useState([])
+  // Fetch all branches
+  const fetchBranchData = async () => {
+    try {
+      const response = await api.get(`${BASE_URL}branch`);
+      setData(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  // Call on component mount
+  useEffect(() => {
+    fetchBranchData();
+  }, []);
 
   // Fetch inquiries when the component mounts
   useEffect(() => {

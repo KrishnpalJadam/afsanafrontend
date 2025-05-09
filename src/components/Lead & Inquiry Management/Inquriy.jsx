@@ -65,6 +65,20 @@ const Inquiry = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
+  const [getData, setData] = useState([])
+  // Fetch all branches
+  const fetchBranchData = async () => {
+    try {
+      const response = await api.get(`${BASE_URL}branch`);
+      setData(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  // Call on component mount
+  useEffect(() => {
+    fetchBranchData();
+  }, []);
   // Modal handlers
   const handleShowInquiryModal = () => setShowInquiryModal(true);
   const handleCloseInquiryModal = () => {
@@ -141,12 +155,40 @@ const Inquiry = () => {
     });
   };
 
+   // Fetch inquiries when the component mounts
+// 🟢 Function outside
+const fetchInquiries = async () => {
+  try {
+    const response = await api.get(`inquiries`);
+    const allInquiries = response.data;
+    const userRole = localStorage.getItem("login");
+
+    const filteredInquiries = userRole === "admin"
+      ? allInquiries
+      : allInquiries.filter(inquiry => inquiry.counselor_id == councolerid);
+
+    setInquiries((prev) => ({
+      ...prev,
+      todayInquiries: filteredInquiries,
+    }));
+
+  } catch (error) {
+    console.error("Error fetching inquiries:", error);
+  }
+};
+
+// 🔄 useEffect to call on mount / when councolerid changes
+useEffect(() => {
+  if (councolerid) {
+    fetchInquiries();
+  }
+}, [councolerid]);
+
   const handleAddInquiry = async (e) => {
     e.preventDefault(); // Prevent form submission
   
-    // Prepare the request payload in the required format
     const requestData = {
-      counselor_id: councolerid, // You can set the actual user_id if required
+      counselor_id: councolerid,
       inquiry_type: newInquiry.inquiryType,
       source: newInquiry.source,
       branch: newInquiry.branch,
@@ -171,19 +213,7 @@ const Inquiry = () => {
       // Send the request to the API
       const response = await api.post(`${BASE_URL}inquiries`, requestData);
   
-      // Handle the response and update the UI
-      if (response.status === 200) {
-        // On success, add the inquiry to the state and close the modal
-        const inquiry = {
-          id: Math.max(...inquiries.todayInquiries.map((i) => i.id), 0) + 1,
-          ...newInquiry,
-        };
-  
-        setInquiries({
-          ...inquiries,
-          todayInquiries: [...inquiries.todayInquiries, inquiry],
-        });
-  
+      if (response.status === 201) {
         // Show success message using SweetAlert
         Swal.fire({
           title: 'Success!',
@@ -191,22 +221,23 @@ const Inquiry = () => {
           icon: 'success',
           confirmButtonText: 'Ok',
         }).then(() => {
-          handleCloseInquiryModal(); // Close the modal after success
+          handleCloseInquiryModal(); // Close modal after success
+          fetchInquiries(); // 🔄 Fetch updated inquiry list
         });
       } else {
-        // Handle error if needed
+        // Handle non-200 responses
         Swal.fire({
           title: 'Success!',
-          text: 'Add inquiry Successfully.',
-          icon: 'Success',
+          text: 'Inquiry added successfully.',
+          icon: 'success',
           confirmButtonText: 'Ok',
         }).then(() => {
-          handleCloseInquiryModal(); // Close the modal after success
-        });;
+          handleCloseInquiryModal();
+          fetchInquiries();
+        });
       }
     } catch (error) {
       console.error("Error during inquiry submission:", error);
-      // Show error SweetAlert if something goes wrong
       Swal.fire({
         title: 'Error!',
         text: 'Something went wrong. Please try again.',
@@ -216,36 +247,6 @@ const Inquiry = () => {
     }
   };
   
-
-
-
- // Fetch inquiries when the component mounts
- useEffect(() => {
-  const fetchInquiries = async () => {
-    try {
-      const response = await api.get(`inquiries`);
-      const allInquiries = response.data;
-      const userRole = localStorage.getItem("login");
-
-      const filteredInquiries = userRole === "admin"
-        ? allInquiries
-        : allInquiries.filter(inquiry => inquiry.counselor_id == councolerid);
-
-      setInquiries((prev) => ({
-        ...prev,
-        todayInquiries: filteredInquiries,
-      }));
-
-    } catch (error) {
-      console.error("Error fetching inquiries:", error);
-    }
-  };
-
-  if (councolerid) {  // jab tak counselor id nahi aati tab api mat call karo
-    fetchInquiries();
-  }
-}, [councolerid]);
-
 
   // Handle inquiry detail view
   const handleViewDetail = async (id) => {
@@ -285,8 +286,7 @@ const Inquiry = () => {
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Today's Inquiries</h2>
         <div>
-          <Button variant="secondary" className="me-2"  onClick={handleShowInquiryModal} style={{ border: "none" }} 
-          >
+          <Button variant="secondary" className="me-2"  onClick={handleShowInquiryModal} style={{ border: "none" }} >
             Add Inquiry </Button>
         </div>
       </div>
@@ -311,7 +311,7 @@ const Inquiry = () => {
           </tr>
         </thead>
         <tbody>
-          {currentInquiries.map((inq) => (
+          {currentInquiries?.map((inq) => (
             <tr key={inq.id}>
               <td>{inq.full_name}</td>
               <td>{inq.email}</td>
@@ -396,18 +396,23 @@ const Inquiry = () => {
                 </Form.Group>
               </Col>
               <Col md={4}>
-                <Form.Group controlId="branch">
-                  <Form.Label>Branch</Form.Label>
-                  <Form.Select
-                    name="branch"
-                    value={newInquiry.branch}
-                    onChange={handleInquiryInputChange}
-                    required>
-                    <option value="">Select Branch</option>
-                    <option value="dhaka">Dhaka</option>
-                    <option value="sylhet">Sylhet</option>
-                  </Form.Select>
-                </Form.Group>
+              <Form.Group controlId="branch">
+  <Form.Label>Branch</Form.Label>
+  <Form.Select
+    name="branch"
+    value={newInquiry.branch}
+    onChange={handleInquiryInputChange}
+    required
+  >
+    <option value="">Select Branch</option>
+    {getData.map((item) => (
+      <option key={item.id} value={item.branch_name}>
+        {item.branch_name}
+      </option>
+    ))}
+  </Form.Select>
+</Form.Group>
+
               </Col>
             </Row>
 
@@ -473,8 +478,7 @@ const Inquiry = () => {
                     name="country"
                     value={newInquiry.country}
                     onChange={handleInquiryInputChange}
-                    required
-                  />
+                    required />
                 </Form.Group>
               </Col>
               <Col md={4}>
@@ -486,8 +490,7 @@ const Inquiry = () => {
                     name="city"
                     value={newInquiry.city}
                     onChange={handleInquiryInputChange}
-                    required
-                  />
+                    required/>
                 </Form.Group>
               </Col>
               <Col md={4}>
@@ -498,8 +501,7 @@ const Inquiry = () => {
                     name="dateOfInquiry"
                     value={newInquiry.dateOfInquiry}
                     onChange={handleInquiryInputChange}
-                    required
-                  />
+                    required/>
                 </Form.Group>
               </Col>
             </Row>
@@ -513,8 +515,7 @@ const Inquiry = () => {
                     name="address"
                     value={newInquiry.address}
                     onChange={handleInquiryInputChange}
-                    required
-                  />
+                    required/>
                 </Form.Group>
               </Col>
               <Col md={6}>
@@ -546,8 +547,7 @@ const Inquiry = () => {
                     onChange={(e) =>
                       handleCheckboxChange("education", edu, e.target.checked)
                     }
-                  />
-                ))}
+                  />))}
               </Col>
             </Row>
 
@@ -568,10 +568,7 @@ const Inquiry = () => {
                         handleCheckboxChange(
                           "englishProficiency",
                           skill,
-                          e.target.checked
-                        )
-                      }
-                    />
+                          e.target.checked)}/>
                   )
                 )}
               </Col>
@@ -601,16 +598,13 @@ const Inquiry = () => {
                     placeholder="Job Title"
                     value={newInquiry.jobExperience.jobTitle}
                     onChange={(e) =>
-                      handleJobExpChange("jobTitle", e.target.value)
-                    }
-                  />
+                      handleJobExpChange("jobTitle", e.target.value)}/>
                 </Form.Group>
               </Col>
               <Col md={4}>
                 <Form.Group controlId="duration">
                   <Form.Label>Duration</Form.Label>
-                  <Form.Control
-                    type="text"
+                  <Form.Control  type="text"
                     placeholder="e.g., 2 years"
                     value={newInquiry.jobExperience.duration}
                     onChange={(e) =>
@@ -637,8 +631,7 @@ const Inquiry = () => {
                       handleCheckboxChange(
                         "preferredCountries",
                         country,
-                        e.target.checked
-                      )
+                        e.target.checked)
                     }
                   />
                 ))}
@@ -656,15 +649,11 @@ const Inquiry = () => {
           </Form>
         </Modal.Body>
       </Modal>
-
-
-
       <Modal
   show={showInquiryDetailsModal}
   onHide={() => setInquiryDetailsModal(false)}
   centered
-  size="lg"
->
+  size="lg">
   <Modal.Header closeButton>
     <Modal.Title>Inquiry Details</Modal.Title>
   </Modal.Header>
