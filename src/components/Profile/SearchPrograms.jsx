@@ -82,8 +82,7 @@ const SearchPrograms = () => {
             <Form.Label>Select Location</Form.Label>
             <Form.Select
               value={selectedLocation}
-              onChange={(e) => setSelectedLocation(e.target.value)}
-            >
+              onChange={(e) => setSelectedLocation(e.target.value)}>
               <option value="">All Locations</option>
               {locations.map((loc, index) => (
                 <option key={index} value={loc}>
