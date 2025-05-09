@@ -15,7 +15,6 @@ import {
 } from "@mui/material";
 import api from "../../interceptors/axiosInterceptor";
 import { useParams } from "react-router-dom";
-import Swal from "sweetalert2";
 
 const steps = ["Application", "Interview", "Visa Process"];
 
