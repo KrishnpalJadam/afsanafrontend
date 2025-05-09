@@ -1,4 +1,4 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Container,
   Button,
@@ -40,30 +40,30 @@ const Lead = () => {
   // Search & Filter States
   const [searchTerm, setSearchTerm] = useState("");
   // Fetch Leads
-const fetchLeads = async () => {
-  try {
-    const response = await api.get(`${BASE_URL}lead`);
-    setLeads(response.data);
-  } catch (error) {
-    console.error("Error fetching leads:", error);
-  }
-};
+  const fetchLeads = async () => {
+    try {
+      const response = await api.get(`${BASE_URL}lead`);
+      setLeads(response.data);
+    } catch (error) {
+      console.error("Error fetching leads:", error);
+    }
+  };
 
-// Fetch Leads initially
-useEffect(() => {
-  fetchLeads();
-}, []);
-const filteredLeads = leads?.filter((lead) =>
-  lead.name.toLowerCase().includes(searchTerm.toLowerCase())
-);
+  // Fetch Leads initially
+  useEffect(() => {
+    fetchLeads();
+  }, []);
+  const filteredLeads = leads?.filter((lead) =>
+    lead.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const fetchCounseller = async () => {
     try {
       const response = await api.get(`counselor`);
- 
+
       if (response.status === 200) {
-      setCounselors(response.data);
-      
+        setCounselors(response.data);
+
       } else {
         console.error("Failed to fetch counselors");
       }
@@ -71,7 +71,7 @@ const filteredLeads = leads?.filter((lead) =>
       console.error("Error fetching counselors:", error);
     }
   };
-  
+
   useEffect(() => {
     fetchCounseller();
   }, []);
@@ -107,7 +107,7 @@ const filteredLeads = leads?.filter((lead) =>
       name: lead.name,
       phone: lead.phone,
       email: lead.email,
-      counselor: lead.counselor.id, 
+      counselor: lead.counselor.id,
       follow_up_date: lead.follow_up_date,
       notes: lead.notes,
       preferred_countries: lead.preferred_countries,
@@ -133,7 +133,7 @@ const filteredLeads = leads?.filter((lead) =>
       // Update lead
       try {
         const response = await api.put(`${BASE_URL}lead/${currentLeadId}`, newLead);
-         fetchLeads()
+        fetchLeads()
       } catch (error) {
         console.error("Error updating lead:", error);
       }
@@ -141,14 +141,14 @@ const filteredLeads = leads?.filter((lead) =>
       // Add new lead
       try {
         const response = await api.post(`${BASE_URL}lead`, newLead);
-        fetchLeads();      
+        fetchLeads();
       } catch (error) {
         console.error("Error adding lead:", error);
       }
     }
     handleCloseModal();
   };
-  
+
   // Delete Lead
   const handleDeleteLead = async (leadId) => {
     try {
@@ -174,30 +174,30 @@ const filteredLeads = leads?.filter((lead) =>
     <Container fluid className="py-3">
       {/* Filter Section */}
       <div className="mt-2">
-      <h2>Leads Management</h2>
+        <h2>Leads Management</h2>
       </div>
       <div className="d-flex justify-content-between mb-3 pt-3">
         <div>
-        <Button variant="secondary" onClick={handleShowModal}>
-          <FaPlus className="me-1" /> New Lead
-        </Button>
+          <Button variant="secondary" onClick={handleShowModal}>
+            <FaPlus className="me-1" /> New Lead
+          </Button>
         </div>
-      
+
         <div className="d-flex gap-2">
           <div>
-          <InputGroup>
-            <InputGroup.Text>
-              <FaSearch />
-            </InputGroup.Text>
-            <Form.Control
-              type="text"
-              placeholder="Search leads..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </InputGroup>
+            <InputGroup>
+              <InputGroup.Text>
+                <FaSearch />
+              </InputGroup.Text>
+              <Form.Control
+                type="text"
+                placeholder="Search leads..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </InputGroup>
           </div>
-  
+
         </div>
       </div>
 
@@ -280,7 +280,7 @@ const filteredLeads = leads?.filter((lead) =>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSaveLead}>
-          <div className="row">
+            <div className="row">
               <div className="col-md-6">
                 <Form.Group className="mb-3">
                   <Form.Label>Name</Form.Label>
@@ -324,21 +324,21 @@ const filteredLeads = leads?.filter((lead) =>
               </div>
 
               <div className="col-md-6">
-              <Form.Group className="mb-3">
-  <Form.Label>Counselor</Form.Label>
-  <Form.Select  name="counselor" value={newLead.counselor} onChange={handleInputChange}>
-  <option value="">Select Counselor</option>
-  {counselors.length > 0 ? (
-    counselors.map((counselor) => (
-      <option key={counselor.id} value={counselor.id}>
-        {counselor.full_name}
-      </option>
-    ))
-  ) : (
-    <option disabled>No counselors available</option>
-  )}
-</Form.Select>
-</Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Counselor</Form.Label>
+                  <Form.Select name="counselor" value={newLead.counselor} onChange={handleInputChange}>
+                    <option value="">Select Counselor</option>
+                    {counselors.length > 0 ? (
+                      counselors.map((counselor) => (
+                        <option key={counselor.id} value={counselor.id}>
+                          {counselor.full_name}
+                        </option>
+                      ))
+                    ) : (
+                      <option disabled>No counselors available</option>
+                    )}
+                  </Form.Select>
+                </Form.Group>
 
               </div>
 

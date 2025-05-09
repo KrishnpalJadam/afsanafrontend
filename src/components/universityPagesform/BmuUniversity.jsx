@@ -15,12 +15,13 @@ import {
 } from "@mui/material";
 import api from "../../interceptors/axiosInterceptor";
 import { useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const steps = ["Application", "Interview", "Visa Process"];
 
 const UniversityStepper = () => {
   const [activeStep, setActiveStep] = useState(0);
-  const [status,setStatus]= useState(false)
+  const [status, setStatus] = useState(false)
   const [applicationId, setApplicationId] = useState(null)
   const [interviewBtn,setInterviewBtn] = useState(0)
   const student_id = parseInt(localStorage.getItem("student_id"));
@@ -72,7 +73,7 @@ const UniversityStepper = () => {
 
   });
 
-   
+
   const handleFileChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.files[0] });
   };
@@ -1244,7 +1245,7 @@ const UniversityStepper = () => {
               >
                 Back
               </Button>
-              <Button variant="contained" onClick={handleNext} disabled={ !status }>
+              <Button variant="contained" onClick={handleNext} disabled={!status}>
                 Next
               </Button>
               {status === false ? (
