@@ -13,11 +13,13 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
+import api from "../../interceptors/axiosInterceptor";
 
 const steps = ["Application", "Interview", "Visa Process"];
 
 const UniversityStepper = () => {
   const [activeStep, setActiveStep] = useState(0);
+  const user_id = localStorage.getItem("user_id");
   const [formData, setFormData] = useState({
     registrationFeePayment: "",
     registration: "",
@@ -58,10 +60,22 @@ const UniversityStepper = () => {
     accommodationConfirmationReceived: "",
     arrivalInCountry: "",
   });
-
+ 
+//  const [testForm , setTestForm] = useState(
+//   {
+//     registrationFeePayment : "",
+//     student_id:user_id
+//   }
+//  )
   const handleFileChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.files[0] });
   };
+  const formDataToSubmit = new FormData();
+  formDataToSubmit.append("student_id", user_id);
+  formDataToSubmit.append("registration_fee_payment",formData.registrationFeePayment);
+  formDataToSubmit.append("registration_date", formData.registration);
+
+
 
   const handleNext = () => {
     setActiveStep((prev) => prev + 1);
@@ -73,6 +87,15 @@ const UniversityStepper = () => {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+  const handleSubmit = async() => {
+    console.log("Form Data Submitted:", formDataToSubmit);
+    try {
+      const response = await api.post("/application", formDataToSubmit);
+      console.log("Form submitted successfully:", response.data);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
   };
 
   const renderStepContent = (step) => {
@@ -1075,8 +1098,11 @@ const UniversityStepper = () => {
               >
                 Back
               </Button>
-              <Button variant="contained" onClick={handleNext}>
-                {activeStep === steps.length - 1 ? "Finish" : "Next"}
+              <Button variant="contained" onClick={handleNext} disabled={activeStep === steps.length - 1}>
+                 Next
+              </Button>
+              <Button variant="contained" onClick={handleSubmit}>
+  Submit Application
               </Button>
             </Box>
           </>
