@@ -60,7 +60,8 @@ const UniversityStepper = () => {
     accommodationConfirmationReceived: "",
     arrivalInCountry: "",
   });
- 
+ console.log("ankitbhai",formData)
+
 //  const [testForm , setTestForm] = useState(
 //   {
 //     registrationFeePayment : "",
