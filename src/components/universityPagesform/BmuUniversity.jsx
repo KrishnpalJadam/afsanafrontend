@@ -59,6 +59,7 @@ const UniversityStepper = () => {
     onlineEnrollmentCompleted: "",
     accommodationConfirmationReceived: "",
     arrivalInCountry: "",
+    residencePermitForm:null
   });
  
 //  const [testForm , setTestForm] = useState(
@@ -74,6 +75,94 @@ const UniversityStepper = () => {
   formDataToSubmit.append("student_id", user_id);
   formDataToSubmit.append("registration_fee_payment",formData.registrationFeePayment);
   formDataToSubmit.append("registration_date", formData.registration);
+  formDataToSubmit.append("application_submission_date", formData.applicationSubmission);
+  formDataToSubmit.append("application_fee_payment", formData.applicationFeePayment);
+  formDataToSubmit.append("fee_confirmation_document", formData.applicationFeeConfirmation);
+
+  formDataToSubmit.append("university_interview_date", formData.interviewDate);
+
+  formDataToSubmit.append("university_interview_outcome", formData.interviewOutcome);
+
+  formDataToSubmit.append("conditional_offer_letter", formData.conditionalOfferLetter);
+  formDataToSubmit.append("invoice_with_conditional_offer", formData.invoiceWithOfferLetter);
+  formDataToSubmit.append("tuition_fee_transfer_proof", formData.tuitionFeeTransferProof);
+
+  formDataToSubmit.append("final_university_offer_letter", formData.finalOfferLetter);
+  formDataToSubmit.append("offer_letter_service_charge_paid", formData.offerLetterServiceCharge);
+
+  formDataToSubmit.append("university_offer_letter_received", formData.universityOfferLetterReceived);
+  formDataToSubmit.append("appendix_form_completed", formData.appendixFormCompleted);
+  formDataToSubmit.append("passport_copy_prepared", formData.passportCopy);
+  // formDataToSubmit.append("email_sent_for_documentation", formData.universityOfferLetterReceived); //----------
+  // formDataToSubmit.append("appointment_date", formData.universityOfferLetterReceived);
+  formDataToSubmit.append("financial_support_declaration", formData.financialSupportDeclaration);
+  formDataToSubmit.append("final_offer_letter", formData.universityOfferLetterReceived);
+  formDataToSubmit.append("proof_of_relationship", formData.relationshipProofWithSponsor);
+  formDataToSubmit.append("english_language_proof", formData.englishProof);
+  formDataToSubmit.append("residence_permit_form", formData.residencePermitForm);
+  formDataToSubmit.append("proof_of_income", formData.incomeProof);
+
+  formDataToSubmit.append("airplane_ticket_booking", formData.airplaneTicket);
+
+  formDataToSubmit.append("police_clearance_certificate", formData.policeClearance);
+
+  formDataToSubmit.append("europass_cv", formData.europassCV);
+
+  formDataToSubmit.append("birth_certificate", formData.birthCertificate);
+
+  formDataToSubmit.append("accommodation_proof", formData.accommodationProof);
+  formDataToSubmit.append("motivation_letter", formData.motivationLetter);
+
+  formDataToSubmit.append("previous_studies_certificates", formData.previousCertificates);
+
+  formDataToSubmit.append("travel_insurance", formData.travelInsurance);
+
+  formDataToSubmit.append("health_insurance", formData.healthInsurance);
+  formDataToSubmit.append("european_photo", formData.europeanPhoto);
+
+  formDataToSubmit.append("visa_decision", formData.visaDecision);
+
+  formDataToSubmit.append("visa_service_charge_paid", formData.visaServiceChargePaid);
+
+  formDataToSubmit.append("flight_booking_confirmed", formData.flightBookingConfirmed);
+
+  formDataToSubmit.append("online_enrollment_completed", formData.onlineEnrollmentCompleted);
+  formDataToSubmit.append("accommodation_confirmation", formData.accommodationConfirmationReceived);
+  formDataToSubmit.append("arrival_country", formData.arrivalInCountry);
+
+
+
+
+
+  // financialSupportDeclaration: null,
+  // validOfferLetter: null,
+  // relationshipProofWithSponsor: null,
+  // englishProof: null,
+  // incomeProof: null,
+  // airplaneTicket: null,
+  // policeClearance: null,
+  // europassCV: null,
+  // birthCertificate: null,
+  // bankStatement: null,
+  // accommodationProof: null,
+  // motivationLetter: null,
+  // previousCertificates: null,
+  // travelInsurance: null,
+  // europeanPhoto: null,
+  // healthInsurance: null,
+  // visaInterviewDate: "",
+  // visaDecision: "",
+  // visaServiceChargePaid: "",
+  // flightBookingConfirmed: "",
+  // onlineEnrollmentCompleted: "",
+  // accommodationConfirmationReceived: "",
+  // arrivalInCountry: "",
+
+
+
+
+
+
 
 
 
@@ -403,6 +492,7 @@ const UniversityStepper = () => {
                 onChange={handleFileChange}
                 accept=".pdf,.jpg,.jpeg,.png"
                 style={{ maxWidth: 250 }}
+                value={formData.appendixFormCompleted}
               />
               {formData.appendixFormCompleted && (
                 <Typography variant="body2" color="text.secondary">
@@ -1019,8 +1109,8 @@ const UniversityStepper = () => {
                 value={formData.flightBookingConfirmed}
                 onChange={handleChange}
               >
-                <MenuItem value="Confirmed">Confirmed</MenuItem>
-                <MenuItem value="Pending">Pending</MenuItem>
+                <MenuItem value="1">Confirmed</MenuItem>
+                <MenuItem value="0">Pending</MenuItem>
               </Select>
             </FormControl>
 
@@ -1032,8 +1122,8 @@ const UniversityStepper = () => {
                 value={formData.onlineEnrollmentCompleted}
                 onChange={handleChange}
               >
-                <MenuItem value="Completed">Completed</MenuItem>
-                <MenuItem value="Pending">Pending</MenuItem>
+                <MenuItem value="1">Completed</MenuItem>
+                <MenuItem value="0">Pending</MenuItem>
               </Select>
             </FormControl>
 
@@ -1045,8 +1135,8 @@ const UniversityStepper = () => {
                 value={formData.accommodationConfirmationReceived}
                 onChange={handleChange}
               >
-                <MenuItem value="Received">Received</MenuItem>
-                <MenuItem value="Pending">Pending</MenuItem>
+                <MenuItem value="1">Received</MenuItem>
+                <MenuItem value="0">Pending</MenuItem>
               </Select>
             </FormControl>
 
