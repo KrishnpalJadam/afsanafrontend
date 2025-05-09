@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSpring, animated } from "react-spring";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Button } from "react-bootstrap";
 
 import Swal from "sweetalert2";
@@ -10,7 +10,7 @@ import api from "../../interceptors/axiosInterceptor";
 const UniversityCards = () => {
   const [universities, setUniversities] = useState([]);
   const role = localStorage.getItem("login"); // To check if the user is an admin
-
+  
   // Spring animation for the cards
   const animation = useSpring({
     opacity: 1,
