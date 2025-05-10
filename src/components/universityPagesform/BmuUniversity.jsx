@@ -62,7 +62,7 @@ const UniversityStepper = () => {
     visaServiceChargePaid: "",
     flightBookingConfirmed: "0",
     onlineEnrollmentCompleted: "0",
-    accommodationConfirmationReceived: "",
+    accommodationConfirmationReceived: "0",
     arrivalInCountry: "",
     residencePermitForm: "",
     emailSentForSubmission: "",
@@ -1254,11 +1254,11 @@ const UniversityStepper = () => {
 ) : (
   interviewBtn === 1 ? (
     <Button variant="contained" onClick={() => handleUpdate(applicationId)}>
-      Submit Interview
+      Submit Visa Details
     </Button>
   ) : (
     <Button variant="contained" onClick={() => handleUpdate(applicationId)}>
-      Submit Visa
+      Submit Interview Details
     </Button>
   )
 )}
