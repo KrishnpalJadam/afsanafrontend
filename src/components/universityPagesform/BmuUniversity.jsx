@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Stepper,
@@ -26,6 +27,8 @@ const UniversityStepper = () => {
   const [interviewBtn,setInterviewBtn] = useState(0)
   const student_id = parseInt(localStorage.getItem("student_id"));
   const university_id = useParams("university.id");
+  const [universities,setUniversities] = ([])
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     registrationFeePayment: "",
     registration: "",
@@ -214,7 +217,8 @@ useEffect(() => {
               icon: 'success',
               confirmButtonText: 'OK',
             });
-            window.location.reload(true);
+            navigate("/UniversityCards")
+            // window.location.reload(true);
       console.log("Form submitted successfully:", response.data);
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -243,13 +247,14 @@ useEffect(() => {
         icon: 'success',
         confirmButtonText: 'OK',
       });
+       navigate("/UniversityCards")
       console.log("Form submitted successfully:", response.data);
     } catch (error) {
       console.error("Error submitting form:", error);
     }
   };
 
-  const renderStepContent = (step) => {
+  const renderStepContent = (step) => {    
     switch (step) {
       case 0:
         return (
