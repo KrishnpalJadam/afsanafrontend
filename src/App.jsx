@@ -67,6 +67,7 @@ import ApplicationTimeline from "./components/AdmissionTracking/ApplicationTimel
 import MyProfile from "./MyProfile/MyProfile";
 import Addbranch from "./components/ReportingAnalytics/Addbranch";
 import ChangePassword from "./MyProfile/ChangePassword";
+import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
 
 function App() {
   //show details to admin
@@ -129,223 +130,90 @@ function App() {
         <div className={`right-side-content ${  hideLayout ? "full-width" : isSidebarCollapsed ? "collapsed" : ""  }`}
           style={hideLayout ? { marginTop: "0", paddingLeft: "0" } : {}}>
           <LeadProvider>
-            <Routes>
-              <Route path="/university/GyorUniversity"   element={<GyorUniversity></GyorUniversity>} ></Route>
-              <Route path="/university/WekerleUniversity"  element={<WekerleUiversity></WekerleUiversity>}></Route>
-              <Route path="/university/HunguryUniversity" element={<HunguryUniversity></HunguryUniversity>} ></Route>
-              <Route  path="/university/DebrecenUniversity"  element={<DebrecenUniversity></DebrecenUniversity>}></Route>
-              {/* login signup */}
-              <Route  path="/login"  element={
-               <Login login={login}  setLogin={setLogin} />}/>
-              {/* login signup */}
-              <Route path="/" element={<Home></Home>}></Route>
+          <Routes>
+  {/* University Routes */}
+  <Route path="/university/GyorUniversity" element={<ProtectedRoute><GyorUniversity /></ProtectedRoute>} />
+  <Route path="/university/WekerleUniversity" element={<ProtectedRoute><WekerleUiversity /></ProtectedRoute>} />
+  <Route path="/university/HunguryUniversity" element={<ProtectedRoute><HunguryUniversity /></ProtectedRoute>} />
+  <Route path="/university/DebrecenUniversity" element={<ProtectedRoute><DebrecenUniversity /></ProtectedRoute>} />
+  <Route path="/university/:id" element={<ProtectedRoute><BmuUniversity /></ProtectedRoute>} />
 
-              {/* dashbord */}
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/councelor" element={<Councelor></Councelor>}></Route>
-              {/* student dashboard */}
-              <Route path="/studentProfile" element={<StudentProfile></StudentProfile>}></Route>
-              {/* dashbord */}
+  {/* Login & Signup */}
+  <Route path="/login" element={<Login login={login} setLogin={setLogin} />} />
+  <Route path="/" element={<Home />} />
 
-              <Route
-                path="/Searchprograms"
-                element={<SearchPrograms></SearchPrograms>}
-              ></Route>
+  {/* Protected Route for Dashboard */}
+  <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
 
-              {/* LeadInquiryManagement */}
-              {/* Inquriy */}
-              <Route path="/inquiry" element={<Inquriy></Inquriy>}></Route>
-              {/* lead   */}
-              <Route path="/lead" element={<Lead></Lead>}></Route>
+  {/* Other Protected Routes */}
+  <Route path="/councelor" element={<ProtectedRoute><Councelor /></ProtectedRoute>} />
+  <Route path="/studentProfile" element={<ProtectedRoute><StudentProfile /></ProtectedRoute>} />
+  <Route path="/Searchprograms" element={<ProtectedRoute><SearchPrograms /></ProtectedRoute>} />
+  <Route path="/inquiry" element={<ProtectedRoute><Inquriy /></ProtectedRoute>} />
+  <Route path="/lead" element={<ProtectedRoute><Lead /></ProtectedRoute>} />
+  <Route path="/lead/:id" element={<ProtectedRoute><Deal /></ProtectedRoute>} />
+  <Route path="/leadCouncelor" element={<ProtectedRoute><LeadCouncelor /></ProtectedRoute>} />
+  <Route path="/councelorTask" element={<ProtectedRoute><CounselorTask /></ProtectedRoute>} />
+  <Route path="/contract" element={<ProtectedRoute><Contract /></ProtectedRoute>} />
+  <Route path="/status" element={<ProtectedRoute><CounselorApplications /></ProtectedRoute>} />
+  <Route path="/adminstatus" element={<ProtectedRoute><AdminStatus /></ProtectedRoute>} />
+  <Route path="/timeline/:applicationId" element={<ProtectedRoute><ApplicationTimeline /></ProtectedRoute>} />
 
-              {/* deal */}
-              {/* <Route path="/deal" element={<Deal></Deal>}></Route> */}
-              <Route path="/lead/:id" element={<Deal />} />
+  {/* Student Management */}
+  <Route path="/studentDetails" element={<ProtectedRoute><StudentDetails /></ProtectedRoute>} />
+  <Route path="/MainStudentDetails" element={<ProtectedRoute><MainStudentDetails /></ProtectedRoute>} />
+  <Route path="/manaDetails" element={<ProtectedRoute><ManaDetails /></ProtectedRoute>} />
+  <Route path="/admission" element={<ProtectedRoute><AdmissionNew /></ProtectedRoute>} />
+  <Route path="/new" element={<ProtectedRoute><AdmissionTracking /></ProtectedRoute>} />
+  <Route path="/studentProfile/:studentId" element={<ProtectedRoute><StudentDetailsPage /></ProtectedRoute>} />
+  <Route path="/student/:id" element={<ProtectedRoute><ViewStudentProfile /></ProtectedRoute>} />
 
-              <Route
-                path="/leadCouncelor"
-                element={<LeadCouncelor></LeadCouncelor>}
-              ></Route>
-              <Route
-                path="/councelorTask"
-                element={<CounselorTask></CounselorTask>}
-              ></Route>
-              <Route path="/contract" element={<Contract></Contract>}></Route>
+  {/* Communication */}
+  <Route path="/communication" element={<ProtectedRoute><CommunicationFollowupManagement /></ProtectedRoute>} />
+  <Route path="/myapplication" element={<ProtectedRoute><MyApplication /></ProtectedRoute>} />
+  <Route path="/ContactSupport" element={<ProtectedRoute><Support /></ProtectedRoute>} />
 
-              <Route
-                path="/status"
-                element={<CounselorApplications></CounselorApplications>}
-              ></Route>
+  {/* Application Tracking */}
+  <Route path="/tracker" element={<ProtectedRoute><ApplicationTracker /></ProtectedRoute>} />
 
-              <Route
-                path="/adminstatus"
-                element={<AdminStatus></AdminStatus>}
-              ></Route>
+  {/* Admission Decisions */}
+  <Route path="/applications" element={<ProtectedRoute><AdmissionDecisions /></ProtectedRoute>} />
+  <Route path="/AdmissionTracking" element={<ProtectedRoute><AdmissionTracking /></ProtectedRoute>} />
 
-              <Route
-                path="/timeline/:applicationId"
-                element={<ApplicationTimeline />}
-              />
+  {/* Follow Up */}
+  <Route path="/followup" element={<ProtectedRoute><FollowUpScheduling /></ProtectedRoute>} />
 
-              {/* student management */}
-              <Route
-                path="/studentDetails"
-                element={<StudentDetails></StudentDetails>}
-              ></Route>
+  {/* Automated Reminders */}
+  <Route path="/reminder" element={<ProtectedRoute><AutomatedReminders /></ProtectedRoute>} />
 
-              <Route
-                path="/MainStudentDetails"
-                element={<MainStudentDetails></MainStudentDetails>}
-              ></Route>
-              {/* student details page */}
-              <Route
-                path="/manaDetails"
-                element={<ManaDetails></ManaDetails>}
-              ></Route>
+  {/* Add Counselor */}
+  <Route path="/addcounselor" element={<ProtectedRoute><AddCounselor onAdd={handleAddCounselor} /></ProtectedRoute>} />
 
-              {/* student addmission */}
-              <Route
-                path="/admission"
-                element={<AdmissionNew></AdmissionNew>}
-              ></Route>
+  {/* Tasks */}
+  <Route path="/tasks" element={<ProtectedRoute><TaskAssignment counselors={counselors} tasks={tasks} onTaskAssign={handleTaskAssign} /></ProtectedRoute>} />
+  <Route path="/tasksreminder" element={<ProtectedRoute><TaskReminder tasks={tasks} /></ProtectedRoute>} />
+  <Route path="/studenttasks" element={<ProtectedRoute><StudentTask /></ProtectedRoute>} />
 
-              <Route
-                path="/new"
-                element={<AdmissionTracking></AdmissionTracking>}
-              ></Route>
-              {/* student detail single page */}
-              <Route
-                path="/studentProfile/:studentId"
-                element={<StudentDetailsPage></StudentDetailsPage>}
-              ></Route>
+  {/* Roles Permissions */}
+  <Route path="/RolesManagement" element={<ProtectedRoute><RolesManagement /></ProtectedRoute>} />
+  <Route path="/permissions/:role" element={<ProtectedRoute><PermissionsTable /></ProtectedRoute>} />
 
-              <Route
-                path="/student/:id"
-                element={<ViewStudentProfile></ViewStudentProfile>}
-              ></Route>
+  {/* Reports & Analytics */}
+  <Route path="/CourseUniversityDatabase" element={<ProtectedRoute><CourseUniversityDatabase /></ProtectedRoute>} />
+  <Route path="/ReportingAnalytics" element={<ProtectedRoute><ReportingAnalytics /></ProtectedRoute>} />
 
-              {/* comunication */}
-              <Route
-                path="/communication"
-                element={
-                  <CommunicationFollowupManagement></CommunicationFollowupManagement>
-                }
-              ></Route>
+  {/* Payment & Invoices */}
+  <Route path="/addbranch" element={<ProtectedRoute><Addbranch /></ProtectedRoute>} />
+  <Route path="/payment" element={<ProtectedRoute><Payment /></ProtectedRoute>} />
+  <Route path="/UniversityCards" element={<ProtectedRoute><UniversityCards /></ProtectedRoute>} />
+  <Route path="/PaymentInvoiceManagement" element={<ProtectedRoute><PaymentInvoiceMangament /></ProtectedRoute>} />
 
-              <Route
-                path="/myapplication"
-                element={<MyApplication></MyApplication>}
-              ></Route>
+  {/* Chatbox Route */}
+  <Route path="/chatbox" element={<ProtectedRoute><ChatBox /></ProtectedRoute>} />
+  <Route path="/profile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
+  <Route path="/change-password" element={<ProtectedRoute><ChangePassword /></ProtectedRoute>} />
+</Routes>
 
-              <Route
-                path="/ContactSupport"
-                element={<Support></Support>}
-              ></Route>
-
-              {/* ApplicationTracking */}
-              <Route
-                path="/tracker"
-                element={<ApplicationTracker></ApplicationTracker>}
-              ></Route>
-
-              {/* university details */}
-              <Route
-                path="/university"
-                element={<UniversitySubmissions></UniversitySubmissions>}
-              ></Route>
-   {/* this is VB routes for all the university  */}
-   <Route
-                path="/university/:id"
-                element={<BmuUniversity></BmuUniversity>}
-              ></Route>
-              {/* Admission decisions */}
-              <Route
-                path="/applications"
-                element={<AdmissionDecisions></AdmissionDecisions>}
-              ></Route>
-              <Route
-                path="/AdmissionTracking"
-                element={<AdmissionTracking />}
-              />
-
-              {/* follow up */}
-              <Route
-                path="/followup"
-                element={<FollowUpScheduling></FollowUpScheduling>}
-              ></Route>
-
-              {/* automated reminder */}
-              <Route
-                path="/reminder"
-                element={<AutomatedReminders></AutomatedReminders>}
-              ></Route>
-
-              {/* add councelor */}
-              <Route
-                path="/addcounselor"
-                element={
-                  <AddCounselor onAdd={handleAddCounselor}></AddCounselor>
-                }
-              ></Route>
-
-              {/* tasks */}
-              <Route
-                path="/tasks"
-                element={
-                  <TaskAssignment
-                    counselors={counselors}
-                    tasks={tasks}
-                    onTaskAssign={handleTaskAssign}
-                  ></TaskAssignment>
-                }
-              ></Route>
-
-              {/* reminder */}
-              <Route
-                path="/tasksreminder"
-                element={<TaskReminder tasks={tasks}></TaskReminder>}
-              ></Route>
-
-              <Route
-                path="/studenttasks"
-                element={<StudentTask></StudentTask>}
-              ></Route>
-
-              {/* roles permissions */}
-              <Route path="/RolesManagement" element={<RolesManagement />} />
-
-              <Route path="/permissions/:role" element={<PermissionsTable />} />
-
-              {/* reports & analytics */}
-              <Route
-                path="/CourseUniversityDatabase"
-                element={<CourseUniversityDatabase></CourseUniversityDatabase>} ></Route>
-
-              {/* payment & invoices*/}
-              <Route
-                path="/ReportingAnalytics"
-                element={<ReportingAnalytics />}/>
-
-              <Route path="/addbranch" element={<Addbranch/>}></Route>
-              <Route path="/payment" element={<Payment></Payment>}></Route>
-
-              {/* PaymentInvoiceManagement */}
-              <Route
-                path="/UniversityCards"
-                element={<UniversityCards></UniversityCards>}
-              ></Route>
-              <Route
-                path="/PaymentInvoiceManagement"
-                element={<PaymentInvoiceMangament />
-                  
-                }
-              />
-
-              {/* chatbox route */}
-              <Route path="/chatbox" element={<ChatBox />} />
-              <Route path="/profile" element={<MyProfile />} />
-              <Route path="/change-password" element={<ChangePassword />} />
-            </Routes>
           </LeadProvider>
         </div>
         {/* right end  */}
