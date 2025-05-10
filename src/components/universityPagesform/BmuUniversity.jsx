@@ -1379,14 +1379,7 @@ useEffect(() => {
       </Stepper>
 
       <Box sx={{ mt: 4 }}>
-        {activeStep === steps.length ? (
-          <>
-            <Typography variant="h6" align="center">
-              🎉 All steps completed successfully!
-            </Typography>
-            {/* <pre>{JSON.stringify(formData, null, 2)}</pre> */}
-          </>
-        ) : (
+         
           <>
             {renderStepContent(activeStep)}
 
@@ -1400,7 +1393,7 @@ useEffect(() => {
               >
                 Back
               </Button>
-              <Button variant="contained" onClick={handleNext} disabled={!status}>
+              <Button variant="contained" onClick={handleNext} disabled={!status|| (activeStep === steps.length-1)}>
                 Next
               </Button>
               {status === false ? (
@@ -1421,7 +1414,7 @@ useEffect(() => {
 
             </Box>
           </>
-        )}
+        
       </Box>
     </Paper>
   );
