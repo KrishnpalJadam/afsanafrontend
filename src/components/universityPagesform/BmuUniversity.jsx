@@ -67,9 +67,10 @@ const UniversityStepper = () => {
     arrivalInCountry: "",
     residencePermitForm: "",
     emailSentForSubmission: "",
-    Application_stage:"0",
-    interview:"0",
-    Visa_process:"0",
+    conditional_offer_letter:"",
+    // Application_stage:"0",
+    // interview:"0",
+    // Visa_process:"0",
     appointmentDateConfirmation:""
 
   });
@@ -94,15 +95,15 @@ useEffect(() => {
             conditionalOfferLetter: applicationData.conditional_offer_letter,
             invoiceWithOfferLetter: applicationData.invoice_with_conditional_offer,
             tuitionFeeTransferProof: applicationData.tuition_fee_transfer_proof,
-            finalOfferLetter: applicationData.final_university_offer_letter,
+            finalOfferLetter: applicationData.final_offer_letter,
             offerLetterServiceCharge: applicationData.offer_letter_service_charge_paid,
             universityOfferLetterReceived: applicationData.university_offer_letter_received,
             appendixFormCompleted: applicationData.appendix_form_completed,
             passportCopy: applicationData.passport_copy_prepared,
             emailSentForSubmission: applicationData.email_sent_for_documentation,
             financialSupportDeclaration: applicationData.financial_support_declaration,
-            validOfferLetter: applicationData.valid_offer_letter,
-            relationshipProofWithSponsor: applicationData.proof_of_relationship_with_sponsor,
+            validOfferLetter: applicationData.final_offer_letter,
+            relationshipProofWithSponsor: applicationData.proof_of_relationship,
             englishProof: applicationData.english_language_proof,
             incomeProof: applicationData.proof_of_income,
             airplaneTicket: applicationData.airplane_ticket_booking,
@@ -124,6 +125,7 @@ useEffect(() => {
             accommodationConfirmationReceived: applicationData.accommodation_confirmation,
             arrivalInCountry: applicationData.arrival_country,
             residencePermitForm: applicationData.residence_permit_form,
+            appointmentDateConfirmation:applicationData.appointment_date,
             // Application_stage: applicationData.application_stage,
           });
           setApplicationId(applicationData.id); // Set the application ID
