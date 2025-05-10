@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import api from "../../interceptors/axiosInterceptor";
 import { useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const steps = ["Application", "Interview", "Visa Process"];
 
@@ -205,6 +206,13 @@ useEffect(() => {
     console.log("Form Data Submitted:", formDataToSubmit);
     try {
       const response = await api.post("/application", formDataToSubmit);
+        Swal.fire({
+              title: 'Success!',
+              text: 'Data submitted successfully!',
+              icon: 'success',
+              confirmButtonText: 'OK',
+            });
+            window.location.reload(true);
       console.log("Form submitted successfully:", response.data);
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -227,6 +235,12 @@ useEffect(() => {
     
     try {
       const response = await api.put(`/application/${id}`, formDataToSubmit);
+      Swal.fire({
+        title: 'Success!',
+        text: 'Data submitted successfully!',
+        icon: 'success',
+        confirmButtonText: 'OK',
+      });
       console.log("Form submitted successfully:", response.data);
     } catch (error) {
       console.error("Error submitting form:", error);

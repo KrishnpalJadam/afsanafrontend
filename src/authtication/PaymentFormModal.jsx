@@ -275,7 +275,7 @@ const PaymentFormModal = ({ show, handleClose }) => {
             <Form.Control type="file" name="file" onChange={handleChange} />
           </Form.Group>
 
-          <Row className="mb-3">
+          {/* <Row className="mb-3">
             <Col md={6}>
               <Form.Label>Name of Assistant</Form.Label>
               <Form.Control
@@ -292,7 +292,7 @@ const PaymentFormModal = ({ show, handleClose }) => {
                 onChange={handleChange}
               />
             </Col>
-          </Row>
+          </Row> */}
 
           <div className="d-flex justify-content-end">
             <Button variant="secondary" onClick={handleClose} className="me-2">
