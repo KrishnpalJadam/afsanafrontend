@@ -18,25 +18,16 @@ const Navbar = ({ toggleSidebar }) => {
   };
   const logout = () => {
       localStorage.clear()    
-    navigate("/"); // This should redirect
+    navigate("/"); 
   };
   return (
     <>
-      <nav
-        className="navbar shadow-lg"
-        style={{
-          position: "fixed",
-          backgroundColor: "white",
-          color: "black",
-          width: "100%",
-        }}
-      >
+      <nav className="navbar shadow-lg"
+        style={{ position: "fixed",  backgroundColor: "white",  color: "black",  width: "100%", }}>
         <div className="container-fluid nav-conter" >
           <div className="nav-content">
             <div className="nav-bran">
-              <img
-                src="/img/logo.png"
-                alt="Logo"
+              <img  src="/img/logo.png"  alt="Logo"
                 height={"90px"}
                 width={"140px"}
                 style={{ marginTop: "-16px" }}

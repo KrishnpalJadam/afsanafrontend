@@ -1,20 +1,93 @@
-import React from "react";
-import { Card, ListGroup, Container, Row, Col, Image } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Card, ListGroup, Container, Row, Col, Form, Button, Modal } from "react-bootstrap";
+import api from "../interceptors/axiosInterceptor"; // your axios setup with interceptors
 
 const MyProfile = () => {
-  // Get login_detail from localStorage
   const loginDetail = JSON.parse(localStorage.getItem("login_detail"));
 
-  // If no login data, show message
-  if (!loginDetail) {
-    return (
-      <Container className="mt-5 text-center">
-        <h4 className="text-muted">No user is logged in.</h4>
-      </Container>
-    );
-  }
+  const [showModal, setShowModal] = useState(false);
+  const [userData, setUserData] = useState(null);
+  const [formData, setFormData] = useState({
+    full_name: "",
+    email: "",
+    phone: "",
+    address: "",
+    gender: "",
+    date_of_birth: "",
+    father_name: "",
+    admission_no: "",
+    id_no: "",
+    category: "",
+    role: "",
+    university_name: ""
+  });
 
-  // Function to render list item only if value exists
+  // ✅ Fetch profile data
+  const fetchUserData = async () => {
+    if (!loginDetail) return;
+
+    try {
+      const res = await api.get(`auth/getUser/${loginDetail.id}`);
+      console.log("Fetched User Data 👉", res.data);
+
+      if (res.data.user) {
+        setUserData(res.data.user);
+        setFormData({
+          full_name: res.data.user.full_name || "",
+          email: res.data.user.email || "",
+          phone: res.data.user.phone || "",
+          address: res.data.user.address || "",
+          gender: res.data.user.gender || "",
+          date_of_birth: res.data.user.date_of_birth ? res.data.user.date_of_birth.split("T")[0] : "",
+          father_name: res.data.user.father_name || "",
+          admission_no: res.data.user.admission_no || "",
+          id_no: res.data.user.id_no || "",
+          category: res.data.user.category || "",
+          role: res.data.user.role || "",
+          university_name: res.data.user.university_name || ""
+        });
+      }
+    } catch (error) {
+      console.error("Failed to fetch user data: ", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  // ✅ Form input change handler
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // ✅ Profile update handler
+  const handleUpdateProfile = async (e) => {
+    e.preventDefault();
+    const data = new FormData();
+    Object.entries(formData).forEach(([key, value]) => {
+      data.append(key, value);
+    });
+
+    try {
+      const res = await api.put(`auth/updateUser/${loginDetail.id}`, data);
+      console.log("Update Response 👉", res.data);
+
+      if (res.status === 200) {
+        alert("Profile updated successfully!");
+        setShowModal(false);
+        fetchUserData();
+      } else {
+        alert("Failed to update profile.");
+      }
+    } catch (error) {
+      console.error("Error updating profile: ", error);
+      alert("An error occurred while updating the profile.");
+    }
+  };
+
+  // ✅ Helper for displaying profile fields
   const renderItem = (label, value) => {
     if (!value) return null;
     return (
@@ -25,35 +98,125 @@ const MyProfile = () => {
     );
   };
 
+  // ✅ Show message if no user logged in
+  if (!loginDetail) {
+    return (
+      <Container className="mt-5 text-center">
+        <h4 className="text-muted">No user is logged in.</h4>
+      </Container>
+    );
+  }
+
   return (
     <Container className="mt-5">
       <Row className="justify-content-center">
         <Col md={6}>
           <Card className="shadow-sm rounded-4 border-0 overflow-hidden">
-            <Card.Header
-              as="h4"
-              className="text-center bg-primary text-white py-3 fw-bold"
-            >
+            <Card.Header as="h4" className="text-center bg-primary text-white py-3 fw-bold">
               My Profile
             </Card.Header>
 
             <ListGroup variant="flush">
-              {renderItem("Full Name", loginDetail.full_name)}
-              {renderItem("Email", loginDetail.email)}
-              {renderItem("Phone", loginDetail.phone)}
-              {renderItem("Gender", loginDetail.gender)}
-              {renderItem("Date of Birth", new Date(loginDetail.date_of_birth).toLocaleDateString())}
-              {renderItem("Address", loginDetail.address)}
-              {renderItem("Father's Name", loginDetail.father_name)}
-              {renderItem("Admission No.", loginDetail.admission_no)}
-              {renderItem("ID No.", loginDetail.id_no)}
-              {renderItem("Category", loginDetail.category)}
-              {renderItem("Role", loginDetail.role)}
-              {renderItem("University Name", loginDetail.university_name)}
+              {renderItem("Full Name", userData?.full_name)}
+              {renderItem("Email", userData?.email)}
+              {renderItem("Phone", userData?.phone)}
+              {renderItem("Gender", userData?.gender)}
+              {renderItem("Date of Birth", userData?.date_of_birth && new Date(userData.date_of_birth).toLocaleDateString())}
+              {renderItem("Address", userData?.address)}
+              {renderItem("Father's Name", userData?.father_name)}
+              {renderItem("Admission No.", userData?.admission_no)}
+              {renderItem("ID No.", userData?.id_no)}
             </ListGroup>
+
+            <Card.Footer className="text-center bg-light">
+              <Button variant="primary" onClick={() => setShowModal(true)}>
+                Update Profile
+              </Button>
+            </Card.Footer>
           </Card>
         </Col>
       </Row>
+
+      {/* ✅ Update Profile Modal */}
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Update Profile</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleUpdateProfile}>
+            {formData.full_name && (
+              <Form.Group className="mb-3">
+                <Form.Label>Full Name</Form.Label>
+                <Form.Control type="text" name="full_name" value={formData.full_name} onChange={handleChange} />
+              </Form.Group>
+            )}
+
+            {formData.email && (
+              <Form.Group className="mb-3">
+                <Form.Label>Email</Form.Label>
+                <Form.Control type="email" name="email" value={formData.email} onChange={handleChange} />
+              </Form.Group>
+            )}
+
+            {formData.phone && (
+              <Form.Group className="mb-3">
+                <Form.Label>Phone</Form.Label>
+                <Form.Control type="text" name="phone" value={formData.phone} onChange={handleChange} />
+              </Form.Group>
+            )}
+
+            {formData.address && (
+              <Form.Group className="mb-3">
+                <Form.Label>Address</Form.Label>
+                <Form.Control type="text" name="address" value={formData.address} onChange={handleChange} />
+              </Form.Group>
+            )}
+
+            {formData.gender && (
+              <Form.Group className="mb-3">
+                <Form.Label>Gender</Form.Label>
+                <Form.Select name="gender" value={formData.gender} onChange={handleChange}>
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </Form.Select>
+              </Form.Group>
+            )}
+
+            {formData.date_of_birth && (
+              <Form.Group className="mb-3">
+                <Form.Label>Date of Birth</Form.Label>
+                <Form.Control type="date" name="date_of_birth" value={formData.date_of_birth} onChange={handleChange} />
+              </Form.Group>
+            )}
+
+            {formData.father_name && (
+              <Form.Group className="mb-3">
+                <Form.Label>Father's Name</Form.Label>
+                <Form.Control type="text" name="father_name" value={formData.father_name} onChange={handleChange} />
+              </Form.Group>
+            )}
+
+            {formData.admission_no && (
+              <Form.Group className="mb-3">
+                <Form.Label>Admission No.</Form.Label>
+                <Form.Control type="text" name="admission_no" value={formData.admission_no} onChange={handleChange} />
+              </Form.Group>
+            )}
+
+            {formData.id_no && (
+              <Form.Group className="mb-3">
+                <Form.Label>ID No.</Form.Label>
+                <Form.Control type="text" name="id_no" value={formData.id_no} onChange={handleChange} />
+              </Form.Group>
+            )}
+
+            <Button variant="primary" type="submit">
+              Save Changes
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
     </Container>
   );
 };
