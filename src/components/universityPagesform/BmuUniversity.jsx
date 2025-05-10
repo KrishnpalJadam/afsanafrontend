@@ -15,13 +15,15 @@ import {
 } from "@mui/material";
 import api from "../../interceptors/axiosInterceptor";
 import { useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const steps = ["Application", "Interview", "Visa Process"];
 
 const UniversityStepper = () => {
   const [activeStep, setActiveStep] = useState(0);
-  const [status,setStatus]= useState(false)
+  const [status, setStatus] = useState(false)
   const [applicationId, setApplicationId] = useState(null)
+  const [interviewBtn,setInterviewBtn] = useState(0)
   const student_id = parseInt(localStorage.getItem("student_id"));
   const university_id = useParams("university.id");
   const [formData, setFormData] = useState({
@@ -29,47 +31,49 @@ const UniversityStepper = () => {
     registration: "",
     applicationSubmission: "",
     applicationFeePayment: "",
-    applicationFeeConfirmation: null,
+    applicationFeeConfirmation: "",
     interviewDate: "",
     interviewOutcome: "",
-    conditionalOfferLetter: null,
-    invoiceWithOfferLetter: null,
-    tuitionFeeTransferProof: null,
-    finalOfferLetter: null,
+    conditionalOfferLetter: "",
+    invoiceWithOfferLetter: "",
+    tuitionFeeTransferProof: "",
+    finalOfferLetter: "",
     offerLetterServiceCharge: "",
-    universityOfferLetterReceived: null,
-    appendixFormCompleted: null,
-    passportCopy: null,
-    financialSupportDeclaration: null,
-    validOfferLetter: null,
-    relationshipProofWithSponsor: null,
-    englishProof: null,
-    incomeProof: null,
-    airplaneTicket: null,
-    policeClearance: null,
-    europassCV: null,
-    birthCertificate: null,
-    bankStatement: null,
-    accommodationProof: null,
-    motivationLetter: null,
-    previousCertificates: null,
-    travelInsurance: null,
-    europeanPhoto: null,
-    healthInsurance: null,
+    universityOfferLetterReceived: "",
+    appendixFormCompleted: "",
+    passportCopy: "",
+    financialSupportDeclaration: "",
+    validOfferLetter: "",
+    relationshipProofWithSponsor: "",
+    englishProof: "",
+    incomeProof: "",
+    airplaneTicket: "",
+    policeClearance: "",
+    europassCV: "",
+    birthCertificate: "",
+    bankStatement: "",
+    accommodationProof: "",
+    motivationLetter: "",
+    previousCertificates: "",
+    travelInsurance: "",
+    europeanPhoto: "",
+    healthInsurance: "",
     visaInterviewDate: "",
     visaDecision: "",
     visaServiceChargePaid: "",
-    flightBookingConfirmed: "",
-    onlineEnrollmentCompleted: "",
+    flightBookingConfirmed: "0",
+    onlineEnrollmentCompleted: "0",
     accommodationConfirmationReceived: "",
     arrivalInCountry: "",
-    residencePermitForm: null,
+    residencePermitForm: "",
     emailSentForSubmission: "",
-    Application_stage:"0"
+    Application_stage:"0",
+    interview:"0",
+    Visa_process:"0"
 
   });
 
-   
+
   const handleFileChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.files[0] });
   };
@@ -117,29 +121,73 @@ const UniversityStepper = () => {
   formDataToSubmit.append("appointment_date", formData.appointmentDateConfirmation);
   formDataToSubmit.append("visa_interview_date", formData.visaInterviewDate);
   formDataToSubmit.append("university_id", university_id.id);
-  formDataToSubmit.append("Application_stage", formData.Application_stage);
-  formDataToSubmit.append("interview", 0);
-  formDataToSubmit.append("Visa_process", 0);
+ 
 
 
-useEffect(()=>{
-      const getApplication = async()=>{
-        try {
-          const res = api.get(`/application/${student_id}/${university_id.id}`)
-          res.then((data) => {
-            // console.log(data.data);  // 'data' will be the resolved value of the promise
-            setStatus(data.data.status);
-            setApplicationId(data?.data?.data[0]?.id)
-            // console.log("Aid",data?.data?.data[0]?.id)
-          })
-           
-          
-        } catch (error) {
-          console.log(error)
+  useEffect(() => {
+    const getApplication = async () => {
+      try {
+        const res = await api.get(`/application/${student_id}/${university_id.id}`);
+        if (res.data.status) {
+          setStatus(true);
+          const applicationData = res.data.data[0];
+  
+          // Populate formData with fetched application data
+          setFormData({
+            ...formData,
+            registrationFeePayment: applicationData.registration_fee_payment,
+            registration: applicationData.registration_date,
+            applicationSubmission: applicationData.application_submission_date,
+            applicationFeePayment: applicationData.application_fee_payment,
+            applicationFeeConfirmation: applicationData.fee_confirmation_document,
+            interviewDate: applicationData.university_interview_date,
+            interviewOutcome: applicationData.university_interview_outcome,
+            conditionalOfferLetter: applicationData.conditional_offer_letter,
+            invoiceWithOfferLetter: applicationData.invoice_with_conditional_offer,
+            tuitionFeeTransferProof: applicationData.tuition_fee_transfer_proof,
+            finalOfferLetter: applicationData.final_university_offer_letter,
+            offerLetterServiceCharge: applicationData.offer_letter_service_charge_paid,
+            universityOfferLetterReceived: applicationData.university_offer_letter_received,
+            appendixFormCompleted: applicationData.appendix_form_completed,
+            passportCopy: applicationData.passport_copy_prepared,
+            emailSentForSubmission: applicationData.email_sent_for_documentation,
+            financialSupportDeclaration: applicationData.financial_support_declaration,
+            validOfferLetter: applicationData.valid_offer_letter,
+            relationshipProofWithSponsor: applicationData.proof_of_relationship_with_sponsor,
+            englishProof: applicationData.english_language_proof,
+            incomeProof: applicationData.proof_of_income,
+            airplaneTicket: applicationData.airplane_ticket_booking,
+            policeClearance: applicationData.police_clearance_certificate,
+            europassCV: applicationData.europass_cv,
+            birthCertificate: applicationData.birth_certificate,
+            bankStatement: applicationData.bank_statement,
+            accommodationProof: applicationData.accommodation_proof,
+            motivationLetter: applicationData.motivation_letter,
+            previousCertificates: applicationData.previous_studies_certificates,
+            travelInsurance: applicationData.travel_insurance,
+            europeanPhoto: applicationData.european_photo,
+            healthInsurance: applicationData.health_insurance,
+            visaInterviewDate: applicationData.visa_interview_date,
+            visaDecision: applicationData.visa_decision,
+            visaServiceChargePaid: applicationData.visa_service_charge_paid,
+            flightBookingConfirmed: applicationData.flight_booking_confirmed,
+            onlineEnrollmentCompleted: applicationData.online_enrollment_completed,
+            accommodationConfirmationReceived: applicationData.accommodation_confirmation,
+            arrivalInCountry: applicationData.arrival_in_country,
+            residencePermitForm: applicationData.residence_permit_form,
+            // Application_stage: applicationData.application_stage,
+          });
+          setApplicationId(applicationData.id); // Set the application ID
+          setInterviewBtn(applicationData.Interview)
         }
-      }  
-      getApplication()
-},[])
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    
+    getApplication();
+  }, []);
+  
 
 
 
@@ -159,11 +207,21 @@ useEffect(()=>{
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
   const handleSubmit = async () => {
-    setFormData({ ...formData, Application_stage: 1 });
-    formDataToSubmit.append("Application_stage", 1);
+    // setFormData({ ...formData, Application_stage: "1" });
+     
+    formDataToSubmit.append("Application_stage", "1");
+    formDataToSubmit.append("interview", "0");
+    formDataToSubmit.append("Visa_process", "0");
     console.log("Form Data Submitted:", formDataToSubmit);
     try {
       const response = await api.post("/application", formDataToSubmit);
+        Swal.fire({
+              title: 'Success!',
+              text: 'Data submitted successfully!',
+              icon: 'success',
+              confirmButtonText: 'OK',
+            });
+            window.location.reload(true);
       console.log("Form submitted successfully:", response.data);
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -171,8 +229,27 @@ useEffect(()=>{
   };
   const handleUpdate = async (id) => {
     console.log("Form Data Submitted:", formDataToSubmit);
+    if(interviewBtn === 0){
+      formDataToSubmit.append("Application_stage", "1");
+    formDataToSubmit.append("interview", "1");
+    formDataToSubmit.append("Visa_process", "0");
+    }else{
+      // setFormData({ ...formData, "interview": 1 });
+      // setFormData({ ...formData, "Visa_process": 1 });
+      formDataToSubmit.append("Application_stage", "1");
+      formDataToSubmit.append("interview", "1");
+      formDataToSubmit.append("Visa_process", "1");
+      
+    }
+    
     try {
       const response = await api.put(`/application/${id}`, formDataToSubmit);
+      Swal.fire({
+        title: 'Success!',
+        text: 'Data submitted successfully!',
+        icon: 'success',
+        confirmButtonText: 'OK',
+      });
       console.log("Form submitted successfully:", response.data);
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -1181,14 +1258,25 @@ useEffect(()=>{
               >
                 Back
               </Button>
-              <Button variant="contained" onClick={handleNext} disabled={ !status }>
+              <Button variant="contained" onClick={handleNext} disabled={!status}>
                 Next
               </Button>
-              {status===false?<Button variant="contained" onClick={handleSubmit}>
-                Submit Application
-              </Button>: <Button variant="contained" onClick={()=>{handleUpdate(applicationId)}}>
-                Submit
-              </Button>}
+              {status === false ? (
+  <Button variant="contained" onClick={handleSubmit}>
+    Submit Application
+  </Button>
+) : (
+  interviewBtn === 1 ? (
+    <Button variant="contained" onClick={() => handleUpdate(applicationId)}>
+      Submit Interview
+    </Button>
+  ) : (
+    <Button variant="contained" onClick={() => handleUpdate(applicationId)}>
+      Submit Visa
+    </Button>
+  )
+)}
+
             </Box>
           </>
         )}

@@ -199,10 +199,10 @@ const Dashboard = () => {
                   <div style={{ fontSize: "1.2rem" }}>{item.label}</div>
                   <span
                     className={`badge px-3 py-2 mt-2 fs-6 rounded-pill ${item.value === "complete"
-                        ? "bg-success"
-                        : item.value === "pending"
-                          ? "bg-warning text-dark"
-                          : "bg-danger"
+                      ? "bg-success"
+                      : item.value === "pending"
+                        ? "bg-warning text-dark"
+                        : "bg-danger"
                       }`}
                   >
                     {item.value.charAt(0).toUpperCase() + item.value.slice(1)}
@@ -231,9 +231,9 @@ const Dashboard = () => {
               <Pie data={pieData} options={pieOptions} height={300} />
             </Card.Body>
           </Card>
-      </Col>
-      
-    </Row>
+        </Col>
+
+      </Row>
     </Container >
   );
 };
