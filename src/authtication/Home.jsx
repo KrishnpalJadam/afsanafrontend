@@ -516,10 +516,12 @@ const App = () => {
         <Container>
           <Row>
             <Col md={6}>
-              <h5>Contact Us</h5>
-              <p>Email: info@studentrecruit.com</p>
-              <p>Phone: +123 456 7890</p>
-            </Col>
+  <h5>Contact Us</h5>
+  <p><strong>Hotline:</strong> 09613752752</p>
+  <p><strong>WhatsApp:</strong> +4915217531538</p>
+  <p><strong>Email:</strong> studyfirstinfo@gmail.com</p>
+</Col>
+
             <Col md={6} className="text-md-end">
               <p>Privacy Policy | Terms of Use</p>
             </Col>

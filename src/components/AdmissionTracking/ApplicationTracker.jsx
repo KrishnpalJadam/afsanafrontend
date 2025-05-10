@@ -85,8 +85,7 @@ const StudentList = () => {
           <select
             className="form-select"
             value={selectedUniversity}
-            onChange={(e) => setSelectedUniversity(e.target.value)}
-          >
+            onChange={(e) => setSelectedUniversity(e.target.value)}>
             <option value="">All</option>
             {uniqueUniversities.map((uni, index) => (
               <option key={index} value={uni}>
@@ -101,8 +100,7 @@ const StudentList = () => {
           <select
             className="form-select"
             value={selectedStudent}
-            onChange={(e) => setSelectedStudent(e.target.value)}
-          >
+            onChange={(e) => setSelectedStudent(e.target.value)}>
             <option value="">All</option>
             {uniqueStudents.map((student, index) => (
               <option key={index} value={student}>
@@ -114,11 +112,9 @@ const StudentList = () => {
 
         <div className="col-md-3">
           <label>Travel Insurance Status</label>
-          <select
-            className="form-select"
+          <select className="form-select"
             value={travelInsuranceStatus}
-            onChange={(e) => setTravelInsuranceStatus(e.target.value)}
-          >
+            onChange={(e) => setTravelInsuranceStatus(e.target.value)}>
             <option value="">All</option>
             <option value="Complete">Complete</option>
             <option value="Pending">Pending</option>
@@ -142,8 +138,8 @@ const StudentList = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredApplications.length > 0 ? (
-              filteredApplications.map((app) => (
+            {filteredApplications?.length > 0 ? (
+              filteredApplications?.map((app) => (
                 <tr key={app.id}>
                   <td>{app.student_name}</td>
                   <td>{app.university_name}</td>
@@ -153,7 +149,7 @@ const StudentList = () => {
                   <td>{getStatusBadge(app.proof_of_income)}</td>
                   <td>{getStatusBadge(app.english_lang_proof)}</td>
                   <td>
-                  <Link to={`/student/${app.id}`}>  <button className="btn btn-primary btn-sm">View</button></Link>
+                  <Link to={`/student/${app.id}`}><button className="btn btn-primary btn-sm">View</button></Link>
                   </td>
                 </tr>
               ))
