@@ -88,7 +88,7 @@ const UniversityCards = () => {
                         crossorigin="anonymous"
                         onError={(e) => {
                           e.target.onerror = null;
-                          e.target.src = "/default-logo.png";
+                          // e.target.src = "default-logo.png";
                         }}
                       />
                       <h5 className="ml-3">{university.name}</h5>

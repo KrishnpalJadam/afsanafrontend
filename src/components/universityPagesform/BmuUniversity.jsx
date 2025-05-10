@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Stepper,
@@ -26,6 +27,8 @@ const UniversityStepper = () => {
   const [interviewBtn,setInterviewBtn] = useState(0)
   const student_id = parseInt(localStorage.getItem("student_id"));
   const university_id = useParams("university.id");
+  const [universities,setUniversities] = ([])
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     registrationFeePayment: "",
     registration: "",
@@ -67,9 +70,10 @@ const UniversityStepper = () => {
     arrivalInCountry: "",
     residencePermitForm: "",
     emailSentForSubmission: "",
-    Application_stage:"0",
-    interview:"0",
-    Visa_process:"0",
+    conditional_offer_letter:"",
+    // Application_stage:"0",
+    // interview:"0",
+    // Visa_process:"0",
     appointmentDateConfirmation:""
 
   });
@@ -94,15 +98,15 @@ useEffect(() => {
             conditionalOfferLetter: applicationData.conditional_offer_letter,
             invoiceWithOfferLetter: applicationData.invoice_with_conditional_offer,
             tuitionFeeTransferProof: applicationData.tuition_fee_transfer_proof,
-            finalOfferLetter: applicationData.final_university_offer_letter,
+            finalOfferLetter: applicationData.final_offer_letter,
             offerLetterServiceCharge: applicationData.offer_letter_service_charge_paid,
             universityOfferLetterReceived: applicationData.university_offer_letter_received,
             appendixFormCompleted: applicationData.appendix_form_completed,
             passportCopy: applicationData.passport_copy_prepared,
             emailSentForSubmission: applicationData.email_sent_for_documentation,
             financialSupportDeclaration: applicationData.financial_support_declaration,
-            validOfferLetter: applicationData.valid_offer_letter,
-            relationshipProofWithSponsor: applicationData.proof_of_relationship_with_sponsor,
+            validOfferLetter: applicationData.final_offer_letter,
+            relationshipProofWithSponsor: applicationData.proof_of_relationship,
             englishProof: applicationData.english_language_proof,
             incomeProof: applicationData.proof_of_income,
             airplaneTicket: applicationData.airplane_ticket_booking,
@@ -124,6 +128,7 @@ useEffect(() => {
             accommodationConfirmationReceived: applicationData.accommodation_confirmation,
             arrivalInCountry: applicationData.arrival_country,
             residencePermitForm: applicationData.residence_permit_form,
+            appointmentDateConfirmation:applicationData.appointment_date,
             // Application_stage: applicationData.application_stage,
           });
           setApplicationId(applicationData.id); // Set the application ID
@@ -212,7 +217,8 @@ useEffect(() => {
               icon: 'success',
               confirmButtonText: 'OK',
             });
-            window.location.reload(true);
+            navigate("/UniversityCards")
+            // window.location.reload(true);
       console.log("Form submitted successfully:", response.data);
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -241,13 +247,14 @@ useEffect(() => {
         icon: 'success',
         confirmButtonText: 'OK',
       });
+       navigate("/UniversityCards")
       console.log("Form submitted successfully:", response.data);
     } catch (error) {
       console.error("Error submitting form:", error);
     }
   };
 
-  const renderStepContent = (step) => {
+  const renderStepContent = (step) => {    
     switch (step) {
       case 0:
         return (
@@ -1377,14 +1384,7 @@ useEffect(() => {
       </Stepper>
 
       <Box sx={{ mt: 4 }}>
-        {activeStep === steps.length ? (
-          <>
-            <Typography variant="h6" align="center">
-              🎉 All steps completed successfully!
-            </Typography>
-            {/* <pre>{JSON.stringify(formData, null, 2)}</pre> */}
-          </>
-        ) : (
+         
           <>
             {renderStepContent(activeStep)}
 
@@ -1398,7 +1398,7 @@ useEffect(() => {
               >
                 Back
               </Button>
-              <Button variant="contained" onClick={handleNext} disabled={!status}>
+              <Button variant="contained" onClick={handleNext} disabled={!status|| (activeStep === steps.length-1)}>
                 Next
               </Button>
               {status === false ? (
@@ -1419,7 +1419,7 @@ useEffect(() => {
 
             </Box>
           </>
-        )}
+        
       </Box>
     </Paper>
   );
