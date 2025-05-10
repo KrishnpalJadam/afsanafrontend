@@ -126,59 +126,25 @@ function App() {
         )}
         {/* sidebar end */}
         {/* right side  */}
-        <div
-          className={`right-side-content ${
-            hideLayout ? "full-width" : isSidebarCollapsed ? "collapsed" : ""
-          }`}
-          style={hideLayout ? { marginTop: "0", paddingLeft: "0" } : {}}
-        >
+        <div className={`right-side-content ${  hideLayout ? "full-width" : isSidebarCollapsed ? "collapsed" : ""  }`}
+          style={hideLayout ? { marginTop: "0", paddingLeft: "0" } : {}}>
           <LeadProvider>
             <Routes>
-           
-              <Route
-                path="/university/GyorUniversity"
-                element={<GyorUniversity></GyorUniversity>}
-              ></Route>
-              <Route
-                path="/university/WekerleUniversity"
-                element={<WekerleUiversity></WekerleUiversity>}
-              ></Route>
-              <Route
-                path="/university/HunguryUniversity"
-                element={<HunguryUniversity></HunguryUniversity>}
-              ></Route>
-              <Route
-                path="/university/DebrecenUniversity"
-                element={<DebrecenUniversity></DebrecenUniversity>}
-              ></Route>
-
+              <Route path="/university/GyorUniversity"   element={<GyorUniversity></GyorUniversity>} ></Route>
+              <Route path="/university/WekerleUniversity"  element={<WekerleUiversity></WekerleUiversity>}></Route>
+              <Route path="/university/HunguryUniversity" element={<HunguryUniversity></HunguryUniversity>} ></Route>
+              <Route  path="/university/DebrecenUniversity"  element={<DebrecenUniversity></DebrecenUniversity>}></Route>
               {/* login signup */}
-              <Route
-                path="/login"
-                element={
-                  <Login
-                    login={login}
-                    setLogin={setLogin}
-                    // handleAdmin={handleAdmin}
-                    // handleStudent={handleStudent}
-                    // handleCounselor={handleCounselor}
-                  />
-                }
-              />
+              <Route  path="/login"  element={
+               <Login login={login}  setLogin={setLogin} />}/>
               {/* login signup */}
               <Route path="/" element={<Home></Home>}></Route>
 
               {/* dashbord */}
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route
-                path="/councelor"
-                element={<Councelor></Councelor>}
-              ></Route>
+              <Route path="/councelor" element={<Councelor></Councelor>}></Route>
               {/* student dashboard */}
-              <Route
-                path="/studentProfile"
-                element={<StudentProfile></StudentProfile>}
-              ></Route>
+              <Route path="/studentProfile" element={<StudentProfile></StudentProfile>}></Route>
               {/* dashbord */}
 
               <Route

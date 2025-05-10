@@ -84,12 +84,9 @@ const ChangePassword = () => {
 
           <Form.Group controlId="confirmPassword" className="mb-4">
             <Form.Label>Confirm New Password</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Confirm New Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
+            <Form.Control type="password"
+              placeholder="Confirm New Password" value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}/>
           </Form.Group>
 
           <div className="text-center">
@@ -102,5 +99,5 @@ const ChangePassword = () => {
     </Container>
   );
 };
-
-export default ChangePassword;
+ 
+export default ChangePassword;   
