@@ -868,15 +868,15 @@ const AdminPayments = () => {
 
   return (
     <Container className="mt-4">
-      <div className="d-flex p-3" style={{justifyContent: "space-between"}}>
+      <div className="d-flex p-3" style={{ justifyContent: "space-between" }}>
         <div>
-        <h3 className="mb-4">Admin - All Student Payments</h3>
+          <h3 className="mb-4">Admin - All Student Payments</h3>
         </div>
-        <div>
+        {/* <div>
           <Link to="/addbranch" className="btn btn-secondary">+ Add Branch</Link>
-        </div>
+        </div> */}
       </div>
-   
+
 
       <Card className="mb-3">
         <Card.Body>
@@ -940,26 +940,31 @@ const AdminPayments = () => {
                 <th>Student</th>
                 <th>Email</th>
                 <th>Whatsapp</th>
+                <th>Group_name</th>
                 <th>University</th>
                 <th>country</th>
                 <th>Payment method</th>
+                <th>Payment type</th>
                 <th>Payment proof</th>
+                <th>Assistant</th>
                 <th>Date</th>
-               
+
               </tr>
             </thead>
             <tbody>
               {currentItems.map((item, index) => (
                 <tr key={item.id}>
                   <td>{indexOfFirstItem + index + 1}</td>
-                  <td>{item.name}</td> {/* Fixed name */}
-                  <td>{item.email}</td>
-                  <td>{item.whatsapp}</td>
-                  <td>{item.university}</td>
-                  <td>{item.country}</td>
-                  <td>{item.payment_method}</td>
-                  <td>
-                    {item.file?.match(/\.(jpg|jpeg|png|gif)$/i) ? (
+                  <td>{item?.name}</td> {/* Fixed name */}
+                  <td>{item?.email}</td>
+                  <td>{item?.whatsapp}</td>
+                  <td>{item?.group_name}</td>
+                  <td>{item?.university_other ? item.university_other : item.universityName}</td>
+                  <td>{item?.country_other ? item.country_other : item.country}</td>
+                  <td>{item?.payment_method_other ? item.payment_method_other : item.payment_method}</td>
+                  <td>{item?.payment_type_other ? item.payment_type_other : item.payment_type}</td>
+                      <td>
+                    {item.file?.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
                       <img
                         style={{ width: "100px", height: "100px" }}
                         src={item.file}
@@ -977,6 +982,8 @@ const AdminPayments = () => {
                       </a>
                     )}
                   </td>
+                  <td>{item?.assistant}</td>
+              
 
                   {/* <td>
                     <Badge bg={item.status === "Paid" ? "success" : "warning"}>
@@ -984,7 +991,7 @@ const AdminPayments = () => {
                     </Badge>
                   </td> */}
                   <td>{new Date(item.created_at).toLocaleDateString()}</td>
-               
+
                 </tr>
               ))}
               {currentItems.length === 0 && (
