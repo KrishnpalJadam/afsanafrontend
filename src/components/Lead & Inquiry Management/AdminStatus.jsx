@@ -378,7 +378,7 @@ const AdminStatus = () => {
               <p><strong>Email:</strong> {selectedLead?.email}</p>
               <p><strong>Phone:</strong> {selectedLead?.phone}</p>
               <p><strong>counselor:</strong> {selectedLead?.counselor}</p>
-              <p><strong>Follow-up Date:</strong> {selectedLead?.follow_up_date}</p>
+              <p><strong>Follow-up Date:</strong> {new Date(selectedLead?.follow_up_date).toLocaleDateString()}</p>
               <p><strong>Source:</strong> {selectedLead?.source}</p>
               <p><strong>Status:</strong> {selectedLead?.status}</p>
               <p><strong>Preferred Countries:</strong> {selectedLead?.preferred_countries}</p>

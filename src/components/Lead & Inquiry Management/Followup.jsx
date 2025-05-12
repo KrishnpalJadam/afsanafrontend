@@ -203,7 +203,7 @@ const Followup = () => {
                            
                             <td>{followUp.title}</td>
                             <td>{followUp.name}</td>
-                            <td>{followUp.follow_up_date}</td>
+                            <td>{new Date(followUp.follow_up_date).toLocaleDateString()}</td>
                             <td>
                                 <Badge bg={getBadge(followUp.status)}>{followUp.status}</Badge>
                             </td>
