@@ -122,7 +122,7 @@ const MyProfile = () => {
               {renderItem("Phone", userData?.phone)}
               {renderItem("Gender", userData?.gender)}
               {renderItem("Date of Birth", userData?.date_of_birth && new Date(userData.date_of_birth).toLocaleDateString())}
-              {renderItem("Address", userData?.address)}
+              {renderItem("Address", userData?.address)} 
               {renderItem("Father's Name", userData?.father_name)}
               {renderItem("Admission No.", userData?.admission_no)}
               {renderItem("ID No.", userData?.id_no)}

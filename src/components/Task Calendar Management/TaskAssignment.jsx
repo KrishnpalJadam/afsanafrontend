@@ -17,6 +17,16 @@ const AdminTaskManager = () => {
   const [tasks ,setTasks] = useState([])  
  const [studentdata, setStudentsData] = useState([]);
    const [counselors, setCounselors] = useState([]);
+   const [currentPage, setCurrentPage] = useState(1);
+const itemsPerPage = 10;
+
+const totalPages = Math.ceil(tasks.length / itemsPerPage);
+
+const paginatedTasks = tasks.slice(
+  (currentPage - 1) * itemsPerPage,
+  currentPage * itemsPerPage
+);
+
   useEffect(() => {
     const fetchStudents = async () => {
       try {
@@ -43,18 +53,19 @@ const AdminTaskManager = () => {
     fetchCounselors();
   }, []);
   
+ const fetchTasks = async () => {
+  try {
+    const response = await api.get(`${BASE_URL}task`);
+    setTasks(response.data);
+    console.log("data", response.data);
+  } catch (error) {
+    console.log(error);
+  }
+};
 useEffect(() => {
-  const fetchTasks = async () => {
-    try {
-      const response = await api.get(`${BASE_URL}task`);
-      setTasks(response.data);
-      console.log("data", response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-    fetchTasks();
-},[])
+  fetchTasks();
+}, []);
+
   const [form, setForm] = useState({
     student: "",
     counselor: "",
@@ -105,7 +116,7 @@ useEffect(() => {
           "Content-Type": "application/json",
         },
       });
-    
+   
       console.log(response.data);
     
       // After successful POST, update the state with the new task
@@ -182,18 +193,6 @@ useEffect(() => {
      deleteTask();
   };
 
-  const handleStatusToggle = (id) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id
-          ? {
-              ...task,
-              status: task.status === "completed" ? "pending" : "completed",
-            }
-          : task
-      )
-    );
-  };
 
   return (
     <Container className="mt-4">
@@ -222,63 +221,81 @@ useEffect(() => {
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody>
-              {tasks?.map((task, index) => (
-                <tr key={task?.id}>
-                  <td>{index + 1}</td>
-                  <td>{task?.student_name}</td>
-                  <td>{task?.title}</td>
-                  <td> 
-                  {new Date(task?.due_date).toLocaleDateString()}
-                  </td>
-                  <td>
-  <Badge
-    bg={
-      task?.status === "completed"
-        ? "success"
-        : task?.status === "pending"
-        ? "warning"
-        : "secondary"
-    }
-  >
-    {task?.status === "Completed" ? "Completed" : "Pending"}
-  </Badge>
-</td>
+   <tbody>
+  {paginatedTasks.map((task, index) => (
+    <tr key={task?.id}>
+      <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
+      <td>{task?.student_name}</td>
+      <td>{task?.title}</td>
+      <td>{new Date(task?.due_date).toLocaleDateString()}</td>
+      <td>
+        <Badge
+          bg={
+            task?.status === "completed"
+              ? "success"
+              : task?.status === "pending"
+              ? "warning"
+              : "secondary"
+          }
+        >
+          {task?.status === "completed" ? "Completed" : "Pending"}
+        </Badge>
+      </td>
+      <td>
+        <Button
+          variant="primary"
+          size="sm"
+          className="me-1"
+          onClick={() => handleEdit(task)}
+        >
+          Edit
+        </Button>
+        <Button
+          variant="danger"
+          size="sm"
+          onClick={() => handleDelete(task?.id)}
+        >
+          Delete
+        </Button>
+      </td>
+    </tr>
+  ))}
 
-                  <td>
-                    <Button  variant="success" size="sm"
-                      className="me-1"
-                      onClick={() => handleStatusToggle(task?.id)}>
-                      Toggle
-                    </Button>
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      className="me-1"
-                      onClick={() => handleEdit(task)}>
-                      Edit
-                    </Button>
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={() => handleDelete(task?.id)}
-                    >
-                      Delete
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-              {tasks.length === 0 && (
-                <tr>
-                  <td colSpan="6" className="text-center">
-                    No tasks assigned yet.
-                  </td>
-                </tr>
-              )}
-            </tbody>
+  {tasks.length === 0 && (
+    <tr>
+      <td colSpan="6" className="text-center">No tasks assigned yet.</td>
+    </tr>
+  )}
+</tbody>
+
           </Table>
         </Card.Body>
       </Card>
+<div className="mt-4 d-flex justify-content-center">
+  <nav>
+    <ul className="pagination">
+      <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+        <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>
+          &laquo;
+        </button>
+      </li>
+
+      {[...Array(totalPages)].map((_, i) => (
+        <li key={i} className={`page-item ${currentPage === i + 1 ? "active" : ""}`}>
+          <button className="page-link" onClick={() => setCurrentPage(i + 1)}>
+            {i + 1}
+          </button>
+        </li>
+      ))}
+
+      <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+        <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>
+          &raquo;
+        </button>
+      </li>
+    </ul>
+  </nav>
+</div>
 
       {/* Add/Edit Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)} size="lg" centered>

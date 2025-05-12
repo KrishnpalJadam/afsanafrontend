@@ -1,11 +1,9 @@
 import { Route, Routes, useLocation } from "react-router-dom";
 import "./App.css";
-
 import Navbar from "./layout/Navbar";
 import Sidebar from "./layout/Sidebar";
 import Home from "./authtication/Home";
 import { useEffect, useState } from "react";
-
 import Login from "./authtication/Login";
 import Dashboard from "./components/dashbord/Dashbord";
 import ChatBox from "./components/CommunicationFollowupManagement/ChatBox";
@@ -127,8 +125,7 @@ function App() {
         )}
         {/* sidebar end */}
         {/* right side  */}
-        <div className={`right-side-content ${  hideLayout ? "full-width" : isSidebarCollapsed ? "collapsed" : ""  }`}
-          style={hideLayout ? { marginTop: "0", paddingLeft: "0" } : {}}>
+        <div className={`right-side-content ${  hideLayout ? "full-width" : isSidebarCollapsed ? "collapsed" : ""  }`} style={hideLayout ? { marginTop: "0", paddingLeft: "0" } : {}}>
           <LeadProvider>
           <Routes>
   {/* University Routes */}

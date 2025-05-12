@@ -286,7 +286,7 @@ useEffect(() => {
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Today's Inquiries</h2>
         <div>
-          <Button variant="secondary" className="me-2"  onClick={handleShowInquiryModal} style={{ border: "none" }} >
+          <Button variant="secondary" className="me-2" onClick={handleShowInquiryModal} style={{ border: "none" }} >
             Add Inquiry </Button>
         </div>
       </div>
@@ -301,6 +301,7 @@ useEffect(() => {
       <Table striped bordered hover responsive>
         <thead>
           <tr>
+            <th>#</th>
             <th>Name</th>
             <th>Email</th>
             <th>Phone</th>
@@ -311,8 +312,9 @@ useEffect(() => {
           </tr>
         </thead>
         <tbody>
-          {currentInquiries?.map((inq) => (
+          {currentInquiries?.map((inq,index) => (
             <tr key={inq.id}>
+              <td>{index+1}</td>
               <td>{inq.full_name}</td>
               <td>{inq.email}</td>
               <td>{inq.phone_number}</td>
@@ -325,8 +327,7 @@ useEffect(() => {
                 <Button variant="danger"
                   size="sm"
                   onClick={() => handleDeleteInquiry(inq.id)}
-                  className="ms-2"
-                  >
+                  className="ms-2">
                   Delete
                 </Button>
               </td>
