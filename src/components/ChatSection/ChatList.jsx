@@ -12,7 +12,7 @@ const ChatList = ({ userId }) => {
   useEffect(() => {
     const fetchChatList = async () => {
       try {
-        const response = await axios.get(`http://192.168.1.21:3002/api/chats/getChatList/${userId}`);
+        const response = await axios.get(`https://afsanaproject-production.up.railway.app/api/chats/getChatList/${userId}`);
         if (response.data.success) {
           setChatList(response.data.chatList);
 
