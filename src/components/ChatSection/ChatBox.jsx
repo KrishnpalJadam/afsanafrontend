@@ -11,21 +11,38 @@ const ChatBox = ({ userId }) => {
   const { receiverId } = useParams(); // Dynamic from route
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
+  const [offset, setOffset] = useState(0);
   const messageEndRef = useRef(null);
 
-  // Register user on mount
+  // Format message object from server
+  const formatMessage = (msg) => ({
+    senderId: msg.senderId || msg.sender_id,
+    content: msg.content || msg.message,
+    timestamp: msg.timestamp,
+  });
+
+  // Register and join room on mount
   useEffect(() => {
-    socket.emit("registerUser", userId); // Register user socket
+    if (userId && receiverId) {
+      socket.emit("registerUser", userId);
+      socket.emit("joinRoom", { user_id: userId, other_user_id: receiverId });
+
+      const chatId = [userId, receiverId].sort((a, b) => a - b).join("_");
+      socket.emit("getChatHistory", {
+        chatId,
+        limit: 50,
+        offset: 0,
+      });
+    }
+
     return () => {
       socket.disconnect();
     };
-  }, [userId]);
+  }, [userId, receiverId]);
 
-  // Listen for incoming messages
+  // Listen for socket events
   useEffect(() => {
     socket.on("receiveMessage", (msg) => {
-      console.log("Received from socket:", msg);
-      // Handle both single message and array of messages
       setMessages((prev) =>
         Array.isArray(msg)
           ? [...prev, ...msg.map(formatMessage)]
@@ -33,56 +50,56 @@ const ChatBox = ({ userId }) => {
       );
     });
 
+    socket.on("chatHistory", ({ messages: oldMessages }) => {
+      const formatted = oldMessages.map(formatMessage);
+      setMessages((prev) => [...formatted, ...prev]);
+    });
+
     return () => {
       socket.off("receiveMessage");
+      socket.off("chatHistory");
     };
   }, []);
 
-  // Normalize message shape
-  const formatMessage = (msg) => ({
-    senderId: msg.senderId || msg.sender_id,
-    content: msg.content || msg.message,
-  });
-
-  // Auto-scroll
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const sendMessage = async () => {
-    if (!message.trim()) return;
+  // Send message (no local push)
+ const sendMessage = () => {
+  if (!message.trim()) return;
 
-    const newMsg = {
-      sender_id: userId,
-      receiver_id: receiverId,
-      message,
-    };
+  const newMsg = {
+    sender_id: userId,
+    receiver_id: receiverId,
+    message,
+  };
 
-    // Send via socket
-    socket.emit("sendMessage", newMsg);
+  socket.emit("sendMessage", newMsg);
+  setMessage(""); // clear input
+};
 
-    // Add to local state
-    setMessages((prev) => [
-      ...prev,
-      { senderId: userId, content: message },
-    ]);
-    setMessage("");
+  // Load older messages
+  const loadOlderMessages = () => {
+    const chatId = [userId, receiverId].sort((a, b) => a - b).join("_");
+    const nextOffset = offset + 50;
 
-    // Save in DB
-    try {
-      const res = await axios.post(
-        "http://192.168.1.21:3002/api/chat/send",
-        newMsg
-      );
-      console.log(res.data);
-    } catch (error) {
-      console.error("Message save error:", error);
-    }
+    socket.emit("getChatHistory", {
+      chatId,
+      limit: 50,
+      offset: nextOffset,
+    });
+
+    setOffset(nextOffset);
   };
 
   return (
     <div className="chat-container">
-      <div className="chat-header">Chat with {receiverId}</div>
+      <div className="chat-header">Chat with User {receiverId}</div>
+
+      <button onClick={loadOlderMessages} className="load-more">
+        Load Older Messages
+      </button>
 
       <div className="chat-messages">
         {messages.map((m, i) => (
