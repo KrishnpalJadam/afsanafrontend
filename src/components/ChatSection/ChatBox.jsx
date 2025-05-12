@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 
 // Connect to your Socket.io server
-const socket = io("http://192.168.1.21:3002");
+const socket = io("https://afsanaproject-production.up.railway.app");
 
 const ChatBox = ({ userId }) => {
   const { receiverId } = useParams(); // Dynamic from route
