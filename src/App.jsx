@@ -71,6 +71,7 @@ import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
 // import chatBox from "./components/ChatSection/ChatBox"
 import ChatBox2 from "./components/ChatSection/ChatBox";
 import ChatHistory from "./components/ChatSection/ChatHistory";
+import ChatList from "./components/ChatSection/ChatList";
 
 function App() {
   //show details to admin
@@ -219,6 +220,9 @@ const user_id = localStorage.getItem("user_id")
   <Route path="/chatHistory" element={<ProtectedRoute><ChatBox2/></ProtectedRoute>} /> */}
   <Route path="/chat/:receiverId" element={<ChatBox2 userId={user_id} />} />
 <Route path="/chatHistory" element={<ChatHistory userId={user_id} />} />
+<Route path="/chatList" element={<ChatList userId={user_id}/>} />
+
+
 
 
   

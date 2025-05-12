@@ -13,13 +13,12 @@ const ChatBox = ({ userId }) => {
   const [messages, setMessages] = useState([]);
   const [offset, setOffset] = useState(0);
   const messageEndRef = useRef(null);
-
   // Format message object from server
   const formatMessage = (msg) => ({
     senderId: msg.senderId || msg.sender_id,
     content: msg.content || msg.message,
     timestamp: msg.timestamp,
-  });
+  });   
 
   // Register and join room on mount
   useEffect(() => {
@@ -52,6 +51,7 @@ const ChatBox = ({ userId }) => {
 
     socket.on("chatHistory", ({ messages: oldMessages }) => {
       const formatted = oldMessages.map(formatMessage);
+    //   console.log(formatMessage)
       setMessages((prev) => [...formatted, ...prev]);
     });
 
@@ -92,23 +92,24 @@ const ChatBox = ({ userId }) => {
 
     setOffset(nextOffset);
   };
-
+//  console.log("message",messages)
   return (
     <div className="chat-container">
-      <div className="chat-header">Chat with User {receiverId}</div>
-
+      <div className="chat-header">{userId==1? <span>Chat with admin</span>: <span>Chat with User {receiverId}</span> } </div>
+{/* 
       <button onClick={loadOlderMessages} className="load-more">
         Load Older Messages
-      </button>
+      </button> */}
 
       <div className="chat-messages">
         {messages.map((m, i) => (
+            
           <div
             key={i}
             className={`message ${
-              m.senderId === userId ? "sent" : "received"
+              m.senderId == userId ? "sent" : "received"
             }`}
-          >
+          >{console.log(m.senderId)}
             {m.content}
           </div>
         ))}

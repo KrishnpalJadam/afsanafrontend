@@ -32,7 +32,16 @@ const Navbar = ({ toggleSidebar }) => {
     localStorage.clear();
     navigate("/");
   };
-
+  const role = localStorage.getItem("login");
+  console.log(role)
+ const handleChat = ()=> {
+  if(role=="student"){
+    navigate("/chat/1")
+  }
+  else{
+    navigate("/chatList")
+  }
+ }
   return (
     <nav className="navbar shadow-lg" style={{ position: "fixed", backgroundColor: "white", color: "black", width: "100%" }}>
       <div className="container-fluid nav-conter">
@@ -86,19 +95,23 @@ const Navbar = ({ toggleSidebar }) => {
             </div>
 
             {/* Chat Section */}
-            <div className="chat-icon-section">
-              <a
+            <div className="chat-icon-section" style={{marginBottom:"10px"}}>
+              {/* <a
                 className="chat-icon"
                 href="#"
                 style={{ color: "black" }}
                 onClick={toggleChats}
-              >
-                <i className="fa-regular fa-message"></i>
-                {chats.length > 0 && (
+              > */}
+              <button  style={{backgroundColor:"#fff", color:"#000", height:'10px', width:'', marginBottom:"10px"}}
+              
+              onClick={handleChat}
+              ><i className="fa-regular fa-message"></i></button>
+                
+                {/* {chats.length > 0 && (
                   <span className="chat-badge">{chats.length}</span>
                 )}
-              </a>
-              {showChats && (
+              </a> */}
+              {/* {showChats && (
                 <div className="chat-dropdown" style={{ marginRight: "-50px", marginTop: "20px",backgroundColor:"#fff" }}>
                   <div className="notification-header">
                     <h6>Chats</h6>
@@ -114,7 +127,7 @@ const Navbar = ({ toggleSidebar }) => {
                     ))}
                   </ul>
                 </div>
-              )}
+              )} */}
             </div>
 
             {/* Profile Dropdown */}
