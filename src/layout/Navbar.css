@@ -1,4 +1,4 @@
-/* Notification Icon */
+ /* ========== Notification Icon ========== */
 .notification-icon {
   position: relative;
   margin-right: 20px;
@@ -9,18 +9,20 @@
   top: -5px;
   right: -5px;
   background-color: red;
-  color: black;
+  color: white;
   border-radius: 50%;
   padding: 2px 6px;
   font-size: 12px;
 }
 
-/* Notification Dropdown */
+/* ========== Notification Dropdown ========== */
 .notification-dropdown {
   position: absolute;
   top: 40px;
   right: 0;
   width: 300px;
+  max-height: 400px;
+  overflow-y: auto;
   background-color: white;
   border: 1px solid #ddd;
   border-radius: 5px;
@@ -47,7 +49,7 @@
   border: none;
   color: #007bff;
   cursor: pointer;
-  font-size: 20px;
+  font-size: 14px;
 }
 
 .clear-all:hover {
@@ -69,18 +71,82 @@
 .notification-item:last-child {
   border-bottom: none;
 }
-/* Custom styles for the notification dropdown */
-.notification-dropdown {
-  width: 300px;
-  max-height: 400px;
-  overflow-y: auto;
-}
 
 .notification-item:hover {
   background-color: #f8f9fa;
 }
 
-/* Adjust the navbar toggler icon color */
+/* ========== Chat Icon Section ========== */
+.chat-icon-section {
+  position: relative;
+  margin-right: 20px;
+}
+
+.chat-icon {
+  position: relative;
+}
+
+.chat-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+}
+
+/* ========== Chat Dropdown ========== */
+.chat-dropdown {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  width: 300px;
+  max-height: 400px;
+  overflow-y: auto;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  color: black;
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.chat-header h6 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.chat-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.chat-item {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.chat-item:last-child {
+  border-bottom: none;
+}
+
+.chat-item:hover {
+  background-color: #f8f9fa;
+}
+
+/* ========== Navbar Toggler & Icons ========== */
 .navbar-toggler {
   border: none;
 }
@@ -89,34 +155,41 @@
   box-shadow: none;
 }
 
-/* Profile dropdown icon size */
 .fa-circle-user {
   font-size: 1.5rem;
 }
-@media (max-width: 820px) {
-  .nav-taggle-icon{
-    font-size: 20px;
-  }
-  .nav-content{
-    justify-content: space-between;
-   
-  }
-  img{
-    width: 20px;
 
-  }
-  .bell-icon{
-    font-size: 20px;
-    margin-right: start;
-  }
-  .fa-regular{
+/* ========== Responsive Fixes ========== */
+@media (max-width: 820px) {
+  .nav-taggle-icon {
     font-size: 20px;
   }
-  img{
-   src: "";
-   alt:"Logo";
+
+  .nav-content {
+    justify-content: space-between;
   }
- 
-   
-  
+
+  img {
+    width: 100px !important;
+  }
+
+  .bell-icon,
+  .chat-icon {
+    font-size: 20px;
+  }
+
+  .fa-regular {
+    font-size: 20px;
+  }
+
+  .chat-item {
+    padding: 8px 12px;
+    border-bottom: 1px solid #f5f5f5;
+  }
+
+  .notification-dropdown,
+  .chat-dropdown {
+    right: -20px;
+    width: 90vw;
+  }
 }

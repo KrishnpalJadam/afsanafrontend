@@ -40,6 +40,7 @@
     "react-router-dom": "^7.1.1",
     "react-spring": "^9.7.5",
     "react-toastify": "^11.0.5",
+    "socket.io-client": "^4.8.1",
     "sweetalert2": "^11.19.1",
     "xlsx": "^0.18.5",
     "yup": "^1.6.1"

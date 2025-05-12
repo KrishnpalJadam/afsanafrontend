@@ -68,6 +68,9 @@ import MyProfile from "./MyProfile/MyProfile";
 import Addbranch from "./components/ReportingAnalytics/Addbranch";
 import ChangePassword from "./MyProfile/ChangePassword";
 import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
+// import chatBox from "./components/ChatSection/ChatBox"
+import ChatBox2 from "./components/ChatSection/ChatBox";
+import ChatHistory from "./components/ChatSection/ChatHistory";
 
 function App() {
   //show details to admin
@@ -106,7 +109,7 @@ function App() {
     setIsSidebarCollapsed((prev) => !prev);
   };
   const location = useLocation();
-
+const user_id = localStorage.getItem("user_id")
   const hideLayout =
     location.pathname === "/" || location.pathname === "/login";
   return (
@@ -212,6 +215,13 @@ function App() {
   <Route path="/chatbox" element={<ProtectedRoute><ChatBox /></ProtectedRoute>} />
   <Route path="/profile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
   <Route path="/change-password" element={<ProtectedRoute><ChangePassword /></ProtectedRoute>} />
+  {/* <Route path="/chat" element={<ProtectedRoute><ChatBox2/></ProtectedRoute>} />
+  <Route path="/chatHistory" element={<ProtectedRoute><ChatBox2/></ProtectedRoute>} /> */}
+  <Route path="/chat/:receiverId" element={<ChatBox2 userId={user_id} />} />
+<Route path="/chatHistory" element={<ChatHistory userId={user_id} />} />
+
+
+  
 </Routes>
 
           </LeadProvider>
