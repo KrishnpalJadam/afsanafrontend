@@ -1,216 +1,220 @@
-import React, { useState } from "react";
-import {
-  Container,
-  Table,
-  Card,
-  Badge,
-  Alert,
-  Button,
-  Modal,
-  Form,
-} from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import { hasPermission } from "../../authtication/permissionUtils";
+import { useEffect, useState } from "react";
+import api from "../../interceptors/axiosInterceptor";
+import { Link } from "react-router-dom";
+import Swal from 'sweetalert2';
 
 const MyApplication = () => {
-  const [showMessageModal, setShowMessageModal] = useState(false);
-  const [selectedStudent, setSelectedStudent] = useState(null);
-  const [messageText, setMessageText] = useState("");
-  const [uploadedDocs, setUploadedDocs] = useState({});
-  const navigate = useNavigate();
+  const [applications, setApplications] = useState([]);
+  const [filteredApplications, setFilteredApplications] = useState([]);
+  const [selectedUniversity, setSelectedUniversity] = useState("");
+  const [selectedStudent, setSelectedStudent] = useState("");
+  const [travelInsuranceStatus, setTravelInsuranceStatus] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+  const [studentid, setStudentId] = useState("");
+      console.log(studentid)
 
-  const applications = [
-    {
-      id: 1,
-      university: "University of Toronto",
-      program: "BSc Computer Science",
-      status: "Submitted",
-      action: "Upload passport scan",
-    },
-    {
-      id: 2,
-      university: "Oxford University",
-      program: "MSc Civil Engineering",
-      status: "In Review",
-      action: "Track application progress",
-    },
-    {
-      id: 3,
-      university: "UBC",
-      program: "MBA",
-      status: "Approved",
-      action: "Schedule visa appointment",
-    },
-    {
-      id: 4,
-      university: "Harvard University",
-      program: "PhD Economics",
-      status: "Rejected",
-      action: "Explore other programs",
-    },
-  ];
+  useEffect(() => {
+    const is_id = localStorage.getItem("student_id");
+    if (is_id) {
+      setStudentId(is_id);
+    }
+  }, []);
 
-  const getStatusBadge = (status) => {
-    switch (status) {
-      case "Submitted":
-        return <Badge bg="secondary">Submitted</Badge>;
-      case "In Review":
-        return <Badge bg="info">In Review</Badge>;
-      case "Approved":
-        return <Badge bg="success">Approved</Badge>;
-      case "Rejected":
-        return <Badge bg="danger">Rejected</Badge>;
-      default:
-        return <Badge bg="dark">{status}</Badge>;
+  // Fetch applications when studentid is set
+useEffect(() => {
+  if (studentid) {
+    fetchApplications();
+  }
+}, [studentid]);
+
+  // Fetch data
+  const fetchApplications = async () => {
+    try {
+      const response = await api.get(`studentApplication/${studentid}`);
+      console.log(response.data)
+      setApplications(response.data);
+      setFilteredApplications(response.data);
+    } catch (error) {
+      console.error("Error fetching applications:", error);
     }
   };
 
-  const handleUpload = (e, appId) => {
-    setUploadedDocs({
-      ...uploadedDocs,
-      [appId]: e.target.files[0]?.name || "",
-    });
+  // Unique Universities & Students
+  const uniqueUniversities = [
+    ...new Set(applications.map((app) => app.university_name)),
+  ];
+
+  const uniqueStudents = [
+    ...new Set(applications.map((app) => app.student_name)),
+  ];
+
+  // Filter Change
+  useEffect(() => {
+    let filtered = [...applications];
+
+    if (selectedUniversity) {
+      filtered = filtered.filter(
+        (app) => app.university_name === selectedUniversity
+      );
+    }
+
+    if (selectedStudent) {
+      filtered = filtered.filter(
+        (app) => app.student_name === selectedStudent
+      );
+    }
+
+    if (travelInsuranceStatus) {
+      filtered = filtered.filter((app) => {
+        const travelProof = app.travel_insurance;
+        const status =
+          travelProof && !travelProof.includes("null") ? "Complete" : "Pending";
+        return status === travelInsuranceStatus;
+      });
+    }
+
+    setFilteredApplications(filtered);
+  }, [selectedUniversity, selectedStudent, travelInsuranceStatus, applications]);
+
+  // Status Badge Color Function
+  const getStatusBadge = (value) => {
+    const status =
+      value && !value.includes("null") ? "Complete" : "Pending";
+    const colorClass =
+      status === "Complete"
+        ? "badge bg-success"
+        : "badge bg-danger";
+    return <span className={colorClass}>{status}</span>;
   };
 
-  const handleMessage = (student) => {
-    setSelectedStudent(student);
-    setShowMessageModal(true);
-  };
 
-  const handleSendMessage = () => {
-    alert(`Message sent to counselor for ${selectedStudent}`);
-    setShowMessageModal(false);
-  };
+// Calculate indexes
+const indexOfLastItem = currentPage * itemsPerPage;
+const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+const currentItems = filteredApplications.slice(indexOfFirstItem, indexOfLastItem);
+const totalPages = Math.ceil(filteredApplications.length / itemsPerPage);
+
 
   return (
-    <Container className="mt-4">
-      <h3 className="mb-4">My Applications</h3>
+    <div className="container mt-4">
+      <h3 className="mb-4">My Application </h3>
 
-      <Card>
-        <Card.Body>
-          <Table responsive bordered hover className="text-center text-nowrap">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>University</th>
-                <th>Program</th>
-                <th>Status</th>
-                <th>Next Action</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {applications.map((app, index) => (
-                <tr key={app.id}>
-                  <td>{index + 1}</td>
-                  <td>{app.university}</td>
-                  <td>{app.program}</td>
-                  <td>{getStatusBadge(app.status)}</td>
-                  <td>
-                    <Alert
-                      variant={
-                        app.status === "Approved"
-                          ? "success"
-                          : app.status === "Rejected"
-                          ? "danger"
-                          : "warning"
-                      }
-                      className="mb-0 py-1 px-2"
-                    >
-                      {app.action}
-                    </Alert>
-                  </td>
-                  <td>
-                    {/* Upload Docs */}
-                    {app.status === "Submitted" && (
-                      <>
-                        <Form.Control
-                          type="file"
-                          size="sm"
-                          onChange={(e) => handleUpload(e, app.id)}
-                        />
-                        {uploadedDocs[app.id] && (
-                          <span className="text-success small">
-                            {uploadedDocs[app.id]}
-                          </span>
-                        )}
-                      </>
-                    )}
+      {/* Filters */}
+      <div className="row mb-4">
+        <div className="col-md-3">
+          <label>University</label>
+          <select
+            className="form-select"
+            value={selectedUniversity}
+            onChange={(e) => setSelectedUniversity(e.target.value)}>
+            <option value="">All</option>
+            {uniqueUniversities.map((uni, index) => (
+              <option key={index} value={uni}>
+                {uni}
+              </option>
+            ))}
+          </select>
+        </div>
 
-                    {/* Track Timeline */}
-                    {app.status === "In Review" && (
-                      <Button
-                        size="sm"
-                        variant="info"
-                        className="mt-1"
-                        onClick={() => navigate(`/timeline/${app.id}`)}
-                        disabled={!hasPermission("Application Management","add")}
-                      >
-                        View Timeline
-                      </Button>
-                    )}
+        <div className="col-md-3">
+          <label>Student</label>
+          <select
+            className="form-select"
+            value={selectedStudent}
+            onChange={(e) => setSelectedStudent(e.target.value)}>
+            <option value="">All</option>
+            {uniqueStudents.map((student, index) => (
+              <option key={index} value={student}>
+                {student}
+              </option>
+            ))}
+          </select>
+        </div>
 
-                    {/* Message Counselor */}
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      className="mt-1 me-1"
-                      onClick={() => handleMessage(app.university)}
-                      disabled={!hasPermission("Application Management","add")}
-                    >
-                      Message Counselor
-                    </Button>
+        <div className="col-md-3">
+          <label>Travel Insurance Status</label>
+          <select className="form-select"
+            value={travelInsuranceStatus}
+            onChange={(e) => setTravelInsuranceStatus(e.target.value)}>
+            <option value="">All</option>
+            <option value="Complete">Complete</option>
+            <option value="Pending">Pending</option>
+          </select>
+        </div>
+      </div>
 
-                    {/* Schedule Visa */}
-                    {app.status === "Approved" && (
-                      <Button size="sm" variant="success" className="mt-1" disabled={!hasPermission("Application Management","add")}>
-                        Book Visa Appointment
-                      </Button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </Card.Body>
-      </Card>
+      {/* Table */}
+      <div className="table-responsive">
+        <table className="table table-bordered table-hover">
+          <thead className="table-light">
+            <tr>
+              <th>Student Name</th>
+              <th>University Name</th>
+              <th>Registration Fee</th>
+              <th>Application Fee</th>
+              <th>Travel Insurance</th>
+              <th>Proof of Income</th>
+           <th>Status</th>   
+              <th>Action</th>
+            </tr>
+          </thead>
+      <tbody>
+  {currentItems?.length > 0 ? (
+    currentItems?.map((app) => (
+      <tr key={app.id}>
+        <td>{app.student_name}</td>
+        <td>{app.university_name}</td>
+        <td>{app.registration_fee_payment || "N/A"}</td>
+        <td>{app.application_fee_payment || "N/A"}</td>
+        <td>{getStatusBadge(app.travel_insurance)}</td>
+        <td>{getStatusBadge(app.proof_of_income)}</td>
+        <td>
+          <span
+            className={`badge ${
+              app.status === 1 ? "bg-success" : "bg-secondary" }`}>
+            {app.status === 1 ? "Verified" : "Pending"}
+          </span>
+        </td>
+        <td>
+          <Link to={`/student/${app.id}`}>
+            <button className="btn btn-primary btn-sm">View</button>
+          </Link>
+        </td>
+      </tr>
+    ))
+  ) : (
+    <tr>
+      <td colSpan="8" className="text-center">
+        No applications found.
+      </td>
+    </tr>
+  )}
+</tbody>
 
-      {/* Message Modal */}
-      <Modal
-        show={showMessageModal}
-        onHide={() => setShowMessageModal(false)}
-        centered
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Message Counselor</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group>
-              <Form.Label>Your Message</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={4}
-                value={messageText}
-                onChange={(e) => setMessageText(e.target.value)}
-                placeholder="Write your message..."
-              />
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant="secondary"
-            onClick={() => setShowMessageModal(false)}
-          >
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={handleSendMessage}>
-            Send Message
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </Container>
+        </table>
+      </div>
+      {totalPages > 1 && (
+  <nav className="mt-3">
+    <ul className="pagination justify-content-center">
+      <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+        <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>Previous</button>
+      </li>
+      
+      {[...Array(totalPages)].map((_, i) => (
+        <li key={i} className={`page-item ${currentPage === i + 1 ? 'active' : ''}`}>
+          <button className="page-link" onClick={() => setCurrentPage(i + 1)}>{i + 1}</button>
+        </li>
+      ))}
+
+      <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+        <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
+      </li>
+    </ul>
+  </nav>
+)}
+
+    </div>
   );
 };
 

@@ -1,14 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Card } from 'react-bootstrap';
 import { Bar } from 'react-chartjs-2';
-import {
-    Chart as ChartJS,
-    CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend
-} from 'chart.js';
-import {
-    FaUserGraduate, FaUsers, FaTasks, FaComments,
-    FaChalkboardTeacher, FaUniversity
-} from 'react-icons/fa';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend} from 'chart.js';
+import {   FaUserGraduate, FaUsers, FaTasks, FaComments,   FaChalkboardTeacher, FaUniversity} from 'react-icons/fa';
 import api from '../../interceptors/axiosInterceptor';
 import BASE_URL from '../../Config';
 
@@ -25,8 +19,8 @@ const Dashboard = () => {
             } catch (error) {
                 console.error('Dashboard fetch error:', error);
             }
-        };
-        fetchData();
+        }; 
+        fetchData(); 
     }, []);
 
     const cards = [
@@ -70,7 +64,6 @@ const Dashboard = () => {
     return (
         <Container fluid className="mt-4">
             <h2 className="text-center mb-4">🎓 Recruitment Admin Dashboard</h2>
-
             <Row className="g-4 mb-4">
                 {cards.map((card, idx) => (
                     <Col md={4} lg={2} key={idx}>

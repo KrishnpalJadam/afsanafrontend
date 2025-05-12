@@ -1,81 +1,3 @@
-// import React, { useContext } from "react";
-// import { Table, Container, Card, Button } from "react-bootstrap";
-// import { LeadContext } from "../../context/LeadContext";
-// import {
-//   FaSearch,
-//   FaExpand,
-//   FaList,
-//   FaCommentAlt,
-//   FaBell,
-//   FaUserPlus,
-//   FaPlus,
-//   FaEdit,
-//   FaTrash,
-// } from "react-icons/fa";
-
-// const AdminStatus = () => {
-//   const { leads } = useContext(LeadContext);
-
-//   return (
-//     <Container className="mt-4">
-//       <div className="d-flex justify-content-between align-items-center mb-4">
-//         <h2>Admin Panel - All Leads</h2>
-//         <div className="d-flex flex-wrap gap-2">
-//           <Button variant="outline-secondary">Export</Button>
-//           <Button variant="outline-secondary">Import</Button>
-//         </div>
-//       </div>
-//       <div className="d-flex flex-wrap justify-content-between align-items-center mb-3">
-//         <div className="d-flex align-items-center flex-grow-1 me-3">
-//           <div className="input-group">
-//             <span className="input-group-text">
-//               <FaSearch />
-//             </span>
-//             <input
-//               type="text"
-//               placeholder="Search in table..."
-//               className="form-control"
-//             />
-//           </div>
-//         </div>
-//       </div>
-
-//       <Card className="p-4 shadow-sm mb-4">
-//         <div className="table-responsive">
-//           <Table className="text-center text-nowrap" striped bordered hover>
-//             <thead>
-//               <tr>
-//                 <th>Lead Name</th>
-//                 <th>Course Interested</th>
-//                 <th>Assigned Counselor</th>
-//                 <th>Status</th>
-//                 <th>Inquiry Date</th>
-//                 <th>Follow-Up Date</th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               {leads.map((lead) => (
-//                 <tr key={lead.id}>
-//                   <td>{lead.name}</td>
-//                   <td>{lead.course}</td>
-//                   <td>{lead.counselor}</td>
-//                   <td>{lead.status}</td>
-//                   <td>{lead.inquiryDate}</td>
-//                   <td>{lead.followUpDate}</td>
-//                 </tr>
-//               ))}
-//             </tbody>
-//           </Table>
-//         </div>
-//       </Card>
-//     </Container>
-//   );
-// };
-
-// export default AdminStatus;
-
-
-
 import React, { useState, useEffect } from "react";
 import {
   Container,
@@ -86,44 +8,22 @@ import {
   Badge,
   InputGroup,
 } from "react-bootstrap";
-import { FaSearch, FaPlus, FaEdit, FaTrash, FaEye } from "react-icons/fa";
+import { FaSearch, FaTrash } from "react-icons/fa";
 
-import BASE_URL from "../../Config"; // Assuming BASE_URL is already set
+import BASE_URL from "../../Config";
 import api from "../../interceptors/axiosInterceptor";
 
 const AdminStatus = () => {
-
-
   const [leads, setLeads] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [showViewModal, setShowViewModal] = useState(false);
-  const [selectedLead, setSelectedLead] = useState(null);
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [currentLeadId, setCurrentLeadId] = useState(null);
-  const [counselors, setCounselors] = useState([]);
-
-
-  const [newLead, setNewLead] = useState({
-    name: "",
-    phone: "",
-    email: "",
-    counselor: "", // Fixed field name from 'counselor' to 'counselor'
-    follow_up_date: "",
-    notes: "",
-    preferred_countries: "",
-    source: "",
-    status: "",
-    user_id: 1, // Include user_id as per the API requirement
-  });
-
-  // Search & Filter States
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [filterSource, setFilterSource] = useState("");
   const [filteredLeads, setFilteredLeads] = useState(null);
- 
 
-  // Fetch Leads
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
   useEffect(() => {
     const fetchLeads = async () => {
       try {
@@ -136,28 +36,6 @@ const AdminStatus = () => {
     fetchLeads();
   }, []);
 
-
-  useEffect(() => {
-    fetchCounseller();
-  }, []);
-  
-  const fetchCounseller = async () => {
-    try {
-      const response = await api.get(`${BASE_URL}counselor`);
-      if (response.status === 200) {
-
-        setCounselors(response.data); // Assuming the response data is under `data.data`
-      } else {
-        console.error("Failed to fetch counselors");
-      }
-    } catch (error) {
-      console.error("Error fetching counselors:", error);
-    }
-  };
-  
-
-
-  // Handle Filter
   const handleFilter = () => {
     const filtered = leads.filter((lead) => {
       const statusMatch = filterStatus === "" || lead.status === filterStatus;
@@ -165,11 +43,12 @@ const AdminStatus = () => {
       const searchMatch =
         searchTerm === "" ||
         lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        lead.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        lead.phone.toLowerCase().includes(searchTerm.toLowerCase());
+        lead.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        lead.phone?.toLowerCase().includes(searchTerm.toLowerCase());
       return statusMatch && sourceMatch && searchMatch;
     });
     setFilteredLeads(filtered);
+    setCurrentPage(1); // Reset to first page on filter
   };
 
   const handleResetFilter = () => {
@@ -177,92 +56,9 @@ const AdminStatus = () => {
     setFilterSource("");
     setSearchTerm("");
     setFilteredLeads(null);
+    setCurrentPage(1);
   };
 
-  const displayLeads = filteredLeads !== null ? filteredLeads : leads;
-
-  // Open "Add Lead" Modal
-  const handleShowModal = () => {
-    setIsEditMode(false);
-    setCurrentLeadId(null);
-    setNewLead({
-      name: "",
-      phone: "",
-      email: "",
-      counselor: "", // Ensure this matches your API field
-      follow_up_date: "",
-      notes: "",
-      preferred_countries: "",
-      source: "",
-      status: "",
-      user_id: 1, // Add user_id to the newLead state
-    });
-    setShowModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-  };
-
-  // Edit Lead
-  const handleEditLead = (lead) => {
-    setIsEditMode(true);
-    setCurrentLeadId(lead.id);
-    setNewLead({
-      name: lead.name,
-      phone: lead.phone,
-      email: lead.email,
-      counselor: lead.counselor_name, // Update to match the API's field
-      follow_up_date: lead.follow_up_date,
-      notes: lead.notes,
-      preferred_countries: lead.preferred_countries,
-      source: lead.source,
-      status: lead.status,
-      user_id: 1, // Ensure user_id is included
-    });
-    setShowModal(true);
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewLead({
-      ...newLead,
-      [name]: name === "counselor" ? value : value, // Set name as value here for counselor
-    });
-  };
-  
-  
-  
-
-
-  const handleSaveLead = async (e) => {
-    e.preventDefault();
-    if (isEditMode) {
-      // Update lead
-      try {
-        const response = await api.put(`${BASE_URL}lead/${currentLeadId}`, newLead);
-        const updatedLeads = leads.map((lead) => lead.id === currentLeadId ? response.data : lead);
-        setLeads(updatedLeads);
-        alert("Updated Successfully Please Refresh This.")
-      } catch (error) {
-        console.error("Error updating lead:", error);
-      }
-    } else {
-      // Add new lead
-      try {
-        const response = await api.post(`${BASE_URL}lead`, newLead);
-        setLeads([...leads, response.data]);
-      } catch (error) {
-        console.error("Error adding lead:", error);
-      }
-    }
-    handleCloseModal();
-  };
-  
- 
-  
-
-  // Delete Lead
   const handleDeleteLead = async (leadId) => {
     try {
       await api.delete(`${BASE_URL}lead/${leadId}`);
@@ -272,33 +68,20 @@ const AdminStatus = () => {
     }
   };
 
-  // View Lead Details
-  const handleViewLeadDetails = (lead) => {
-    setSelectedLead(lead);
-    setShowViewModal(true);
-  };
+  const displayLeads = filteredLeads !== null ? filteredLeads : leads;
 
-  const handleCloseViewModal = () => {
-    setShowViewModal(false);
-    setSelectedLead(null);
-  };
+  // Pagination calculations
+  const indexOfLastLead = currentPage * itemsPerPage;
+  const indexOfFirstLead = indexOfLastLead - itemsPerPage;
+  const currentLeads = displayLeads.slice(indexOfFirstLead, indexOfLastLead);
+  const totalPages = Math.ceil(displayLeads.length / itemsPerPage);
 
   return (
     <Container fluid className="py-3">
-      {/* Filter Section */}
-      <div className="mt-2">
-
       <h2>Admin Panel - All Leads</h2>
-      </div>
+
       <div className="d-flex justify-content-between mb-3 pt-3">
-        <div>
-        {/* <Button variant="secondary" onClick={handleShowModal}>
-          <FaPlus className="me-1" /> New Lead
-        </Button> */}
-        </div>
-      
         <div className="d-flex gap-2">
-          <div>
           <InputGroup>
             <InputGroup.Text>
               <FaSearch />
@@ -310,8 +93,6 @@ const AdminStatus = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </InputGroup>
-          </div>
-        
           <Button variant="outline-secondary" onClick={handleFilter}>
             Apply Filters
           </Button>
@@ -321,10 +102,10 @@ const AdminStatus = () => {
         </div>
       </div>
 
-      {/* Leads Table */}
       <Table striped bordered hover className="text-center">
         <thead>
           <tr>
+            <th>#</th>
             <th>Name</th>
             <th>Contact</th>
             <th>Asign Counselor</th>
@@ -335,13 +116,13 @@ const AdminStatus = () => {
           </tr>
         </thead>
         <tbody>
-          {displayLeads.length > 0 ? (
-            displayLeads.map((lead) => (
+          {currentLeads.length > 0 ? (
+            currentLeads.map((lead, index) => (
               <tr key={lead.id}>
+                <td>{indexOfFirstLead + index + 1}</td>
                 <td>{lead?.name}</td>
                 <td>{lead?.phone}</td>
                 <td>{lead?.counselor_name || "Unassigned"}</td>
-
                 <td>
                   <Badge bg={lead.status === "In Progress" ? "primary" : "success"}>
                     {lead?.status}
@@ -350,207 +131,53 @@ const AdminStatus = () => {
                 <td>{lead?.created_at}</td>
                 <td>{lead?.follow_up_date}</td>
                 <td>
-              
-                  <Button variant="outline-danger" size="sm" onClick={() => handleDeleteLead(lead.id)}>
+                  <Button
+                    variant="outline-danger"
+                    size="sm"
+                    onClick={() => handleDeleteLead(lead.id)}
+                  >
                     <FaTrash />
                   </Button>
-                
                 </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="5">No leads found.</td>
+              <td colSpan="8">No leads found.</td>
             </tr>
           )}
         </tbody>
       </Table>
 
-      {/* View Lead Details Modal */}
-      <Modal show={showViewModal} onHide={handleCloseViewModal} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Lead Details</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {selectedLead && (
-            <div>
-              <p><strong>Name:</strong> {selectedLead?.name}</p>
-              <p><strong>Email:</strong> {selectedLead?.email}</p>
-              <p><strong>Phone:</strong> {selectedLead?.phone}</p>
-              <p><strong>counselor:</strong> {selectedLead?.counselor}</p>
-              <p><strong>Follow-up Date:</strong> {new Date(selectedLead?.follow_up_date).toLocaleDateString()}</p>
-              <p><strong>Source:</strong> {selectedLead?.source}</p>
-              <p><strong>Status:</strong> {selectedLead?.status}</p>
-              <p><strong>Preferred Countries:</strong> {selectedLead?.preferred_countries}</p>
-              <p><strong>Notes:</strong> {selectedLead?.notes}</p>
-            </div>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseViewModal}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-      {/* Add/Edit Lead Modal */}
-      <Modal show={showModal} onHide={handleCloseModal} size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>{isEditMode ? "Edit Lead" : "Add New Lead"}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form onSubmit={handleSaveLead}>
-          <div className="row">
-              <div className="col-md-6">
-                <Form.Group className="mb-3">
-                  <Form.Label>Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Enter name"
-                    name="name"
-                    value={newLead.name}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </Form.Group>
-              </div>
-
-              <div className="col-md-6">
-                <Form.Group className="mb-3">
-                  <Form.Label>Phone</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Enter phone"
-                    name="phone"
-                    value={newLead.phone}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </Form.Group>
-              </div>
-
-              <div className="col-md-6">
-                <Form.Group className="mb-3">
-                  <Form.Label>Email</Form.Label>
-                  <Form.Control
-                    type="email"
-                    placeholder="Enter email"
-                    name="email"
-                    value={newLead.email}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </Form.Group>
-              </div>
-
-              <div className="col-md-6">
-              <Form.Group className="mb-3">
-  <Form.Label>Counselor</Form.Label>
-  <Form.Select
-  name="counselor"
-  value={newLead.counselor}
-  onChange={handleInputChange}
->
-  <option value="">Select Counselor</option>
-  {counselors.length > 0 ? (
-    counselors.map((counselor) => (
-      <option key={counselor.id} value={counselor.name}>
-        {counselor.name}
-      </option>
-    ))
-  ) : (
-    <option disabled>No counselors available</option>
-  )}
-</Form.Select>
-
-
-
-</Form.Group>
-
-              </div>
-
-              <div className="col-md-6">
-                <Form.Group className="mb-3">
-                  <Form.Label>Follow-up Date</Form.Label>
-                  <Form.Control
-                    type="date"
-                    name="follow_up_date"
-                    value={newLead.follow_up_date}
-                    onChange={handleInputChange}
-                  />
-                </Form.Group>
-              </div>
-
-              <div className="col-md-6">
-                <Form.Group className="mb-3">
-                  <Form.Label>Source</Form.Label>
-                  <Form.Select
-                    name="source"
-                    value={newLead.source}
-                    onChange={handleInputChange}
-                  >
-                    <option value="">Select Source</option>
-                    <option value="Website">Website</option>
-                    <option value="Office Visit">Office Visit</option>
-                    <option value="Phone Call">Phone Call</option>
-                    <option value="Email Inquiry">Email Inquiry</option>
-                    <option value="Social Media">Social Media</option>
-                  </Form.Select>
-                </Form.Group>
-              </div>
-
-              <div className="col-md-6">
-                <Form.Group className="mb-3">
-                  <Form.Label>Status</Form.Label>
-                  <Form.Select
-                    name="status"
-                    value={newLead.status}
-                    onChange={handleInputChange}
-                  >
-                    <option value="">Select status</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Completed">Completed</option>
-                    <option value="Pending">Pending</option>
-                  </Form.Select>
-                </Form.Group>
-              </div>
-
-              <div className="col-md-6">
-                <Form.Group className="mb-3">
-                  <Form.Label>Preferred Countries</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Enter preferred countries"
-                    name="preferred_countries"
-                    value={newLead.preferred_countries}
-                    onChange={handleInputChange}
-                  />
-                </Form.Group>
-              </div>
-
-              <div className="col-12">
-                <Form.Group className="mb-3">
-                  <Form.Label>Notes</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    placeholder="Enter notes"
-                    name="notes"
-                    value={newLead.notes}
-                    onChange={handleInputChange}
-                  />
-                </Form.Group>
-              </div>
-            </div>
-            <div className="d-flex justify-content-end">
-              <Button variant="danger" onClick={handleCloseModal}>Cancel</Button>
-              <Button variant="secondary" type="submit">
-                {isEditMode ? "Update Lead" : "Add Lead"}
-              </Button>
-            </div>
-          </Form>
-        </Modal.Body>
-      </Modal>
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <nav>
+          <ul className="pagination justify-content-center">
+            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+              <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>
+                Previous
+              </button>
+            </li>
+            {[...Array(totalPages)].map((_, index) => (
+              <li
+                key={index}
+                className={`page-item ${currentPage === index + 1 ? "active" : ""}`}
+              >
+                <button className="page-link" onClick={() => setCurrentPage(index + 1)}>
+                  {index + 1}
+                </button>
+              </li>
+            ))}
+            <li
+              className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}
+            >
+              <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>
+                Next
+              </button>
+            </li>
+          </ul>
+        </nav>
+      )}
     </Container>
   );
 };

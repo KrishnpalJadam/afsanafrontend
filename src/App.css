@@ -1119,3 +1119,10 @@ a{
 .student-form-btn-secondary:hover {
   background-color: #e9ecef;
 }
+
+thead{
+  white-space: nowrap !important;
+}
+tbody{
+  white-space: nowrap !important;
+}

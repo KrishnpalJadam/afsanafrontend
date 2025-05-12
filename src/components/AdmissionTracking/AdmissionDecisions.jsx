@@ -124,8 +124,6 @@ const AdmissionDecisions = () => {
     }
   };
   
-
-
   const updateDecisionStatus = async (id, newStatus) => {
     try {
       await api.patch(`${BASE_URL}admissiondecision/${id}`, { status: newStatus });
@@ -137,6 +135,7 @@ const AdmissionDecisions = () => {
     }
   };
 
+  
   const deleteDecision = async (id) => {
     try {
       const response = await api.delete(`${BASE_URL}admissiondecision/${id}`);

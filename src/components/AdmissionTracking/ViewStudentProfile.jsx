@@ -89,7 +89,7 @@ const ApplicationDetails = () => {
     const documentFields = [
       "accommodation_proof", "airplane_ticket_booking", "appendix_form_completed", "bank_statement",
       "birth_certificate", "conditional_offer_letter", "english_language_proof", "europass_cv",
-      "european_photo", "fee_confirmation_document", "final_university_offer_letter",
+      "european_photo", "fee_confirmation_document", "final_university_offer_letter", "final_offer_letter",
       "financial_support_declaration", "health_insurance", "invoice_with_conditional_offer",
       "motivation_letter", "passport_copy_prepared", "police_clearance_certificate",
       "previous_studies_certificates", "proof_of_income", "proof_of_relationship",
