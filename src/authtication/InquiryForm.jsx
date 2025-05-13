@@ -451,7 +451,7 @@ const InquiryForm = () => {
 
             <div className="d-flex justify-content-end mt-4">
               <Button variant="danger" onClick={handleCloseInquiryModal} className="me-2">
-                Cancel
+                Clear
               </Button>
               <Button variant="secondary" type="submit">
                 Submit Inquiry
