@@ -26,6 +26,8 @@
     "dayjs": "^1.11.13",
     "file-saver": "^2.0.5",
     "formik": "^2.4.6",
+    "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.2",
     "moment": "^2.30.1",
     "papaparse": "^5.5.2",
     "primeicons": "^7.0.0",
