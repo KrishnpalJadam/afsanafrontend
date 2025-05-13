@@ -526,7 +526,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                     Student Programs
                   </li>}
 
-                  {hasPermission("Communication", "view")&&<li
+                  {/* {hasPermission("Communication", "view")&&<li
                     className={`menu-item submenu-item ${
                       isActive("/ContactSupport") ? "active" : ""
                     }`}
@@ -536,7 +536,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                     }}
                   >
                     Communication
-                  </li>}
+                  </li>} */}
                 </ul>
               )}
             </li>
