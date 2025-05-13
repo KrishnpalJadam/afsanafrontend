@@ -64,10 +64,7 @@ const AdminUniversity = ({ university }) => {
                 objectFit: "cover",
                 padding: "5px",
               }}
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = "/default-logo.png"; // Provide a default image if failed
-              }}
+             
             />
 
 

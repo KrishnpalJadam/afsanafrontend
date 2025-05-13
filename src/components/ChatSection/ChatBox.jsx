@@ -1,8 +1,8 @@
- import React, { useEffect, useState, useRef } from "react";
+ import { useEffect, useState, useRef } from "react";
 import io from "socket.io-client";
 import "./ChatBox.css";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+
 
 // Connect to your Socket.io server
 const socket = io("https://afsanaproject-production.up.railway.app");
@@ -51,7 +51,6 @@ const ChatBox = ({ userId }) => {
 
     socket.on("chatHistory", ({ messages: oldMessages }) => {
       const formatted = oldMessages.map(formatMessage);
-    //   console.log(formatMessage)
       setMessages((prev) => [...formatted, ...prev]);
     });
 
@@ -95,7 +94,7 @@ const ChatBox = ({ userId }) => {
 //  console.log("message",messages)
   return (
     <div className="chat-container">
-      <div className="chat-header">{userId==1? <span>Chat with admin</span>: <span>Chat with User {receiverId}</span> } </div>
+      <div className="chat-header">{userId!=1? <span>Chat with admin</span>: <span>Chat with {localStorage.getItem("receiver_name")}</span> } </div>
 {/* 
       <button onClick={loadOlderMessages} className="load-more">
         Load Older Messages
@@ -109,7 +108,7 @@ const ChatBox = ({ userId }) => {
             className={`message ${
               m.senderId == userId ? "sent" : "received"
             }`}
-          >{console.log(m.senderId)}
+          >
             {m.content}
           </div>
         ))}

@@ -3,7 +3,7 @@ import "./App.css";
 import Navbar from "./layout/Navbar";
 import Sidebar from "./layout/Sidebar";
 import Home from "./authtication/Home";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Login from "./authtication/Login";
 import Dashboard from "./components/dashbord/Dashbord";
 import ChatBox from "./components/CommunicationFollowupManagement/ChatBox";

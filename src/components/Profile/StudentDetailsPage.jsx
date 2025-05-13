@@ -111,7 +111,6 @@ function StudentDetailsPage() {
   //   return <div>Student not found</div>;
   // }
   const authToken = localStorage.getItem('authToken')
-  console.log("authToken", authToken);
   useEffect(() => {
 
 
@@ -129,7 +128,7 @@ function StudentDetailsPage() {
 
         const data = await response.json();
         setStudent(data);
-        console.log("data", data);
+        // console.log("data", data);
       } catch (error) {
         console.error("Error fetching student data:", error);
       }

@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Tab,
@@ -17,7 +17,7 @@ const Payment = () => {
   const [key, setKey] = useState("due");
   const [showModal, setShowModal] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState(null);
-  const [payments,setPayments] = useState([])
+  const [payments, setPayments] = useState([])
 
   const duePayments = [
     {
@@ -84,12 +84,12 @@ const Payment = () => {
       console.error("Error fetching payments:", error);
     }
   };
-  
+
 
   useEffect(() => {
     fetchPayments(user?.email);
   }, []);
-console.log(payments)
+  console.log(payments)
   return (
     <Container className="mt-4">
       <h3 className="mb-4">Payments & Transactions</h3>
@@ -108,19 +108,21 @@ console.log(payments)
                 <thead>
                   <tr>
                     <th>#</th>
+                    <th>Student</th>
                     <th>Email</th>
-                    <th>university Id</th>
+                    <th>university</th>
                     <th>Country</th>
                     <th>Payment method</th>
                     {/* <th>Amount</th> */}
                     {/* <th>Due Date</th> */}
-                    <th>Action</th>
+                    <th>Payment Proof</th>
                   </tr>
                 </thead>
                 <tbody>
                   {payments?.map((item, index) => (
                     <tr key={index}>
-                      <td>{index+1}</td>
+                      <td>{index + 1}</td>
+                      <td>{item?.name}</td>
                       <td>{item?.email}</td>
                       <td>{item?.university}</td>
                       <td>{item?.country}</td>
@@ -129,14 +131,23 @@ console.log(payments)
                       {/* <td>{item?.amount}</td>
                       <td>{item?.dueDate}</td> */}
                       <td>
-                        <Button
-                          variant="success"
-                          size="sm"
-                          onClick={() => handlePayNow(item)}
-                          disabled={hasPermission("Payments & Invoices","add")}
-                        >
-                          Pay Now
-                        </Button>
+                        {item.photo?.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
+                          <img
+                            style={{ width: "100px", height: "100px" }}
+                            src={item.photo}
+                            alt=""
+                            crossOrigin=""
+                          />
+                        ) : (
+                          <a
+                            href={item.photo}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn btn-sm btn-primary"
+                          >
+                            View File
+                          </a>
+                        )}
                       </td>
                     </tr>
                   ))}
