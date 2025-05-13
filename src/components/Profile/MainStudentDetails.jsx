@@ -1,6 +1,5 @@
 
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 
 import {
   Container,
@@ -15,10 +14,11 @@ import {
 import api from "../../interceptors/axiosInterceptor";
 import BASE_URL from "../../Config";
 import { hasPermission } from "../../authtication/permissionUtils";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const [student, setStudent] = useState(null);
-  console.log(student);
+  const navigate = useNavigate()
   useEffect(() => {
     const id = localStorage.getItem('student_id')
     api.get(`${BASE_URL}auth/getStudentById/${id}`)
@@ -29,13 +29,6 @@ const Profile = () => {
         console.error(err);
       });
   }, []);
-
-
-
-
-  console.log("Student Photo:", student?.photo);
-
-
 
 
   return (
@@ -55,7 +48,7 @@ const Profile = () => {
               <h3>{student?.full_name}</h3>
               <p>Email: {student?.email}</p>
               <p>Phone: {student?.mobile_number}</p>
-              <Button variant="outline-primary" size="sm" disabled={hasPermission("Student Details","add")}>
+              <Button variant="outline-primary" size="sm" disabled={!hasPermission("Student Details","add")} onClick={()=>{navigate("/profile")}}>
                 Edit Profile
               </Button>
             </Col>

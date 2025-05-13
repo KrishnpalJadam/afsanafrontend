@@ -1,20 +1,10 @@
 import { useState, useEffect } from "react";
-import {
-  Container,
-  Button,
-  Table,
-  Form,
-  Modal,
-  Badge,
-  InputGroup,
-} from "react-bootstrap";
+import {  Container,  Button,  Table,  Form,  Modal,  Badge,  InputGroup,} from "react-bootstrap";
 import { FaSearch, FaPlus, FaEdit, FaTrash, FaEye } from "react-icons/fa";
-
 import BASE_URL from "../../Config"; // Assuming BASE_URL is already set
 import api from "../../interceptors/axiosInterceptor";
 
 const Lead = () => {
-
 
   const [leads, setLeads] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -23,6 +13,8 @@ const Lead = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentLeadId, setCurrentLeadId] = useState(null);
   const [counselors, setCounselors] = useState([]);
+const [currentPage, setCurrentPage] = useState(1);
+const itemsPerPage = 5;
 
   const [newLead, setNewLead] = useState({
     name: "",
@@ -169,6 +161,10 @@ const Lead = () => {
     setShowViewModal(false);
     setSelectedLead(null);
   };
+const indexOfLastLead = currentPage * itemsPerPage;
+const indexOfFirstLead = indexOfLastLead - itemsPerPage;
+const currentLeads = filteredLeads.slice(indexOfFirstLead, indexOfLastLead);
+const totalPages = Math.ceil(filteredLeads.length / itemsPerPage);
 
   return (
     <Container fluid className="py-3">
@@ -205,6 +201,7 @@ const Lead = () => {
       <Table striped bordered hover className="text-center">
         <thead>
           <tr>
+            <th>#</th>
             <th>Name</th>
             <th>Contact</th>
             <th>Asign Counselor</th>
@@ -213,9 +210,10 @@ const Lead = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredLeads?.length > 0 ? (
-            filteredLeads?.map((lead) => (
+          {currentLeads?.length > 0 ? (
+            currentLeads?.map((lead,index) => (
               <tr key={lead.id}>
+                <td>{index+1}</td>
                 <td>{lead?.name}</td>
                 <td>{lead?.phone}</td>
                 <td>{lead?.counselor_name || "Unassigned"}</td>
@@ -245,6 +243,25 @@ const Lead = () => {
           )}
         </tbody>
       </Table>
+{totalPages > 1 && (
+  <nav className="mt-3">
+    <ul className="pagination justify-content-center">
+      <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+        <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>Previous</button>
+      </li>
+
+      {[...Array(totalPages)].map((_, index) => (
+        <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+          <button className="page-link" onClick={() => setCurrentPage(index + 1)}>{index + 1}</button>
+        </li>
+      ))}
+
+      <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+        <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
+      </li>
+    </ul>
+  </nav>
+)}
 
       {/* View Lead Details Modal */}
       <Modal show={showViewModal} onHide={handleCloseViewModal} centered>
@@ -257,7 +274,7 @@ const Lead = () => {
               <p><strong>Name:</strong> {selectedLead?.name}</p>
               <p><strong>Email:</strong> {selectedLead?.email}</p>
               <p><strong>Phone:</strong> {selectedLead?.phone}</p>
-              <p><strong>counselor:</strong> {selectedLead?.counselor}</p>
+              <p><strong>counselor:</strong> {selectedLead?.counselor_name}</p>
               <p><strong>Follow-up Date:</strong> {selectedLead?.follow_up_date}</p>
               <p><strong>Source:</strong> {selectedLead?.source}</p>
               <p><strong>Status:</strong> {selectedLead?.status}</p>

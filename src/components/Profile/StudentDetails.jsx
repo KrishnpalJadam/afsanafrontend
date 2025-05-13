@@ -187,14 +187,12 @@ useEffect(() => {
   return (
     <div className="container pt-3">
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-
-
         <div>
           <h2 className="mb-3">All Students</h2>
         </div>
         <div>
           {/* <!-- Trigger Button --> */}
-          <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#studentFormModal">
+          <button type="button" className="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#studentFormModal">
             + Add Student
           </button>
         </div>
@@ -217,7 +215,6 @@ useEffect(() => {
               })
             }
             
-             
           </select>
         </div>
 
@@ -265,6 +262,7 @@ useEffect(() => {
         <table className="table table-striped table-bordered text-center">
           <thead className="table-light text-nowrap">
             <tr>
+              <th>#</th>
               <th>Student Name</th>
               <th>Admission No</th>
               <th>ID No.</th>
@@ -280,6 +278,7 @@ useEffect(() => {
           <tbody>
             {filtered_student?.map((student, index) => (
               <tr key={index} className="text-nowrap">
+                  <td>{index+1}</td>
                 <td>
                   <Link
                     to={{

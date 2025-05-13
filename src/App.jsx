@@ -1,11 +1,9 @@
 import { Route, Routes, useLocation } from "react-router-dom";
 import "./App.css";
-
 import Navbar from "./layout/Navbar";
 import Sidebar from "./layout/Sidebar";
 import Home from "./authtication/Home";
-import { useEffect, useState } from "react";
-
+import React, { useEffect, useState } from "react";
 import Login from "./authtication/Login";
 import Dashboard from "./components/dashbord/Dashbord";
 import ChatBox from "./components/CommunicationFollowupManagement/ChatBox";
@@ -68,6 +66,10 @@ import MyProfile from "./MyProfile/MyProfile";
 import Addbranch from "./components/ReportingAnalytics/Addbranch";
 import ChangePassword from "./MyProfile/ChangePassword";
 import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
+// import chatBox from "./components/ChatSection/ChatBox"
+import ChatBox2 from "./components/ChatSection/ChatBox";
+import ChatHistory from "./components/ChatSection/ChatHistory";
+import ChatList from "./components/ChatSection/ChatList";
 
 function App() {
   //show details to admin
@@ -106,7 +108,7 @@ function App() {
     setIsSidebarCollapsed((prev) => !prev);
   };
   const location = useLocation();
-
+const user_id = localStorage.getItem("user_id")
   const hideLayout =
     location.pathname === "/" || location.pathname === "/login";
   return (
@@ -127,8 +129,7 @@ function App() {
         )}
         {/* sidebar end */}
         {/* right side  */}
-        <div className={`right-side-content ${  hideLayout ? "full-width" : isSidebarCollapsed ? "collapsed" : ""  }`}
-          style={hideLayout ? { marginTop: "0", paddingLeft: "0" } : {}}>
+        <div className={`right-side-content ${  hideLayout ? "full-width" : isSidebarCollapsed ? "collapsed" : ""  }`} style={hideLayout ? { marginTop: "0", paddingLeft: "0" } : {}}>
           <LeadProvider>
           <Routes>
   {/* University Routes */}
@@ -212,6 +213,16 @@ function App() {
   <Route path="/chatbox" element={<ProtectedRoute><ChatBox /></ProtectedRoute>} />
   <Route path="/profile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
   <Route path="/change-password" element={<ProtectedRoute><ChangePassword /></ProtectedRoute>} />
+  {/* <Route path="/chat" element={<ProtectedRoute><ChatBox2/></ProtectedRoute>} />
+  <Route path="/chatHistory" element={<ProtectedRoute><ChatBox2/></ProtectedRoute>} /> */}
+  <Route path="/chat/:receiverId" element={<ChatBox2 userId={user_id} />} />
+<Route path="/chatHistory" element={<ChatHistory userId={user_id} />} />
+<Route path="/chatList" element={<ChatList userId={user_id}/>} />
+
+
+
+
+  
 </Routes>
 
           </LeadProvider>

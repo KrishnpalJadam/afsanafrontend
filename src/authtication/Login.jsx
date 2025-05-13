@@ -7,6 +7,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FaUser, FaLock } from "react-icons/fa";
 import { IoChevronBackCircleSharp } from "react-icons/io5";
+
+import axios from "axios";
 import api from "../interceptors/axiosInterceptor";
 const Login = ({ setLogin }) => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -17,71 +19,66 @@ const Login = ({ setLogin }) => {
   };
 
 
-  const handleLogin = async (event) => {
+const handleLogin = async (e) => {
+  e.preventDefault();  // Prevent form submission default behavior
 
-    event.preventDefault()
-    if (!formData.email || !formData.password) {
-      toast.error("Please enter email and password.");
-      return;
+  if (!formData.email || !formData.password) {
+    toast.error("Please enter email and password.");
+    return;
+  }
+
+  try {
+    const response = await axios.post(`${BASE_URL}auth/login`, formData);
+    console.log(response.data);
+    const { token, user } = response.data;
+    const role = user.role;
+
+    if (role && token) {
+      setLogin(role);
+      localStorage.setItem("login", role);
+      localStorage.setItem("authToken", token);
+      localStorage.setItem("user_id", user.id);
+      localStorage.setItem("login_detail", JSON.stringify(response.data.user));
+      localStorage.setItem("counselor_id", user.counselor_id);
+      localStorage.setItem("student_id", user.student_id);
+
+      const permissionsResponse = await api.get(`permission?role_name=${role}`);
+      localStorage.setItem("permissions", JSON.stringify(permissionsResponse.data));
+
+      Swal.fire({
+        title: 'Success!',
+        text: 'You have logged in successfully.',
+        icon: 'success',
+        confirmButtonText: 'Ok',
+      });
+
+      setTimeout(() => {
+        if (role === "admin") {
+          navigate("/dashboard");
+        } else if (role === "student") {
+          navigate("/UniversityCards");
+        } else if (role === "counselor") {
+          navigate("/councelor");
+        }
+      }, 300);
+    } else {
+      toast.error("Invalid credentials! Please check your email or password.");
     }
 
-    try {
-      const response = await api.post(`${BASE_URL}auth/login`, formData);
-      const { token, user } = response.data;
-      const role = user.role;
-
-      if (role && token) {
-        setLogin(role);
-        localStorage.setItem("login", role);
-        localStorage.setItem("authToken", token);
-        localStorage.setItem("user_id", user.id);
-        localStorage.setItem("login_detail", JSON.stringify(response.data.user));
-        localStorage.setItem("counselor_id", user.counselor_id);
-        localStorage.setItem("student_id", user.student_id);
-
-        const permissionsResponse = await api.get(`permission?role_name=${role}`);
-        localStorage.setItem("permissions", JSON.stringify(permissionsResponse.data));
-        Swal.fire({
-          title: 'Success!',
-          text: 'You have logged in successfully.',
-          icon: 'success',
-          confirmButtonText: 'Ok'
-        });
-
-        setTimeout(() => {
-          if (role === "admin") {
-            navigate("/dashboard");
-          } else if (role === "student") {
-            navigate("/UniversityCards");
-          } else if (role === "counselor") {
-            navigate("/councelor");
-          }
-        }, 300);
-      } else {
-        toast.error("Invalid credentials! Please check your email or password.");
-      }
-
-    } catch (error) {
-      console.error("Error during login:", error);
-      if (error.response && error.response.status === 401) {
-        toast.error("Invalid credentials! Please try again.");
-      } else {
-        toast.error("Something went wrong. Please try again later.");
-      }
-      console.log("Login successful. Setting login role:", role);
-
+  } catch (error) {
+    console.error("Error during login:", error);
+    if (error.response && error.response.status === 401) {
+      toast.error("Invalid credentials! Please try again.");
+    } else {
+      toast.error("Something went wrong. Please try again later.");
     }
+  }
+};
 
-  };
 
   return (
-    <main style={{
-      display: "flex",
-      minHeight: "100vh",
-      backgroundColor: "#b4ccf0",
-      alignItems: "center",
-      justifyContent: "center",
-    }}>
+    <main style={{  display: "flex",  minHeight: "100vh",  backgroundColor: "#b4ccf0",
+      alignItems: "center", justifyContent: "center", }}>
       <div style={{
         backgroundColor: "#fff",
         width: "90%",
@@ -89,8 +86,7 @@ const Login = ({ setLogin }) => {
         display: "flex",
         borderRadius: "20px",
         overflow: "hidden",
-        boxShadow: "0 8px 16px rgba(0,0,0,0.1)"
-      }}>
+        boxShadow: "0 8px 16px rgba(0,0,0,0.1)"}}>
         {/* Left Image Section */}
         <div style={{
           flex: 1,
@@ -121,6 +117,7 @@ const Login = ({ setLogin }) => {
               <input type="email" name="email"
                 placeholder="Enter your username/email"
                 value={formData.email}
+                autoComplete="off"   
                 onChange={handleChange}
                 style={{
                   width: "100%",
@@ -141,6 +138,7 @@ const Login = ({ setLogin }) => {
               <input
                 type="password"
                 name="password"
+                autoComplete="off"
                 placeholder="Enter your password"
                 value={formData.password}
                 onChange={handleChange}

@@ -14,6 +14,7 @@ const ApplicationDetails = () => {
   const fetchApplication = async () => {
     try {
       const res = await api.get(`application/${id}`);
+      console.log(res.data)
       setApplication(res.data);
     } catch (error) {
       console.error("Error fetching application", error);
@@ -74,44 +75,62 @@ const ApplicationDetails = () => {
               <th>View</th>
             </tr>
           </thead>
-          <tbody>
-            {Object.entries(application).map(([key, value], index) => {
-              // Skip meta fields
-              if (["id", "student_id", "student_name", "university_name", "university_id", "registration_date", "application_submission_date"].includes(key)) {
-                return null;
-              }
+      <tbody>
+  {Object.entries(application).map(([key, value], index) => {
+    // Skip meta fields
+    if (["id", "student_id", "student_name", "university_name", "university_id", "registration_date", "application_submission_date"].includes(key)) {
+      return null;
+    }
 
-              // Format label nicely
-              const label = key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+    // Format label nicely
+    const label = key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
 
-              return (
-                <tr key={key}>
-                  <td>{index + 1}</td>
-                  <td>{label}</td>
-                  <td>
-                    {isCompleted(value) ? (
-                      <Badge bg="success">
-                        <FaCheckCircle /> Completed
-                      </Badge>
-                    ) : (
-                      <Badge bg="warning text-dark">
-                        <FaTimesCircle /> Pending
-                      </Badge>
-                    )}
-                  </td>
-                  <td>
-                    {isCompleted(value) && canViewDocument(value) ? (
-                      <a href={value} target="_blank" rel="noreferrer">
-                        <FaFilePdf /> View
-                      </a>
-                    ) : (
-                      "-"
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
+    // List of fields considered as documents (you can extend this list as needed)
+    const documentFields = [
+      "accommodation_proof", "airplane_ticket_booking", "appendix_form_completed", "bank_statement",
+      "birth_certificate", "conditional_offer_letter", "english_language_proof", "europass_cv",
+      "european_photo", "fee_confirmation_document", "final_university_offer_letter", "final_offer_letter",
+      "financial_support_declaration", "health_insurance", "invoice_with_conditional_offer",
+      "motivation_letter", "passport_copy_prepared", "police_clearance_certificate",
+      "previous_studies_certificates", "proof_of_income", "proof_of_relationship",
+      "residence_permit_form", "travel_insurance", "tuition_fee_transfer_proof"
+    ];
+
+    const isDocument = documentFields.includes(key);
+
+    return (
+      <tr key={key}>
+        <td>{index + 1}</td>
+        <td>{label}</td>
+        <td>
+          {isDocument ? (
+            value && value.includes("uploads") ? (
+              <Badge bg="success">
+                <FaCheckCircle /> Completed
+              </Badge>
+            ) : (
+              <Badge bg="warning text-dark">
+                <FaTimesCircle /> Pending
+              </Badge>
+            )
+          ) : (
+            value || "-"
+          )}
+        </td>
+        <td>
+          {isDocument && value && value.includes("uploads") ? (
+            <a href={value} target="_blank" rel="noreferrer">
+              <FaFilePdf /> View
+            </a>
+          ) : (
+            "-"
+          )}
+        </td>
+      </tr>
+    );
+  })}
+</tbody>
+
         </Table>
       </Card>
     </div>
