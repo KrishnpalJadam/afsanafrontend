@@ -119,7 +119,6 @@ const Followup = () => {
         try {
             const response = await api.get(`${BASE_URL}followUp/${id}`);
             const followUpDetail = response.data;
-            console.log('Follow-up details:', followUpDetail);
             // You can open a modal with the detailed info here if needed
         } catch (error) {
             console.error('Error fetching follow-up details:', error);

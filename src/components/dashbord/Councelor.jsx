@@ -276,7 +276,6 @@ const CounselorDashboard = () => {
     }
   }, []);
   const counselor_idmain = localStorage.getItem("counselor_id")
-  console.log(counselor_idmain)
   // Get dashboard data
   useEffect(() => {
     const allData = async () => {

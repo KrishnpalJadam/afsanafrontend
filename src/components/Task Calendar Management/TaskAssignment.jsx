@@ -32,7 +32,6 @@ const paginatedTasks = tasks.slice(
       try {
         const response = await api.get(`${BASE_URL}auth/getAllStudents`);
         setStudentsData(response.data);
-        console.log("student", response.data);
       } catch (error) {
         console.error("Error fetching students:", error);
       }
@@ -43,7 +42,6 @@ const paginatedTasks = tasks.slice(
     const fetchCounselors = async () => {
       try {
         const res = await api.get(`${BASE_URL}counselor`);
-        console.log("counselor data : ", res.data);
         setCounselors(res.data);
       } catch (err) {
         console.error("Failed to fetch counselors", err);
@@ -57,7 +55,6 @@ const paginatedTasks = tasks.slice(
   try {
     const response = await api.get(`${BASE_URL}task`);
     setTasks(response.data);
-    console.log("data", response.data);
   } catch (error) {
     console.log(error);
   }
@@ -117,7 +114,6 @@ useEffect(() => {
         },
       });
    
-      console.log(response.data);
     
       // After successful POST, update the state with the new task
       if (response.ok) {
@@ -180,7 +176,6 @@ useEffect(() => {
            method: "DELETE",
          });
          const data = await response.json();
-         console.log(data);
          if (response.ok) {
            setTasks(tasks.filter((task) => task.id !== id));
          } else {

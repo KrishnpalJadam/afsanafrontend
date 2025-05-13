@@ -14,7 +14,6 @@ const ApplicationDetails = () => {
   const fetchApplication = async () => {
     try {
       const res = await api.get(`application/${id}`);
-      console.log(res.data)
       setApplication(res.data);
     } catch (error) {
       console.error("Error fetching application", error);

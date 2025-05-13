@@ -29,7 +29,6 @@ const handleLogin = async (e) => {
 
   try {
     const response = await axios.post(`${BASE_URL}auth/login`, formData);
-    console.log(response.data);
     const { token, user } = response.data;
     const role = user.role;
 

@@ -17,7 +17,6 @@ const LeadInquiryManagement = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form Submitted", formData);
     alert("Inquiry Submitted Successfully!");
     setShowModal(false);
   };

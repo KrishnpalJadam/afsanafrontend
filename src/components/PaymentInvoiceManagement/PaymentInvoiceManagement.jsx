@@ -141,7 +141,6 @@ const PaymentInvoiceMangament = () => {
     const fetchData = async () => {
       try {
         const response = await api.get(`${BASE_URL}universities`);
-        console.log(response.data); // To check if data is correct
         setUniversities(response.data); 
       } catch (error) {
         console.log("Error fetching universities:", error);

@@ -10,7 +10,6 @@ const ContactSupport = () => {
 
 
   const role = localStorage.getItem("login");
-  console.log(role)
   const openChat = () => {
     if (role == "student") {
       navigate("/chat/1")

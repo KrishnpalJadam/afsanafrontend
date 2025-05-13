@@ -28,7 +28,6 @@ const MyProfile = () => {
 
     try {
       const res = await api.get(`auth/getUser/${loginDetail.id}`);
-      console.log("Fetched User Data 👉", res.data);
 
       if (res.data.user) {
         setUserData(res.data.user);
@@ -72,7 +71,6 @@ const MyProfile = () => {
 
     try {
       const res = await api.put(`auth/updateUser/${loginDetail.id}`, data);
-      console.log("Update Response 👉", res.data);
 
       if (res.status === 200) {
         alert("Profile updated successfully!");

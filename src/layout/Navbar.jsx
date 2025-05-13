@@ -33,7 +33,6 @@ const Navbar = ({ toggleSidebar }) => {
     navigate("/");
   };
   const role = localStorage.getItem("login");
-  console.log(role)
  const handleChat = ()=> {
   if(role=="student"){
     navigate("/chat/1")
