@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import ChatList from "./ChatList";
 
 const ChatBox = ({ userId }) => {
-  const { receiverId } = useParams(); // Dynamic from route
+  const { receiverId } = useParams(); // from route
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [offset, setOffset] = useState(0);
@@ -19,10 +19,25 @@ const ChatBox = ({ userId }) => {
     timestamp: msg.timestamp,
   });
 
-  // Connect and join room when userId & receiverId available
+  // Connect socket and join room when userId & receiverId change
   useEffect(() => {
     if (userId && receiverId) {
-      const newSocket = io("https://afsanaproject-production.up.railway.app");
+      // Clean up previous socket
+      if (socket) {
+        socket.emit("leaveRoom", {
+          user_id: userId,
+          other_user_id: receiverId,
+        });
+        socket.disconnect();
+      }
+
+      // Reset state
+      setMessages([]);
+      setOffset(0);
+
+      const newSocket = io("https://afsanaproject-production.up.railway.app", {
+        forceNew: true,
+      });
       setSocket(newSocket);
 
       newSocket.emit("registerUser", userId);
@@ -38,11 +53,11 @@ const ChatBox = ({ userId }) => {
         offset: 0,
       });
 
-      return () => newSocket.disconnect();
+      return () => newSocket.disconnect(); // cleanup
     }
   }, [userId, receiverId]);
 
-  // Listen for incoming messages and history
+  // Listen to socket events
   useEffect(() => {
     if (!socket) return;
 
@@ -65,7 +80,7 @@ const ChatBox = ({ userId }) => {
     };
   }, [socket]);
 
-  // Scroll to bottom on new message
+  // Scroll to bottom on message update
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -81,10 +96,10 @@ const ChatBox = ({ userId }) => {
     };
 
     socket.emit("sendMessage", newMsg);
-    setMessage(""); // clear input
+    setMessage("");
   };
 
-  // Load older messages
+  // Load older messages (optional)
   const loadOlderMessages = () => {
     if (!socket) return;
     const chatId = [userId, receiverId].sort((a, b) => a - b).join("_");
@@ -100,45 +115,43 @@ const ChatBox = ({ userId }) => {
   };
 
   return (
-    <div style={{display:"flex"}}>
-      <div>{userId==1&&<ChatList userId={userId}/>}</div>
-    <div className="chat-container">
-      <div className="chat-header">
-        {userId != 1 ? (
-          <span>Chat with admin</span>
-        ) : (
-          <span>Chat with {localStorage.getItem("receiver_name")}</span>
-        )}
-      </div>
+    <div style={{ display: "flex" }}>
+      <div>{userId == 1 && <ChatList userId={userId} />}</div>
+      <div className="chat-container">
+        <div className="chat-header">
+          {userId != 1 ? (
+            <span>Chat with admin</span>
+          ) : (
+            <span>Chat with {localStorage.getItem("receiver_name")}</span>
+          )}
+        </div>
 
-      {/* Uncomment if you want to load older messages */}
-      {/* <button onClick={loadOlderMessages} className="load-more">
-        Load Older Messages
-      </button> */}
+        {/* Uncomment if needed */}
+        {/* <button onClick={loadOlderMessages} className="load-more">Load Older Messages</button> */}
 
-      <div className="chat-messages">
-        {messages.map((m, i) => (
-          <div
-            key={i}
-            className={`message ${m.senderId == userId ? "sent" : "received"}`}
-          >
-            {m.content}
-          </div>
-        ))}
-        <div ref={messageEndRef} />
-      </div>
+        <div className="chat-messages">
+          {messages.map((m, i) => (
+            <div
+              key={i}
+              className={`message ${m.senderId == userId ? "sent" : "received"}`}
+            >
+              {m.content}
+            </div>
+          ))}
+          <div ref={messageEndRef} />
+        </div>
 
-      <div className="chat-input-area">
-        <input
-          type="text"
-          placeholder="Type a message..."
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-        />
-        <button onClick={sendMessage}>Send</button>
+        <div className="chat-input-area">
+          <input
+            type="text"
+            placeholder="Type a message..."
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          />
+          <button onClick={sendMessage}>Send</button>
+        </div>
       </div>
-    </div>
     </div>
   );
 };
