@@ -8,17 +8,17 @@ import { useNavigate } from "react-router-dom";
 const ContactSupport = () => {
   const navigate = useNavigate()
 
-  
-    const role = localStorage.getItem("login");
+
+  const role = localStorage.getItem("login");
   console.log(role)
- const openChat = ()=> {
-  if(role=="student"){
-    navigate("/chat/1")
+  const openChat = () => {
+    if (role == "student") {
+      navigate("/chat/1")
+    }
+    else {
+      navigate("/chatList")
+    }
   }
-  else{
-    navigate("/chatList")
-  }
- }
   return (
     <>
       <TawkMessenger />
