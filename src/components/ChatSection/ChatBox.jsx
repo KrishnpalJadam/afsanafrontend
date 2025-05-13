@@ -2,6 +2,7 @@
 import io from "socket.io-client";
 import "./ChatBox.css";
 import { useParams } from "react-router-dom";
+import ChatList from "./ChatList";
 
 
 // Connect to your Socket.io server
@@ -93,6 +94,8 @@ const ChatBox = ({ userId }) => {
   };
 //  console.log("message",messages)
   return (
+    <div style={{display:"flex"}}>
+      <div>{userId==1&&<ChatList userId={userId}/>}</div>
     <div className="chat-container">
       <div className="chat-header">{userId!=1? <span>Chat with admin</span>: <span>Chat with {localStorage.getItem("receiver_name")}</span> } </div>
 {/* 
@@ -125,6 +128,7 @@ const ChatBox = ({ userId }) => {
         />
         <button onClick={sendMessage}>Send</button>
       </div>
+    </div>
     </div>
   );
 };
