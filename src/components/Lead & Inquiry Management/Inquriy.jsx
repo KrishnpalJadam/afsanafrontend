@@ -293,10 +293,10 @@ useEffect(() => {
       </div>
 
       {/* Header Section */}
-      <div className="d-flex justify-content-between mb-3">
+      {/* <div className="d-flex justify-content-between mb-3">
         <Form.Control type="text"
           placeholder="Search inquiries" className="w-50"/>
-      </div>
+      </div> */}
 
       {/* Today's Inquiries */}
       <Table striped bordered hover responsive>

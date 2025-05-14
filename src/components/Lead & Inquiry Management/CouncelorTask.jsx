@@ -163,7 +163,7 @@ const CounselorTask = () => {
     <img
       src={selectedTask.image}
       alt="Task"
-        crossOrigin="anonymous"
+        crossorigin="anonymous"
       style={{ width: "200px", height: "auto", borderRadius: "6px", marginTop: "8px" }}
     />
   </div>

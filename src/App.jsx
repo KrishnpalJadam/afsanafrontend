@@ -58,7 +58,7 @@ import SearchPrograms from "./components/Profile/SearchPrograms";
 import Payment from "./components/ReportingAnalytics/Payment";
 import StudentTask from "./components/Task Calendar Management/StudentTask";
 import Support from "./components/CommunicationFollowupManagement/Support";
-import TawkMessenger from "./TawkMessenger";
+
 import MyApplication from "./components/AdmissionTracking/MyApplication";
 import CounselorApplications from "./components/AdmissionTracking/CounselorApplications";
 import ApplicationTimeline from "./components/AdmissionTracking/ApplicationTimeline";

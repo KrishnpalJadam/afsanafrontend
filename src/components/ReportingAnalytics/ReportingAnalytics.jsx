@@ -276,7 +276,7 @@ const generatePDF = () => {
                         style={{ width: "100px", height: "100px" }}
                         src={item.file}
                         alt=""
-                        crossOrigin=""
+                        crossorigin=""
                       />
                     ) : (
                       <a

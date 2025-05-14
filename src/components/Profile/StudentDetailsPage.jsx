@@ -164,7 +164,7 @@ function StudentDetailsPage() {
             src={student?.photo}
             alt="Profile"
             className="img-fluid rounded-circle shadow-sm"
-            crossOrigin=''
+            crossorigin=''
           />
           <h2 className="font-weight-bold text-primary">{student?.full_name}</h2>
         </Col>

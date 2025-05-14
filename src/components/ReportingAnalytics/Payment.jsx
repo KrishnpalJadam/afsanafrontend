@@ -133,7 +133,7 @@ const Payment = () => {
                             style={{ width: "100px", height: "100px" }}
                             src={item.photo}
                             alt=""
-                            crossOrigin=""
+                            crossorigin=""
                           />
                         ) : (
                           <a

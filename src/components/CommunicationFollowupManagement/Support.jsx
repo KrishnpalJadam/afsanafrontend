@@ -1,7 +1,7 @@
 import React from "react";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import { FaWhatsapp, FaPhoneAlt, FaEnvelope, FaComments } from "react-icons/fa";
-import TawkMessenger from "../../TawkMessenger";
+
 import { hasPermission } from "../../authtication/permissionUtils";
 import { useNavigate } from "react-router-dom";
 
@@ -20,7 +20,7 @@ const ContactSupport = () => {
   }
   return (
     <>
-      <TawkMessenger />
+      {/* <TawkMessenger /> */}
       <Container className="mt-4">
         <h3 className="mb-4 text-center">Contact Support</h3>
 
