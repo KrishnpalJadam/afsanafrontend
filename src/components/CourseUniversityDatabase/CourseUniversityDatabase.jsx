@@ -109,12 +109,12 @@ const Reports = () => {
   }, [])
 
 
- useEffect(() => {
+  useEffect(() => {
     const fetchApplication = async () => {
       try {
         const responce2 = await api.get(`applicationPipline`);
-        console.log("resgsf", responce2.data)
-        // setApplication(responce2.data)
+   
+        setApplication([responce2.data])
       } catch (error) {
         console.log(error)
       }
@@ -122,30 +122,54 @@ const Reports = () => {
     fetchApplication()
   }, [])
 
+
+
+
+
+  // Function to handle date range filtering
+const handleFilter = () => {
+  console.log("Filtering reports for date range:", dateRange);
+  // Logic to fetch or filter the data based on the selected date range
+  // For example, re-fetch data using the dateRange
+};
+
+// Function to handle export functionality
+const handleExport = () => {
+  console.log("Exporting the report...");
+  // Logic to export the current report data
+  // You can implement exporting as a CSV, Excel, PDF, or any other format you prefer.
+};
+  
   return (
     <Container className="mt-3">
-      {/* Header with Filters */}
-      <div className="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
-        <h2>Reports & Analytics</h2>
-        <div className="d-flex flex-wrap gap-3">
-          <Form.Select
-            value={dateRange}
-            onChange={(e) => setDateRange(e.target.value)}
-            style={{ width: "200px" }}
-          >
-            <option value="last7">Last 7 Days</option>
-            <option value="last30">Last 30 Days</option>
-            <option value="last90">Last 90 Days</option>
-            <option value="year">This Year</option>
-          </Form.Select>
-          <Button variant="secondary" style={{ border: "none" }}>
-            <FaFilter className="me-2" /> Filter
-          </Button>
-          <Button variant="secondary" style={{ border: "none" }}>
-            <FaDownload className="me-2" /> Export Report
-          </Button>
-        </div>
-      </div>
+    {/* Header with Filters */}
+<div className="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+  <h2>Reports & Analytics</h2>
+  <div className="d-flex flex-wrap gap-3">
+    {/* Date Range Filter */}
+    <Form.Select
+      value={dateRange}
+      onChange={(e) => setDateRange(e.target.value)}
+      style={{ width: "200px" }}
+    >
+      <option value="last7">Last 7 Days</option>
+      <option value="last30">Last 30 Days</option>
+      <option value="last90">Last 90 Days</option>
+      <option value="year">This Year</option>
+    </Form.Select>
+
+    {/* Filter Button */}
+    <Button variant="secondary" style={{ border: "none" }} onClick={() => handleFilter()}>
+      <FaFilter className="me-2" /> Filter
+    </Button>
+
+    {/* Export Report Button */}
+    <Button variant="secondary" style={{ border: "none" }} onClick={() => handleExport()}>
+      <FaDownload className="me-2" /> Export Report
+    </Button>
+  </div>
+</div>
+
 
       {/* Tabs for Different Reports */}
       <Tabs
@@ -262,7 +286,7 @@ const Reports = () => {
                       {perfomance?.result?.map((item, index) => {
                         return (
                           <tr key={index}>
-                            <td>{index+1}</td>
+                            <td>{index + 1}</td>
                             <td>{item?.counselor_name}</td>
                             <td>{item?.total_leads}</td>
                             <td>{item?.active}</td>
@@ -313,45 +337,37 @@ const Reports = () => {
                       <tr>
                         <th>Stage</th>
                         <th>Count</th>
-                        <th>Progress</th>
-                        <th>Avg Time</th>
+                      
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>New Inquiry</td>
-                        <td>45</td>
-                        <td>
-                          <ProgressBar
+                      {application?.map((item) => {
+                        return (
+                          <>
+                            <tr>
+                              <td>New Inquiry</td>
+                              <td>{item.total_inquiries}</td>
+                           
+                            </tr>
+                            <tr>
+                              <td>Document Collection</td>
+                              <td>{item.completed_tasks}</td>
+                           
+                            </tr>
+                            <tr>
+                              <td>University Application</td>
+                              <td>{item.completed_tasks}</td>
+                         
+                            </tr>
+                            <tr>
+                              <td>Offer Received</td>
+                              <td>{item.total_inquiries}</td>
+                             
+                            </tr>
+                          </>
+                        )
+                      })}
 
-                            now={45} variant="info" />
-                        </td>
-                        <td>2 days</td>
-                      </tr>
-                      <tr>
-                        <td>Document Collection</td>
-                        <td>38</td>
-                        <td>
-                          <ProgressBar now={45} variant="primary" />
-                        </td>
-                        <td>5 days</td>
-                      </tr>
-                      <tr>
-                        <td>University Application</td>
-                        <td>25</td>
-                        <td>
-                          <ProgressBar now={30} variant="warning" />
-                        </td>
-                        <td>10 days</td>
-                      </tr>
-                      <tr>
-                        <td>Offer Received</td>
-                        <td>18</td>
-                        <td>
-                          <ProgressBar now={20} variant="success" />
-                        </td>
-                        <td>15 days</td>
-                      </tr>
                     </tbody>
                   </Table>
                 </Card.Body>
@@ -361,7 +377,7 @@ const Reports = () => {
         </Tab>
 
         {/* Follow-up Analytics Tab */}
-    
+
       </Tabs>
     </Container>
   );
