@@ -101,7 +101,6 @@ const student = {
 function StudentDetailsPage() {
   const [student, setStudent] = useState()
   const { studentId } = useParams();
-  console.log("studentId", studentId);
 
   // const selectedStudent = students.find(
   //   (student) => student.studentId.toString() === studentId
@@ -155,7 +154,6 @@ function StudentDetailsPage() {
     }
   };
 
-  console.log(":");
   return (
     <div className="container mt-5">
       {/* Profile Header */}

@@ -24,7 +24,6 @@ const CounselorTask = () => {
   const fetchTasks = async () => {
     try {
       const response = await api.get(`task/${counselorId}`);
-      console.log(response.data)
       setTasksData(response.data);
     } catch (error) {
       console.error("Error fetching tasks:", error);

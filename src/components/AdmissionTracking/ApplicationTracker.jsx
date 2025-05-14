@@ -17,7 +17,6 @@ const itemsPerPage = 5;
   const fetchApplications = async () => {
     try {
       const response = await api.get(`application`);
-      console.log(response.data)
       setApplications(response.data);
       setFilteredApplications(response.data);
     } catch (error) {

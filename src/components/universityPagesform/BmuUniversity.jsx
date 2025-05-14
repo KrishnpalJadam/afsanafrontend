@@ -208,7 +208,6 @@ useEffect(() => {
     formDataToSubmit.append("Application_stage", "1");
     formDataToSubmit.append("interview", "0");
     formDataToSubmit.append("Visa_process", "0");
-    console.log("Form Data Submitted:", formDataToSubmit);
     try {
       const response = await api.post("/application", formDataToSubmit);
         Swal.fire({
@@ -219,13 +218,11 @@ useEffect(() => {
             });
             navigate("/UniversityCards")
             // window.location.reload(true);
-      console.log("Form submitted successfully:", response.data);
     } catch (error) {
       console.error("Error submitting form:", error);
     }
   };
   const handleUpdate = async (id) => {
-    console.log("Form Data Submitted:", formDataToSubmit);
     if(interviewBtn === 0){
       formDataToSubmit.append("Application_stage", "1");
     formDataToSubmit.append("interview", "1");
@@ -248,7 +245,6 @@ useEffect(() => {
         confirmButtonText: 'OK',
       });
        navigate("/UniversityCards")
-      console.log("Form submitted successfully:", response.data);
     } catch (error) {
       console.error("Error submitting form:", error);
     }

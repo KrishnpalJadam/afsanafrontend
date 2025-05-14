@@ -24,7 +24,6 @@ const AdminUniversity = ({ university }) => {
   const handleDeleteUniversity = async (id) => {
     try {
       const response = await api.delete(`${BASE_URL}universities/${id}`);
-      console.log('Delete response:', response);
       alert("Deleted successfully. Please refresh this.");
       // After successful delete, filter out the deleted university from the list
       setUniversities((prevUniversities) =>

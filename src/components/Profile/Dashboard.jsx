@@ -141,7 +141,6 @@ const Dashboard = () => {
       const fetchApplicationData = async () => {
         try {
           const response = await api.get(`${BASE_URL}dashboardApplyUniveristy/${selectedUniversityId}/${stuId}`);
-          console.log("Application Data: ", response.data);
           setApplicationStatus(response.data); // Update status based on response
         } catch (error) {
           console.error("Error fetching application data:", error);

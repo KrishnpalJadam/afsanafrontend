@@ -17,6 +17,7 @@ const Inquiry = () => {
   const [showFollowUpModal, setShowFollowUpModal] = useState(false);
   const [showInquiryDetailsModal, setInquiryDetailsModal] = useState(false);
   const [selectedInquiry, setSelectedInquiry] = useState(null);
+  const [searchQuery, setSearchQuery]  = useState("");
 
   // State for new inquiry form data
   const [newInquiry, setNewInquiry] = useState({

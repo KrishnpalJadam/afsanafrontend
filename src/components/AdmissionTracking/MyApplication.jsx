@@ -12,8 +12,7 @@ const MyApplication = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
   const [studentid, setStudentId] = useState("");
-      console.log(studentid)
-
+      
   useEffect(() => {
     const is_id = localStorage.getItem("student_id");
     if (is_id) {
@@ -32,7 +31,6 @@ useEffect(() => {
   const fetchApplications = async () => {
     try {
       const response = await api.get(`studentApplication/${studentid}`);
-      console.log(response.data)
       setApplications(response.data);
       setFilteredApplications(response.data);
     } catch (error) {

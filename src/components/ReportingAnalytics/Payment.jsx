@@ -72,13 +72,11 @@ const Payment = () => {
     return `⏳ ${days} day(s) remaining`;
   };
   const user = JSON.parse(localStorage.getItem("login_detail"))
-  console.log(user)
   const fetchPayments = async (email) => {
     try {
       const response = await api.get(`${BASE_URL}payments/${email}`);
       if (response?.data) {
         setPayments(response.data); // Storing the fetched payments in the state
-        console.log("Payments:", response.data);
       }
     } catch (error) {
       console.error("Error fetching payments:", error);
@@ -89,7 +87,6 @@ const Payment = () => {
   useEffect(() => {
     fetchPayments(user?.email);
   }, []);
-  console.log(payments)
   return (
     <Container className="mt-4">
       <h3 className="mb-4">Payments & Transactions</h3>

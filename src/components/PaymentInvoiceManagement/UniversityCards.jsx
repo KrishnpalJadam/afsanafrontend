@@ -37,7 +37,6 @@ const UniversityCards = () => {
   const handleDeleteUniversity = async (id) => {
     try {
       const response = await api.delete(`${BASE_URL}universities/${id}`);
-      console.log('Delete response:', response);
       Swal.fire({
         title: "Deleted Successfully!",
         text: "The university has been deleted.",

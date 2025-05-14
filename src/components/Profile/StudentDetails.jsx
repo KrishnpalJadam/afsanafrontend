@@ -24,7 +24,6 @@ useEffect(() => {
   const fetchData = async () => {
     try {
       const response = await api.get(`${BASE_URL}universities`);
-      console.log("university",response.data); // To check if data is correct
       setUniversities(response.data); // Ensure the data is passed correctly
     } catch (error) {
       console.log("Error fetching universities:", error);
@@ -98,9 +97,6 @@ useEffect(() => {
    
     
     try {
-       for (let [key, value] of formPayload.entries()) {
-        console.log(`${key}:`, value);
-      }
       const res = await api({
         method,
         url,
@@ -150,7 +146,6 @@ useEffect(() => {
       try {
         const response = await api.get(`${BASE_URL}auth/getAllStudents`);
         setStudentsData(response.data);
-        console.log("student", response.data);
       } catch (error) {
         console.error("Error fetching students:", error);
       }
@@ -167,7 +162,6 @@ useEffect(() => {
            method: "DELETE",
          });
          const data = await response.json();
-         console.log(data);
          if (response.ok) {
            setStudentsData(student.filter((task) => task.id !== id));
          } else {

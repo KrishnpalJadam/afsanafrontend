@@ -20,7 +20,6 @@ function ManaDetails() {
       try {
         const response = await api.get(`${BASE_URL}auth/getAllStudents`);
         setStudentsData(response.data);
-        console.log("student", response.data);
       } catch (error) {
         console.error("Error fetching students:", error);
       }
