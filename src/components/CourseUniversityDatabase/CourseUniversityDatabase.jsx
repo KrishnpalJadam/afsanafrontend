@@ -113,7 +113,7 @@ const Reports = () => {
     const fetchApplication = async () => {
       try {
         const responce2 = await api.get(`applicationPipline`);
-   
+
         setApplication([responce2.data])
       } catch (error) {
         console.log(error)
@@ -127,48 +127,48 @@ const Reports = () => {
 
 
   // Function to handle date range filtering
-const handleFilter = () => {
-  console.log("Filtering reports for date range:", dateRange);
-  // Logic to fetch or filter the data based on the selected date range
-  // For example, re-fetch data using the dateRange
-};
+  const handleFilter = () => {
+    console.log("Filtering reports for date range:", dateRange);
+    // Logic to fetch or filter the data based on the selected date range
+    // For example, re-fetch data using the dateRange
+  };
 
-// Function to handle export functionality
-const handleExport = () => {
-  console.log("Exporting the report...");
-  // Logic to export the current report data
-  // You can implement exporting as a CSV, Excel, PDF, or any other format you prefer.
-};
-  
+  // Function to handle export functionality
+  const handleExport = () => {
+    console.log("Exporting the report...");
+    // Logic to export the current report data
+    // You can implement exporting as a CSV, Excel, PDF, or any other format you prefer.
+  };
+
   return (
     <Container className="mt-3">
-    {/* Header with Filters */}
-<div className="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
-  <h2>Reports & Analytics</h2>
-  <div className="d-flex flex-wrap gap-3">
-    {/* Date Range Filter */}
-    <Form.Select
-      value={dateRange}
-      onChange={(e) => setDateRange(e.target.value)}
-      style={{ width: "200px" }}
-    >
-      <option value="last7">Last 7 Days</option>
-      <option value="last30">Last 30 Days</option>
-      <option value="last90">Last 90 Days</option>
-      <option value="year">This Year</option>
-    </Form.Select>
+      {/* Header with Filters */}
+      <div className="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+        <h2>Reports & Analytics</h2>
+        <div className="d-flex flex-wrap gap-3">
+          {/* Date Range Filter */}
+          <Form.Select
+            value={dateRange}
+            onChange={(e) => setDateRange(e.target.value)}
+            style={{ width: "200px" }}
+          >
+            <option value="last7">Last 7 Days</option>
+            <option value="last30">Last 30 Days</option>
+            <option value="last90">Last 90 Days</option>
+            <option value="year">This Year</option>
+          </Form.Select>
 
-    {/* Filter Button */}
-    <Button variant="secondary" style={{ border: "none" }} onClick={() => handleFilter()}>
-      <FaFilter className="me-2" /> Filter
-    </Button>
+          {/* Filter Button */}
+          <Button variant="secondary" style={{ border: "none" }} onClick={() => handleFilter()}>
+            <FaFilter className="me-2" /> Filter
+          </Button>
 
-    {/* Export Report Button */}
-    <Button variant="secondary" style={{ border: "none" }} onClick={() => handleExport()}>
-      <FaDownload className="me-2" /> Export Report
-    </Button>
-  </div>
-</div>
+          {/* Export Report Button */}
+          <Button variant="secondary" style={{ border: "none" }} onClick={() => handleExport()}>
+            <FaDownload className="me-2" /> Export Report
+          </Button>
+        </div>
+      </div>
 
 
       {/* Tabs for Different Reports */}
@@ -337,7 +337,7 @@ const handleExport = () => {
                       <tr>
                         <th>Stage</th>
                         <th>Count</th>
-                      
+
                       </tr>
                     </thead>
                     <tbody>
@@ -347,22 +347,22 @@ const handleExport = () => {
                             <tr>
                               <td>New Inquiry</td>
                               <td>{item.total_inquiries}</td>
-                           
+
                             </tr>
                             <tr>
                               <td>Document Collection</td>
                               <td>{item.completed_tasks}</td>
-                           
+
                             </tr>
                             <tr>
                               <td>University Application</td>
                               <td>{item.completed_tasks}</td>
-                         
+
                             </tr>
                             <tr>
                               <td>Offer Received</td>
                               <td>{item.total_inquiries}</td>
-                             
+
                             </tr>
                           </>
                         )
