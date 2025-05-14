@@ -1,20 +1,26 @@
-import React, { useEffect, useState } from "react";
+ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import api from "../../interceptors/axiosInterceptor";
 import "./ChatBox.css"; // Make sure to import the CSS file
+import BASE_URL from "../../Config";
 
 const ChatList = ({ userId }) => {
   const [chatList, setChatList] = useState([]);
   const [userDetails, setUserDetails] = useState({}); // State to store user details (name, id, photo)
+  const [counselors, setCounselors] = useState([]);
   const navigate = useNavigate();
+  const role = localStorage.getItem("login");
 
   // Fetch chat list on component mount
   useEffect(() => {
     const fetchChatList = async () => {
       try {
-        const response = await axios.get(`https://afsanaproject-production.up.railway.app/api/chats/getChatList/${userId}`);
+        const response = await axios.get(
+          `https://afsanaproject-production.up.railway.app/api/chats/getChatList/${userId}`
+        );
         if (response.data.success) {
+          console.log("chatList",response.data.chatList)
           setChatList(response.data.chatList);
 
           // Fetch user details (name and id) for each chat
@@ -33,16 +39,41 @@ const ChatList = ({ userId }) => {
     fetchChatList();
   }, [userId]);
 
+  // Fetch counselor list
+  useEffect(() => {
+    const fetchCounselors = async () => {
+      try {
+        const res = await api.get(`${BASE_URL}auth/getusersByRole/counselor`);
+        console.log(res.data)
+        setCounselors(res.data); // Store counselors data
+      } catch (err) {
+        console.error("Failed to fetch counselors", err);
+      }
+    };
+
+    fetchCounselors();
+  }, []);
+
   // Function to fetch user details (full_name, id, and photo) based on chatId
   const getUserDetails = async (chatId) => {
     let [first, second] = chatId.split("_");
     first = parseInt(first);
     second = parseInt(second);
+    let id1 ="" 
+    if(userId==first){
+      id1=second }
+    else{ 
+      id1 = first
+     }
 
     try {
-      const response = await api.get(`auth/getUser/${second}`); // Fetch user by receiverId (second part of chatId)
+      const response = await api.get(`auth/getUser/${id1}`); // Fetch user by receiverId (second part of chatId)
       if (response.data.user) {
-        return { full_name: response.data.user.full_name, id: response.data.user.id, profile_photo: response.data.user.photo };
+        return {
+          full_name: response.data.user.full_name,
+          id: response.data.user.id,
+          profile_photo: response.data.user.photo,
+        };
       }
     } catch (err) {
       console.error("Error fetching user data:", err.message);
@@ -54,9 +85,44 @@ const ChatList = ({ userId }) => {
     navigate(`/chat/${chatId}`);
   };
 
+  const handleCounselorSelect = (e) => {
+    const counselorId = e.target.value;
+    if (counselorId) {
+      const selectedCounselor = counselors.find(
+        (counselor) => counselor.id === parseInt(counselorId)
+      );
+      // You can now open chat with the selected counselor
+      if (selectedCounselor) {
+        openChat(`${selectedCounselor.id}`);
+      }
+      else{
+        openChat("1");
+      }
+    }
+  };
+
   return (
-    <div >
+    <div>
       <h3>Your Chats</h3>
+      {/* Counselor Select dropdown */}
+      {role=="student"?<div className="counselor-select">
+        <label htmlFor="counselor-select">Choose a Counselor:</label>
+        <select id="counselor-select" onChange={handleCounselorSelect}>
+          <option value="">Select  to chat</option>
+          <option value="1">Admin</option>
+          {/* <option value="1"><button onClick={()=>{navigate("/chat/1")}}>Admin</button></option> */}
+          {counselors.length > 0 ? (
+            counselors.map((counselor) => (
+              <option key={counselor.id} value={counselor.id}>
+                {counselor.full_name}
+              </option>
+            ))
+          ) : (
+            <option disabled>Loading counselors...</option>
+          )}
+        </select>
+      </div>:""}
+
       {chatList.length > 0 ? (
         chatList.map((chat, index) => (
           <div
