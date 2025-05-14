@@ -11,6 +11,7 @@ const AdminPayments = () => {
   const [branchFilter, setBranchFilter] = useState("");
   const [countryFilter, setCountryFilter] = useState("");
   const [paymentMethodFilter, setPaymentMethodFilter] = useState("");
+  const [paymentTypeFilter, setPaymentTypeFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
   const [payments, setPayments] = useState([]);
@@ -128,6 +129,12 @@ const generatePDF = () => {
         paymentMethodFilter === "" ||
         item.payment_method === paymentMethodFilter ||
         item.payment_method_other === paymentMethodFilter
+    )
+    .filter(
+      (item) =>
+        paymentTypeFilter === "" ||
+        item.payment_type == paymentTypeFilter 
+        // item.payment_method_other === paymentMethodFilter
     );
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -203,6 +210,25 @@ const generatePDF = () => {
                   <option>Bank Transfer</option>
                   <option>Cash</option>
                   <option>Bank Deposit</option>
+                </Form.Select>
+              </Form.Group>
+            </Col>
+             <Col md={3}>
+              <Form.Group>
+                <Form.Label>Filter by Payment Type</Form.Label>
+                <Form.Select
+                  value={paymentTypeFilter}
+                  onChange={(e) => setPaymentTypeFilter(e.target.value)}
+                >
+                  <option value="">Select Payment Type</option>
+                <option>File Opening Charge</option>
+                <option>Application Fee</option>
+                <option>After Offer Letter Charge</option>
+                <option>Insurance Fee</option>
+                <option>Bank Statement</option>
+                <option>After Visa</option>
+                <option>Accommodation</option>
+                <option>Other</option>
                 </Form.Select>
               </Form.Group>
             </Col>
