@@ -96,9 +96,20 @@ const Navbar = ({ toggleSidebar }) => {
                   </div>
                   <ul className="notification-list">
                     {notifications.map((item) => (
-                      <li className="notification-item">
-                        {item.title}
-                      </li>
+                      <>
+
+                        <li className="notification-item">
+                          <div style={{ display: "flex", justifyContent: "space-between" }}>
+                            <div>
+                              {item.title}
+                            </div>
+                            <div>
+                              <span><strong>Due Date:</strong>  <br/>{item.due_date}</span>
+                            </div>
+                          </div>
+                        </li>
+
+                      </>
                     ))}
                   </ul>
                 </div>
