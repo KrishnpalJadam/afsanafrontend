@@ -123,6 +123,7 @@ const ChatBox = ({ userId }) => {
             <span>Chat with admin</span>
           ) : (
             <span>Chat with {localStorage.getItem("receiver_name")}</span>
+            //  <span></span>
           )}
         </div>
 
