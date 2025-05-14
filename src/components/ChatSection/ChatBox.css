@@ -179,3 +179,48 @@
 .chat-item p:empty {
   display: none;
 }
+.counselor-select {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  max-width: 400px;
+  width: 100%;
+}
+
+.counselor-select label {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #333;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.counselor-select select {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.counselor-select select:focus {
+  border-color: #38bdf8;
+  outline: none;
+}
+
+.counselor-select select option {
+  font-size: 1rem;
+}
+
+.counselor-select select option:disabled {
+  color: #aaa;
+}
+
+.counselor-select select option:hover {
+  background-color: #f0f0f0;
+}

@@ -84,7 +84,7 @@ const ChatList = ({ userId }) => {
   const openChat = (chatId) => {
     navigate(`/chat/${chatId}`);
   };
-
+   
   const handleCounselorSelect = (e) => {
     const counselorId = e.target.value;
     if (counselorId) {
@@ -105,23 +105,27 @@ const ChatList = ({ userId }) => {
     <div>
       <h3>Your Chats</h3>
       {/* Counselor Select dropdown */}
-      {role=="student"?<div className="counselor-select">
-        <label htmlFor="counselor-select">Choose a Counselor:</label>
-        <select id="counselor-select" onChange={handleCounselorSelect}>
-          <option value="">Select  to chat</option>
-          <option value="1">Admin</option>
-          {/* <option value="1"><button onClick={()=>{navigate("/chat/1")}}>Admin</button></option> */}
-          {counselors.length > 0 ? (
-            counselors.map((counselor) => (
-              <option key={counselor.id} value={counselor.id}>
-                {counselor.full_name}
-              </option>
-            ))
-          ) : (
-            <option disabled>Loading counselors...</option>
-          )}
-        </select>
-      </div>:""}
+      <div>
+  {role === "student" && (
+    <div className="counselor-select">
+      <label htmlFor="counselor-select">Choose Admin or Counselor to Chat:</label>
+      <select id="counselor-select" onChange={handleCounselorSelect}>
+        <option value="">Select to chat</option>
+        <option value="1">Admin</option>
+        {counselors.length > 0 ? (
+          counselors.map((counselor) => (
+            <option key={counselor.id} value={counselor.id}>
+              {counselor.full_name}
+            </option>
+          ))
+        ) : (
+          <option disabled>Loading counselors...</option>
+        )}
+      </select>
+    </div>
+  )}
+</div>
+
 
       {chatList.length > 0 ? (
         chatList.map((chat, index) => (
@@ -135,7 +139,7 @@ const ChatList = ({ userId }) => {
           >
             {/* Profile image with fallback */}
             <img
-              src={userDetails[chat.chatId]?.profile_photo || "https://via.placeholder.com/50"}
+              src={userDetails[chat.chatId]?.profile_photo || "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png"}
               alt="Profile"
               className="profile-img"
               crossorigin=""
