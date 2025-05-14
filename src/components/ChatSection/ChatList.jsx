@@ -93,7 +93,9 @@ const ChatList = ({ userId }) => {
       );
       // You can now open chat with the selected counselor
       if (selectedCounselor) {
-        openChat(`${selectedCounselor.id}`);
+        // console.log(selectedCounselor)
+        localStorage.setItem("receiver_name", selectedCounselor?.full_name);
+        openChat(`${selectedCounselor?.id}`);
       }
       else{
         openChat("1");
