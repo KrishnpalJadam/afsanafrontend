@@ -45,14 +45,14 @@ const Navbar = ({ toggleSidebar }) => {
     navigate("/");
   };
   const role = localStorage.getItem("login");
-  const handleChat = () => {
-    if (role == "student") {
-      navigate("/chat/1")
-    }
-    else {
-      navigate("/chatList")
-    }
-  }
+ const handleChat = ()=> {
+  // if(role=="student"){
+  //   navigate("/chat/1")
+  // }
+  // else {
+    navigate("/chatList")
+  // }
+ }
   return (
     <nav className="navbar shadow-lg" style={{ position: "fixed", backgroundColor: "white", color: "black", width: "100%" }}>
       <div className="container-fluid nav-conter">

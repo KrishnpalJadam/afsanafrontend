@@ -116,10 +116,10 @@ const ChatBox = ({ userId }) => {
 
   return (
     <div style={{ display: "flex" }}>
-      <div>{userId == 1 && <ChatList userId={userId} />}</div>
+      <div> <ChatList userId={userId} /></div>
       <div className="chat-container">
         <div className="chat-header">
-          {userId != 1 ? (
+          {userId == 1 ? (
             <span>Chat with admin</span>
           ) : (
             <span>Chat with {localStorage.getItem("receiver_name")}</span>
