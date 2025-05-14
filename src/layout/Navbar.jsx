@@ -1,14 +1,12 @@
- import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../layout/Navbar.css";
+import api from "../interceptors/axiosInterceptor";
+import BASE_URL from "../Config";
 
 const Navbar = ({ toggleSidebar }) => {
   const [showNotifications, setShowNotifications] = useState(false);
-  const [notifications, setNotifications] = useState([
-    "New message from John",
-    "Your application has been approved",
-    "Reminder: Meeting at 3 PM",
-  ]);
+  const [notifications, setNotifications] = useState([]);
 
   const [showChats, setShowChats] = useState(false);
   const [chats, setChats] = useState([
@@ -28,20 +26,34 @@ const Navbar = ({ toggleSidebar }) => {
     setShowNotifications(false); // Hide notifications if open
   };
 
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const response = await api.get(`remainder`);
+        console.log(response.data); // verify the data
+        setNotifications(response.data); // correct: storing data in state
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchNotifications();
+  }, []);
+
+
   const logout = () => {
     localStorage.clear();
     navigate("/");
   };
   const role = localStorage.getItem("login");
   console.log(role)
- const handleChat = ()=> {
-  if(role=="student"){
-    navigate("/chat/1")
+  const handleChat = () => {
+    if (role == "student") {
+      navigate("/chat/1")
+    }
+    else {
+      navigate("/chatList")
+    }
   }
-  else{
-    navigate("/chatList")
-  }
- }
   return (
     <nav className="navbar shadow-lg" style={{ position: "fixed", backgroundColor: "white", color: "black", width: "100%" }}>
       <div className="container-fluid nav-conter">
@@ -84,9 +96,9 @@ const Navbar = ({ toggleSidebar }) => {
                     </button>
                   </div>
                   <ul className="notification-list">
-                    {notifications.map((notification, index) => (
-                      <li key={index} className="notification-item">
-                        {notification}
+                    {notifications.map((item) => (
+                      <li className="notification-item">
+                        {item.title}
                       </li>
                     ))}
                   </ul>
@@ -95,19 +107,19 @@ const Navbar = ({ toggleSidebar }) => {
             </div>
 
             {/* Chat Section */}
-            <div className="chat-icon-section" style={{marginBottom:"10px"}}>
+            <div className="chat-icon-section" style={{ marginBottom: "10px" }}>
               {/* <a
                 className="chat-icon"
                 href="#"
                 style={{ color: "black" }}
                 onClick={toggleChats}
               > */}
-              <button  style={{backgroundColor:"#fff", color:"#000", height:'10px', width:'', marginBottom:"10px"}}
-              
-              onClick={handleChat}
+              <button style={{ backgroundColor: "#fff", color: "#000", height: '10px', width: '', marginBottom: "10px" }}
+
+                onClick={handleChat}
               ><i className="fa-regular fa-message"></i></button>
-                
-                {/* {chats.length > 0 && (
+
+              {/* {chats.length > 0 && (
                   <span className="chat-badge">{chats.length}</span>
                 )}
               </a> */}

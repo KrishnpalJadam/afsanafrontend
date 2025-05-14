@@ -72,7 +72,7 @@ const ChatList = ({ userId }) => {
               src={userDetails[chat.chatId]?.profile_photo || "https://via.placeholder.com/50"}
               alt="Profile"
               className="profile-img"
-              crossOrigin=""
+              crossorigin=""
             />
             <div className="chat-details">
               <p className="user-name">{userDetails[chat.chatId]?.full_name || "Loading..."}</p>
