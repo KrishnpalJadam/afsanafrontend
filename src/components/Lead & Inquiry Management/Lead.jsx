@@ -14,7 +14,7 @@ const Lead = () => {
   const [currentLeadId, setCurrentLeadId] = useState(null);
   const [counselors, setCounselors] = useState([]);
 const [currentPage, setCurrentPage] = useState(1);
-const itemsPerPage = 5;
+const itemsPerPage = 10;
 
   const [newLead, setNewLead] = useState({
     name: "",

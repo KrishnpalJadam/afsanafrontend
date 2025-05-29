@@ -13,10 +13,23 @@ const ApplicationDetails = () => {
   // Fetch application data
   const fetchApplication = async () => {
     try {
+      // Try fetching by application ID
       const res = await api.get(`application/${id}`);
       setApplication(res.data);
     } catch (error) {
-      console.error("Error fetching application", error);
+      console.warn("First API failed, trying studentApplication...", error?.response?.data || error);
+
+      try {
+        // Try fetching by student ID
+        const fallback = await api.get(`studentApplication/${id}`);
+        if (Array.isArray(fallback.data)) {
+          setApplication(fallback.data[0]); // extract first item if array
+        } else {
+          setApplication(fallback.data);
+        }
+      } catch (secondError) {
+        console.error("Second API failed:", secondError?.response?.data || secondError);
+      }
     } finally {
       setLoading(false);
     }
@@ -74,61 +87,81 @@ const ApplicationDetails = () => {
               <th>View</th>
             </tr>
           </thead>
-      <tbody>
-  {Object.entries(application).map(([key, value], index) => {
-    // Skip meta fields
-    if (["id", "student_id", "student_name", "university_name", "university_id", "registration_date", "application_submission_date"].includes(key)) {
-      return null;
-    }
+          <tbody>
+            {Object.entries(application).slice(0, 47).map(([key, value], index) => {
+              // Skip meta fields
+              if (["id", "student_id", "student_name", "university_name", "university_id", "registration_date", "application_submission_date"].includes(key)) {
+                return null;
+              }
 
-    // Format label nicely
-    const label = key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+              // Format label nicely
+              const label = key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
 
-    // List of fields considered as documents (you can extend this list as needed)
-    const documentFields = [
-      "accommodation_proof", "airplane_ticket_booking", "appendix_form_completed", "bank_statement",
-      "birth_certificate", "conditional_offer_letter", "english_language_proof", "europass_cv",
-      "european_photo", "fee_confirmation_document", "final_university_offer_letter", "final_offer_letter",
-      "financial_support_declaration", "health_insurance", "invoice_with_conditional_offer",
-      "motivation_letter", "passport_copy_prepared", "police_clearance_certificate",
-      "previous_studies_certificates", "proof_of_income", "proof_of_relationship",
-      "residence_permit_form", "travel_insurance", "tuition_fee_transfer_proof"
-    ];
+              // List of fields considered as documents (you can extend this list as needed)
+              const documentFields = [
+                "accommodation_proof", "airplane_ticket_booking", "appendix_form_completed", "bank_statement",
+                "birth_certificate", "conditional_offer_letter", "english_language_proof", "europass_cv",
+                "european_photo", "fee_confirmation_document", "final_university_offer_letter", "final_offer_letter",
+                "financial_support_declaration", "health_insurance", "invoice_with_conditional_offer",
+                "motivation_letter", "passport_copy_prepared", "police_clearance_certificate",
+                "previous_studies_certificates", "proof_of_income", "proof_of_relationship",
+                "residence_permit_form", "travel_insurance", "tuition_fee_transfer_proof",
+              ];
 
-    const isDocument = documentFields.includes(key);
+              const isDocument = documentFields.includes(key);
 
-    return (
-      <tr key={key}>
-        <td>{index + 1}</td>
-        <td>{label}</td>
-        <td>
-          {isDocument ? (
-            value && value.includes("uploads") ? (
-              <Badge bg="success">
-                <FaCheckCircle /> Completed
-              </Badge>
-            ) : (
-              <Badge bg="warning text-dark">
-                <FaTimesCircle /> Pending
-              </Badge>
-            )
-          ) : (
-            value || "-"
-          )}
-        </td>
-        <td>
-          {isDocument && value && value.includes("uploads") ? (
-            <a href={value} target="_blank" rel="noreferrer">
-              <FaFilePdf /> View
-            </a>
-          ) : (
-            "-"
-          )}
-        </td>
-      </tr>
-    );
-  })}
-</tbody>
+              return (
+                <tr key={key}>
+                  <td>{index + 1}</td>
+                  <td>{label}</td>
+                  <td>
+                    {isDocument ? (
+                      value && value.includes("uploads") ? (
+                        <Badge bg="success">
+                          <FaCheckCircle /> Completed
+                        </Badge>
+                      ) : (
+                        <Badge bg="warning text-dark">
+                          <FaTimesCircle /> Pending
+                        </Badge>
+                      )
+                    ) : (() => {
+                      // Convert value to readable label
+                      let label =
+                        (key === "flight_booking_confirmed" && (value == "1" ? "Confirmed" : "Pending")) ||
+                        (key === "online_enrollment_completed" && (value == "1" ? "Completed" : "Pending")) ||
+                        (key === "accommodation_confirmation" && (value == "1" ? "Received" : "Pending")) ||
+                        (key === "Application_stage" && (value == "1" ? "Completed" : "Pending")) ||
+                        (key === "Interview" && (value == "1" ? "Done" : "Pending")) ||
+                        (key === "Visa_process" && (value == "1" ? "Started" : "Pending")) ||
+                        value;
+
+                      // Set badge color
+                      let badgeVariant =
+                        label === "Confirmed" || label === "Completed" || label === "Received" || label === "Done" || label === "Started"
+                          ? "success"
+                          : label === "Pending"
+                            ? "warning text-dark"
+                            : "secondary";
+
+                      return <Badge bg={badgeVariant}>{label}</Badge>;
+                    })()}
+                  </td>
+
+
+                  <td>
+                    {isDocument && value && value.includes("uploads") ? (
+                      <a href={value} target="_blank" rel="noreferrer">
+                        <FaFilePdf /> View
+                      </a>
+                    ) : (
+                      "-"
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
 
         </Table>
       </Card>

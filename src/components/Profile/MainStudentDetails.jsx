@@ -14,7 +14,8 @@ import {
 import api from "../../interceptors/axiosInterceptor";
 import BASE_URL from "../../Config";
 import { hasPermission } from "../../authtication/permissionUtils";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { FaAnglesRight } from "react-icons/fa6";
 
 const Profile = () => {
   const [student, setStudent] = useState(null);
@@ -42,13 +43,13 @@ const Profile = () => {
                 alt="Student Photo" crossorigin="anonymous"
                 style={{ height: "150px", width: "150px", objectFit: "cover", borderRadius: "50%" }}
               />
-             
+
             </Col>
             <Col md={10} className="text-center mt-3">
               <h3>{student?.full_name}</h3>
               <p>Email: {student?.email}</p>
               <p>Phone: {student?.mobile_number}</p>
-              <Button variant="outline-primary" size="sm" disabled={!hasPermission("Student Details","add")} onClick={()=>{navigate("/profile")}}>
+              <Button variant="outline-primary" size="sm" disabled={!hasPermission("Student Details", "add")} onClick={() => { navigate("/profile") }}>
                 Edit Profile
               </Button>
             </Col>
@@ -62,34 +63,40 @@ const Profile = () => {
             <Card.Body>
               <Row>
                 <Col md={6}>
-                  <strong>Date of Birth:</strong> {student?.date_of_birth}
+                  <strong>Id no:</strong> {student?.id_no}
                 </Col>
                 <Col md={6}>
+                  <strong>Admision No.:</strong> {student?.admission_no}
+                </Col>
+                <Col md={6} className="mt-2">
+                  <strong>Date of Birth:</strong> {student?.date_of_birth}
+                </Col>
+                <Col md={6} className="mt-2">
                   <strong>Gender:</strong> {student?.gender}
                 </Col>
               </Row>
               <Row className="mt-2">
                 <Col md={6}>
-                  <strong>Nationality:</strong> Indian
+                  <strong>Father Name:</strong> {student?.father_name}
                 </Col>
                 <Col md={6}>
-                  <strong>Address:</strong> {"student"}
-                </Col>
-              </Row>
-              <Row className="mt-2">
-                <Col md={6}>
-                  <strong>Passport Number:</strong> N1234567
-                </Col>
-                <Col md={6}>
-                  <strong>Marital Status:</strong> Single
+                  <strong>Address:</strong> {student?.address}
                 </Col>
               </Row>
               <Row className="mt-2">
                 <Col md={6}>
-                  <strong>Alternate Email:</strong> sanjana.alt@email.com
+                  <strong>Category:</strong> {student?.category}
                 </Col>
                 <Col md={6}>
-                  <strong>Emergency Contact:</strong> +91 98765 11122
+                  <strong>DOB:</strong> {student?.date_of_birth}
+                </Col>
+              </Row>
+              <Row className="mt-2">
+                <Col md={6}>
+                  <strong>Alternate Email:</strong> {student?.email}
+                </Col>
+                <Col md={6}>
+                  <strong>Emergency Contact:</strong> {student?.mobile_number}
                 </Col>
               </Row>
             </Card.Body>
@@ -97,7 +104,7 @@ const Profile = () => {
         </Tab>
 
         {/* Academic Info */}
-        <Tab eventKey="academic" title="Education">
+        {/* <Tab eventKey="academic" title="Education">
           <Card className="mb-4">
             <Card.Body>
               <Row>
@@ -142,11 +149,11 @@ const Profile = () => {
               </Row>
             </Card.Body>
           </Card>
-        </Tab>
+        </Tab> */}
 
         {/* Documents */}
 
-        <Tab eventKey="documents" title="Documents">
+        {/* <Tab eventKey="documents" title="Documents">
           <Row>
             {[
               { title: "Passport", file: "Passport.pdf", status: "✅" },
@@ -181,10 +188,10 @@ const Profile = () => {
               Upload More
             </Button>
           </div>
-        </Tab>
+        </Tab> */}
 
         {/* Preferences */}
-        <Tab eventKey="preferences" title="Study Preferences">
+        {/* <Tab eventKey="preferences" title="Study Preferences">
           <Card className="mb-4">
             <Card.Body>
               <Row>
@@ -222,8 +229,12 @@ const Profile = () => {
               </Row>
             </Card.Body>
           </Card>
-        </Tab>
+        </Tab> */}
       </Tabs>
+      <div  className="text-center">
+
+      <Link className="btn btn-primary" to="/myapplication">More Details <FaAnglesRight className="ms-2" /></Link>
+      </div>
     </Container>
   );
 };

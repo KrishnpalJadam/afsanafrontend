@@ -22,7 +22,7 @@ const AdminStatus = () => {
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 30;
 
   useEffect(() => {
     const fetchLeads = async () => {
@@ -75,6 +75,9 @@ const AdminStatus = () => {
   const indexOfFirstLead = indexOfLastLead - itemsPerPage;
   const currentLeads = displayLeads.slice(indexOfFirstLead, indexOfLastLead);
   const totalPages = Math.ceil(displayLeads.length / itemsPerPage);
+  useEffect(() => {
+    handleFilter();
+  }, [searchTerm, filterStatus, filterSource]);
 
   return (
     <Container fluid className="py-3">
@@ -83,22 +86,19 @@ const AdminStatus = () => {
       <div className="d-flex justify-content-between mb-3 pt-3">
         <div className="d-flex gap-2">
           <InputGroup>
-            <InputGroup.Text>
-              <FaSearch />
-            </InputGroup.Text>
             <Form.Control
               type="text"
               placeholder="Search leads..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleFilter();
+                }
+              }}
             />
           </InputGroup>
-          <Button variant="outline-secondary" onClick={handleFilter}>
-            Apply Filters
-          </Button>
-          <Button variant="outline-secondary" onClick={handleResetFilter}>
-            Reset Filters
-          </Button>
         </div>
       </div>
 

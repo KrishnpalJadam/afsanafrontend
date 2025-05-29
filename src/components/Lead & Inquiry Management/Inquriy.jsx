@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-import { Table, Button, Form, Badge, Modal, Pagination, Row, Col,} from "react-bootstrap";
+import { Table, Button, Form, Badge, Modal, Pagination, Row, Col, } from "react-bootstrap";
 import BASE_URL from "../../Config";
 import Swal from 'sweetalert2';
 import { ToastContainer, toast } from 'react-toastify';
@@ -17,7 +17,7 @@ const Inquiry = () => {
   const [showFollowUpModal, setShowFollowUpModal] = useState(false);
   const [showInquiryDetailsModal, setInquiryDetailsModal] = useState(false);
   const [selectedInquiry, setSelectedInquiry] = useState(null);
-  const [searchQuery, setSearchQuery]  = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   // State for new inquiry form data
   const [newInquiry, setNewInquiry] = useState({
@@ -43,14 +43,14 @@ const Inquiry = () => {
     },
     preferredCountries: [],
   });
-  const [councolerid,setCouncolerId]= useState("")
-  
-  useEffect(()=>{
-    const is_id=localStorage.getItem("user_id")
-    if(is_id){
+  const [councolerid, setCouncolerId] = useState("")
+
+  useEffect(() => {
+    const is_id = localStorage.getItem("user_id")
+    if (is_id) {
       setCouncolerId(is_id)
     }
-  },[])
+  }, [])
   // State for new follow-up form data
   const [newFollowUp, setNewFollowUp] = useState({
     name: "",
@@ -156,38 +156,38 @@ const Inquiry = () => {
     });
   };
 
-   // Fetch inquiries when the component mounts
-// 🟢 Function outside
-const fetchInquiries = async () => {
-  try {
-    const response = await api.get(`inquiries`);
-    const allInquiries = response.data;
-    const userRole = localStorage.getItem("login");
+  // Fetch inquiries when the component mounts
+  // 🟢 Function outside
+  const fetchInquiries = async () => {
+    try {
+      const response = await api.get(`inquiries`);
+      const allInquiries = response.data;
+      const userRole = localStorage.getItem("login");
 
-    const filteredInquiries = userRole === "admin"
-      ? allInquiries
-      : allInquiries.filter(inquiry => inquiry.counselor_id == councolerid);
+      const filteredInquiries = userRole === "admin"
+        ? allInquiries
+        : allInquiries.filter(inquiry => inquiry.counselor_id == councolerid);
 
-    setInquiries((prev) => ({
-      ...prev,
-      todayInquiries: filteredInquiries,
-    }));
+      setInquiries((prev) => ({
+        ...prev,
+        todayInquiries: filteredInquiries,
+      }));
 
-  } catch (error) {
-    console.error("Error fetching inquiries:", error);
-  }
-};
+    } catch (error) {
+      console.error("Error fetching inquiries:", error);
+    }
+  };
 
-// 🔄 useEffect to call on mount / when councolerid changes
-useEffect(() => {
-  if (councolerid) {
-    fetchInquiries();
-  }
-}, [councolerid]);
+  // 🔄 useEffect to call on mount / when councolerid changes
+  useEffect(() => {
+    if (councolerid) {
+      fetchInquiries();
+    }
+  }, [councolerid]);
 
   const handleAddInquiry = async (e) => {
     e.preventDefault(); // Prevent form submission
-  
+
     const requestData = {
       counselor_id: councolerid,
       inquiry_type: newInquiry.inquiryType,
@@ -209,11 +209,11 @@ useEffect(() => {
       job_duration: newInquiry.jobExperience.duration,
       preferred_countries: newInquiry.preferredCountries,
     };
-  
+
     try {
       // Send the request to the API
       const response = await api.post(`${BASE_URL}inquiries`, requestData);
-  
+
       if (response.status === 201) {
         // Show success message using SweetAlert
         Swal.fire({
@@ -234,6 +234,7 @@ useEffect(() => {
           confirmButtonText: 'Ok',
         }).then(() => {
           handleCloseInquiryModal();
+          setCurrentPage(1);
           fetchInquiries();
         });
       }
@@ -247,7 +248,7 @@ useEffect(() => {
       });
     }
   };
-  
+
 
   // Handle inquiry detail view
   const handleViewDetail = async (id) => {
@@ -279,7 +280,7 @@ useEffect(() => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentInquiries = (inquiries.todayInquiries || []).slice(indexOfFirstItem, indexOfLastItem);
-  
+
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
@@ -313,9 +314,10 @@ useEffect(() => {
           </tr>
         </thead>
         <tbody>
-          {currentInquiries?.map((inq,index) => (
+          {currentInquiries?.map((inq, index) => (
             <tr key={inq.id}>
-              <td>{index+1}</td>
+           <td>{indexOfFirstItem + index + 1}</td>
+
               <td>{inq.full_name}</td>
               <td>{inq.email}</td>
               <td>{inq.phone_number}</td>
@@ -336,12 +338,9 @@ useEffect(() => {
           ))}
         </tbody>
       </Table>
-      <Followup/>
-
-  
-      {/* <Pagination>
+      <Pagination className="justify-content-center mt-3">
         {Array.from({
-          length: Math.ceil(inquiries.todayFollowUps.length / itemsPerPage),
+          length: Math.ceil((inquiries.todayInquiries || []).length / itemsPerPage),
         }).map((_, index) => (
           <Pagination.Item
             key={index + 1}
@@ -351,9 +350,14 @@ useEffect(() => {
             {index + 1}
           </Pagination.Item>
         ))}
-      </Pagination> */}
+      </Pagination>
+      <Followup />
 
-  
+
+
+
+
+
 
       {/* Modal for Adding New Inquiry */}
       <Modal show={showInquiryModal}
@@ -398,22 +402,22 @@ useEffect(() => {
                 </Form.Group>
               </Col>
               <Col md={4}>
-              <Form.Group controlId="branch">
-  <Form.Label>Branch</Form.Label>
-  <Form.Select
-    name="branch"
-    value={newInquiry.branch}
-    onChange={handleInquiryInputChange}
-    required
-  >
-    <option value="">Select Branch</option>
-    {getData.map((item) => (
-      <option key={item.id} value={item.branch_name}>
-        {item.branch_name}
-      </option>
-    ))}
-  </Form.Select>
-</Form.Group>
+                <Form.Group controlId="branch">
+                  <Form.Label>Branch</Form.Label>
+                  <Form.Select
+                    name="branch"
+                    value={newInquiry.branch}
+                    onChange={handleInquiryInputChange}
+                    required
+                  >
+                    <option value="">Select Branch</option>
+                    {getData.map((item) => (
+                      <option key={item.id} value={item.branch_name}>
+                        {item.branch_name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
 
               </Col>
             </Row>
@@ -430,7 +434,7 @@ useEffect(() => {
                     name="name"
                     value={newInquiry.name}
                     onChange={handleInquiryInputChange}
-                    required/>
+                    required />
                 </Form.Group>
               </Col>
               <Col md={3}>
@@ -454,7 +458,7 @@ useEffect(() => {
                     name="email"
                     value={newInquiry.email}
                     onChange={handleInquiryInputChange}
-                    required/>
+                    required />
                 </Form.Group>
               </Col>
               <Col md={3}>
@@ -466,7 +470,7 @@ useEffect(() => {
                     name="course"
                     value={newInquiry.course}
                     onChange={handleInquiryInputChange}
-                    required/>
+                    required />
                 </Form.Group>
               </Col>
             </Row>
@@ -492,7 +496,7 @@ useEffect(() => {
                     name="city"
                     value={newInquiry.city}
                     onChange={handleInquiryInputChange}
-                    required/>
+                    required />
                 </Form.Group>
               </Col>
               <Col md={4}>
@@ -503,7 +507,7 @@ useEffect(() => {
                     name="dateOfInquiry"
                     value={newInquiry.dateOfInquiry}
                     onChange={handleInquiryInputChange}
-                    required/>
+                    required />
                 </Form.Group>
               </Col>
             </Row>
@@ -517,7 +521,7 @@ useEffect(() => {
                     name="address"
                     value={newInquiry.address}
                     onChange={handleInquiryInputChange}
-                    required/>
+                    required />
                 </Form.Group>
               </Col>
               <Col md={6}>
@@ -570,7 +574,7 @@ useEffect(() => {
                         handleCheckboxChange(
                           "englishProficiency",
                           skill,
-                          e.target.checked)}/>
+                          e.target.checked)} />
                   )
                 )}
               </Col>
@@ -600,13 +604,13 @@ useEffect(() => {
                     placeholder="Job Title"
                     value={newInquiry.jobExperience.jobTitle}
                     onChange={(e) =>
-                      handleJobExpChange("jobTitle", e.target.value)}/>
+                      handleJobExpChange("jobTitle", e.target.value)} />
                 </Form.Group>
               </Col>
               <Col md={4}>
                 <Form.Group controlId="duration">
                   <Form.Label>Duration</Form.Label>
-                  <Form.Control  type="text"
+                  <Form.Control type="text"
                     placeholder="e.g., 2 years"
                     value={newInquiry.jobExperience.duration}
                     onChange={(e) =>
@@ -652,139 +656,139 @@ useEffect(() => {
         </Modal.Body>
       </Modal>
       <Modal
-  show={showInquiryDetailsModal}
-  onHide={() => setInquiryDetailsModal(false)}
-  centered
-  size="lg">
-  <Modal.Header closeButton>
-    <Modal.Title>Inquiry Details</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    {selectedInquiry && (
-      <div>
-        <h5>Personal Information</h5>
-        <Row className="mb-3">
-          <Col md={6}>
-            <p>
-              <strong>Name:</strong> {selectedInquiry.full_name}
-            </p>
-          </Col>
-          <Col md={6}>
-            <p>
-              <strong>Email:</strong> {selectedInquiry.email}
-            </p>
-          </Col>
-        </Row>
-        <Row className="mb-3">
-          <Col md={6}>
-            <p>
-              <strong>Phone:</strong> {selectedInquiry.phone_number}
-            </p>
-          </Col>
-          <Col md={6}>
-            <p>
-              <strong>City:</strong> {selectedInquiry.city}
-            </p>
-          </Col>
-        </Row>
-        <Row className="mb-3">
-          <Col md={6}>
-            <p>
-              <strong>Country:</strong> {selectedInquiry.country}
-            </p>
-          </Col>
-          <Col md={6}>
-            <p>
-              <strong>Inquiry Date:</strong>{" "}
-              {new Date(selectedInquiry.date_of_inquiry).toLocaleDateString()}
-            </p>
-          </Col>
-        </Row>
-        <Row className="mb-3">
-          <Col md={6}>
-            <p>
-              <strong>Address:</strong> {selectedInquiry.address}
-            </p>
-          </Col>
-          <Col md={6}>
-            <p>
-              <strong>Present Address:</strong>{" "}
-              {selectedInquiry.present_address}
-            </p>
-          </Col>
-        </Row>
+        show={showInquiryDetailsModal}
+        onHide={() => setInquiryDetailsModal(false)}
+        centered
+        size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>Inquiry Details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedInquiry && (
+            <div>
+              <h5>Personal Information</h5>
+              <Row className="mb-3">
+                <Col md={6}>
+                  <p>
+                    <strong>Name:</strong> {selectedInquiry.full_name}
+                  </p>
+                </Col>
+                <Col md={6}>
+                  <p>
+                    <strong>Email:</strong> {selectedInquiry.email}
+                  </p>
+                </Col>
+              </Row>
+              <Row className="mb-3">
+                <Col md={6}>
+                  <p>
+                    <strong>Phone:</strong> {selectedInquiry.phone_number}
+                  </p>
+                </Col>
+                <Col md={6}>
+                  <p>
+                    <strong>City:</strong> {selectedInquiry.city}
+                  </p>
+                </Col>
+              </Row>
+              <Row className="mb-3">
+                <Col md={6}>
+                  <p>
+                    <strong>Country:</strong> {selectedInquiry.country}
+                  </p>
+                </Col>
+                <Col md={6}>
+                  <p>
+                    <strong>Inquiry Date:</strong>{" "}
+                    {new Date(selectedInquiry.date_of_inquiry).toLocaleDateString()}
+                  </p>
+                </Col>
+              </Row>
+              <Row className="mb-3">
+                <Col md={6}>
+                  <p>
+                    <strong>Address:</strong> {selectedInquiry.address}
+                  </p>
+                </Col>
+                <Col md={6}>
+                  <p>
+                    <strong>Present Address:</strong>{" "}
+                    {selectedInquiry.present_address}
+                  </p>
+                </Col>
+              </Row>
 
-        <h5 className="mt-4">Education & Background</h5>
-        <Row className="mb-3">
-          <Col md={12}>
-            <p>
-              <strong>Education:</strong>{" "}
-              {selectedInquiry.education_background.join(", ")}
-            </p>
-          </Col>
-        </Row>
-        <Row className="mb-3">
-          <Col md={12}>
-            <p>
-              <strong>English Proficiency:</strong>{" "}
-              {selectedInquiry.english_proficiency.join(", ")}
-            </p>
-          </Col>
-        </Row>
+              <h5 className="mt-4">Education & Background</h5>
+              <Row className="mb-3">
+                <Col md={12}>
+                  <p>
+                    <strong>Education:</strong>{" "}
+                    {selectedInquiry.education_background.join(", ")}
+                  </p>
+                </Col>
+              </Row>
+              <Row className="mb-3">
+                <Col md={12}>
+                  <p>
+                    <strong>English Proficiency:</strong>{" "}
+                    {selectedInquiry.english_proficiency.join(", ")}
+                  </p>
+                </Col>
+              </Row>
 
-        {selectedInquiry.job_title && (
-          <>
-            <h5 className="mt-4">Job Experience</h5>
-            <Row className="mb-3">
-              <Col md={4}>
-                <p>
-                  <strong>Company:</strong> {selectedInquiry.company_name}
-                </p>
-              </Col>
-              <Col md={4}>
-                <p>
-                  <strong>Job Title:</strong> {selectedInquiry.job_title}
-                </p>
-              </Col>
-              <Col md={4}>
-                <p>
-                  <strong>Duration:</strong> {selectedInquiry.job_duration}
-                </p>
-              </Col>
-            </Row>
-          </>
-        )}
+              {selectedInquiry.job_title && (
+                <>
+                  <h5 className="mt-4">Job Experience</h5>
+                  <Row className="mb-3">
+                    <Col md={4}>
+                      <p>
+                        <strong>Company:</strong> {selectedInquiry.company_name}
+                      </p>
+                    </Col>
+                    <Col md={4}>
+                      <p>
+                        <strong>Job Title:</strong> {selectedInquiry.job_title}
+                      </p>
+                    </Col>
+                    <Col md={4}>
+                      <p>
+                        <strong>Duration:</strong> {selectedInquiry.job_duration}
+                      </p>
+                    </Col>
+                  </Row>
+                </>
+              )}
 
-        <h5 className="mt-4">Preferences</h5>
-        <Row className="mb-3">
-          <Col md={6}>
-            <p>
-              <strong>Course:</strong> {selectedInquiry.course_name}
-            </p>
-          </Col>
-          <Col md={6}>
-            <p>
-              <strong>Source:</strong> {selectedInquiry.source}
-            </p>
-          </Col>
-        </Row>
-        <Row className="mb-3">
-          <Col md={12}>
-            <p>
-              <strong>Preferred Countries:</strong>{" "}
-              {selectedInquiry.preferred_countries.join(", ")}
-            </p>
-          </Col>
-        </Row>
-      </div>
-    )}
-  </Modal.Body>
-  <Modal.Footer>
-    <Button variant="secondary" onClick={() => setShowInquiryModal(false)}>
-      Close
-    </Button>
-  </Modal.Footer>
-</Modal>
+              <h5 className="mt-4">Preferences</h5>
+              <Row className="mb-3">
+                <Col md={6}>
+                  <p>
+                    <strong>Course:</strong> {selectedInquiry.course_name}
+                  </p>
+                </Col>
+                <Col md={6}>
+                  <p>
+                    <strong>Source:</strong> {selectedInquiry.source}
+                  </p>
+                </Col>
+              </Row>
+              <Row className="mb-3">
+                <Col md={12}>
+                  <p>
+                    <strong>Preferred Countries:</strong>{" "}
+                    {selectedInquiry.preferred_countries.join(", ")}
+                  </p>
+                </Col>
+              </Row>
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowInquiryModal(false)}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
 
 

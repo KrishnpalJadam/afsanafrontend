@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import {  Container,  Button,  Table,  Form,  Modal,  Badge,  InputGroup,} from "react-bootstrap";
+import { Container, Button, Table, Form, Modal, Badge, InputGroup, } from "react-bootstrap";
 import { FaSearch, FaPlus, FaEdit, FaTrash, FaEye } from "react-icons/fa";
 import BASE_URL from "../../Config"; // Assuming BASE_URL is already set
 import api from "../../interceptors/axiosInterceptor";
@@ -13,8 +13,8 @@ const LeadCouncelor = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentLeadId, setCurrentLeadId] = useState(null);
   const [counselors, setCounselors] = useState([]);
-const [currentPage, setCurrentPage] = useState(1);
-const itemsPerPage = 5;
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   const [newLead, setNewLead] = useState({
     name: "",
@@ -31,15 +31,19 @@ const itemsPerPage = 5;
 
   // Search & Filter States
   const [searchTerm, setSearchTerm] = useState("");
+  const counsolerId = localStorage.getItem("counselor_id")
   // Fetch Leads
   const fetchLeads = async () => {
     try {
-      const response = await api.get(`${BASE_URL}lead`);
+      const response = await api.get(`${BASE_URL}lead/counselor/${counsolerId}`);
       setLeads(response.data);
     } catch (error) {
       console.error("Error fetching leads:", error);
     }
   };
+
+
+
 
   // Fetch Leads initially
   useEffect(() => {
@@ -76,7 +80,7 @@ const itemsPerPage = 5;
       name: "",
       phone: "",
       email: "",
-      counselor: "", // Ensure this matches your API field
+      counselor: counsolerId, // Ensure this matches your API field
       follow_up_date: "",
       notes: "",
       preferred_countries: "",
@@ -161,10 +165,10 @@ const itemsPerPage = 5;
     setShowViewModal(false);
     setSelectedLead(null);
   };
-const indexOfLastLead = currentPage * itemsPerPage;
-const indexOfFirstLead = indexOfLastLead - itemsPerPage;
-const currentLeads = filteredLeads.slice(indexOfFirstLead, indexOfLastLead);
-const totalPages = Math.ceil(filteredLeads.length / itemsPerPage);
+  const indexOfLastLead = currentPage * itemsPerPage;
+  const indexOfFirstLead = indexOfLastLead - itemsPerPage;
+  const currentLeads = filteredLeads.slice(indexOfFirstLead, indexOfLastLead);
+  const totalPages = Math.ceil(filteredLeads.length / itemsPerPage);
 
   return (
     <Container fluid className="py-3">
@@ -241,25 +245,25 @@ const totalPages = Math.ceil(filteredLeads.length / itemsPerPage);
           )}
         </tbody>
       </Table>
-{totalPages > 1 && (
-  <nav className="mt-3">
-    <ul className="pagination justify-content-center">
-      <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-        <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>Previous</button>
-      </li>
+      {totalPages > 1 && (
+        <nav className="mt-3">
+          <ul className="pagination justify-content-center">
+            <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+              <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>Previous</button>
+            </li>
 
-      {[...Array(totalPages)].map((_, index) => (
-        <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
-          <button className="page-link" onClick={() => setCurrentPage(index + 1)}>{index + 1}</button>
-        </li>
-      ))}
+            {[...Array(totalPages)].map((_, index) => (
+              <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+                <button className="page-link" onClick={() => setCurrentPage(index + 1)}>{index + 1}</button>
+              </li>
+            ))}
 
-      <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-        <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
-      </li>
-    </ul>
-  </nav>
-)}
+            <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+              <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
+            </li>
+          </ul>
+        </nav>
+      )}
 
       {/* View Lead Details Modal */}
       <Modal show={showViewModal} onHide={handleCloseViewModal} centered>
@@ -338,7 +342,7 @@ const totalPages = Math.ceil(filteredLeads.length / itemsPerPage);
                 </Form.Group>
               </div>
 
-              <div className="col-md-6">
+              {/* <div className="col-md-6">
                 <Form.Group className="mb-3">
                   <Form.Label>Counselor</Form.Label>
                   <Form.Select name="counselor" value={newLead.counselor} onChange={handleInputChange}>
@@ -355,7 +359,7 @@ const totalPages = Math.ceil(filteredLeads.length / itemsPerPage);
                   </Form.Select>
                 </Form.Group>
 
-              </div>
+              </div> */}
 
               <div className="col-md-6">
                 <Form.Group className="mb-3">

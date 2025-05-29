@@ -1,4 +1,4 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Container,
   Table,
@@ -12,20 +12,21 @@ import {
 } from "react-bootstrap";
 import BASE_URL from "../../Config";
 import api from "../../interceptors/axiosInterceptor";
+import Swal from "sweetalert2";
 
 const AdminTaskManager = () => {
-  const [tasks ,setTasks] = useState([])  
- const [studentdata, setStudentsData] = useState([]);
-   const [counselors, setCounselors] = useState([]);
-   const [currentPage, setCurrentPage] = useState(1);
-const itemsPerPage = 10;
+  const [tasks, setTasks] = useState([])
+  const [studentdata, setStudentsData] = useState([]);
+  const [counselors, setCounselors] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
-const totalPages = Math.ceil(tasks.length / itemsPerPage);
+  const totalPages = Math.ceil(tasks.length / itemsPerPage);
 
-const paginatedTasks = tasks.slice(
-  (currentPage - 1) * itemsPerPage,
-  currentPage * itemsPerPage
-);
+  const paginatedTasks = tasks.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -47,21 +48,21 @@ const paginatedTasks = tasks.slice(
         console.error("Failed to fetch counselors", err);
       }
     };
-  
+
     fetchCounselors();
   }, []);
-  
- const fetchTasks = async () => {
-  try {
-    const response = await api.get(`${BASE_URL}task`);
-    setTasks(response.data);
-  } catch (error) {
-    console.log(error);
-  }
-};
-useEffect(() => {
-  fetchTasks();
-}, []);
+
+  const fetchTasks = async () => {
+    try {
+      const response = await api.get(`${BASE_URL}task`);
+      setTasks(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    fetchTasks();
+  }, []);
 
   const [form, setForm] = useState({
     student: "",
@@ -88,13 +89,13 @@ useEffect(() => {
   const handleSave = async () => {
     if (!form.student || !form.title || !form.due) return;
 
-    const user_id = localStorage.getItem("user_id"); // Assuming user_id is available in localStorage
+    const user_id = localStorage.getItem("user_id");
 
     const taskData = {
       title: form.title,
       user_id,
       due_date: form.due,
-      counselor_id: form.counselor, // dynamic counselor_id
+      counselor_id: form.counselor,
       student_id: form.student,
       description: form.description,
       priority: form.priority,
@@ -106,25 +107,18 @@ useEffect(() => {
       finishing_date: form.finishingDate,
       attachment: form.attachment,
     };
-    
+
     try {
-      const response = await api.post(`${BASE_URL}task`, taskData, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-   
-    
-      // After successful POST, update the state with the new task
-      if (response.ok) {
-        setTasks([
-          ...tasks,
-          {
-            id: Date.now(),
-            ...taskData, // Adding the task data to the state
-            status: "pending",
-          },
-        ]);
+      const response = await api.post(`${BASE_URL}task`, taskData);
+
+      if (response.status === 201 || response.status === 200) {
+        await fetchTasks(); // ✅ Get updated data from server
+
+        Swal.fire({
+          icon: "success",
+          title: "Task Created!",
+          text: "The task was successfully assigned.",
+        });
 
         setForm({
           student: "",
@@ -140,15 +134,20 @@ useEffect(() => {
           finishingDate: "",
           attachment: "",
         });
+
         setEditId(null);
-        setShowModal(false);
-      } else {
-        console.error("Failed to create task:", data);
+        setShowModal(false); // ✅ Close modal
       }
     } catch (error) {
       console.error("Error occurred while posting the task:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Oops!",
+        text: "Task creation failed. Please try again.",
+      });
     }
   };
+
 
   const handleEdit = (task) => {
     setForm({
@@ -170,22 +169,22 @@ useEffect(() => {
   };
 
   const handleDelete = (id) => {
-    const deleteTask =  async () => {
-       try {
-         const response = await fetch(`${BASE_URL}task/${id}`, {
-           method: "DELETE",
-         });
-         const data = await response.json();
-         if (response.ok) {
-           setTasks(tasks.filter((task) => task.id !== id));
-         } else {
-           console.error("Failed to delete task:", data);
-         }
-       } catch (error) {
-         console.error("Error occurred while deleting the task:", error);
-       }
-     }
-     deleteTask();
+    const deleteTask = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}task/${id}`, {
+          method: "DELETE",
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setTasks(tasks.filter((task) => task.id !== id));
+        } else {
+          console.error("Failed to delete task:", data);
+        }
+      } catch (error) {
+        console.error("Error occurred while deleting the task:", error);
+      }
+    }
+    deleteTask();
   };
 
 
@@ -216,81 +215,81 @@ useEffect(() => {
                 <th>Actions</th>
               </tr>
             </thead>
-   <tbody>
-  {paginatedTasks.map((task, index) => (
-    <tr key={task?.id}>
-      <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-      <td>{task?.student_name}</td>
-      <td>{task?.title}</td>
-      <td>{new Date(task?.due_date).toLocaleDateString()}</td>
-      <td>
-        <Badge
-          bg={
-            task?.status === "completed"
-              ? "success"
-              : task?.status === "pending"
-              ? "warning"
-              : "secondary"
-          }
-        >
-          {task?.status === "completed" ? "Completed" : "Pending"}
-        </Badge>
-      </td>
-      <td>
-        <Button
-          variant="primary"
-          size="sm"
-          className="me-1"
-          onClick={() => handleEdit(task)}
-        >
-          Edit
-        </Button>
-        <Button
-          variant="danger"
-          size="sm"
-          onClick={() => handleDelete(task?.id)}
-        >
-          Delete
-        </Button>
-      </td>
-    </tr>
-  ))}
+            <tbody>
+              {paginatedTasks.map((task, index) => (
+                <tr key={task?.id}>
+                  <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                  <td>{task?.student_name}</td>
+                  <td>{task?.title}</td>
+                  <td>{new Date(task?.due_date).toLocaleDateString()}</td>
+                  <td>
+                    <Badge
+                      bg={
+                        task?.status === "completed"
+                          ? "success"
+                          : task?.status === "pending"
+                            ? "warning"
+                            : "secondary"
+                      }
+                    >
+                      {task?.status === "completed" ? "Completed" : "Pending"}
+                    </Badge>
+                  </td>
+                  <td>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      className="me-1"
+                      onClick={() => handleEdit(task)}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => handleDelete(task?.id)}
+                    >
+                      Delete
+                    </Button>
+                  </td>
+                </tr>
+              ))}
 
-  {tasks.length === 0 && (
-    <tr>
-      <td colSpan="6" className="text-center">No tasks assigned yet.</td>
-    </tr>
-  )}
-</tbody>
+              {tasks.length === 0 && (
+                <tr>
+                  <td colSpan="6" className="text-center">No tasks assigned yet.</td>
+                </tr>
+              )}
+            </tbody>
 
           </Table>
         </Card.Body>
       </Card>
-<div className="mt-4 d-flex justify-content-center">
-  <nav>
-    <ul className="pagination">
-      <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-        <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>
-          &laquo;
-        </button>
-      </li>
+      <div className="mt-4 d-flex justify-content-center">
+        <nav>
+          <ul className="pagination">
+            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+              <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>
+                &laquo;
+              </button>
+            </li>
 
-      {[...Array(totalPages)].map((_, i) => (
-        <li key={i} className={`page-item ${currentPage === i + 1 ? "active" : ""}`}>
-          <button className="page-link" onClick={() => setCurrentPage(i + 1)}>
-            {i + 1}
-          </button>
-        </li>
-      ))}
+            {[...Array(totalPages)].map((_, i) => (
+              <li key={i} className={`page-item ${currentPage === i + 1 ? "active" : ""}`}>
+                <button className="page-link" onClick={() => setCurrentPage(i + 1)}>
+                  {i + 1}
+                </button>
+              </li>
+            ))}
 
-      <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-        <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>
-          &raquo;
-        </button>
-      </li>
-    </ul>
-  </nav>
-</div>
+            <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+              <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>
+                &raquo;
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </div>
 
       {/* Add/Edit Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)} size="lg" centered>
@@ -325,34 +324,34 @@ useEffect(() => {
               <Col md={6}>
                 <Form.Label>Counselor *</Form.Label>
                 <Form.Select
-  name="counselor"
-  value={form.counselor}
-  onChange={handleChange}
->
-  <option value="">Select Counselor</option>
-  {counselors.map((counselor) => (
-    <option key={counselor.id} value={counselor.id}>
-      {counselor.full_name}
-    </option>
-  ))}
-</Form.Select>
+                  name="counselor"
+                  value={form.counselor}
+                  onChange={handleChange}
+                >
+                  <option value="">Select Counselor</option>
+                  {counselors.map((counselor) => (
+                    <option key={counselor.id} value={counselor.id}>
+                      {counselor.full_name}
+                    </option>
+                  ))}
+                </Form.Select>
 
               </Col>
               <Col md={6}>
-  <Form.Label>Student *</Form.Label>
-  <Form.Select
-  name="student"
-  value={form.student}
-  onChange={handleChange}
->
-  <option value="">Select Student</option>
-  {studentdata.map((student) => (
-    <option key={student.id} value={student.id}>
-      {student.full_name}
-    </option>
-  ))}
-</Form.Select>
-</Col>
+                <Form.Label>Student *</Form.Label>
+                <Form.Select
+                  name="student"
+                  value={form.student}
+                  onChange={handleChange}
+                >
+                  <option value="">Select Student</option>
+                  {studentdata.map((student) => (
+                    <option key={student.id} value={student.id}>
+                      {student.full_name}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Col>
 
             </Row>
 

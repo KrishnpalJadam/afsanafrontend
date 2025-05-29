@@ -8,6 +8,7 @@ import moment from "moment";
 const fetchTasks = async (setTasks) => {
   try {
     const response = await api.get(`${BASE_URL}task`);
+    
     setTasks(response.data);
   } catch (error) {
     console.error("Error fetching tasks:", error);

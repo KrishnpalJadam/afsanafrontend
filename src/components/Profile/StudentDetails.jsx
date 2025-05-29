@@ -16,25 +16,25 @@ const StudentDetails = () => {
   // const [selectedSection, setSelectedSection] = useState(""); // State for selected section
   const [student, setStudentsData] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
-const [editStudentId, setEditStudentId] = useState(null);
-const [universities, setUniversities] = useState([]);
- 
-// Fetch universities
-useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const response = await api.get(`${BASE_URL}universities`);
-      setUniversities(response.data); // Ensure the data is passed correctly
-    } catch (error) {
-      console.log("Error fetching universities:", error);
-    }
-  };
-  fetchData();
-}, []);
+  const [editStudentId, setEditStudentId] = useState(null);
+  const [universities, setUniversities] = useState([]);
+
+  // Fetch universities
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await api.get(`${BASE_URL}universities`);
+        setUniversities(response.data); // Ensure the data is passed correctly
+      } catch (error) {
+        console.log("Error fetching universities:", error);
+      }
+    };
+    fetchData();
+  }, []);
   const user_id = localStorage.getItem("user_id")
   const [formData, setFormData] = useState({
     user_id: user_id,
-    student_name: "",
+    full_name: "",
     father_name: "",
     admission_no: "",
     id_no: "",
@@ -44,7 +44,7 @@ useEffect(() => {
     gender: "",
     category: "",
     address: "",
-    full_name: "",
+   
     role: "student",
     password: "",
     email: ""
@@ -57,7 +57,7 @@ useEffect(() => {
     setIsEditing(false);
     setFormData({
       user_id: "",
-      student_name: "",
+      full_name: "",
       father_name: "",
       admission_no: "",
       id_no: "",
@@ -67,7 +67,7 @@ useEffect(() => {
       gender: "",
       category: "",
       address: "",
-      full_name: "",
+     
       role: "",
       password: "",
       email: "",
@@ -80,22 +80,22 @@ useEffect(() => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const formPayload = new FormData();
     for (const key in formData) {
       formPayload.append(key, formData[key]);
     }
-  
+
     if (photo) formPayload.append("photo", photo);
     documents.forEach((doc) => formPayload.append("documents", doc));
-  
+
     const url = isEditing
       ? `${BASE_URL}auth/updateStudent/${editStudentId}`
       : `${BASE_URL}auth/createStudent`;
-  
+
     const method = isEditing ? "put" : "post";
-   
-    
+
+
     try {
       const res = await api({
         method,
@@ -103,11 +103,11 @@ useEffect(() => {
         data: formPayload,
         headers: { "Content-Type": "multipart/form-data" },
       });
-  
+
       alert(isEditing ? "Student updated" : "Student created");
       setFormData({
-        user_id:  user_id,
-        student_name: "",
+        user_id: user_id,
+        full_name: "",
         father_name: "",
         admission_no: "",
         id_no: "",
@@ -117,7 +117,7 @@ useEffect(() => {
         gender: "",
         category: "",
         address: "",
-        full_name: "",
+      
         role: "student",
         password: "",
         email: "",
@@ -129,18 +129,18 @@ useEffect(() => {
       setShow(false);
       document.getElementById("studentFormModal").classList.remove("show");
       document.getElementById("studentFormModal").style.display = "none";
-  
+
       // Reload students
       const { data } = await api.get(`${BASE_URL}auth/getAllStudents`);
       setStudentsData(data);
       window.location.reload(true);
-  
+
     } catch (err) {
       console.error("Error:", err);
       alert("Submission failed");
     }
   };
-  
+
   useEffect(() => {
     const fetchStudents = async () => {
       try {
@@ -156,28 +156,32 @@ useEffect(() => {
   }, [])
 
   const handleDelete = (id) => {
-    const deleteTask =  async () => {
-       try {
-         const response = await fetch(`${BASE_URL}auth/deleteStudent/${id}`, {
-           method: "DELETE",
-         });
-         const data = await response.json();
-         if (response.ok) {
-           setStudentsData(student.filter((task) => task.id !== id));
-         } else {
-           console.error("Failed to delete task:", data);
-         }
-       } catch (error) {
-         console.error("Error occurred while deleting the task:", error);
-       }
-     }
-     deleteTask();
+    const deleteTask = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}auth/deleteStudent/${id}`, {
+          method: "DELETE",
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setStudentsData(student.filter((task) => task.id !== id));
+        } else {
+          console.error("Failed to delete task:", data);
+        }
+      } catch (error) {
+        console.error("Error occurred while deleting the task:", error);
+      }
+    }
+    deleteTask();
   };
-  const filtered_student = student.filter((item)=>{
-       return item?.full_name.toLowerCase().includes(searchQuery.toLowerCase())
-  })
-  
- 
+  const filtered_student = student.filter((item) => {
+    const matchesSearch = item?.full_name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesUniversity = selectedCourse === "" || item?.university_id == selectedCourse;
+    return matchesSearch && matchesUniversity;
+  });
+
+
+
+
   return (
     <div className="container pt-3">
       <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -204,11 +208,11 @@ useEffect(() => {
           >
             <option value="">All University</option>
             {
-              universities?.map((item)=>{
-       return <option key={item?.id} value={item?.id}>{item?.name}</option>
+              universities?.map((item) => {
+                return <option key={item?.id} value={item?.id}>{item?.name}</option>
               })
             }
-            
+
           </select>
         </div>
 
@@ -224,11 +228,7 @@ useEffect(() => {
           />
         </div>
 
-        <div className="col-md-2 d-flex">
-          <button className="btn btn-secondary mt-4 w-100" style={{ backgroundColor: "gray", border: "none" }}>
-            <i className="fas fa-search"></i> Search
-          </button>
-        </div>
+
       </div>
 
       <ul className="nav nav-tabs mt-4">
@@ -272,7 +272,7 @@ useEffect(() => {
           <tbody>
             {filtered_student?.map((student, index) => (
               <tr key={index} className="text-nowrap">
-                  <td>{index+1}</td>
+                <td>{index + 1}</td>
                 <td>
                   <Link
                     to={{
@@ -300,21 +300,21 @@ useEffect(() => {
                     ☰
                   </button> */}
                   <button className="btn btn-light btn-sm me-1"
-                  onClick={() => {
-                    setFormData({
-                      ...student
-                    });
-                    setEditStudentId(student.id);
-                    setIsEditing(true);
-                    setPhoto(null);
-                    setDocuments([]);
-                    setShow(true);
-                    document.getElementById("studentFormModal").classList.add("show");
-                    document.getElementById("studentFormModal").style.display = "block";
-                  }}
-                  
+                    onClick={() => {
+                      setFormData({
+                        ...student
+                      });
+                      setEditStudentId(student.id);
+                      setIsEditing(true);
+                      setPhoto(null);
+                      setDocuments([]);
+                      setShow(true);
+                      document.getElementById("studentFormModal").classList.add("show");
+                      document.getElementById("studentFormModal").style.display = "block";
+                    }}
+
                   >✎</button>
-                  <button className="btn btn-light btn-sm me-1" onClick={()=>{handleDelete(student?.id)}}> <FaTrash /></button>
+                  <button className="btn btn-light btn-sm me-1" onClick={() => { handleDelete(student?.id) }}> <FaTrash /></button>
                 </td>
               </tr>
             ))}
@@ -322,7 +322,7 @@ useEffect(() => {
         </table>
       </div>
 
-       <>
+      <>
         {/* Modal */}
         <div
           className="modal fade"
@@ -346,7 +346,7 @@ useEffect(() => {
                   data-bs-dismiss="modal"
                   aria-label="Close"
                   onClick={resetForm}
-                
+
                 />
               </div>
               <div className="modal-body">
@@ -361,9 +361,9 @@ useEffect(() => {
                         className="form-control student-form-input"
                         id="studentName"
                         placeholder="Enter student name"
-                        value={formData.student_name}
+                        value={formData.full_name}
                         onChange={(e) =>
-                          setFormData({ ...formData, student_name: e.target.value, full_name: e.target.value })
+                          setFormData({ ...formData, full_name: e.target.value, full_name: e.target.value })
                         }
                       />
                     </div>
@@ -465,11 +465,11 @@ useEffect(() => {
 
                           Select university
                         </option>
-                          {universities ?.map((uni) => (
-                            <option key={uni.id} value={uni.id}>
-                              {uni.name}
-                            </option>
-                          ))}
+                        {universities?.map((uni) => (
+                          <option key={uni.id} value={uni.id}>
+                            {uni.name}
+                          </option>
+                        ))}
                       </select>
                     </div>
                     <div className="col-md-6 student-form-group">
@@ -578,21 +578,21 @@ useEffect(() => {
                         type="button"
                         className="btn student-form-btn student-form-btn-secondary"
                         data-bs-dismiss="modal"
-                         onClick={resetForm}
+                        onClick={resetForm}
                       >
                         Cancel
                       </button>
-                        {isEditing==true?<button
+                      {isEditing == true ? <button
                         type="submit"
                         className="btn student-form-btn btn-primary"
                       >
                         update
-                      </button>:<button
-                          type="submit"
-                          className="btn student-form-btn btn-primary"
-                        >
-                          Submit
-                          </button>}
+                      </button> : <button
+                        type="submit"
+                        className="btn student-form-btn btn-primary"
+                      >
+                        Submit
+                      </button>}
                     </div>
                   </div>
                 </form>

@@ -98,7 +98,7 @@ useEffect(() => {
             conditionalOfferLetter: applicationData.conditional_offer_letter,
             invoiceWithOfferLetter: applicationData.invoice_with_conditional_offer,
             tuitionFeeTransferProof: applicationData.tuition_fee_transfer_proof,
-            finalOfferLetter: applicationData.final_offer_letter,
+            finalOfferLetter: applicationData.final_university_offer_letter,
             offerLetterServiceCharge: applicationData.offer_letter_service_charge_paid,
             universityOfferLetterReceived: applicationData.university_offer_letter_received,
             appendixFormCompleted: applicationData.appendix_form_completed,

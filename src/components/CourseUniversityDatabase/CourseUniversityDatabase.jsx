@@ -40,7 +40,7 @@ ChartJS.register(
   ArcElement
 );
 
-const Reports = () => {
+const CourseUniversityDatabase = () => {
   const [dateRange, setDateRange] = useState("last30");
   const [activeTab, setActiveTab] = useState("overview");
 
@@ -51,76 +51,74 @@ const Reports = () => {
 
 
 
-  const counselorPerformance = {
-    labels: ["John Smith", "Emma Wilson", "Michael Brown", "Sarah Davis"],
-    datasets: [
-      {
-        label: "Conversion Rate (%)",
-        data: [75, 68, 82, 71],
-        backgroundColor: "rgba(54, 162, 235, 0.5)",
-      },
-    ],
-  };
-
-
-  const popularCourses = {
-    labels: [
-      "Computer Science",
-      "Business Admin",
-      "Engineering",
-      "Medicine",
-      "Law",
-    ],
-    datasets: [
-      {
-        label: "Applications",
-        data: [65, 59, 80, 81, 56],
-        backgroundColor: "rgba(75, 192, 192, 0.5)",
-      },
-    ],
-  };
 
 
 
   useEffect(() => {
     const fetchOverview = async () => {
       try {
-        const responce = await api.get(`overview`);
-
-        setOverview([responce.data])
+        const response = await api.get(`overview?range=${dateRange}`);
+        setOverview([response.data]);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-    }
-    fetchOverview()
-  }, [])
+    };
+    fetchOverview();
+  }, [dateRange]); // Re-run when dateRange changes
+
 
   useEffect(() => {
     const fetchPerfomance = async () => {
       try {
-        const responce1 = await api.get(`counselorPerformance`);
-
-        setPerfomance(responce1.data)
+        const response1 = await api.get(`counselorPerformance?range=${dateRange}`);
+        setPerfomance(response1.data);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-    }
-    fetchPerfomance()
-  }, [])
+    };
+    fetchPerfomance();
+  }, [dateRange]);
+
+  useEffect(() => {
+    const fetchApplication = async () => {
+      try {
+        const response2 = await api.get(`applicationPipline?range=${dateRange}`);
+        setApplication([response2.data]);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchApplication();
+  }, [dateRange]);
+
 
 
   useEffect(() => {
     const fetchApplication = async () => {
       try {
-        const responce2 = await api.get(`applicationPipline`);
-
-        setApplication([responce2.data])
+        const response2 = await api.get(`applicationPipline?range=${dateRange}`);
+        setApplication([response2.data]);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-    }
-    fetchApplication()
-  }, [])
+    };
+    fetchApplication();
+  }, [dateRange]);
+  const exportCSV = (data, filename = "report.csv") => {
+    const headers = Object.keys(data[0]);
+    const rows = data.map(obj => headers.map(header => `"${obj[header]}"`).join(','));
+    const csvContent = [headers.join(','), ...rows].join('\n');
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
 
 
@@ -133,11 +131,16 @@ const Reports = () => {
     // For example, re-fetch data using the dateRange
   };
 
-  // Function to handle export functionality
   const handleExport = () => {
-    console.log("Exporting the report...");
-    // Logic to export the current report data
-    // You can implement exporting as a CSV, Excel, PDF, or any other format you prefer.
+    if (activeTab === "overview" && overview.length > 0) {
+      exportCSV(overview, "overview_report.csv");
+    } else if (activeTab === "counselors" && perfomance.result?.length > 0) {
+      exportCSV(perfomance.result, "counselor_performance.csv");
+    } else if (activeTab === "trends" && application.length > 0) {
+      exportCSV(application, "application_pipeline.csv");
+    } else {
+      console.warn("Nothing to export or unsupported tab.");
+    }
   };
 
   return (
@@ -188,11 +191,11 @@ const Reports = () => {
                       <Card.Body>
                         <h6 className="text-muted">Total Inquiries</h6>
                         <h3>{item.total_inquiries}</h3>
-                        <div className="mt-3">
+                        {/* <div className="mt-3">
                           <small className="text-success">
                             ↑ 12.5% vs last period
                           </small>
-                        </div>
+                        </div> */}
                       </Card.Body>
                     </Card>
                   </Col>
@@ -203,7 +206,18 @@ const Reports = () => {
                         <h6 className="text-muted">Active Applications</h6>
                         <h3>{item.total_Active_Applications}</h3>
                         <div className="mt-3">
-                          <small className="text-danger">↓ 2.1% vs last period</small>
+                          {/* <small className="text-danger">↓ 2.1% vs last period</small> */}
+                        </div>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                  <Col xs={12} md={6} lg={3}>
+                    <Card className="h-100">
+                      <Card.Body>
+                        <h6 className="text-muted">Comlete Applications</h6>
+                        <h3>{item.total_fulfill_Applications}</h3>
+                        <div className="mt-3">
+                          {/* <small className="text-danger">↓ 2.1% vs last period</small> */}
                         </div>
                       </Card.Body>
                     </Card>
@@ -241,7 +255,7 @@ const Reports = () => {
         {/* Counselor Performance Tab */}
         <Tab eventKey="counselors" title="Counselor Performance">
           <Row className="g-4">
-            <Col xs={12}>
+            {/* <Col xs={12}>
               <Card>
                 <Card.Body>
                   <h5 className="mb-4">Conversion Rate by Counselor</h5>
@@ -259,7 +273,7 @@ const Reports = () => {
                   />
                 </Card.Body>
               </Card>
-            </Col>
+            </Col> */}
           </Row>
 
           <Row className="mt-4">
@@ -268,9 +282,9 @@ const Reports = () => {
                 <Card.Body>
                   <div className="d-flex justify-content-between align-items-center mb-4">
                     <h5 className="mb-0">Detailed Performance Metrics</h5>
-                    <Button variant="secondary" size="sm" style={{ border: "none" }}>
+                    {/* <Button variant="secondary" size="sm" style={{ border: "none" }}>
                       <FaDownload className="me-2" /> Export
-                    </Button>
+                    </Button> */}
                   </div>
                   <Table responsive hover>
                     <thead>
@@ -306,25 +320,7 @@ const Reports = () => {
         {/* Application Trends Tab */}
         <Tab eventKey="trends" title="Application Trends">
           <Row className="g-4">
-            <Col xs={12}>
-              <Card>
-                <Card.Body>
-                  <h5 className="mb-4">Popular Courses</h5>
-                  <Bar
-                    data={popularCourses}
-                    options={{
-                      responsive: true,
-                      plugins: {
-                        legend: {
-                          display: false,
-                        },
-                      },
-                    }}
-                    height={100}
-                  />
-                </Card.Body>
-              </Card>
-            </Col>
+
           </Row>
 
           <Row className="mt-4">
@@ -383,4 +379,4 @@ const Reports = () => {
   );
 };
 
-export default Reports;
+export default CourseUniversityDatabase;

@@ -63,7 +63,7 @@ const AdminUniversity = ({ university }) => {
                 objectFit: "cover",
                 padding: "5px",
               }}
-             
+
             />
 
 
@@ -110,9 +110,14 @@ const AdminUniversity = ({ university }) => {
             </div>
           </div>
 
-          <Link to={"/university"} className="btn btn-primary w-100">
-            Apply Now
-          </Link>
+
+          {role != "admin" && (
+            <div>
+              <Link to={"/university"} className="btn btn-primary w-100">
+                Apply Now
+              </Link>
+            </div>
+          )}
           {role === "admin" && (
             <div>
               <Button variant="danger" onClick={() => handleDeleteUniversity(university.id)} className="mt-2 w-100">

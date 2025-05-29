@@ -18,59 +18,6 @@ const Payment = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [payments, setPayments] = useState([])
-
-  const duePayments = [
-    {
-      id: 1,
-      description: "Tuition Fee - Semester 1",
-      amount: "$1,200",
-      dueDate: "2025-06-15",
-    },
-    {
-      id: 2,
-      description: "Application Processing Fee",
-      amount: "$150",
-      dueDate: "2025-06-30",
-    },
-  ];
-
-  const paidTransactions = [
-    {
-      id: 1,
-      description: "Registration Fee",
-      amount: "$100",
-      paidOn: "2025-04-01",
-    },
-    {
-      id: 2,
-      description: "Library Deposit",
-      amount: "$50",
-      paidOn: "2025-04-05",
-    },
-  ];
-
-  const upcomingDeadlines = [
-    { id: 1, task: "Pay Visa Fee", deadline: "2025-07-01" },
-    { id: 2, task: "Pay Hostel Fee", deadline: "2025-08-01" },
-  ];
-
-  const handlePayNow = (payment) => {
-    setSelectedPayment(payment);
-    setShowModal(true);
-  };
-
-  const handleDownload = (item) => {
-    alert(`Receipt downloaded for: ${item.description}`);
-  };
-
-  const getCountdown = (deadline) => {
-    const now = new Date();
-    const target = new Date(deadline);
-    const diff = target - now;
-    if (diff <= 0) return "⚠️ Deadline passed";
-    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-    return `⏳ ${days} day(s) remaining`;
-  };
   const user = JSON.parse(localStorage.getItem("login_detail"))
   const fetchPayments = async (email) => {
     try {
@@ -100,7 +47,7 @@ const Payment = () => {
             className="mb-3"
           >
             {/* Due Payments Tab */}
-            <Tab eventKey="due" title="Due Payments">
+            <Tab eventKey="due" title="Payments">
               <Table striped bordered hover responsive>
                 <thead>
                   <tr>
@@ -153,7 +100,7 @@ const Payment = () => {
             </Tab>
 
             {/* Paid Transactions Tab */}
-            <Tab eventKey="paid" title="Paid Transactions">
+            {/* <Tab eventKey="paid" title="Paid Transactions">
               <Table striped bordered hover responsive>
                 <thead>
                   <tr>
@@ -184,10 +131,10 @@ const Payment = () => {
                   ))}
                 </tbody>
               </Table>
-            </Tab>
+            </Tab> */}
 
             {/* Upcoming Deadlines Tab */}
-            <Tab eventKey="upcoming" title="Upcoming Deadlines">
+            {/* <Tab eventKey="upcoming" title="Upcoming Deadlines">
               <Table striped bordered hover responsive>
                 <thead>
                   <tr>
@@ -212,7 +159,7 @@ const Payment = () => {
                   ))}
                 </tbody>
               </Table>
-            </Tab>
+            </Tab> */}
           </Tabs>
         </Card.Body>
       </Card>
