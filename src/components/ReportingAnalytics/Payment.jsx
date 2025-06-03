@@ -9,7 +9,6 @@ import {
   Modal,
   Alert,
 } from "react-bootstrap";
-import { hasPermission } from "../../authtication/permissionUtils";
 import api from "../../interceptors/axiosInterceptor";
 import BASE_URL from "../../Config";
 
@@ -17,13 +16,23 @@ const Payment = () => {
   const [key, setKey] = useState("due");
   const [showModal, setShowModal] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState(null);
-  const [payments, setPayments] = useState([])
-  const user = JSON.parse(localStorage.getItem("login_detail"))
-  const fetchPayments = async (email) => {
+  const [payments, setPayments] = useState([]);
+  const [dedline, setdedline] = useState([]);
+  const [paidTransactions, setpaidTransactions] = useState([]);
+
+  // Static data for Upcoming Deadlines tab
+
+  const user = JSON.parse(localStorage.getItem("login_detail"));
+  const studentId = localStorage.getItem("student_id")
+  console.log(studentId)
+  const fetchPayments = async () => {
     try {
-      const response = await api.get(`${BASE_URL}payments/${email}`);
+      const response = await api.get(`${BASE_URL}paymentsbyid/${studentId}`);
+
       if (response?.data) {
-        setPayments(response.data); // Storing the fetched payments in the state
+        const filterPay = response?.data?.filter((res) => res.payment_status !== "paid")
+        setPayments(response?.data);
+        setpaidTransactions(filterPay)
       }
     } catch (error) {
       console.error("Error fetching payments:", error);
@@ -31,9 +40,57 @@ const Payment = () => {
   };
 
 
+  const statusUpdate = async (payment) => {
+    try {
+      // Backend patch call
+      console.log("payment", payment)
+      await api.patch(`${BASE_URL}payment_status/${payment.id}`, {
+        payment_status: "paid",
+      });
+
+
+      setPaidTransactions((prev) => [
+        ...prev,
+        {
+          id: payment.id,
+          description: payment.additional_notes || "Payment",
+          amount: `$${payment.total}`,
+          paidOn: new Date().toLocaleDateString(),
+        },
+      ]);
+
+      alert("Payment status updated to Paid.");
+    } catch (error) {
+      console.error(error);
+      alert("Failed to update payment status.");
+    }
+  };
+
+
   useEffect(() => {
-    fetchPayments(user?.email);
-  }, []);
+    if (user?.email) fetchPayments(user.email);
+  }, [user?.email]);
+
+  // Helper function for countdown (example)
+  const getCountdown = (deadline) => {
+    const now = new Date();
+    const end = new Date(deadline);
+    const diff = end - now;
+
+    if (diff <= 0) return "Deadline passed";
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+
+    return `${days}d ${hours}h ${minutes}m left`;
+  };
+
+  // Dummy handler for download button
+  const handleDownload = (item) => {
+    alert(`Downloading receipt for: ${item.description}`);
+  };
+
   return (
     <Container className="mt-4">
       <h3 className="mb-4">Payments & Transactions</h3>
@@ -52,47 +109,35 @@ const Payment = () => {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Student</th>
                     <th>Email</th>
-                    <th>university</th>
-                    <th>Country</th>
-                    <th>Payment method</th>
-                    {/* <th>Amount</th> */}
-                    {/* <th>Due Date</th> */}
-                    <th>Payment Proof</th>
+                    <th>Description</th>
+
+                    <th>Amount</th>
+                    <th>Due Date</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {payments?.map((item, index) => (
+                  {paidTransactions?.map((item, index) => (
                     <tr key={index}>
                       <td>{index + 1}</td>
-                      <td>{item?.name}</td>
                       <td>{item?.email}</td>
-                      <td>{item?.university}</td>
-                      <td>{item?.country}</td>
-                      <td>{item?.payment_method}</td>
+                      <td>{item?.additional_notes}</td>
 
-                      {/* <td>{item?.amount}</td>
-                      <td>{item?.dueDate}</td> */}
+                      <td>{item?.total}</td>
+                      <td>{item?.payment_date}</td>
                       <td>
-                        {item.photo?.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
-                          <img
-                            style={{ width: "100px", height: "100px" }}
-                            src={item.photo}
-                            alt=""
-                            crossorigin=""
-                          />
-                        ) : (
-                          <a
-                            href={item.photo}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="btn btn-sm btn-primary"
-                          >
-                            View File
-                          </a>
-                        )}
+                        <button className="btn btn-primary me-3">View Details</button>
+                        <button
+                          className="btn btn-success"
+                          onClick={() => statusUpdate(item)}
+                        >
+                          Pay now
+                        </button>
+
                       </td>
+
+
                     </tr>
                   ))}
                 </tbody>
@@ -100,24 +145,26 @@ const Payment = () => {
             </Tab>
 
             {/* Paid Transactions Tab */}
-            {/* <Tab eventKey="paid" title="Paid Transactions">
+            <Tab eventKey="paid" title="Paid Transactions">
               <Table striped bordered hover responsive>
                 <thead>
                   <tr>
-                    <th>#</th>
-                    <th>University	</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Description</th>
                     <th>Amount</th>
                     <th>Paid On</th>
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {paidTransactions.map((item, index) => (
+                  {payments.map((item, index) => (
                     <tr key={index}>
-                      <td>{item.id}</td>
-                      <td>{item.description}</td>
-                      <td>{item.amount}</td>
-                      <td>{item.paidOn}</td>
+                      <td>{item.name}</td>
+                      <td>{item.email}</td>
+                      <td>{item.additional_notes}</td>
+                      <td>{item.total}</td>
+                      <td>{new Date(item.updated_at).toDateString()}</td>
                       <td>
                         <Button
                           variant="info"
@@ -131,10 +178,10 @@ const Payment = () => {
                   ))}
                 </tbody>
               </Table>
-            </Tab> */}
+            </Tab>
 
             {/* Upcoming Deadlines Tab */}
-            {/* <Tab eventKey="upcoming" title="Upcoming Deadlines">
+            <Tab eventKey="upcoming" title="Upcoming Deadlines">
               <Table striped bordered hover responsive>
                 <thead>
                   <tr>
@@ -145,21 +192,29 @@ const Payment = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {upcomingDeadlines.map((item, index) => (
-                    <tr key={index}>
-                      <td>{item.id}</td>
-                      <td>{item.task}</td>
-                      <td>{item.deadline}</td>
-                      <td>
-                        <Alert variant="warning" className="mb-0 py-1 px-2">
-                          {getCountdown(item.deadline)}
-                        </Alert>
-                      </td>
-                    </tr>
-                  ))}
+                 {payments
+  .filter(
+    (item) =>
+      new Date(item.payment_date) > new Date(item.created_at) && // payment_date created_at se badh
+      item.payment_status !== "paid" // status paid nahi hona chahiye
+  )
+  .map((item, index) => (
+    <tr key={index}>
+      <td>{item.id}</td>
+      <td>{item.additional_notes}</td>
+      <td>{new Date(item.payment_date).toLocaleString()}</td>
+      <td>
+        <Alert variant="warning" className="mb-0 py-1 px-2">
+          {getCountdown(item.payment_date)}
+        </Alert>
+      </td>
+    </tr>
+  ))}
+
                 </tbody>
               </Table>
-            </Tab> */}
+            </Tab>
+
           </Tabs>
         </Card.Body>
       </Card>

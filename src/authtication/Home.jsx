@@ -261,8 +261,11 @@ const App = () => {
             </Nav>
 
             <div className="d-flex align-items-center gap-3">
-              <Link to={"/login"} className="btn btn-gradient px-4 py-2">
+              <Link to="/login" className="btn btn-gradient px-4 py-2">
                 Log in
+              </Link>
+               <Link to="/signup" className="btn btn-gradient px-4 py-2">
+                Signup
               </Link>
               <Button
                 variant="outline-light"
