@@ -1,24 +1,31 @@
 
 import React, { useEffect, useState } from "react";
-import { Table, Button, Form, Badge, Modal, Pagination, Row, Col, } from "react-bootstrap";
+import { Table, Button, Form, Badge, Modal, Pagination, Row, Col, Dropdown, DropdownButton, DropdownItem } from "react-bootstrap";
 import BASE_URL from "../../Config";
 import Swal from 'sweetalert2';
 import { ToastContainer, toast } from 'react-toastify';
 import TodaysInqiury from "./TodaysInqiury";
 import Followup from "./Followup";
+import { MdDelete } from "react-icons/md";
 import api from "../../interceptors/axiosInterceptor";
 import { hasPermission } from "../../authtication/permissionUtils";
 const Inquiry = () => {
   // Sample inquiry data
-  const [inquiries, setInquiries] = useState({});
 
+  const [showAssignModal, setShowAssignModal] = useState(false);
   // State for modals
   const [showInquiryModal, setShowInquiryModal] = useState(false);
   const [showFollowUpModal, setShowFollowUpModal] = useState(false);
   const [showInquiryDetailsModal, setInquiryDetailsModal] = useState(false);
   const [selectedInquiry, setSelectedInquiry] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCounselor, setSelectedCounselor] = useState(null);
 
+  const [counselors, setCounselors] = useState([]); // Counselor list
+  const [inquiries, setInquiries] = useState([]); // Inquiries data
+  const role = localStorage.getItem("role");
+  console.log("details", role);
+  // console.log("login_detail", login_detail); 
   // State for new inquiry form data
   const [newInquiry, setNewInquiry] = useState({
     name: "",
@@ -156,27 +163,45 @@ const Inquiry = () => {
     });
   };
 
+
+  useEffect(() => {
+    const fetchCounselors = async () => {
+      try {
+        const res = await api.get(`${BASE_URL}counselor`);  // Fetch counselor data
+        setCounselors(res.data);  // Update the counselors state with data
+        console.log(selectedCounselor);
+      } catch (err) {
+        console.error("Failed to fetch counselors", err);
+      }
+    };
+    fetchCounselors();  // Call the function to fetch counselors
+  }, []);  // This runs only once when the component mounts
+
+
   // Fetch inquiries when the component mounts
   // 🟢 Function outside
+  // 🟢 Function to fetch inquiries
   const fetchInquiries = async () => {
     try {
-      const response = await api.get(`inquiries`);
+      const response = await api.get(`inquiries`); // Fetch inquiries from API
+
       const allInquiries = response.data;
-      const userRole = localStorage.getItem("login");
 
+      const userRole = localStorage.getItem("role"); // Get the user role (admin or counselor)
+      const userId = localStorage.getItem("user_id"); // Get the counselor ID
+
+      // If the user is an admin, fetch all inquiries, otherwise, filter by counselor_id
       const filteredInquiries = userRole === "admin"
-        ? allInquiries
-        : allInquiries.filter(inquiry => inquiry.counselor_id == councolerid);
+        ? allInquiries // Admin sees all inquiries
+        : allInquiries.filter(inquiry => inquiry.counselor_id === parseInt(userId)); // Counselor sees their assigned inquiries
 
-      setInquiries((prev) => ({
-        ...prev,
-        todayInquiries: filteredInquiries,
-      }));
+      setInquiries(filteredInquiries); // Update the inquiries state with the filtered inquiries
 
     } catch (error) {
-      console.error("Error fetching inquiries:", error);
+      console.error("Error fetching inquiries:", error); // Handle error
     }
   };
+
 
   // 🔄 useEffect to call on mount / when councolerid changes
   useEffect(() => {
@@ -249,6 +274,45 @@ const Inquiry = () => {
     }
   };
 
+  const handleOpenAssignModal = (inquiry) => {
+    setSelectedInquiry(inquiry);
+    setShowAssignModal(true); // Show the modal
+  };
+  const handleCloseAssignModal = () => {
+    setShowAssignModal(false);
+    setSelectedCounselor(null); // Reset selected counselor when closing modal
+  };
+
+
+  const handleAssignCounselor = async () => {
+    if (!selectedCounselor) {
+      alert("Please select a counselor.");
+      return;
+    }
+
+    try {
+      // Sending the selected counselor's ID along with the inquiry ID
+      const payload = {
+        inquiry_id: selectedInquiry.id,   // Inquiry ID
+        counselor_id: selectedCounselor.id,  // Sending the selected counselor's ID
+      };
+
+      // Call the API to assign the counselor to the inquiry
+      const response = await api.post(`${BASE_URL}assign-inquiry`, payload);
+
+      if (response.status === 200) {
+        alert("Counselor assigned successfully.");
+        setShowAssignModal(false);  // Close the modal
+        fetchInquiries();  // Optionally re-fetch inquiries
+      }
+    } catch (error) {
+      console.error("Error assigning counselor:", error);
+      alert("Failed to assign counselor.");
+    }
+  };
+
+
+
 
   // Handle inquiry detail view
   const handleViewDetail = async (id) => {
@@ -275,23 +339,167 @@ const Inquiry = () => {
       console.error("Error deleting inquiry:", error);
     }
   };
+  const handleShowAssignModal = (inquiry) => {
+    setSelectedInquiry(inquiry); // Set selected inquiry
+    setSelectedCounselor(null);  // Reset selected counselor on modal open
+    setShowAssignModal(true);    // Show the modal
+  };
 
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentInquiries = (inquiries.todayInquiries || []).slice(indexOfFirstItem, indexOfLastItem);
+  const currentInquiries = Array.isArray(inquiries?.todayInquiries)
+    ? inquiries.todayInquiries.slice(indexOfFirstItem, indexOfLastItem)
+    : [];
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+
+  const [selectedFilter, setSelectedFilter] = useState(null);
+  const [selectedStatus, setSelectedStatus] = useState(null);
+
+
+  // Handle the filter selection
+  const handleFilterSelect = (filter) => {
+    setSelectedFilter(filter);
+    console.log("Selected Filter: ", filter);
+  };
+
+  const handleStatusSelect = (status) => {
+    setSelectedStatus(status);
+    console.log("Selected Status: ", status);
+  };
   return (
     <div className="container mt-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Today's Inquiries</h2>
-        <div>
-          <Button variant="secondary" className="me-2" onClick={handleShowInquiryModal} style={{ border: "none" }} >
-            Add Inquiry </Button>
+        <div className="d-flex gap-3">
+          {/* Render 'Assign To' button only for admin */}
+          {role === "admin" && (
+            <div>
+              {/* <button
+                variant="primary"
+                className="me-2"
+                data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop"
+                style={{
+                  border: "none",
+                  height: "35px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  width: "100%" // Optional: Ensure the button takes up available width
+                }}
+              >
+                Assign To
+              </button> */}
+            </div>
+          )}
+
+          {/* Render 'Follow Up' button only for admin */}
+          {/* {role === "admin" && (
+    <div>
+      <button
+        variant="primary"
+        className="me-2"
+        style={{
+          border: "none",
+          height: "35px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "100%" // Optional: Ensure the button takes up available width
+        }}
+      >
+        Follow Up
+      </button>
+    </div>
+  )} */}
+
+          {/* Always show 'Add Inquiry' button */}
+          <div className="d-flex gap-3">
+            <div>
+              <Button
+                variant="secondary"
+                className="me-2"
+                onClick={handleShowInquiryModal}
+                style={{ border: "none" }}
+              >
+                Add Inquiry
+              </Button>
+            </div>
+
+            {/* Filter Button */}
+            {/* <div>
+              <DropdownButton
+                id="filter-dropdown"
+                variant="secondary"
+                title={`Filter Inquiries`}
+                style={{ border: "none" }}
+              >
+             
+                <Dropdown.Item as="button" onClick={() => handleFilterSelect("Counselor")}>
+                  Filter by Counselor
+                </Dropdown.Item>
+
+             
+                <Dropdown.Item as="button" onClick={() => handleStatusSelect("New")}>
+                  Filter by Status - New
+                </Dropdown.Item>
+                <Dropdown.Item as="button" onClick={() => handleStatusSelect("Contacted")}>
+                  Filter by Status - Contacted
+                </Dropdown.Item>
+                <Dropdown.Item as="button" onClick={() => handleStatusSelect("Converted")}>
+                  Filter by Status - Converted
+                </Dropdown.Item>
+              </DropdownButton>
+            </div> */}
+          </div>
         </div>
       </div>
+
+      {/* // Modal for assigning counselor */}
+      <Modal show={showAssignModal} onHide={handleCloseAssignModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Assign Counselor to Inquiry</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedInquiry && (
+            <div>
+              <p><strong>Inquiry Name:</strong> {selectedInquiry.full_name}</p>
+              <p><strong>Course:</strong> {selectedInquiry.course_name}</p>
+              <Form.Group controlId="counselorSelect">
+                <Form.Label>Select Counselor</Form.Label>
+                <label className="form-label">Counselor *</label>
+                <select
+                  className="form-select"
+                  onChange={(e) => {
+                    const selectedId = e.target.value;
+                    const selected = counselors.find((c) => c.id.toString() === selectedId);
+                    setSelectedCounselor(selected); // Set the full object
+                  }}
+                  value={selectedCounselor ? selectedCounselor.id : ""}
+                >
+                  <option value="">Select Counselor</option>
+                  {counselors.map((counselor) => (
+                    <option key={counselor.id} value={counselor.id}>
+                      {counselor.full_name}
+                    </option>
+                  ))}
+                </select>
+
+
+
+              </Form.Group>
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseAssignModal}>Cancel</Button>
+          <Button variant="primary" onClick={handleAssignCounselor}>Assign</Button>
+        </Modal.Footer>
+      </Modal>
+
 
       {/* Header Section */}
       {/* <div className="d-flex justify-content-between mb-3">
@@ -300,44 +508,70 @@ const Inquiry = () => {
       </div> */}
 
       {/* Today's Inquiries */}
-      <Table striped bordered hover responsive>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>City</th>
-            <th>Course</th>
-            <th>Source</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentInquiries?.map((inq, index) => (
-            <tr key={inq.id}>
-           <td>{indexOfFirstItem + index + 1}</td>
+ <Table striped bordered hover responsive>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Course</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {Array.isArray(inquiries) && inquiries.length > 0 ? (
+      inquiries.map((inq, index) => (
+        <tr key={inq.id}>
+          <td>{index + 1}</td>
+          <td>{inq.full_name}</td>
+          <td>{inq.email}</td>
+          <td>{inq.course_name}</td>
+          
+          {/* Status Column */}
+          <td>
+            {inq.status === "0" ? (
+              <Badge bg="warning">Not Assigned</Badge>
+            ) : (
+              <Badge bg="success">Assigned</Badge>
+            )}
+          </td>
 
-              <td>{inq.full_name}</td>
-              <td>{inq.email}</td>
-              <td>{inq.phone_number}</td>
-              <td>{inq.city}</td>
-              <td>{inq.course_name}</td>
-              <td>{inq.source}</td>
-              <td>
-                <Button variant="info" size="sm"
-                  onClick={() => handleViewDetail(inq.id)}>View </Button>
-                <Button variant="danger"
-                  size="sm"
-                  onClick={() => handleDeleteInquiry(inq.id)}
-                  className="ms-2">
-                  Delete
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+          <td>
+            {/* Assign Counselor Button */}
+            {inq.status === "0" ? (
+              <Button variant="info" size="sm" onClick={() => handleOpenAssignModal(inq)}>
+                Assign Counselor
+              </Button>
+            ) : (
+              // If assigned, show "Already Assigned" with the counselor's name
+              <Button variant="success" size="sm" disabled>
+                Already Assigned
+              </Button>
+            )}
+
+            {/* Delete Button */}
+            <Button 
+              variant="danger" 
+              size="sm" 
+              onClick={() => handleDeleteInquiry(inq.id)} 
+              className="ms-2"
+            >
+              <MdDelete /> {/* MdDelete icon for delete button */}
+            </Button>
+          </td>
+        </tr>
+      ))
+    ) : (
+      <tr>
+        <td colSpan="6">No inquiries available.</td>
+      </tr>
+    )}
+  </tbody>
+</Table>
+
+
+
       <Pagination className="justify-content-center mt-3">
         {Array.from({
           length: Math.ceil((inquiries.todayInquiries || []).length / itemsPerPage),

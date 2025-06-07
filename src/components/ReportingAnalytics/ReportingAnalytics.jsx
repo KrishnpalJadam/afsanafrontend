@@ -78,7 +78,7 @@ const AdminPayments = () => {
 
     setSelectedPayment(payment);
     console.log(payment)
-    // Set default values or from payment
+    // Set default values or from payment    
     setPaymentAmount(payment.payment_amount || "");
     setGstPercent(0);
     setTaxPercent(0);
@@ -105,83 +105,82 @@ const AdminPayments = () => {
   };
 
   // Generate PDF invoice
-  const generateInvoicePDF = async () => {
-    if (!selectedPayment) return;
-    console.log("selectedPayment", selectedPayment)
-    try {
-      // Prepare payload  
-      const { amt, gstAmount, taxAmount, disc, total } = calculateTotals();
+ const generateInvoicePDF = async () => {
+  if (!selectedPayment) return;
+  console.log("selectedPayment", selectedPayment)
+  try {
+    // Prepare payload  
+    const { amt, gstAmount, taxAmount, disc, total } = calculateTotals();
 
-      const payload = {
-        payment_amount: amt.toString(),
-        tax: taxAmount.toString(),
-        total: total.toString(),
-        additional_notes: notes,
-        payment_date:paymentdate,
-        student_id: selectedPayment?.student_id || "", // apke data structure ke hisaab se id
-      };
+    const payload = {
+      payment_amount: amt.toString(),
+      tax: taxAmount.toString(),
+      total: total.toString(),
+      additional_notes: notes,  
+      payment_date: paymentdate,
+      student_id: selectedPayment?.student_id || "", // Ensure this is correctly passed
+    };
 
-      // API call to save invoice data
-      const response = await api.post(`${BASE_URL}student_invoice`, payload);
+    // API call to save invoice data
+    const response = await api.post(`${BASE_URL}student_invoice`, payload);
 
-      if (response.status === 200 || response.status === 201) {
-        // Success - Ab PDF generate karo
+    if (response.status === 200 || response.status === 201) {
+      // Success - Ab PDF generate karo
 
-        setPayments((prevPayments) =>
-          prevPayments.map((p) =>
-            p.id === selectedPayment.id ? { ...p, isInvoiceView: 1 } : p
-          )
-        );
+      setPayments((prevPayments) =>
+        prevPayments.map((p) =>
+          p.id === selectedPayment.id ? { ...p, isInvoiceView: 1 } : p
+        )
+      );
 
+      const doc = new jsPDF();
+      doc.setFontSize(18);
+      doc.text("Invoice", 14, 22);
 
-        const doc = new jsPDF();
-        doc.setFontSize(18);
-        doc.text("Invoice", 14, 22);
+      // Student details
+      doc.setFontSize(12);
+      doc.text(`Student Name: ${selectedPayment.name}`, 14, 40);
+      doc.text(`Email: ${selectedPayment.email}`, 14, 48);
+      doc.text(`Payment Date: ${selectedPayment.payment_date}`, 14, 56);
+      doc.text(`Date: ${new Date().toLocaleDateString()}`, 14, 64);
 
-        // Student details
-        doc.setFontSize(12);
-        doc.text(`Student Name: ${selectedPayment.name}`, 14, 40);
-        doc.text(`Email: ${selectedPayment.email}`, 14, 48);
-        // doc.text(`Branch: ${selectedPayment.branch_name}`, 14, 56);
-        doc.text(`Payment Date: ${selectedPayment.payment_date}`, 14, 56);
-        doc.text(`Date: ${new Date().toLocaleDateString()}`, 14, 64);
+      // Invoice table data
+      const invoiceTable = [
+        ["Description", "Amount (in USD)"],
+        ["Payment Amount", amt.toFixed(2)],
+        ["Tax (" + taxPercent + "%)", taxAmount.toFixed(2)],
+        ["Total Amount", total.toFixed(2)],
+      ];
 
-        // Invoice table data
-        const invoiceTable = [
-          ["Description", "Amount (in USD)"],
-          ["Payment Amount", amt.toFixed(2)],
-          ["Tax (" + taxPercent + "%)", taxAmount.toFixed(2)],
-          ["Total Amount", total.toFixed(2)],
-        ];
+      autoTable(doc, {
+        startY: 72,
+        head: [invoiceTable[0]],
+        body: invoiceTable.slice(1),
+        theme: "grid",
+        styles: { halign: "right" },
+        headStyles: { fillColor: [41, 128, 185], textColor: 255 },
+        columnStyles: {
+          0: { halign: "left" },
+        },
+      });
 
-        autoTable(doc, {
-          startY: 72,
-          head: [invoiceTable[0]],
-          body: invoiceTable.slice(1),
-          theme: "grid",
-          styles: { halign: "right" },
-          headStyles: { fillColor: [41, 128, 185], textColor: 255 },
-          columnStyles: {
-            0: { halign: "left" },
-          },
-        });
-
-        // Notes
-        if (notes) {
-          doc.text("Notes:", 14, doc.lastAutoTable.finalY + 12);
-          doc.text(notes, 14, doc.lastAutoTable.finalY + 20);
-        }
-
-        doc.save(`Invoice_${selectedPayment.name}_${Date.now()}.pdf`);
-        closeInvoiceModal();
-      } else {
-        alert("Invoice save failed. Please try again.");
+      // Notes
+      if (notes) {
+        doc.text("Notes:", 14, doc.lastAutoTable.finalY + 12);
+        doc.text(notes, 14, doc.lastAutoTable.finalY + 20);
       }
-    } catch (error) {
-      console.error("Error saving invoice:", error);
-      alert("Something went wrong while saving the invoice.");
+
+      doc.save(`Invoice_${selectedPayment.name}_${Date.now()}.pdf`);
+      closeInvoiceModal();
+    } else {
+      alert("Invoice save failed. Please try again.");
     }
-  };
+  } catch (error) {
+    console.error("Error saving invoice:", error);
+    alert("Something went wrong while saving the invoice.");
+  }
+};
+
 
 
 
@@ -410,7 +409,7 @@ const AdminPayments = () => {
                         size="sm"
                         onClick={() => openViewDetailsModal(item.student_id)}
                       >
-                        View Details
+                        View invoice
                       </Button>
                     ) : (
                       <Button

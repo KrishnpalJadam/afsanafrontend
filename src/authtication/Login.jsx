@@ -34,7 +34,8 @@ const handleLogin = async (e) => {
 
     if (role && token) {
       setLogin(role);
-      localStorage.setItem("login", role);
+      localStorage.setItem("login", role);  
+      localStorage.setItem("role", user.role);        
       localStorage.setItem("authToken", token);
       localStorage.setItem("user_id", user.id);
       localStorage.setItem("login_detail", JSON.stringify(response.data.user));
@@ -157,7 +158,7 @@ const handleLogin = async (e) => {
               backgroundColor: "#1d4ed8", color: "#fff", border: "none",
               fontWeight: "bold",
               cursor: "pointer"
-            }}>Login In </button>
+            }}>Login </button>
           </form>
 
           <div style={{
@@ -165,10 +166,22 @@ const handleLogin = async (e) => {
             textAlign: "center", fontSize: "14px", color: "#666"
           }}>
 
-
+ <Link
+              to="/signup"
+              style={{
+                color: "#1d4ed8",
+                textDecoration: "none",
+                fontWeight: "bold",
+              }}
+            >
+              You don't have an account? signup
+            </Link>
             {/* <p style={{ marginTop: "15px" }}>
               Don’t have an account? <a href="#" style={{ color: "#1d4ed8" }}>Sign up Now</a>
             </p> */}
+            <div className="mt-4">
+
+          
             <Link to="/" style={{
               width: "35%",
               padding: "8px",
@@ -180,6 +193,7 @@ const handleLogin = async (e) => {
             }}>
               <IoChevronBackCircleSharp />  Back To Home
             </Link>
+              </div>
           </div>
         </div>
       </div>

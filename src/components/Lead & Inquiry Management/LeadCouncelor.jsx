@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
-import { Container, Button, Table, Form, Modal, Badge, InputGroup, } from "react-bootstrap";
+import { Container, Button, Table, Form, Modal, Badge, InputGroup, Dropdown, DropdownButton } from "react-bootstrap";
 import { FaSearch, FaPlus, FaEdit, FaTrash, FaEye } from "react-icons/fa";
 import BASE_URL from "../../Config"; // Assuming BASE_URL is already set
 import api from "../../interceptors/axiosInterceptor";
+import Swal from "sweetalert2";
 
-const LeadCouncelor = () => {
+
+const LeadCouncelor = ({ lead }) => {
 
   const [leads, setLeads] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [status, setStatus] = useState(lead);
   const [showViewModal, setShowViewModal] = useState(false);
   const [selectedLead, setSelectedLead] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -15,6 +18,17 @@ const LeadCouncelor = () => {
   const [counselors, setCounselors] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+  const [selectedLeadForInvoice, setSelectedLeadForInvoice] = useState(null);
+
+
+  // invoice state 
+  const [paymentAmount, setPaymentAmount] = useState();
+  const [tax, setTax] = useState();
+  const [total, setTotal] = useState(0);
+  const [paymentDate, setPaymentDate] = useState("");
+  const [notes, setNotes] = useState("");
+
 
   const [newLead, setNewLead] = useState({
     name: "",
@@ -35,7 +49,7 @@ const LeadCouncelor = () => {
   // Fetch Leads
   const fetchLeads = async () => {
     try {
-      const response = await api.get(`${BASE_URL}lead/counselor/${counsolerId}`);
+      const response = await api.get(`${BASE_URL}lead/getLeadByCounselorIdnew/${counsolerId}`);
       setLeads(response.data);
     } catch (error) {
       console.error("Error fetching leads:", error);
@@ -86,7 +100,7 @@ const LeadCouncelor = () => {
       preferred_countries: "",
       source: "",
       status: "",
-      user_id: 1, // Add user_id to the newLead state
+      user_id: lead.id, // Add user_id to the newLead state
     });
     setShowModal(true);
   };
@@ -146,14 +160,35 @@ const LeadCouncelor = () => {
   };
 
   // Delete Lead
-  const handleDeleteLead = async (leadId) => {
-    try {
-      await api.delete(`${BASE_URL}lead/${leadId}`);
-      setLeads(leads.filter((lead) => lead.id !== leadId));
-    } catch (error) {
-      console.error("Error deleting lead:", error);
+const handleDeleteLead = async (leadId) => {
+  try {
+    const response = await api.delete(`${BASE_URL}inquiries/${leadId}`);
+    
+    if (response.status === 200) {
+      console.log("Deletion Success:", response.data);  // Ensure response has the expected data
+      setLeads(leads.filter((lead) => lead.id !== leadId));  // Update the local state
+      Swal.fire({
+        icon: 'success',
+        title: 'Lead Deleted',
+        text: 'The lead has been deleted successfully!',
+      });
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error Deleting Lead',
+        text: 'Failed to delete the lead on the server.',
+      });
     }
-  };
+  } catch (error) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Deletion Failed',
+      text: 'Something went wrong while deleting the lead.',
+    });
+    console.error("Error deleting lead:", error);
+  }
+};
+
 
   // View Lead Details
   const handleViewLeadDetails = (lead) => {
@@ -170,6 +205,140 @@ const LeadCouncelor = () => {
   const currentLeads = filteredLeads.slice(indexOfFirstLead, indexOfLastLead);
   const totalPages = Math.ceil(filteredLeads.length / itemsPerPage);
 
+
+
+
+  const handleStatusChange = (newStatus) => {
+    setStatus(newStatus);
+    // Optionally, update the lead status in your database or state here
+  };
+
+
+  const handleShowInvoiceModal = (lead) => {
+    setSelectedLeadForInvoice(lead);
+    setShowInvoiceModal(true);
+  };
+
+
+
+
+  // Calculate total based on payment amount and tax
+  useEffect(() => {
+    const calculatedTotal = paymentAmount + (paymentAmount * (tax / 100));
+    setTotal(calculatedTotal);
+  }, [paymentAmount, tax]);
+
+  // Handle Input Changes for Invoice Form
+  const handleInvoiceInputChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name === "paymentAmount") {
+      setPaymentAmount(Number(value));
+    } else if (name === "tax") {
+      setTax(Number(value));
+    } else if (name === "paymentDate") {
+      setPaymentDate(value);
+    } else if (name === "notes") {
+      setNotes(value);
+    }
+  };
+
+
+  // Handle Generate Invoice
+const handleGenerateInvoice = async () => {
+  const invoicedata = {
+    student_name: selectedLeadForInvoice?.name,
+    description: notes,
+    amount: total,
+    fee_date: paymentDate,
+    inquiry_id: selectedLeadForInvoice?.id,
+      user_id: selectedLeadForInvoice.id 
+  };
+
+  if (!invoicedata || !invoicedata.inquiry_id) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Missing Information',
+      text: 'Student ID and Inquiry ID are required!',
+    });
+    return;
+  }
+
+  try {
+    const response = await api.post(`${BASE_URL}createStudentFeeBYcounselors`, invoicedata);
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Invoice Generated',
+      text: 'The invoice has been created successfully!',
+    });
+
+    setShowInvoiceModal(false); // Close modal
+  } catch (error) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Invoice Failed',
+      text: 'Something went wrong while generating the invoice.',
+    });
+
+    console.error("Error generating invoice:", error);
+  }
+};
+
+
+
+
+
+  const handleChangePaymentStatus = async (leadId, newStatus) => {
+    try {
+      // Update the payment status locally before making the API request
+      const updatedLeads = leads.map((lead) =>
+        lead.id === leadId ? { ...lead, payment_status: newStatus } : lead
+      );
+      setLeads(updatedLeads);
+
+      // Prepare the data to be sent to the API
+      const payload = {
+        id: leadId,
+        payment_status: newStatus,  // Payment status to be updated
+      };
+
+      // Send the PATCH request to update the payment status
+      const response = await api.patch(`${BASE_URL}fee/update-status`, payload);
+      console.log("Payment status updated successfully:", response);
+    } catch (error) {
+      console.error("Error updating payment status:", error);
+    }
+  };
+
+
+
+
+  const handleChangeLeadStatus = async (leadId, newStatus) => {
+    try {
+      // Update the lead status locally before making the API request (optional)
+      const updatedLeads = leads.map((lead) =>
+        lead.id === leadId ? { ...lead, lead_status: newStatus } : lead
+      );
+      setLeads(updatedLeads);
+
+      // Prepare the data to be sent to the API
+      const payload = {
+        id: leadId,
+        lead_status: newStatus,  // Lead status to be updated
+      };
+
+      // Send the PATCH request to update the lead status
+      const response = await api.patch(`${BASE_URL}fee/update-lesd-status`, payload);
+      console.log("Lead status updated successfully:", response);
+    } catch (error) {
+      console.error("Error updating lead status:", error);
+    }
+  };
+
+
+
+
   return (
     <Container fluid className="py-3">
       {/* Filter Section */}
@@ -177,13 +346,14 @@ const LeadCouncelor = () => {
         <h2>Leads Management</h2>
       </div>
       <div className="d-flex justify-content-between mb-3 pt-3">
-        <div>
+        {/* <div>
           <Button variant="secondary" onClick={handleShowModal}>
             <FaPlus className="me-1" /> New Lead
           </Button>
-        </div>
+        </div> */}
 
         <div className="d-flex gap-2">
+
           <div>
             <InputGroup>
               <InputGroup.Text>
@@ -197,7 +367,6 @@ const LeadCouncelor = () => {
               />
             </InputGroup>
           </div>
-
         </div>
       </div>
 
@@ -208,7 +377,10 @@ const LeadCouncelor = () => {
             <th>Name</th>
             <th>Contact</th>
             <th>Asign Counselor</th>
+            <th>Invoice</th>
+            <th>Payment Status</th>
             <th>Status</th>
+            {/* <th>Notes</th> */}
             <th>Actions</th>
           </tr>
         </thead>
@@ -218,14 +390,70 @@ const LeadCouncelor = () => {
               <tr key={lead.id}>
                 <td>{lead?.name}</td>
                 <td>{lead?.phone}</td>
+
                 <td>{lead?.counselor_name || "Unassigned"}</td>
+                <td>
+                  {/* Conditional Rendering for Create Invoice Button */}
+                  {lead.is_view === "1" ? (
+                    <Button variant="secondary" size="sm" disabled>
+                      Already Created
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={() => handleShowInvoiceModal(lead)}
+                    >
+                      Create Invoice
+                    </Button>
+                  )}
+                </td>
+
+
+
+
 
                 <td>
-                  <Badge bg={lead.status === "In Progress" ? "primary" : "success"}>
-                    {lead?.status}
-                  </Badge>
+                  {/* Styled dropdown for payment status */}
+                  <Form.Control
+                    as="select"
+                    value={lead.payment_status}
+                    onChange={(e) => handleChangePaymentStatus(lead.id, e.target.value)}
+                    className="payment-status-dropdown"
+                  >
+                    <option value="select">Select</option>
+                    <option value="paid">Paid</option>
+                    <option value="unpaid">Unpaid</option>
+                  </Form.Control>
+
+
                 </td>
+
+
+
+
+
+
+
                 <td>
+                  {/* Styled dropdown for lead status */}
+                  <Form.Control
+                    as="select"
+                    value={lead.lead_status}
+                    onChange={(e) => handleChangeLeadStatus(lead.id, e.target.value)}
+                    className="lead-status-dropdown"
+                  >
+                    <option value="select">Select</option>
+                    <option value="New">New</option>
+                    <option value="Contacted">Contacted</option>
+                    <option value="Converted">Converted</option>
+                    <option value="Dropped">Dropped</option>
+                  </Form.Control>
+                </td>
+
+               
+                <td>
+
                   <Button variant="outline-primary" size="sm" onClick={() => handleViewLeadDetails(lead)}>
                     <FaEye />
                   </Button>
@@ -244,6 +472,9 @@ const LeadCouncelor = () => {
             </tr>
           )}
         </tbody>
+
+
+        
       </Table>
       {totalPages > 1 && (
         <nav className="mt-3">
@@ -443,6 +674,77 @@ const LeadCouncelor = () => {
           </Form>
         </Modal.Body>
       </Modal>
+
+
+      {/* invoice model */}
+      <Modal show={showInvoiceModal} onHide={() => setShowInvoiceModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Generate Invoice for {selectedLeadForInvoice?.name}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>Payment Amount</Form.Label>
+              <Form.Control
+                type="number"
+                name="paymentAmount"
+                value={paymentAmount}
+                onChange={handleInvoiceInputChange}
+                placeholder="Enter payment amount"
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Tax (%)</Form.Label>
+              <Form.Control
+                type="number"
+                name="tax"
+                value={tax}
+                onChange={handleInvoiceInputChange}
+                placeholder="Enter tax percentage"
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Payment Date</Form.Label>
+              <Form.Control
+                type="date"
+                name="paymentDate"
+                value={paymentDate}
+                onChange={handleInvoiceInputChange}
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Additional Notes</Form.Label>
+              <Form.Control
+                as="textarea"
+                name="notes"
+                value={notes}
+                onChange={handleInvoiceInputChange}
+                placeholder="Enter notes"
+              />
+            </Form.Group>
+
+            <div>
+              <h5>Invoice Summary</h5>
+              <p>Payment Amount: ${paymentAmount}</p>
+              <p>Tax ({tax}%): ${(paymentAmount * (tax / 100)).toFixed(2)}</p>
+              <p>Total: ${total.toFixed(2)}</p>
+            </div>
+
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setShowInvoiceModal(false)}>
+                Cancel
+              </Button>
+              <Button variant="primary" onClick={handleGenerateInvoice}>
+                Generate
+              </Button>
+            </Modal.Footer>
+          </Form>
+        </Modal.Body>
+      </Modal>
+
     </Container>
   );
 };

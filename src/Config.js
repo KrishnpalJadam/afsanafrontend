@@ -1,3 +1,9 @@
-// const BASE_URL = "http://192.168.1.46:3001/api/"  
-const BASE_URL = "https://afsanaproject-production.up.railway.app/api/"   
+// const BASE_URL = "https://hrb5wx2v-3001.inc1.devtunnels.ms/api/"  
+// veni railway
+// const BASE_URL = "https://afsanaproject-production.up.railway.app/api/" 
+
+// sagarsir railaway
+const BASE_URL = "https://afsana-backend-production.up.railway.app/api/"   
+
 export default BASE_URL
+ 

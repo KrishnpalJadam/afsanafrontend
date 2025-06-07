@@ -543,7 +543,7 @@ const StudentDetails = () => {
                       />
                     </div>
                   </div>
-                  <div className="row">
+                  {/* <div className="row">
                     <div className="col-md-6 student-form-group">
                       <label htmlFor="photo" className="student-form-label">
                         Upload Photo
@@ -570,7 +570,7 @@ const StudentDetails = () => {
                         You can upload multiple documents
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                   <div className="student-form-actions d-flex justify-content-end">
 
                     <div>

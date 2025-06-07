@@ -105,7 +105,7 @@ const itemsPerPage = 10;
       preferred_countries: lead.preferred_countries,
       source: lead.source,
       status: lead.status,
-      user_id: 1,
+      user_id: lead.id,
     });
     setShowModal(true);
   };

@@ -11,12 +11,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
   const navigate = useNavigate();
   const location = useLocation();
   
- 
-  useEffect(() => {
-    if (!login) {
-      navigate("/login"); // Agar login nahi hai toh login page par bhejo
-    }
-  }, [login, navigate]);
+
 
   const toggleSubmenu = (menuName) => {
     setOpenSubmenu((prev) => (prev === menuName ? null : menuName));
@@ -188,7 +183,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                       menuItemClick();
                     }}
                   >
-                    Admin Status
+                    All Lead
                   </li>
                   {/* <li
                   className={`menu-item submenu-item ${
@@ -914,3 +909,5 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
 };
 
 export default Sidebar;
+
+

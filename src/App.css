@@ -1130,3 +1130,23 @@ tbody{
 }
 
 
+
+
+
+.payment-status-dropdown {
+  background-color: #f8f9fa !important;  /* Light background */
+  border: 1px solid #ced4da !important;  /* Soft border */
+  border-radius: 0.375rem !important;  /* Rounded corners */
+  padding: 0.5rem 1rem !important;  /* Adequate padding for better look */
+  font-size: 1rem !important;  /* Clear font size */
+  transition: border-color 0.3s, box-shadow 0.3s !important;  /* Smooth transition effect */
+}
+
+.payment-status-dropdown:focus {
+  border-color: #80bdff !important;  /* Blue border on focus */
+  box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25) !important;  /* Light blue shadow */
+}
+
+.payment-status-dropdown option {
+  font-weight: 500 !important;  /* Option font weight */
+}

@@ -10,7 +10,7 @@ import {
   Modal,
   Form,
 } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import InquiryForm from "./InquiryForm";
 import "./Home.css";
 import bmu from "../assets/bmulogo.webp";
@@ -212,7 +212,10 @@ const App = () => {
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYhuaZv2zcldGUHcFtm25YNu_WH5FkznSdFw&s", // Unsplash link
     },
   ];
-
+  const navigate = useNavigate()
+  const signup = () => {
+    navigate("/signup")
+  }
   return (
     <div className="bg-dark text-white">
       <PaymentFormModal
@@ -264,9 +267,11 @@ const App = () => {
               <Link to="/login" className="btn btn-gradient px-4 py-2">
                 Log in
               </Link>
-               <Link to="/signup" className="btn btn-gradient px-4 py-2">
+
+              <Link to="/signup" className="btn btn-gradient px-4 py-2">
                 Signup
               </Link>
+
               <Button
                 variant="outline-light"
                 className="inquiry-btn"
@@ -293,11 +298,21 @@ const App = () => {
               instructors
             </p>
             <div className="hero-buttons d-flex gap-3 justify-content-center">
-              <Button variant="gradient" size="lg" className="pulse-button">
-                <i className="fas fa-play-circle me-2"></i>
-                Start Learning
-              </Button>
-              <Button variant="outline-light" size="lg" className="hover-fill">
+              <Link to="/signup">
+                <Button variant="gradient" size="lg" className="pulse-button">
+                  <i className="fas fa-play-circle me-2"></i>
+                  Start Learning
+                </Button>
+              </Link>
+              <Button
+                variant="outline-light"
+                size="lg"
+                className="hover-fill"
+                onClick={() => {
+                  // Scroll to the element with id "about"
+                  document.getElementById("courses").scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
                 <i className="fas fa-book me-2"></i>
                 Browse Courses
               </Button>
@@ -322,7 +337,7 @@ const App = () => {
 
       {/* Featured Courses */}
 
-      <Container className="py-5" id="courses">
+      <Container className="py-5" id="about">
         {/* <h2 className="text-center fw-bold mb-5">
           Top International Universities
         </h2> */}
@@ -383,7 +398,7 @@ const App = () => {
 
       </Container>
       {/* Top-rated Courses */}
-      <Container className="py-5" id="about">
+      <Container className="py-5" id="courses">
         <h2 className="text-center fw-bold mb-5">
           <span className="gradient-text">Top-rated</span> Courses
         </h2>
@@ -402,14 +417,14 @@ const App = () => {
                   <div className="category-badge">
                     <i
                       className={`fas fa-${course.category === "Physics"
-                          ? "atom"
-                          : course.category === "Computer Science"
-                            ? "laptop-code"
-                            : course.category === "Literature"
-                              ? "book"
-                              : course.category === "History"
-                                ? "landmark"
-                                : "language"
+                        ? "atom"
+                        : course.category === "Computer Science"
+                          ? "laptop-code"
+                          : course.category === "Literature"
+                            ? "book"
+                            : course.category === "History"
+                              ? "landmark"
+                              : "language"
                         }`}
                     ></i>
                     {course.category}
@@ -519,11 +534,11 @@ const App = () => {
         <Container>
           <Row>
             <Col md={6}>
-  <h5>Contact Us</h5>
-  <p><strong>Hotline:</strong> 09613752752</p>
-  <p><strong>WhatsApp:</strong> +4915217531538</p>
-  <p><strong>Email:</strong> studyfirstinfo@gmail.com</p>
-</Col>
+              <h5>Contact Us</h5>
+              <p><strong>Hotline:</strong> 09613752752</p>
+              <p><strong>WhatsApp:</strong> +4915217531538</p>
+              <p><strong>Email:</strong> studyfirstinfo@gmail.com</p>
+            </Col>
 
             <Col md={6} className="text-md-end">
               <p>Privacy Policy | Terms of Use</p>

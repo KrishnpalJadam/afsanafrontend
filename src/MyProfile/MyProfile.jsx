@@ -140,80 +140,107 @@ const MyProfile = () => {
         <Modal.Header closeButton>
           <Modal.Title>Update Profile</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          <Form onSubmit={handleUpdateProfile}>
-            {formData.full_name && (
-              <Form.Group className="mb-3">
-                <Form.Label>Full Name</Form.Label>
-                <Form.Control type="text" name="full_name" value={formData.full_name} onChange={handleChange} />
-              </Form.Group>
-            )}
+       <Modal.Body>
+  <Form onSubmit={handleUpdateProfile}>
+    <Form.Group className="mb-3">
+      <Form.Label>Full Name</Form.Label>
+      <Form.Control
+        type="text"
+        name="full_name"
+        value={formData.full_name || ""}
+        onChange={handleChange}
+      />
+    </Form.Group>
 
-            {formData.email && (
-              <Form.Group className="mb-3">
-                <Form.Label>Email</Form.Label>
-                <Form.Control type="email" name="email" value={formData.email} onChange={handleChange} />
-              </Form.Group>
-            )}
+    <Form.Group className="mb-3">
+      <Form.Label>Email</Form.Label>
+      <Form.Control
+        type="email"
+        name="email"
+        value={formData.email || ""}
+        onChange={handleChange}
+      />
+    </Form.Group>
 
-            {formData.phone && (
-              <Form.Group className="mb-3">
-                <Form.Label>Phone</Form.Label>
-                <Form.Control type="text" name="phone" value={formData.phone} onChange={handleChange} />
-              </Form.Group>
-            )}
+    <Form.Group className="mb-3">
+      <Form.Label>Phone</Form.Label>
+      <Form.Control
+        type="text"
+        name="phone"
+        value={formData.phone || ""}
+        onChange={handleChange}
+      />
+    </Form.Group>
 
-            {formData.address && (
-              <Form.Group className="mb-3">
-                <Form.Label>Address</Form.Label>
-                <Form.Control type="text" name="address" value={formData.address} onChange={handleChange} />
-              </Form.Group>
-            )}
+    <Form.Group className="mb-3">
+      <Form.Label>Address</Form.Label>
+      <Form.Control
+        type="text"
+        name="address"
+        value={formData.address || ""}
+        onChange={handleChange}
+      />
+    </Form.Group>
 
-            {formData.gender && (
-              <Form.Group className="mb-3">
-                <Form.Label>Gender</Form.Label>
-                <Form.Select name="gender" value={formData.gender} onChange={handleChange}>
-                  <option value="">Select Gender</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                </Form.Select>
-              </Form.Group>
-            )}
+    <Form.Group className="mb-3">
+      <Form.Label>Gender</Form.Label>
+      <Form.Select
+        name="gender"
+        value={formData.gender || ""}
+        onChange={handleChange}
+      >
+        <option value="">Select Gender</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </Form.Select>
+    </Form.Group>
 
-            {formData.date_of_birth && (
-              <Form.Group className="mb-3">
-                <Form.Label>Date of Birth</Form.Label>
-                <Form.Control type="date" name="date_of_birth" value={formData.date_of_birth} onChange={handleChange} />
-              </Form.Group>
-            )}
+    <Form.Group className="mb-3">
+      <Form.Label>Date of Birth</Form.Label>
+      <Form.Control
+        type="date"
+        name="date_of_birth"
+        value={formData.date_of_birth || ""}
+        onChange={handleChange}
+      />
+    </Form.Group>
 
-            {formData.father_name && (
-              <Form.Group className="mb-3">
-                <Form.Label>Father's Name</Form.Label>
-                <Form.Control type="text" name="father_name" value={formData.father_name} onChange={handleChange} />
-              </Form.Group>
-            )}
+    <Form.Group className="mb-3">
+      <Form.Label>Father's Name</Form.Label>
+      <Form.Control
+        type="text"
+        name="father_name"
+        value={formData.father_name || ""}
+        onChange={handleChange}
+      />
+    </Form.Group>
 
-            {formData.admission_no && (
-              <Form.Group className="mb-3">
-                <Form.Label>Admission No.</Form.Label>
-                <Form.Control type="text" name="admission_no" value={formData.admission_no} onChange={handleChange} />
-              </Form.Group>
-            )}
+    <Form.Group className="mb-3">
+      <Form.Label>Admission No.</Form.Label>
+      <Form.Control
+        type="text"
+        name="admission_no"
+        value={formData.admission_no || ""}
+        onChange={handleChange}
+      />
+    </Form.Group>
 
-            {formData.id_no && (
-              <Form.Group className="mb-3">
-                <Form.Label>ID No.</Form.Label>
-                <Form.Control type="text" name="id_no" value={formData.id_no} onChange={handleChange} />
-              </Form.Group>
-            )}
+    <Form.Group className="mb-3">
+      <Form.Label>ID No.</Form.Label>
+      <Form.Control
+        type="text"
+        name="id_no"
+        value={formData.id_no || ""}
+        onChange={handleChange}
+      />
+    </Form.Group>
 
-            <Button variant="primary" type="submit">
-              Save Changes
-            </Button>
-          </Form>
-        </Modal.Body>
+    <Button variant="primary" type="submit">
+      Save Changes
+    </Button>
+  </Form>
+</Modal.Body>
+
       </Modal>
     </Container>
   );

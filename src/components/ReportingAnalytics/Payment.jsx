@@ -8,10 +8,13 @@ import {
   Button,
   Modal,
   Alert,
+  Badge,
 } from "react-bootstrap";
 import api from "../../interceptors/axiosInterceptor";
 import BASE_URL from "../../Config";
-
+import jsPDF from "jspdf";
+import { FaVolumeHigh } from "react-icons/fa6";
+// import logo from "https://apply.studyfirstinfo.com/img/logo.png";
 const Payment = () => {
   const [key, setKey] = useState("due");
   const [showModal, setShowModal] = useState(false);
@@ -19,12 +22,15 @@ const Payment = () => {
   const [payments, setPayments] = useState([]);
   const [dedline, setdedline] = useState([]);
   const [paidTransactions, setpaidTransactions] = useState([]);
-
+  const [studentFees, setStudentFees] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   // Static data for Upcoming Deadlines tab
 
   const user = JSON.parse(localStorage.getItem("login_detail"));
   const studentId = localStorage.getItem("student_id")
-  console.log(studentId)
+  const userId = localStorage.getItem("user_id")
+ 
   const fetchPayments = async () => {
     try {
       const response = await api.get(`${BASE_URL}paymentsbyid/${studentId}`);
@@ -86,17 +92,61 @@ const Payment = () => {
     return `${days}d ${hours}h ${minutes}m left`;
   };
 
-  // Dummy handler for download button
+  // Generate and download the receipt PDF
   const handleDownload = (item) => {
-    alert(`Downloading receipt for: ${item.description}`);
+    const doc = new jsPDF();
+
+    // Set up the logo
+    // doc.addImage("https://apply.studyfirstinfo.com/img/logo.png", 10, 10, 50, 30);
+
+    // Set up the title and invoice details
+    doc.setFontSize(16);
+    doc.text("Invoice", 100, 20);
+
+    doc.setFontSize(12);
+    doc.text(`Invoice Number: ${item.id}`, 10, 50);
+    doc.text(`Student Name: ${item.name}`, 10, 60);
+    doc.text(`Email: ${item.email}`, 10, 70);
+    doc.text(`Amount: $${item.total}`, 10, 80);
+    doc.text(`Payment Method: ${item.payment_method}`, 10, 90);
+    doc.text(`Payment Date: ${new Date(item.payment_date).toLocaleDateString()}`, 10, 100);
+    doc.text(`Notes: ${item.additional_notes}`, 10, 110);
+
+    // Add a footer or additional information
+    doc.text("Thank you for your payment!", 10, 130);
+
+    // Save the PDF
+    doc.save(`Invoice_${item.id}.pdf`);
   };
+
+ 
+ useEffect(() => {
+  const fetchStudentFees = async () => {
+    try {
+      const response = await api.get(`getStudentFeesByUser/${studentId}`);
+      console.log("Student Fees Data:", response); // Log the response data to console
+      setStudentFees(response.data); // Update the state with the fetched data
+    } catch (err) {
+      setError(err.message);
+      console.error("Error fetching student fees:", err); // Log the error to console
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchStudentFees();
+}, []); // Empty array ensures it runs only once when the component mounts
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <Container className="mt-4">
-      <h3 className="mb-4">Payments & Transactions</h3>
+
 
       <Card>
         <Card.Body>
+          <h4 className="mb-4">Create new payment</h4>
           <Tabs
             id="payment-tabs"
             activeKey={key}
@@ -124,10 +174,10 @@ const Payment = () => {
                       <td>{item?.email}</td>
                       <td>{item?.additional_notes}</td>
 
-                      <td>{item?.total}</td>
+                      <td>${item?.total}</td>
                       <td>{item?.payment_date}</td>
                       <td>
-                        <button className="btn btn-primary me-3">View Details</button>
+                        {/* <button className="btn btn-primary me-3">View Details</button> */}
                         <button
                           className="btn btn-success"
                           onClick={() => statusUpdate(item)}
@@ -163,14 +213,10 @@ const Payment = () => {
                       <td>{item.name}</td>
                       <td>{item.email}</td>
                       <td>{item.additional_notes}</td>
-                      <td>{item.total}</td>
+                      <td>${item.total}</td>
                       <td>{new Date(item.updated_at).toDateString()}</td>
                       <td>
-                        <Button
-                          variant="info"
-                          size="sm"
-                          onClick={() => handleDownload(item)}
-                        >
+                        <Button variant="info" size="sm" onClick={() => handleDownload(item)}>
                           Download Receipt
                         </Button>
                       </td>
@@ -192,24 +238,24 @@ const Payment = () => {
                   </tr>
                 </thead>
                 <tbody>
-                 {payments
-  .filter(
-    (item) =>
-      new Date(item.payment_date) > new Date(item.created_at) && // payment_date created_at se badh
-      item.payment_status !== "paid" // status paid nahi hona chahiye
-  )
-  .map((item, index) => (
-    <tr key={index}>
-      <td>{item.id}</td>
-      <td>{item.additional_notes}</td>
-      <td>{new Date(item.payment_date).toLocaleString()}</td>
-      <td>
-        <Alert variant="warning" className="mb-0 py-1 px-2">
-          {getCountdown(item.payment_date)}
-        </Alert>
-      </td>
-    </tr>
-  ))}
+                  {payments
+                    .filter(
+                      (item) =>
+                        new Date(item.payment_date) > new Date(item.created_at) && // payment_date created_at se badh
+                        item.payment_status !== "paid" // status paid nahi hona chahiye
+                    )
+                    .map((item, index) => (
+                      <tr key={index}>
+                        <td>{item.id}</td>
+                        <td>{item.additional_notes}</td>
+                        <td>{new Date(item.payment_date).toLocaleString()}</td>
+                        <td>
+                          <Alert variant="warning" className="mb-0 py-1 px-2">
+                            {getCountdown(item.payment_date)}
+                          </Alert>
+                        </td>
+                      </tr>
+                    ))}
 
                 </tbody>
               </Table>
@@ -218,6 +264,56 @@ const Payment = () => {
           </Tabs>
         </Card.Body>
       </Card>
+
+
+      {/* leade invoice details */}
+      <div className="mt-5">
+        <Card className="mt-4">
+          <Card.Body>
+            <h4>Lead Invoice Details</h4>
+
+            {/* Student Invoice Details Table */}
+            <Card className="mt-4">
+              <Card.Body>
+
+                <Table striped bordered hover responsive>
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Description</th>
+                      <th>Amount</th>
+                      <th>Paid On</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {/* Static data for now */}
+                    <tr>
+                      <td>1</td>
+                      <td>Course Fee</td>
+                      <td>$500.00</td>
+                      <td>05/30/2025</td>
+                      <td>
+                        <Badge bg="success">Paid</Badge>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>2</td>
+                      <td>Library Fee</td>
+                      <td>$50.00</td>
+                      <td>06/05/2025</td>
+                      <td>
+                        <Badge bg="danger">Unpaid</Badge>
+                      </td>
+                    </tr>
+                  </tbody>
+                </Table>
+              </Card.Body>
+            </Card>
+          </Card.Body>
+        </Card>
+      </div>
+
 
       {/* Pay Now Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>

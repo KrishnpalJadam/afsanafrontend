@@ -74,7 +74,7 @@ import Signup from "./authtication/Signup";
 
 function App() {
   //show details to admin
-  const [login, setLogin] = useState(localStorage.getItem("/login") || "");
+  const [login, setLogin] = useState(localStorage.getItem("login") || "");
 
   useEffect(() => {
 
@@ -110,8 +110,9 @@ function App() {
   };
   const location = useLocation();
   const user_id = localStorage.getItem("user_id")
-  const hideLayout =
-    location.pathname === "/" || location.pathname === "/login";
+const noLayoutPaths = ["/", "/login", "/signup"];
+const hideLayout = noLayoutPaths.includes(location.pathname);
+
   return (
     <>
       {/* navbar */}
