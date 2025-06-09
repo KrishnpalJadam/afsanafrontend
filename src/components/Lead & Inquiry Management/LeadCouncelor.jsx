@@ -160,41 +160,52 @@ const LeadCouncelor = ({ lead }) => {
   };
 
   // Delete Lead
-const handleDeleteLead = async (leadId) => {
-  try {
-    const response = await api.delete(`${BASE_URL}inquiries/${leadId}`);
-    
-    if (response.status === 200) {
-      console.log("Deletion Success:", response.data);  // Ensure response has the expected data
-      setLeads(leads.filter((lead) => lead.id !== leadId));  // Update the local state
-      Swal.fire({
-        icon: 'success',
-        title: 'Lead Deleted',
-        text: 'The lead has been deleted successfully!',
-      });
-    } else {
+  const handleDeleteLead = async (leadId) => {
+    try {
+      const response = await api.delete(`${BASE_URL}inquiries/${leadId}`);
+
+      if (response.status === 200) {
+        console.log("Deletion Success:", response.data);  // Ensure response has the expected data
+        setLeads(leads.filter((lead) => lead.id !== leadId));  // Update the local state
+        Swal.fire({
+          icon: 'success',
+          title: 'Lead Deleted',
+          text: 'The lead has been deleted successfully!',
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error Deleting Lead',
+          text: 'Failed to delete the lead on the server.',
+        });
+      }
+    } catch (error) {
       Swal.fire({
         icon: 'error',
-        title: 'Error Deleting Lead',
-        text: 'Failed to delete the lead on the server.',
+        title: 'Deletion Failed',
+        text: 'Something went wrong while deleting the lead.',
       });
+      console.error("Error deleting lead:", error);
     }
-  } catch (error) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Deletion Failed',
-      text: 'Something went wrong while deleting the lead.',
-    });
-    console.error("Error deleting lead:", error);
-  }
-};
+  };
 
 
   // View Lead Details
   const handleViewLeadDetails = (lead) => {
     setSelectedLead(lead);
     setShowViewModal(true);
+
+    // Fetch the invoice data from localStorage for the selected lead
+    const invoiceData = JSON.parse(localStorage.getItem(`invoice-${lead.id}`));
+
+    if (invoiceData) {
+      setSelectedLead((prevLead) => ({
+        ...prevLead,
+        invoice: invoiceData
+      }));
+    }
   };
+
 
   const handleCloseViewModal = () => {
     setShowViewModal(false);
@@ -245,45 +256,72 @@ const handleDeleteLead = async (leadId) => {
 
 
   // Handle Generate Invoice
-const handleGenerateInvoice = async () => {
-  const invoicedata = {
-    student_name: selectedLeadForInvoice?.name,
-    description: notes,
-    amount: total,
-    fee_date: paymentDate,
-    inquiry_id: selectedLeadForInvoice?.id,
-      user_id: selectedLeadForInvoice.id 
+  const handleGenerateInvoice = async () => {
+    const invoicedata = {
+      student_name: selectedLeadForInvoice?.name,
+      description: notes,
+      amount: total,
+      fee_date: paymentDate,
+      inquiry_id: selectedLeadForInvoice?.id,
+      user_id: selectedLeadForInvoice.id
+    };
+
+    if (!invoicedata || !invoicedata.inquiry_id) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Missing Information',
+        text: 'Student ID and Inquiry ID are required!',
+      });
+      return;
+    }
+
+    try {
+      const response = await api.post(`${BASE_URL}createStudentFeeBYcounselors`, invoicedata);
+
+      // Save invoice data to localStorage
+      localStorage.setItem(`invoice-${selectedLeadForInvoice.id}`, JSON.stringify(invoicedata));
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Invoice Generated',
+        text: 'The invoice has been created successfully!',
+      });
+
+      setShowInvoiceModal(false); // Close modal
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Invoice Failed',
+        text: 'Something went wrong while generating the invoice.',
+      });
+
+      console.error("Error generating invoice:", error);
+    }
   };
 
-  if (!invoicedata || !invoicedata.inquiry_id) {
+
+const handleViewInvoiceData = (lead) => {
+  // Fetch the invoice data from localStorage
+  const invoiceData = JSON.parse(localStorage.getItem(`invoice-${lead.id}`));
+
+  if (invoiceData) {
+    setSelectedLead({
+      ...lead,
+      invoice: invoiceData,
+    });
+    setShowViewModal(true); // Open the modal to show invoice data
+  } else {
     Swal.fire({
       icon: 'warning',
-      title: 'Missing Information',
-      text: 'Student ID and Inquiry ID are required!',
+      title: 'No Invoice Found',
+      text: 'No invoice data available for this lead.',
     });
-    return;
-  }
-
-  try {
-    const response = await api.post(`${BASE_URL}createStudentFeeBYcounselors`, invoicedata);
-
-    Swal.fire({
-      icon: 'success',
-      title: 'Invoice Generated',
-      text: 'The invoice has been created successfully!',
-    });
-
-    setShowInvoiceModal(false); // Close modal
-  } catch (error) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Invoice Failed',
-      text: 'Something went wrong while generating the invoice.',
-    });
-
-    console.error("Error generating invoice:", error);
   }
 };
+
+
+
+
 
 
 
@@ -407,7 +445,13 @@ const handleGenerateInvoice = async () => {
                       Create Invoice
                     </Button>
                   )}
-                  <button className="btn btn-secondary btn-sm ms-3"><FaEye /></button>
+                  <button
+                    className="btn btn-secondary btn-sm ms-3"
+                    onClick={() => handleViewInvoiceData(lead)} // Call the function to fetch invoice data
+                  >
+                    <FaEye />
+                  </button>
+
                 </td>
 
 
@@ -452,7 +496,7 @@ const handleGenerateInvoice = async () => {
                   </Form.Control>
                 </td>
 
-               
+
                 <td>
 
                   <Button variant="outline-primary" size="sm" className="me-2" onClick={() => handleViewLeadDetails(lead)}>
@@ -475,7 +519,7 @@ const handleGenerateInvoice = async () => {
         </tbody>
 
 
-        
+
       </Table>
       {totalPages > 1 && (
         <nav className="mt-3">
@@ -497,6 +541,7 @@ const handleGenerateInvoice = async () => {
         </nav>
       )}
 
+
       {/* View Lead Details Modal */}
       <Modal show={showViewModal} onHide={handleCloseViewModal} centered>
         <Modal.Header closeButton>
@@ -514,9 +559,22 @@ const handleGenerateInvoice = async () => {
               <p><strong>Status:</strong> {selectedLead?.status}</p>
               <p><strong>Preferred Countries:</strong> {selectedLead?.preferred_countries}</p>
               <p><strong>Notes:</strong> {selectedLead?.notes}</p>
+
+              {/* Display invoice details if available */}
+              {selectedLead.invoice && (
+                <div>
+                  <h5>Invoice Details</h5>
+                  <p><strong>Payment Amount:</strong> ${selectedLead.invoice.amount}</p>
+                  <p><strong>Tax:</strong> ${(selectedLead.invoice.amount * (selectedLead.invoice.tax / 100)).toFixed(2)}</p>
+                  <p><strong>Total:</strong> ${(selectedLead.invoice.amount + (selectedLead.invoice.amount * (selectedLead.invoice.tax / 100))).toFixed(2)}</p>
+                  <p><strong>Fee Date:</strong> {selectedLead.invoice.fee_date}</p>
+                  <p><strong>Description:</strong> {selectedLead.invoice.description}</p>
+                </div>
+              )}
             </div>
           )}
         </Modal.Body>
+
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseViewModal}>
             Close
