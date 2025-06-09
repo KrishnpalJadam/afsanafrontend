@@ -407,6 +407,7 @@ const handleGenerateInvoice = async () => {
                       Create Invoice
                     </Button>
                   )}
+                  <button className="btn btn-secondary btn-sm ms-3"><FaEye /></button>
                 </td>
 
 
@@ -454,13 +455,13 @@ const handleGenerateInvoice = async () => {
                
                 <td>
 
-                  <Button variant="outline-primary" size="sm" onClick={() => handleViewLeadDetails(lead)}>
+                  <Button variant="outline-primary" size="sm" className="me-2" onClick={() => handleViewLeadDetails(lead)}>
                     <FaEye />
                   </Button>
-                  <Button variant="outline-danger" size="sm" onClick={() => handleDeleteLead(lead.id)}>
+                  <Button variant="outline-danger" size="sm" className="me-2" onClick={() => handleDeleteLead(lead.id)}>
                     <FaTrash />
                   </Button>
-                  <Button variant="outline-success" size="sm" onClick={() => handleEditLead(lead)}>
+                  <Button variant="outline-success" size="sm" className="me-2" onClick={() => handleEditLead(lead)}>
                     <FaEdit />
                   </Button>
                 </td>
