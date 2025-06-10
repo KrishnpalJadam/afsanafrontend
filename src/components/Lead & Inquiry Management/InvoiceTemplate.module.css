@@ -1,0 +1,14 @@
+.invoice-wrapper {
+  padding: 20px;
+  background-color: #fff;
+  color: #333;
+  font-family: 'Montserrat', sans-serif;
+}
+.invoice h2 {
+  color: #1779ba;
+}
+.additional-info h5 {
+  font-size: 14px;
+  text-transform: uppercase;
+  color: #1779ba;
+}

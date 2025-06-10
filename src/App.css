@@ -21,6 +21,9 @@ body {
   font-family: 'Poppins', sans-serif !important;
   background-color: #f2f2f2;
 }
+.my{
+  font-family: 'Poppins', sans-serif !important;
+}
 
 a {
   text-decoration: none;
@@ -1131,6 +1134,50 @@ tbody{
 
 
 
+
+.invoice-wrapper {
+  padding: 20px;
+  background-color: #fff;
+  color: #333;
+  font-family: 'Montserrat', sans-serif;
+}
+.invoice h2 {
+  color: #1779ba;
+}
+.additional-info h5 {
+  font-size: 14px;
+  text-transform: uppercase;
+  color: #1779ba;
+}
+
+
+.invoice-container-wrapper {
+    max-width: 900px;
+    margin: auto;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.invoice-card {
+    background: #fff;
+    border-radius: 12px;
+}
+
+.invoice-logo {
+    max-height: 60px;
+}
+
+@media print {
+
+    .invoice-card, .invoice-card * {
+        visibility: visible;
+    }
+    .invoice-card {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+}
 
 
 .payment-status-dropdown {

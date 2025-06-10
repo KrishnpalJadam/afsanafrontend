@@ -490,7 +490,6 @@ const StudentDetails = () => {
                       <label className="student-form-label">Gender</label>
                       <div>
 
-
                         {["Male", "Female", "Other"].map((g) => (
                           <div key={g} className="form-check form-check-inline">
                             <input

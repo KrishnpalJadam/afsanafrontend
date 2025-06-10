@@ -120,7 +120,7 @@ const MyProfile = () => {
               {renderItem("Phone", userData?.phone)}
               {renderItem("Gender", userData?.gender)}
               {renderItem("Date of Birth", userData?.date_of_birth && new Date(userData.date_of_birth).toLocaleDateString())}
-              {renderItem("Address", userData?.address)} 
+              {renderItem("Address", userData?.address)}
               {renderItem("Father's Name", userData?.father_name)}
               {renderItem("Admission No.", userData?.admission_no)}
               {renderItem("ID No.", userData?.id_no)}
@@ -140,106 +140,106 @@ const MyProfile = () => {
         <Modal.Header closeButton>
           <Modal.Title>Update Profile</Modal.Title>
         </Modal.Header>
-       <Modal.Body>
-  <Form onSubmit={handleUpdateProfile}>
-    <Form.Group className="mb-3">
-      <Form.Label>Full Name</Form.Label>
-      <Form.Control
-        type="text"
-        name="full_name"
-        value={formData.full_name || ""}
-        onChange={handleChange}
-      />
-    </Form.Group>
+        <Modal.Body>
+          <Form onSubmit={handleUpdateProfile}>
+            <Form.Group className="mb-3">
+              <Form.Label>Full Name</Form.Label>
+              <Form.Control
+                type="text"
+                name="full_name"
+                value={formData.full_name || ""}
+                onChange={handleChange}
+              />
+            </Form.Group>
 
-    <Form.Group className="mb-3">
-      <Form.Label>Email</Form.Label>
-      <Form.Control
-        type="email"
-        name="email"
-        value={formData.email || ""}
-        onChange={handleChange}
-      />
-    </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type="email"
+                name="email"
+                value={formData.email || ""}
+                onChange={handleChange}
+              />
+            </Form.Group>
 
-    <Form.Group className="mb-3">
-      <Form.Label>Phone</Form.Label>
-      <Form.Control
-        type="text"
-        name="phone"
-        value={formData.phone || ""}
-        onChange={handleChange}
-      />
-    </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Phone</Form.Label>
+              <Form.Control
+                type="text"
+                name="phone"
+                value={formData.phone || ""}
+                onChange={handleChange}
+              />
+            </Form.Group>
 
-    <Form.Group className="mb-3">
-      <Form.Label>Address</Form.Label>
-      <Form.Control
-        type="text"
-        name="address"
-        value={formData.address || ""}
-        onChange={handleChange}
-      />
-    </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Address</Form.Label>
+              <Form.Control
+                type="text"
+                name="address"
+                value={formData.address || ""}
+                onChange={handleChange}
+              />
+            </Form.Group>
 
-    <Form.Group className="mb-3">
-      <Form.Label>Gender</Form.Label>
-      <Form.Select
-        name="gender"
-        value={formData.gender || ""}
-        onChange={handleChange}
-      >
-        <option value="">Select Gender</option>
-        <option value="Male">Male</option>
-        <option value="Female">Female</option>
-      </Form.Select>
-    </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Gender</Form.Label>
+              <Form.Select
+                name="gender"
+                value={formData.gender || ""}
+                onChange={handleChange}
+              >
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </Form.Select>
+            </Form.Group>
 
-    <Form.Group className="mb-3">
-      <Form.Label>Date of Birth</Form.Label>
-      <Form.Control
-        type="date"
-        name="date_of_birth"
-        value={formData.date_of_birth || ""}
-        onChange={handleChange}
-      />
-    </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Date of Birth</Form.Label>
+              <Form.Control
+                type="date"
+                name="date_of_birth"
+                value={formData.date_of_birth || ""}
+                onChange={handleChange}
+              />
+            </Form.Group>
 
-    <Form.Group className="mb-3">
-      <Form.Label>Father's Name</Form.Label>
-      <Form.Control
-        type="text"
-        name="father_name"
-        value={formData.father_name || ""}
-        onChange={handleChange}
-      />
-    </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Father's Name</Form.Label>
+              <Form.Control
+                type="text"
+                name="father_name"
+                value={formData.father_name || ""}
+                onChange={handleChange}
+              />
+            </Form.Group>
 
-    <Form.Group className="mb-3">
-      <Form.Label>Admission No.</Form.Label>
-      <Form.Control
-        type="text"
-        name="admission_no"
-        value={formData.admission_no || ""}
-        onChange={handleChange}
-      />
-    </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Admission No.</Form.Label>
+              <Form.Control
+                type="text"
+                name="admission_no"
+                value={formData.admission_no || ""}
+                onChange={handleChange}
+              />
+            </Form.Group>
 
-    <Form.Group className="mb-3">
-      <Form.Label>ID No.</Form.Label>
-      <Form.Control
-        type="text"
-        name="id_no"
-        value={formData.id_no || ""}
-        onChange={handleChange}
-      />
-    </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>ID No.</Form.Label>
+              <Form.Control
+                type="text"
+                name="id_no"
+                value={formData.id_no || ""}
+                onChange={handleChange}
+              />
+            </Form.Group>
 
-    <Button variant="primary" type="submit">
-      Save Changes
-    </Button>
-  </Form>
-</Modal.Body>
+            <Button variant="primary" type="submit">
+              Save Changes
+            </Button>
+          </Form>
+        </Modal.Body>
 
       </Modal>
     </Container>

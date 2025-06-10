@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { Container, Button, Table, Form, Modal, Badge, InputGroup, Dropdown, DropdownButton } from "react-bootstrap";
 import { FaSearch, FaPlus, FaEdit, FaTrash, FaEye } from "react-icons/fa";
-import BASE_URL from "../../Config"; // Assuming BASE_URL is already set
+import BASE_URL from "../../Config";
 import api from "../../interceptors/axiosInterceptor";
 import Swal from "sweetalert2";
+import InvoiceTemplate from "./InvoiceTemplate";
 
 
 const LeadCouncelor = ({ lead }) => {
@@ -40,17 +41,23 @@ const LeadCouncelor = ({ lead }) => {
     preferred_countries: "",
     source: "",
     status: "",
-    user_id: 1, // Include user_id as per the API requirement
+    user_id: 1,
   });
 
-  // Search & Filter States
+
   const [searchTerm, setSearchTerm] = useState("");
   const counsolerId = localStorage.getItem("counselor_id")
-  // Fetch Leads
+
   const fetchLeads = async () => {
     try {
       const response = await api.get(`${BASE_URL}lead/getLeadByCounselorIdnew/${counsolerId}`);
       setLeads(response.data);
+
+      // Save the lead ID in localStorage for future use
+      if (response.data && response.data.length > 0) {
+        const leadId = response.data[0].id; // Assuming the first lead object contains the ID
+
+      }
     } catch (error) {
       console.error("Error fetching leads:", error);
     }
@@ -221,25 +228,21 @@ const LeadCouncelor = ({ lead }) => {
 
   const handleStatusChange = (newStatus) => {
     setStatus(newStatus);
-    // Optionally, update the lead status in your database or state here
-  };
 
-
-  const handleShowInvoiceModal = (lead) => {
-    setSelectedLeadForInvoice(lead);
-    setShowInvoiceModal(true);
   };
 
 
 
 
-  // Calculate total based on payment amount and tax
+
+
+
   useEffect(() => {
     const calculatedTotal = paymentAmount + (paymentAmount * (tax / 100));
     setTotal(calculatedTotal);
   }, [paymentAmount, tax]);
 
-  // Handle Input Changes for Invoice Form
+
   const handleInvoiceInputChange = (e) => {
     const { name, value } = e.target;
 
@@ -277,17 +280,14 @@ const LeadCouncelor = ({ lead }) => {
 
     try {
       const response = await api.post(`${BASE_URL}createStudentFeeBYcounselors`, invoicedata);
-
-      // Save invoice data to localStorage
       localStorage.setItem(`invoice-${selectedLeadForInvoice.id}`, JSON.stringify(invoicedata));
-
       Swal.fire({
         icon: 'success',
         title: 'Invoice Generated',
         text: 'The invoice has been created successfully!',
       });
 
-      setShowInvoiceModal(false); // Close modal
+      setShowInvoiceModal(false);
     } catch (error) {
       Swal.fire({
         icon: 'error',
@@ -299,33 +299,27 @@ const LeadCouncelor = ({ lead }) => {
     }
   };
 
+  const [getInvoice, setInvoicedata] = useState([])
 
-const handleViewInvoiceData = (lead) => {
-  // Fetch the invoice data from localStorage
-  const invoiceData = JSON.parse(localStorage.getItem(`invoice-${lead.id}`));
-
-  if (invoiceData) {
-    setSelectedLead({
-      ...lead,
-      invoice: invoiceData,
-    });
-    setShowViewModal(true); // Open the modal to show invoice data
-  } else {
-    Swal.fire({
-      icon: 'warning',
-      title: 'No Invoice Found',
-      text: 'No invoice data available for this lead.',
-    });
-  }
+  // Fetch Invoice Data
+ const fetchInvoice = async (lead) => {
+    try {
+        const response = await api.get(`${BASE_URL}getInquiryByIdinvoice/${lead.id}`);
+        // Make sure to set the data properly in state
+        setSelectedLeadForInvoice(response.data);
+    } catch (error) {
+        console.error("Error fetching invoice:", error);
+    }
 };
+useEffect(() => {
+  if (selectedLeadForInvoice) {
+    console.log("Selected Lead Updated:", selectedLeadForInvoice);
+  }
+}, [selectedLeadForInvoice]);
 
-
-
-
-
-
-
-
+  useEffect(() => {
+    fetchInvoice();
+  }, []);
 
   const handleChangePaymentStatus = async (leadId, newStatus) => {
     try {
@@ -350,8 +344,6 @@ const handleViewInvoiceData = (lead) => {
   };
 
 
-
-
   const handleChangeLeadStatus = async (leadId, newStatus) => {
     try {
       // Update the lead status locally before making the API request (optional)
@@ -373,9 +365,10 @@ const handleViewInvoiceData = (lead) => {
       console.error("Error updating lead status:", error);
     }
   };
-
-
-
+  const handleShowInvoiceModal = (lead) => {
+    setSelectedLeadForInvoice(lead);
+    setShowInvoiceModal(true);
+  };
 
   return (
     <Container fluid className="py-3">
@@ -447,7 +440,7 @@ const handleViewInvoiceData = (lead) => {
                   )}
                   <button
                     className="btn btn-secondary btn-sm ms-3"
-                    onClick={() => handleViewInvoiceData(lead)} // Call the function to fetch invoice data
+                    onClick={() => fetchInvoice(lead)} // Call the function to fetch invoice data
                   >
                     <FaEye />
                   </button>
@@ -540,7 +533,9 @@ const handleViewInvoiceData = (lead) => {
           </ul>
         </nav>
       )}
-
+      {selectedLeadForInvoice && (
+        <InvoiceTemplate invoice={selectedLeadForInvoice} />
+      )}
 
       {/* View Lead Details Modal */}
       <Modal show={showViewModal} onHide={handleCloseViewModal} centered>

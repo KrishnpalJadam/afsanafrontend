@@ -243,17 +243,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
 
               {openSubmenu === "leadInquiry" &&(
                 <ul className={`submenu `}>
-                 { hasPermission("Inquiry","view") &&  <li
-                    className={`menu-item submenu-item ${
-                      isActive("/inquiry") ? "active" : ""
-                    }`}
-                    onClick={() => {
-                      navigate("/inquiry");
-                      menuItemClick();
-                    }}
-                  >
-                    Inquiry
-                  </li>}
+             
                   {hasPermission("Lead","view") &&<li
                     className={`menu-item submenu-item ${
                       isActive("/leadCouncelor") ? "active" : ""
