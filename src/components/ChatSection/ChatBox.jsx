@@ -35,7 +35,7 @@ const ChatBox = ({ userId }) => {
       setMessages([]);
       setOffset(0);
 
-      const newSocket = io("https://ssknf82q-3001.inc1.devtunnels.ms", {
+      const newSocket = io("https://afsana-backend-production.up.railway.app", {
         forceNew: true,
       });
       setSocket(newSocket);

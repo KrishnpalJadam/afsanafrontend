@@ -148,8 +148,8 @@ useEffect(() => {
                     <td>{lead.source}</td>
                     <td>
                       <Badge
-                        bg={getStatusBackgroundColor(lead.lead_status)}  // Set background color based on lead status
-                        style={{ color: 'white', padding: '5px 10px', borderRadius: '4px' }}
+                         // Set background color based on lead status
+                        style={{ color: 'white', padding: '5px 10px', borderRadius: '4px', backgroundColor: "green" }}
                       >
                         {lead.lead_status}  {/* Display status */}
                       </Badge>

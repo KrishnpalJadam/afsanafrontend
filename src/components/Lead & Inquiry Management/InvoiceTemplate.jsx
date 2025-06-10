@@ -1,9 +1,9 @@
-import { useEffect, useRef } from "react";
+import { forwardRef, useEffect, useRef } from "react";
 import html2pdf from 'html2pdf.js';
 
-const InvoiceTemplate = ({ invoice }) => {
-    const invoiceRef = useRef();
-
+const InvoiceTemplate = forwardRef(({ invoice }, invoiceRef) => {
+   
+    
     useEffect(() => {
         console.log("Invoice Data:", invoice);
     }, [invoice]);
@@ -25,11 +25,11 @@ const InvoiceTemplate = ({ invoice }) => {
     const handleDownload = () => {
         const element = invoiceRef.current;
         const opt = {
-            margin:       1,
-            filename:     `Invoice_${invoice.id}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2 },
-            jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            margin: 1,
+            filename: `Invoice_${invoice.id}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
         };
         // Using html2pdf to create the PDF with proper scaling and formatting
         html2pdf().from(element).set(opt).save();
@@ -102,6 +102,6 @@ const InvoiceTemplate = ({ invoice }) => {
             </div>
         </div>
     );
-};
+});
 
 export default InvoiceTemplate;

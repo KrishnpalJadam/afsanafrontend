@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Container, Button, Table, Form, Modal, Badge, InputGroup, Dropdown, DropdownButton } from "react-bootstrap";
 import { FaSearch, FaPlus, FaEdit, FaTrash, FaEye } from "react-icons/fa";
 import BASE_URL from "../../Config";
@@ -8,7 +8,7 @@ import InvoiceTemplate from "./InvoiceTemplate";
 
 
 const LeadCouncelor = ({ lead }) => {
-
+  const invoiceRef = useRef(null);  // Create the invoiceRef here
   const [leads, setLeads] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [status, setStatus] = useState(lead);
@@ -198,20 +198,26 @@ const LeadCouncelor = ({ lead }) => {
 
 
   // View Lead Details
-  const handleViewLeadDetails = (lead) => {
-    setSelectedLead(lead);
-    setShowViewModal(true);
+const handleViewLeadDetails = (lead) => {
+  setSelectedLead(lead);
+  setShowViewModal(true);
 
-    // Fetch the invoice data from localStorage for the selected lead
-    const invoiceData = JSON.parse(localStorage.getItem(`invoice-${lead.id}`));
+  // Fetch invoice data from localStorage
+  const invoiceData = JSON.parse(localStorage.getItem(`invoice-${lead.id}`));
 
-    if (invoiceData) {
-      setSelectedLead((prevLead) => ({
-        ...prevLead,
-        invoice: invoiceData
-      }));
-    }
-  };
+  if (invoiceData) {
+    setSelectedLead((prevLead) => ({
+      ...prevLead,
+      invoice: invoiceData
+    }));
+  }
+
+  // Scroll to the invoice section
+  if (invoiceRef.current) {
+    invoiceRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+};
+
 
 
   const handleCloseViewModal = () => {
@@ -302,20 +308,20 @@ const LeadCouncelor = ({ lead }) => {
   const [getInvoice, setInvoicedata] = useState([])
 
   // Fetch Invoice Data
- const fetchInvoice = async (lead) => {
+  const fetchInvoice = async (lead) => {
     try {
-        const response = await api.get(`${BASE_URL}getInquiryByIdinvoice/${lead.id}`);
-        // Make sure to set the data properly in state
-        setSelectedLeadForInvoice(response.data);
+      const response = await api.get(`${BASE_URL}getInquiryByIdinvoice/${lead.id}`);
+      // Make sure to set the data properly in state
+      setSelectedLeadForInvoice(response.data);
     } catch (error) {
-        console.error("Error fetching invoice:", error);
+      console.error("Error fetching invoice:", error);
     }
-};
-useEffect(() => {
-  if (selectedLeadForInvoice) {
-    console.log("Selected Lead Updated:", selectedLeadForInvoice);
-  }
-}, [selectedLeadForInvoice]);
+  };
+  useEffect(() => {
+    if (selectedLeadForInvoice) {
+      console.log("Selected Lead Updated:", selectedLeadForInvoice);
+    }
+  }, [selectedLeadForInvoice]);
 
   useEffect(() => {
     fetchInvoice();
@@ -438,18 +444,20 @@ useEffect(() => {
                       Create Invoice
                     </Button>
                   )}
-                  <button
-                    className="btn btn-secondary btn-sm ms-3"
-                    onClick={() => fetchInvoice(lead)} // Call the function to fetch invoice data
-                  >
-                    <FaEye />
-                  </button>
+               <button
+  className="btn btn-secondary btn-sm ms-3"
+  onClick={() => {
+    fetchInvoice(lead);
+    if (invoiceRef.current) {
+      invoiceRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }}
+>
+  <FaEye />
+</button>
+
 
                 </td>
-
-
-
-
 
                 <td>
                   {/* Styled dropdown for payment status */}
@@ -467,12 +475,6 @@ useEffect(() => {
 
                 </td>
 
-
-
-
-
-
-
                 <td>
                   {/* Styled dropdown for lead status */}
                   <Form.Control
@@ -482,10 +484,9 @@ useEffect(() => {
                     className="lead-status-dropdown"
                   >
                     <option value="select">Select</option>
-                    <option value="New">New</option>
                     <option value="Contacted">Contacted</option>
                     <option value="Converted">Converted</option>
-                    <option value="Dropped">Dropped</option>
+                    <option value="Panding">Panding</option>
                   </Form.Control>
                 </td>
 
@@ -534,7 +535,7 @@ useEffect(() => {
         </nav>
       )}
       {selectedLeadForInvoice && (
-        <InvoiceTemplate invoice={selectedLeadForInvoice} />
+        <InvoiceTemplate invoice={selectedLeadForInvoice} ref={invoiceRef} />
       )}
 
       {/* View Lead Details Modal */}

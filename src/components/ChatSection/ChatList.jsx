@@ -17,7 +17,7 @@ const ChatList = ({ userId }) => {
     const fetchChatList = async () => {
       try {
         const response = await axios.get(
-          `https://ssknf82q-3001.inc1.devtunnels.ms/api/chats/getChatList/${userId}`
+          `https://afsana-backend-production.up.railway.app/api/chats/getChatList/${userId}`
         );
         if (response.data.success) {
           console.log("chatList",response.data.chatList)
