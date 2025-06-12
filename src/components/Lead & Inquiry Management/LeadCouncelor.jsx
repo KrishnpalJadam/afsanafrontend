@@ -499,9 +499,9 @@ const handleViewLeadDetails = (lead) => {
                   <Button variant="outline-danger" size="sm" className="me-2" onClick={() => handleDeleteLead(lead.id)}>
                     <FaTrash />
                   </Button>
-                  <Button variant="outline-success" size="sm" className="me-2" onClick={() => handleEditLead(lead)}>
+                  {/* <Button variant="outline-success" size="sm" className="me-2" onClick={() => handleEditLead(lead)}>
                     <FaEdit />
-                  </Button>
+                  </Button> */}
                 </td>
               </tr>
             ))
@@ -552,7 +552,8 @@ const handleViewLeadDetails = (lead) => {
               <p><strong>counselor:</strong> {selectedLead?.counselor_name}</p>
               <p><strong>Follow-up Date:</strong> {selectedLead?.follow_up_date}</p>
               <p><strong>Source:</strong> {selectedLead?.source}</p>
-              <p><strong>Status:</strong> {selectedLead?.status}</p>
+              <p><strong>Leadstatus:</strong> {selectedLead?.lead_status}</p>
+              <p><strong>Payment Status:</strong> {selectedLead?.payment_status}</p>
               <p><strong>Preferred Countries:</strong> {selectedLead?.preferred_countries}</p>
               <p><strong>Notes:</strong> {selectedLead?.notes}</p>
 

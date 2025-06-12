@@ -73,7 +73,7 @@ import ChatList from "./components/ChatSection/ChatList";
 import Signup from "./authtication/Signup";
 import InquiryForm from "./authtication/InquiryForm";
 import InquryTabledemo from "./demofiles/InquryTabledemo";
-import Inquirydemo from "./demofiles/Inquirydemo";
+
 
 
 function App() {
@@ -229,7 +229,7 @@ function App() {
 
 
 
-              <Route path="/inquirydemo" element={<Inquirydemo/>} />
+              {/* <Route path="/inquirydemo" element={<Inquirydemo/>} /> */}
               <Route path="/inquryTabledemo" element={<InquryTabledemo/>} />
 
 
