@@ -222,7 +222,54 @@ const [year, setYear] = useState("");
       console.error("Error fetching inquiries:", error); // Handle error
     }
   };
+const [filteredData, setFilteredData] = useState([]);
+  const [filters, setFilters] = useState({
+    search: "",
+    branch: "",
+    source: "",
+    startDate: "",
+    endDate: "",
+  });
 
+  useEffect(() => {
+    filterInquiries();
+  }, [inquiries, filters]);
+
+  const filterInquiries = () => {
+    let data = [...inquiries];
+
+    // Search Filter (Name or Phone)
+    if (filters.search) {
+      data = data.filter(
+        (inq) =>
+          inq?.full_name?.toLowerCase()?.includes(filters.search.toLowerCase()) ||
+          inq?.phone_number?.includes(filters.search)
+      );
+    }
+
+    // Branch Filter
+    if (filters.branch) {
+      data = data.filter((inq) => inq.branch === filters.branch);
+    }
+
+    // Source Filter
+    if (filters.source) {
+      data = data.filter((inq) => inq.source === filters.source);
+    }
+
+    // Date Range Filter
+    if (filters.startDate && filters.endDate) {
+      data = data.filter((inq) => {
+        const inquiryDate = new Date(inq.date_of_inquiry);
+        return (
+          inquiryDate >= new Date(filters.startDate) &&
+          inquiryDate <= new Date(filters.endDate)
+        );
+      });
+    }
+
+    setFilteredData(data);
+  };
 
   // 🔄 useEffect to call on mount / when councolerid changes
   useEffect(() => {
@@ -354,9 +401,6 @@ const [year, setYear] = useState("");
     }
   };
 
-
-
-
   // Handle inquiry detail view
   const handleViewDetail = async (id) => {
     try {
@@ -388,78 +432,11 @@ const [year, setYear] = useState("");
     setShowAssignModal(true);    // Show the modal
   };
 
-  // Pagination logic
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentInquiries = Array.isArray(inquiries?.todayInquiries)
-    ? inquiries.todayInquiries.slice(indexOfFirstItem, indexOfLastItem)
-    : [];
-
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-
-  const [selectedFilter, setSelectedFilter] = useState(null);
-  const [selectedStatus, setSelectedStatus] = useState(null);
-
-
-  // Handle the filter selection
-  const handleFilterSelect = (filter) => {
-    setSelectedFilter(filter);
-    console.log("Selected Filter: ", filter);
-  };
-
-  const handleStatusSelect = (status) => {
-    setSelectedStatus(status);
-    console.log("Selected Status: ", status);
-  };
   return (
     <div className="container mt-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Today's Inquiries</h2>
         <div className="d-flex gap-3">
-          {/* Render 'Assign To' button only for admin */}
-          {role === "admin" && (
-            <div>
-              {/* <button
-                variant="primary"
-                className="me-2"
-                data-bs-toggle="modal"
-                data-bs-target="#staticBackdrop"
-                style={{
-                  border: "none",
-                  height: "35px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  width: "100%" // Optional: Ensure the button takes up available width
-                }}
-              >
-                Assign To
-              </button> */}
-            </div>
-          )}
-
-          {/* Render 'Follow Up' button only for admin */}
-          {/* {role === "admin" && (
-    <div>
-      <button
-        variant="primary"
-        className="me-2"
-        style={{
-          border: "none",
-          height: "35px",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          width: "100%" // Optional: Ensure the button takes up available width
-        }}
-      >
-        Follow Up
-      </button>
-    </div>
-  )} */}
-
-          {/* Always show 'Add Inquiry' button */}
           <div className="d-flex gap-3">
             <div>
               <Button
@@ -473,34 +450,88 @@ const [year, setYear] = useState("");
             </div>
 
             {/* Filter Button */}
-            {/* <div>
-              <DropdownButton
-                id="filter-dropdown"
-                variant="secondary"
-                title={`Filter Inquiries`}
-                style={{ border: "none" }}
-              >
-             
-                <Dropdown.Item as="button" onClick={() => handleFilterSelect("Counselor")}>
-                  Filter by Counselor
-                </Dropdown.Item>
-
-             
-                <Dropdown.Item as="button" onClick={() => handleStatusSelect("New")}>
-                  Filter by Status - New
-                </Dropdown.Item>
-                <Dropdown.Item as="button" onClick={() => handleStatusSelect("Contacted")}>
-                  Filter by Status - Contacted
-                </Dropdown.Item>
-                <Dropdown.Item as="button" onClick={() => handleStatusSelect("Converted")}>
-                  Filter by Status - Converted
-                </Dropdown.Item>
-              </DropdownButton>
-            </div> */}
+         
           </div>
         </div>
       </div>
-
+    <Row className="mb-4">
+        <Col md={3}>
+          <Form.Control
+            placeholder="Search by Name or Phone"
+            value={filters.search}
+            onChange={(e) =>
+              setFilters({ ...filters, search: e.target.value })
+            }
+          />
+        </Col>
+        <Col md={2}>
+          <Form.Select
+            value={filters.branch}
+            onChange={(e) =>
+              setFilters({ ...filters, branch: e.target.value })
+            }
+          >
+            <option value="">All Branches</option>
+            <option value="Dhaka">Dhaka</option>
+            <option value="Sylhet">Sylhet</option>
+          </Form.Select>
+        </Col>
+        <Col md={2}>
+          <Form.Select
+            value={filters.source}
+            onChange={(e) =>
+              setFilters({ ...filters, source: e.target.value })
+            }
+          >
+            <option value="">All Sources</option>
+            <option value="facebook">Facebook</option>
+            <option value="youtube">YouTube</option>
+            <option value="website">Website</option>
+            <option value="referral">Referral</option>
+            <option value="event">Event</option>
+            <option value="agent">Agent</option>
+            <option value="office_visit">Office Visit</option>
+            <option value="hotline">Hotline</option>
+            <option value="seminar">Seminar</option>
+            <option value="expo">Expo</option>
+            <option value="other">Other</option>
+          </Form.Select>
+        </Col>
+        <Col md={2}>
+          <Form.Control
+            type="date"
+            value={filters.startDate}
+            onChange={(e) =>
+              setFilters({ ...filters, startDate: e.target.value })
+            }
+          />
+        </Col>
+        <Col md={2}>
+          <Form.Control
+            type="date"
+            value={filters.endDate}
+            onChange={(e) =>
+              setFilters({ ...filters, endDate: e.target.value })
+            }
+          />
+        </Col>
+        <Col md={1}>
+    <button
+      className="btn btn-secondary w-100"
+      onClick={() =>
+        setFilters({
+          search: "",
+          branch: "",
+          source: "",
+          startDate: "",
+          endDate: "",
+        })
+      }
+    >
+      Reset
+    </button>
+  </Col>
+      </Row>
       {/* // Modal for assigning counselor */}
       <Modal show={showAssignModal} onHide={handleCloseAssignModal} centered>
         <Modal.Header closeButton>
@@ -543,13 +574,6 @@ const [year, setYear] = useState("");
         </Modal.Footer>
       </Modal>
 
-
-      {/* Header Section */}
-      {/* <div className="d-flex justify-content-between mb-3">
-        <Form.Control type="text"
-          placeholder="Search inquiries" className="w-50"/>
-      </div> */}
-
       {/* Today's Inquiries */}
  <Table striped bordered hover responsive>
   <thead>
@@ -557,26 +581,27 @@ const [year, setYear] = useState("");
       <th>Inquiry ID</th>
       <th>Name</th>
       <th>Phone</th>
-      <th>Email</th>
-      <th>Date</th>
+      <th>Source</th>
+      <th>Branch</th>
       <th>Inquiry Type</th>
-      <th>Course</th>
+      <th>Date of Inquiry</th>
+      <th>Country</th>
       <th>Status</th>
       <th>Action</th>
     </tr>
   </thead>
   <tbody>
-    {Array.isArray(inquiries) && inquiries.length > 0 ? (
-      inquiries?.map((inq, index) => (
+    {Array.isArray(filteredData) && filteredData.length > 0 ? (
+      filteredData?.map((inq, index) => (
         <tr key={inq.id}>
           <td>{index + 1}</td>
           <td>{inq.full_name}</td>
           <td>{inq.phone_number}</td>
-          <td>{inq.email}</td>
-         <td>{new Date(inq.date_of_inquiry).toISOString().split('T')[0]}</td>
+          <td>{inq.source}</td>
+          <td>{inq.branch}</td>
           <td>{inq.inquiry_type}</td>
-          <td>{inq.course_name}</td>
-          
+         <td>{new Date(inq.date_of_inquiry).toISOString().split('T')[0]}</td>
+          <td>{inq.country}</td>
           {/* Status Column */}
           <td>
             {inq.status === "0" ? (
@@ -600,12 +625,10 @@ const [year, setYear] = useState("");
             )}
 
             {/* Delete Button */}
-            <Button 
-              variant="danger" 
+            <Button   variant="danger" 
               size="sm" 
               onClick={() => handleDeleteInquiry(inq.id)} 
-              className="ms-2"
-            >
+              className="ms-2">
               <MdDelete /> {/* MdDelete icon for delete button */}
             </Button>
           </td>
@@ -618,24 +641,7 @@ const [year, setYear] = useState("");
     )}
   </tbody>
 </Table>
-
-
-      <Pagination className="justify-content-center mt-3">
-        {Array.from({
-          length: Math.ceil((inquiries.todayInquiries || []).length / itemsPerPage),
-        }).map((_, index) => (
-          <Pagination.Item
-            key={index + 1}
-            active={index + 1 === currentPage}
-            onClick={() => paginate(index + 1)}
-          >
-            {index + 1}
-          </Pagination.Item>
-        ))}
-      </Pagination>
       <Followup />
-
-
       {/* Modal for Adding New Inquiry */}
       <Modal show={showInquiryModal}
         onHide={handleCloseInquiryModal}
@@ -697,8 +703,7 @@ const [year, setYear] = useState("");
                     name="branch"
                     value={newInquiry.branch}
                     onChange={handleInquiryInputChange}
-                    required
-                  >
+                    required>
                     <option value="">Select Branch</option>
                     {getData.map((item) => (
                       <option key={item.id} value={item.branch_name}>
