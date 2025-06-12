@@ -372,7 +372,7 @@ const Inquiry = () => {
   return (
     <div className="container mt-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Today's Inquiries</h2>
+        <h2>Total Inquiries</h2>
         <div className="d-flex gap-3">
           {/* Render 'Assign To' button only for admin */}
           {role === "admin" && (
@@ -457,6 +457,51 @@ const Inquiry = () => {
           </div>
         </div>
       </div>
+<div className="card mb-4">
+  <div className="card-body">
+    <form className="row g-3">
+      <div className="col-md-3">
+        <label>Search Name / Phone</label>
+        <input type="text" className="form-control" placeholder="Search..." />
+      </div>
+      <div className="col-md-3">
+        <label>Status</label>
+        <select className="form-select">
+          <option value="">All</option>
+          <option>New</option>
+          <option>In Progress</option>
+          <option>Closed</option>
+          <option>Rejected</option>
+        </select>
+      </div>
+      <div className="col-md-3">
+        <label>Branch</label>
+        <select className="form-select">
+          <option value="">All Branches</option>
+          <option>Dhaka</option>
+          <option>Sylhet</option>
+          <option>Chittagong</option>
+        </select>
+      </div>
+      <div className="col-md-3">
+        <label>Date Range</label>
+        <div className="input-group">
+          <input type="date" className="form-control" />
+          <span className="input-group-text">to</span>
+          <input type="date" className="form-control" />
+        </div>
+      </div>
+      <div className="col-md-12 text-end">
+        <button type="button" className="btn btn-primary mt-3 me-3">
+          Apply Filters
+        </button>
+        <button type="reset" className="btn btn-secondary mt-3">
+          Clear
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
 
       {/* // Modal for assigning counselor */}
       <Modal show={showAssignModal} onHide={handleCloseAssignModal} centered>
@@ -512,10 +557,15 @@ const Inquiry = () => {
   <thead>
     <tr>
       <th>#</th>
-      <th>Name</th>
-      <th>Email</th>
-      <th>Course</th>
+      <th>Full Name</th>
+      <th>Inquiry Type</th>
+      <th>Source</th>
+      <th>Branch</th>
+      <th>Phone</th>
+      <th>Country</th>
+      <th>Date of Inquiry </th>
       <th>Status</th>
+      <th>Asign To</th>
       <th>Action</th>
     </tr>
   </thead>
@@ -525,8 +575,14 @@ const Inquiry = () => {
         <tr key={inq.id}>
           <td>{index + 1}</td>
           <td>{inq.full_name}</td>
-          <td>{inq.email}</td>
-          <td>{inq.course_name}</td>
+          <td>{inq.inquiry_type}</td>
+          <td>{inq.source}</td>
+          <td>{inq.branch}</td>
+          <td>{inq.phone_number}</td>
+          <td>{inq.country}</td>
+       <td>{new Date(inq.date_of_inquiry).toLocaleDateString()}</td>
+
+         
           
           {/* Status Column */}
           <td>
@@ -550,7 +606,10 @@ const Inquiry = () => {
               </Button>
             )}
 
-            {/* Delete Button */}
+           
+          </td>
+          <td>
+             {/* Delete Button */}
             <Button 
               variant="danger" 
               size="sm" 

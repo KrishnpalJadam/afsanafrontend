@@ -71,6 +71,10 @@ import ChatBox2 from "./components/ChatSection/ChatBox";
 import ChatHistory from "./components/ChatSection/ChatHistory";
 import ChatList from "./components/ChatSection/ChatList";
 import Signup from "./authtication/Signup";
+import InquiryForm from "./authtication/InquiryForm";
+import InquryTabledemo from "./demofiles/InquryTabledemo";
+import Inquirydemo from "./demofiles/Inquirydemo";
+
 
 function App() {
   //show details to admin
@@ -110,8 +114,8 @@ function App() {
   };
   const location = useLocation();
   const user_id = localStorage.getItem("user_id")
-const noLayoutPaths = ["/", "/login", "/signup"];
-const hideLayout = noLayoutPaths.includes(location.pathname);
+  const noLayoutPaths = ["/", "/login", "/signup"];
+  const hideLayout = noLayoutPaths.includes(location.pathname);
 
   return (
     <>
@@ -221,6 +225,12 @@ const hideLayout = noLayoutPaths.includes(location.pathname);
               <Route path="/chat/:receiverId" element={<ChatBox2 userId={user_id} />} />
               <Route path="/chatHistory" element={<ChatHistory userId={user_id} />} />
               <Route path="/chatList" element={<ChatList userId={user_id} />} />
+            
+
+
+
+              <Route path="/inquirydemo" element={<Inquirydemo/>} />
+              <Route path="/inquryTabledemo" element={<InquryTabledemo/>} />
 
 
 

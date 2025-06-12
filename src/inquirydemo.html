@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Inquiry Form</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container my-5">
+  <h2 class="text-center mb-4">Student Inquiry Form</h2>
+
+  <form>
+
+    <!-- Inquiry Details -->
+    <h4>Inquiry Details</h4>
+    <div class="row g-3 mb-3">
+      <div class="col-md-4">
+        <label>Inquiry Type</label>
+        <select class="form-select">
+          <option value="">Select</option>
+          <option>Student Visa</option>
+          <option>Visit Visa</option>
+          <option>Work Visa</option>
+          <option>Short Visa</option>
+          <option>German Course</option>
+          <option>English Course</option>
+          <option>Others</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label>Source</label>
+        <select class="form-select">
+          <option>WhatsApp</option>
+          <option>Facebook</option>
+          <option>YouTube</option>
+          <option>Website</option>
+          <option>Referral</option>
+          <option>Event</option>
+          <option>Agent</option>
+          <option>Office Visit</option>
+          <option>Hotline</option>
+          <option>Seminar</option>
+          <option>Expo</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label>Branch</label>
+        <input type="text" class="form-control" placeholder="Enter Branch Name">
+      </div>
+    </div>
+
+    <!-- Personal Information -->
+    <h4>Personal Information</h4>
+    <div class="row g-3 mb-3">
+      <div class="col-md-3">
+        <label>Full Name</label>
+        <input type="text" class="form-control" placeholder="Enter Name">
+      </div>
+      <div class="col-md-3">
+        <label>Phone (WhatsApp)</label>
+        <input type="text" class="form-control" placeholder="Enter Phone">
+      </div>
+      <div class="col-md-3">
+        <label>Email</label>
+        <input type="email" class="form-control" placeholder="Enter Email">
+      </div>
+      <div class="col-md-3">
+        <label>Date of Birth</label>
+        <input type="date" class="form-control">
+      </div>
+    </div>
+
+    <div class="row g-3 mb-3">
+      <div class="col-md-3">
+        <label>Gender</label>
+        <select class="form-select">
+          <option>Select</option>
+          <option>Male</option>
+          <option>Female</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label>Country</label>
+        <input type="text" class="form-control" placeholder="Enter Country">
+      </div>
+      <div class="col-md-3">
+        <label>City</label>
+        <input type="text" class="form-control" placeholder="Enter City">
+      </div>
+      <div class="col-md-3">
+        <label>Course Name</label>
+        <input type="text" class="form-control" placeholder="Enter Course">
+      </div>
+    </div>
+
+    <!-- Academic Background -->
+    <h4>Academic Background</h4>
+    <div class="row g-3 mb-3">
+      <div class="col-md-2">
+        <label>SSC GPA</label>
+        <input type="text" class="form-control">
+      </div>
+      <div class="col-md-2">
+        <label>SSC Year</label>
+        <input type="text" class="form-control">
+      </div>
+      <div class="col-md-2">
+        <label>HSC GPA</label>
+        <input type="text" class="form-control">
+      </div>
+      <div class="col-md-2">
+        <label>HSC Year</label>
+        <input type="text" class="form-control">
+      </div>
+      <div class="col-md-2">
+        <label>Bachelor CGPA</label>
+        <input type="text" class="form-control">
+      </div>
+      <div class="col-md-2">
+        <label>Bachelor Year</label>
+        <input type="text" class="form-control">
+      </div>
+    </div>
+
+    <div class="row g-3 mb-3">
+      <div class="col-md-6">
+        <label>Board/University</label>
+        <input type="text" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label>Medium of Instruction</label>
+        <select class="form-select">
+          <option>Select</option>
+          <option>English</option>
+          <option>Bangla</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Course & Program Info -->
+    <h4>Course & Program Info</h4>
+    <div class="row g-3 mb-3">
+      <div class="col-md-3">
+        <label>Study Level</label>
+        <select class="form-select">
+          <option>Select</option>
+          <option>Diploma</option>
+          <option>Bachelor</option>
+          <option>Master</option>
+          <option>PhD</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label>Study Field</label>
+        <input type="text" class="form-control" placeholder="Eg. Business">
+      </div>
+      <div class="col-md-3">
+        <label>Intake</label>
+        <select class="form-select">
+          <option>February</option>
+          <option>September</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label>Budget</label>
+        <input type="text" class="form-control" placeholder="1 Year Tuition + Living">
+      </div>
+    </div>
+
+    <!-- English Proficiency -->
+    <h4>English Proficiency</h4>
+    <div class="row g-3 mb-3">
+      <div class="col-md-3">
+        <label>Test Type</label>
+        <select class="form-select">
+          <option>IELTS</option>
+          <option>TOEFL</option>
+          <option>Duolingo</option>
+          <option>No Test Yet</option>
+        </select>
+      </div>
+      <div class="col-md-2"><label>Overall</label><input type="text" class="form-control"></div>
+      <div class="col-md-2"><label>Reading</label><input type="text" class="form-control"></div>
+      <div class="col-md-2"><label>Writing</label><input type="text" class="form-control"></div>
+      <div class="col-md-2"><label>Speaking</label><input type="text" class="form-control"></div>
+      <div class="col-md-2"><label>Listening</label><input type="text" class="form-control"></div>
+    </div>
+
+    <!-- Work & Visa History -->
+    <h4>Work & Visa History</h4>
+    <div class="row g-3 mb-3">
+      <div class="col-md-4"><label>Company</label><input type="text" class="form-control"></div>
+      <div class="col-md-4"><label>Job Title</label><input type="text" class="form-control"></div>
+      <div class="col-md-4"><label>Duration</label><input type="text" class="form-control"></div>
+    </div>
+
+    <div class="row g-3 mb-3">
+      <div class="col-md-6"><label>Study Gap</label><textarea class="form-control" rows="2"></textarea></div>
+      <div class="col-md-6">
+        <label>Visa Refusal</label>
+        <div class="form-check">
+          <input type="radio" class="form-check-input" name="visaRefusal" id="yes"><label class="form-check-label" for="yes">Yes</label>
+        </div>
+        <div class="form-check">
+          <input type="radio" class="form-check-input" name="visaRefusal" id="no"><label class="form-check-label" for="no">No</label>
+        </div>
+        <label>Refusal Reason</label>
+        <input type="text" class="form-control">
+      </div>
+    </div>
+
+    <!-- Address -->
+    <h4>Address</h4>
+    <div class="mb-3">
+      <label>Permanent Address</label>
+      <textarea class="form-control" rows="2"></textarea>
+    </div>
+    <div class="mb-3">
+      <label>Present Address</label>
+      <textarea class="form-control" rows="2"></textarea>
+    </div>
+
+    <!-- Consent -->
+    <div class="form-check mb-3">
+      <input type="checkbox" class="form-check-input" required>
+      <label class="form-check-label">I confirm all information is correct and give permission to Study First Info to contact me.</label>
+    </div>
+
+    <div class="text-end">
+      <button type="submit" class="btn btn-primary">Submit Inquiry</button>
+    </div>
+
+  </form>
+</div>
+
+</body>
+</html>
