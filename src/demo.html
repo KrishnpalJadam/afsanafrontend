@@ -2,79 +2,317 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Invoice - Immigration Service</title>
+  <title>Student Enquiry Form - Study First Info</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="bg-light">
-  <div class="container mt-5">
-    <h2>Create Invoice</h2>
+<body>
 
-    <form>
-      <div class="row g-3 mb-3">
-        <div class="col-md-6">
-          <label class="form-label">Student Name</label>
-          <input type="text" class="form-control" placeholder="Enter name">
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Service Title</label>
-          <input type="text" class="form-control" placeholder="e.g. Visa Filing">
-        </div>
-        <div class="col-md-4">
-          <label class="form-label">Total Amount (₹)</label>
-          <input type="number" class="form-control" placeholder="50000">
-        </div>
-        <div class="col-md-4">
-          <label class="form-label">Amount Paid (₹)</label>
-          <input type="number" class="form-control" placeholder="20000">
-        </div>
-        <div class="col-md-4">
-          <label class="form-label">Due Date</label>
-          <input type="date" class="form-control">
-        </div>
-        <div class="col-md-12">
-          <label class="form-label">Additional Notes</label>
-          <textarea class="form-control" rows="2" placeholder="Anything to mention"></textarea>
-        </div>
+<div class="container my-5">
+  <h2 class="mb-4 text-center">Student Enquiry Form</h2>
+
+  <form>
+
+    <!-- Inquiry Details -->
+    <h4>Inquiry Details</h4>
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <label for="inquiryType" class="form-label">Inquiry Type</label>
+        <select class="form-select" id="inquiryType" required>
+          <option value="">Select</option>
+          <option value="student_visa">Student Visa</option>
+          <option value="visit_visa">Visit Visa</option>
+          <option value="work_visa">Work Visa</option>
+          <option value="short_visa">Short Visa</option>
+          <option value="german_course">German Course</option>
+          <option value="english_course">English Course</option>
+          <option value="others">Others</option>
+        </select>
       </div>
 
-      <button type="submit" class="btn btn-success">Generate Invoice</button>
-      <button type="button" class="btn btn-primary">Mark as Paid</button>
-      <button type="button" class="btn btn-outline-secondary">Download PDF</button>
-    </form>
+      <div class="col-md-4">
+        <label for="source" class="form-label">Source</label>
+        <select class="form-select" id="source" required>
+          <option value="">Select</option>
+          <option value="whatsapp">WhatsApp</option>
+          <option value="facebook">Facebook</option>
+          <option value="youtube">YouTube</option>
+          <option value="website">Website</option>
+          <option value="referral">Referral</option>
+          <option value="event">Event</option>
+          <option value="agent">Agent</option>
+          <option value="office_visit">Office Visit</option>
+          <option value="hotline">Hotline</option>
+          <option value="seminar">Seminar</option>
+          <option value="expo">Expo</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
 
-    <hr class="my-5">
+      <div class="col-md-4">
+        <label for="branch" class="form-label">Branch</label>
+        <input type="text" class="form-control" id="branch" required>
+      </div>
+    </div>
 
-    <h4>Recent Invoices</h4>
-    <table class="table table-bordered">
-      <thead class="table-secondary">
-        <tr>
-          <th>#</th>
-          <th>Student</th>
-          <th>Service</th>
-          <th>Total</th>
-          <th>Paid</th>
-          <th>Due</th>
-          <th>Status</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>1</td>
-          <td>Krishna</td>
-          <td>Visa Filing</td>
-          <td>₹50000</td>
-          <td>₹20000</td>
-          <td>₹30000</td>
-          <td><span class="badge bg-warning text-dark">Pending</span></td>
-          <td>
-            <button class="btn btn-sm btn-success">Mark Paid</button>
-            <button class="btn btn-sm btn-outline-primary">PDF</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <!-- Personal Information -->
+    <h4>Personal Information</h4>
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <label for="fullName" class="form-label">Full Name</label>
+        <input type="text" class="form-control" id="fullName" required>
+      </div>
+      <div class="col-md-4">
+        <label for="phone" class="form-label">Phone (WhatsApp)</label>
+        <input type="tel" class="form-control" id="phone" required>
+      </div>
+      <div class="col-md-4">
+        <label for="email" class="form-label">Email Address</label>
+        <input type="email" class="form-control" id="email" required>
+      </div>
+    </div>
 
+    <div class="row mb-3">
+      <div class="col-md-3">
+        <label for="country" class="form-label">Country</label>
+        <input type="text" class="form-control" id="country" required>
+      </div>
+      <div class="col-md-3">
+        <label for="city" class="form-label">City</label>
+        <input type="text" class="form-control" id="city" required>
+      </div>
+      <div class="col-md-3">
+        <label for="dob" class="form-label">Date of Birth</label>
+        <input type="date" class="form-control" id="dob" required>
+      </div>
+      <div class="col-md-3">
+        <label for="gender" class="form-label">Gender</label>
+        <select class="form-select" id="gender" required>
+          <option value="">Select</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Academic Background -->
+    <h4>Academic Background</h4>
+    <div class="row mb-3">
+      <div class="col-md-3">
+        <label for="highestLevel" class="form-label">Highest Level Completed</label>
+        <select class="form-select" id="highestLevel" required>
+          <option value="">Select</option>
+          <option value="ssc">SSC</option>
+          <option value="hsc">HSC</option>
+          <option value="bachelor">Bachelor</option>
+          <option value="master">Master</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">SSC GPA & Year</label>
+        <input type="text" class="form-control" placeholder="GPA & Year">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">HSC GPA & Year</label>
+        <input type="text" class="form-control" placeholder="GPA & Year">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Bachelor CGPA & Year</label>
+        <input type="text" class="form-control" placeholder="CGPA & Year">
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label class="form-label">Board/University Name</label>
+        <input type="text" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Medium of Instruction</label>
+        <select class="form-select" required>
+          <option value="">Select</option>
+          <option value="english">English</option>
+          <option value="bangla">Bangla</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Course & Program Info -->
+    <h4>Course & Program Info</h4>
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <label class="form-label">Interested Program/Course Name</label>
+        <input type="text" class="form-control">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Preferred Study Level</label>
+        <select class="form-select">
+          <option value="">Select</option>
+          <option value="diploma">Diploma</option>
+          <option value="bachelor">Bachelor</option>
+          <option value="master">Master</option>
+          <option value="phd">PhD</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Preferred Study Field</label>
+        <input type="text" class="form-control" placeholder="e.g. Business, Engineering">
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <label class="form-label">Preferred Intake</label>
+        <select class="form-select">
+          <option value="">Select</option>
+          <option value="february">February</option>
+          <option value="september">September</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="col-md-8">
+        <label class="form-label">Preferred Countries</label><br>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="checkbox" id="hungary" value="Hungary">
+          <label class="form-check-label" for="hungary">Hungary</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="checkbox" id="uk" value="UK">
+          <label class="form-check-label" for="uk">UK</label>
+        </div>
+        <!-- Add more countries as needed -->
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Initial Budget (1-Year Tuition + Living Cost)</label>
+      <input type="text" class="form-control">
+    </div>
+
+    <!-- Consent -->
+    <div class="form-check mb-3">
+      <input class="form-check-input" type="checkbox" id="consent" required>
+      <label class="form-check-label" for="consent">
+        I confirm all information is correct and give permission to Study First Info to contact me.
+      </label>
+    </div>
+<!-- Section 5: English Proficiency -->
+<h4>English Proficiency</h4>
+<div class="row mb-3">
+  <div class="col-md-3">
+    <label class="form-label">Test Type</label>
+    <select class="form-select">
+      <option value="">Select</option>
+      <option value="ielts">IELTS</option>
+      <option value="toefl">TOEFL</option>
+      <option value="duolingo">Duolingo</option>
+      <option value="no_test">No Test Yet</option>
+    </select>
   </div>
+  <div class="col-md-3">
+    <label class="form-label">Overall Band Score</label>
+    <input type="text" class="form-control" placeholder="e.g. 6.5">
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">Reading Score</label>
+    <input type="text" class="form-control" placeholder="e.g. 6.5">
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">Writing Score</label>
+    <input type="text" class="form-control" placeholder="e.g. 6.0">
+  </div>
+</div>
+
+<div class="row mb-3">
+  <div class="col-md-3">
+    <label class="form-label">Speaking Score</label>
+    <input type="text" class="form-control" placeholder="e.g. 7.0">
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">Listening Score</label>
+    <input type="text" class="form-control" placeholder="e.g. 6.5">
+  </div>
+</div>
+
+<!-- Section 6: Work & Visa History -->
+<h4>Work & Visa History</h4>
+<div class="row mb-3">
+  <div class="col-md-4">
+    <label class="form-label">Company Name</label>
+    <input type="text" class="form-control" placeholder="Company Name">
+  </div>
+  <div class="col-md-4">
+    <label class="form-label">Job Title</label>
+    <input type="text" class="form-control" placeholder="Job Title">
+  </div>
+  <div class="col-md-4">
+    <label class="form-label">Duration</label>
+    <input type="text" class="form-control" placeholder="e.g. Jan 2020 - Dec 2022">
+  </div>
+</div>
+
+<div class="mb-3">
+  <label class="form-label">Study Gap (if any)</label>
+  <textarea class="form-control" rows="2" placeholder="Explain any study gaps"></textarea>
+</div>
+
+<div class="mb-3">
+  <label class="form-label">Any Previous Visa Refusal?</label><br>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" type="radio" name="visaRefusal" id="visaYes" value="yes">
+    <label class="form-check-label" for="visaYes">Yes</label>
+  </div>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" type="radio" name="visaRefusal" id="visaNo" value="no">
+    <label class="form-check-label" for="visaNo">No</label>
+  </div>
+</div>
+
+<div class="mb-3">
+  <label class="form-label">Visa Refusal Reason (if yes)</label>
+  <input type="text" class="form-control" placeholder="Enter reason if any">
+</div>
+
+<!-- Section 7: Address -->
+<h4>Address</h4>
+<div class="mb-3">
+  <label class="form-label">Permanent Address</label>
+  <textarea class="form-control" rows="2" placeholder="Permanent Address"></textarea>
+</div>
+<div class="mb-3">
+  <label class="form-label">Present Address</label>
+  <textarea class="form-control" rows="2" placeholder="Present Address"></textarea>
+</div>
+
+<!-- Section 8: Final -->
+<h4>Final Details</h4>
+<div class="row mb-3">
+  <div class="col-md-4">
+    <label class="form-label">Date of Inquiry</label>
+    <input type="text" class="form-control" readonly value="<?php echo date('Y-m-d'); ?>">
+  </div>
+</div>
+
+<div class="mb-3">
+  <label class="form-label">Additional Notes (Optional)</label>
+  <textarea class="form-control" rows="3" placeholder="Any additional comments..."></textarea>
+</div>
+
+<!-- Consent -->
+<div class="form-check mb-4">
+  <input class="form-check-input" type="checkbox" id="finalConsent" required>
+  <label class="form-check-label" for="finalConsent">
+    I confirm all the above information is true and allow Study First Info to contact me.
+  </label>
+</div>
+
+    <button type="submit" class="btn btn-primary">Submit Form</button>
+
+  </form>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
