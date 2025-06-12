@@ -560,7 +560,7 @@ const [filteredData, setFilteredData] = useState([]);
                   value={selectedCounselor ? selectedCounselor.id : ""}
                 >
                   <option value="">Select Counselor</option>
-                  {counselors.map((counselor) => (
+                  {counselors?.map((counselor) => (
                     <option key={counselor.id} value={counselor.id}>
                       {counselor.full_name}
                     </option>
@@ -1378,12 +1378,12 @@ const [filteredData, setFilteredData] = useState([]);
                 <Col md={12}>
                   <p>
                     <strong>English Proficiency:</strong>{" "}
-                    {selectedInquiry.english_proficiency.join(", ")}
+                    {selectedInquiry?.english_proficiency?.join(", ")}
                   </p>
                 </Col>
               </Row>
 
-              {selectedInquiry.job_title && (
+              {selectedInquiry?.job_title && (
                 <>
                   <h5 className="mt-4">Job Experience</h5>
                   <Row className="mb-3">
