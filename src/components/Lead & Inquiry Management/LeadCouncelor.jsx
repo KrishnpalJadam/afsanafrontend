@@ -382,13 +382,13 @@ const getStatusClass = (status) => {
     case 'In Review':
       return 'bg-warning text-dark'; // Yellow background, dark text for 'In Review'
     case 'Converted to Lead':
-      return 'bg-info text-white'; // Blue background, white text for 'Converted to Lead'
+      return 'bg-primary text-white'; // Blue background, white text for 'Converted to Lead'
     case 'Not Eligible':
       return 'bg-danger text-white'; // Red background, white text for 'Not Eligible'
     case 'Not Interested':
       return 'bg-secondary text-white'; // Grey background, white text for 'Not Interested'
     case 'Duplicate':
-      return 'bg-dark text-white'; // Dark background, white text for 'Duplicate'
+      return 'bg-warning text-white'; // Dark background, white text for 'Duplicate'
     default:
       return 'bg-success text-white'; // Default is 'New' (Green)
   }
@@ -401,11 +401,7 @@ const getStatusClass = (status) => {
         <h2>Leads Management</h2>
       </div>
       <div className="d-flex justify-content-between mb-3 pt-3">
-        {/* <div>
-          <Button variant="secondary" onClick={handleShowModal}>
-            <FaPlus className="me-1" /> New Lead
-          </Button>
-        </div> */}
+       
 
         <div className="d-flex gap-2">
 
