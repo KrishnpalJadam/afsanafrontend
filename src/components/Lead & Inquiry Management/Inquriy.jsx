@@ -19,6 +19,11 @@ const Inquiry = () => {
   const [showInquiryDetailsModal, setInquiryDetailsModal] = useState(false);
   const [selectedInquiry, setSelectedInquiry] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [countryOptions, setCountryOptions] = useState([]);
+  const [followUpDate, setFollowUpDate] = useState("");
+const [notes, setNotes] = useState("");
+
+   console.log(selectedInquiry)
   const [selectedCounselor, setSelectedCounselor] = useState(null);
 const [gpa, setGpa] = useState("");
 const [year, setYear] = useState("");
@@ -34,7 +39,6 @@ const [year, setYear] = useState("");
     email: "",
     phone: "",
     city: "",
-  
     course: "Maths",
     source: "Whatsapp",
     inquiryType: "",
@@ -207,7 +211,7 @@ const [year, setYear] = useState("");
       const response = await api.get(`inquiries`); // Fetch inquiries from API
 
       const allInquiries = response.data;
-
+      console.log(allInquiries)
       const userRole = localStorage.getItem("role"); // Get the user role (admin or counselor)
       const userId = localStorage.getItem("user_id"); // Get the counselor ID
 
@@ -217,7 +221,12 @@ const [year, setYear] = useState("");
         : allInquiries.filter(inquiry => inquiry.counselor_id === parseInt(userId)); // Counselor sees their assigned inquiries
 
       setInquiries(filteredInquiries); // Update the inquiries state with the filtered inquiries
+// Extract unique countries from filtered inquiries
+    const uniqueCountries = [...new Set(filteredInquiries
+      .map(inq => inq.country)
+      .filter(country => country && country.trim() !== ""))];
 
+    setCountryOptions(uniqueCountries); // Store for dropdown options
     } catch (error) {
       console.error("Error fetching inquiries:", error); // Handle error
     }
@@ -237,25 +246,28 @@ const [filteredData, setFilteredData] = useState([]);
 
   const filterInquiries = () => {
     let data = [...inquiries];
-
     // Search Filter (Name or Phone)
     if (filters.search) {
       data = data.filter(
         (inq) =>
           inq?.full_name?.toLowerCase()?.includes(filters.search.toLowerCase()) ||
-          inq?.phone_number?.includes(filters.search)
+          inq?.phone_number?.includes(filters.search) ||
+           inq?.email?.toLowerCase()?.includes(filters.search.toLowerCase())
       );
     }
 
-    // Branch Filter
-    if (filters.branch) {
-      data = data.filter((inq) => inq.branch === filters.branch);
-    }
-
+// Country Filter
+if (filters.country) {
+  data = data.filter((inq) => inq.country === filters.country);
+}
     // Source Filter
     if (filters.source) {
-      data = data.filter((inq) => inq.source === filters.source);
+      data = data?.filter((inq) => inq.source === filters.source);
     }
+    // Counselor Filter
+if (filters.counselor) {
+  data = data?.filter((inq) => String(inq.counselor_id) === filters.counselor);
+}
 
     // Date Range Filter
     if (filters.startDate && filters.endDate) {
@@ -267,7 +279,6 @@ const [filteredData, setFilteredData] = useState([]);
         );
       });
     }
-
     setFilteredData(data);
   };
 
@@ -383,9 +394,11 @@ const [filteredData, setFilteredData] = useState([]);
     try {
       // Sending the selected counselor's ID along with the inquiry ID
       const payload = {
-        inquiry_id: selectedInquiry.id,   // Inquiry ID
-        counselor_id: selectedCounselor.id,  // Sending the selected counselor's ID
-      };
+  inquiry_id: selectedInquiry.id,           // Inquiry ID
+  counselor_id: selectedCounselor.id,       // Counselor ID
+  follow_up_date: followUpDate,             // Follow-up date
+  notes: notes                              // Notes
+};
 
       // Call the API to assign the counselor to the inquiry
       const response = await api.post(`${BASE_URL}assign-inquiry`, payload);
@@ -432,6 +445,25 @@ const [filteredData, setFilteredData] = useState([]);
     setShowAssignModal(true);    // Show the modal
   };
 
+  const handleStatusChange = async (status) => {
+  try {
+    const response = await api.patch(
+      `fee/update-lesd-status`,
+       {
+    id: selectedInquiry?.id,
+    lead_status: status
+  }
+    );
+    alert("Status updated successfully!");
+   await  fetchInquiries()
+    setInquiryDetailsModal(false); 
+    console.log(response.data);
+  } catch (error) {
+    console.error("Error updating status:", error);
+    alert("Failed to update status.");
+  }
+};
+
   return (
     <div className="container mt-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -454,75 +486,109 @@ const [filteredData, setFilteredData] = useState([]);
           </div>
         </div>
       </div>
-    <Row className="mb-4">
-        <Col md={3}>
-           <label htmlFor=""><small>Search</small> </label>
-          <Form.Control style={{height: "40px"}}
-            placeholder="Search by Name or Phone"
-            value={filters.search}
-            onChange={(e) =>
-              setFilters({ ...filters, search: e.target.value })
-            }
-          />
-        </Col>
-        <Col md={2}>
-                <label htmlFor=""><small>Branches</small> </label>
-          <Form.Select style={{height: "40px"}}
-            value={filters.branch}
-            onChange={(e) =>
-              setFilters({ ...filters, branch: e.target.value })
-            }
-          >
-            <option value="">All Branches</option>
-            <option value="Dhaka">Dhaka</option>
-            <option value="Sylhet">Sylhet</option>
-          </Form.Select>
-        </Col>
-        <Col md={2}>
-         <label htmlFor=""><small>Sources</small> </label>
-          <Form.Select style={{height: "40px"}}
-            value={filters.source}
-            onChange={(e) =>
-              setFilters({ ...filters, source: e.target.value })
-            }
-          >
-            <option value="">All Sources</option>
-            <option value="facebook">Facebook</option>
-            <option value="youtube">YouTube</option>
-            <option value="website">Website</option>
-            <option value="referral">Referral</option>
-            <option value="event">Event</option>
-            <option value="agent">Agent</option>
-            <option value="office_visit">Office Visit</option>
-            <option value="hotline">Hotline</option>
-            <option value="seminar">Seminar</option>
-            <option value="expo">Expo</option>
-            <option value="other">Other</option>
-          </Form.Select>
-        </Col>
-        <Col md={2} >
-        <label htmlFor=""><small>Inquiry start date</small> </label>
-          <Form.Control style={{height: "40px"}}
-            type="date"
-            value={filters.startDate}
-            onChange={(e) =>
-              setFilters({ ...filters, startDate: e.target.value })
-            }
-          />
-        </Col>
-        <Col md={2}>
-                <label htmlFor=""><small>Inquiry end date</small> </label>
-          <Form.Control style={{height: "40px"}}
-            type="date"
-            value={filters.endDate}
-            onChange={(e) =>
-              setFilters({ ...filters, endDate: e.target.value })
-            }
-          />
-        </Col>
-        <Col md={1}>
-    <button
-      className="btn btn-secondary w-100 mt-4"
+    {/* Row 1: Search, Country, Source */}
+<Row className="mb-3">
+  <Col md={4}>
+    <label><small>Search</small></label>
+    <Form.Control
+      style={{ height: "40px" }}
+      placeholder="Search by Name, Phone or Email"
+      value={filters.search}
+      onChange={(e) =>
+        setFilters({ ...filters, search: e.target.value })
+      }
+    />
+  </Col>
+
+  <Col md={4}>
+    <label><small>Country</small></label>
+    <Form.Select
+      style={{ height: "40px" }}
+      value={filters.country}
+      onChange={(e) =>
+        setFilters({ ...filters, country: e.target.value })
+      }
+    >
+      <option value="">All Countries</option>
+      {countryOptions.map((country, idx) => (
+        <option key={idx} value={country}>{country}</option>
+      ))}
+    </Form.Select>
+  </Col>
+
+  <Col md={4}>
+    <label><small>Source</small></label>
+    <Form.Select
+      style={{ height: "40px" }}
+      value={filters.source}
+      onChange={(e) =>
+        setFilters({ ...filters, source: e.target.value })
+      }
+    >
+      <option value="">All Sources</option>
+      <option value="facebook">Facebook</option>
+      <option value="youtube">YouTube</option>
+      <option value="website">Website</option>
+      <option value="referral">Referral</option>
+      <option value="event">Event</option>
+      <option value="agent">Agent</option>
+      <option value="office_visit">Office Visit</option>
+      <option value="hotline">Hotline</option>
+      <option value="seminar">Seminar</option>
+      <option value="expo">Expo</option>
+      <option value="other">Other</option>
+    </Form.Select>
+  </Col>
+</Row>
+
+{/* Row 2: Dates, Counselor, Reset */}
+<Row className="mb-4">
+  <Col md={4}>
+    <label><small>Inquiry Start Date</small></label>
+    <Form.Control
+      type="date"
+      style={{ height: "40px" }}
+      value={filters.startDate}
+      onChange={(e) =>
+        setFilters({ ...filters, startDate: e.target.value })
+      }
+    />
+  </Col>
+
+  <Col md={4}>
+    <label><small>Inquiry End Date</small></label>
+    <Form.Control
+      type="date"
+      style={{ height: "40px" }}
+      value={filters.endDate}
+      onChange={(e) =>
+        setFilters({ ...filters, endDate: e.target.value })
+      }
+    />
+  </Col>
+
+  <Col md={3}>
+    <label><small>Counselor Name</small></label>
+    <Form.Select
+      style={{ height: "40px" }}
+      value={filters.counselor}
+      onChange={(e) =>
+        setFilters({ ...filters, counselor: e.target.value })
+      }
+    >
+      <option value="">All Counselors</option>
+      {counselors?.map((counselor) => (
+        <option key={counselor.id} value={counselor.id}>
+          {counselor.full_name}
+        </option>
+      ))}
+    </Form.Select>
+  </Col>
+
+  <Col md={1} className="d-flex align-items-end">
+    <Button
+      variant="secondary"
+      className="w-100"
       onClick={() =>
         setFilters({
           search: "",
@@ -530,13 +596,17 @@ const [filteredData, setFilteredData] = useState([]);
           source: "",
           startDate: "",
           endDate: "",
+          country: "",
+          counselor: ""
         })
       }
     >
       Reset
-    </button>
+    </Button>
   </Col>
-      </Row>
+</Row>
+
+
       {/* // Modal for assigning counselor */}
       <Modal show={showAssignModal} onHide={handleCloseAssignModal} centered>
         <Modal.Header closeButton>
@@ -547,29 +617,46 @@ const [filteredData, setFilteredData] = useState([]);
             <div>
               <p><strong>Inquiry Name:</strong> {selectedInquiry.full_name}</p>
               <p><strong>Course:</strong> {selectedInquiry.course_name}</p>
-              <Form.Group controlId="counselorSelect">
-                <Form.Label>Select Counselor</Form.Label>
-                <label className="form-label">Counselor *</label>
-                <select
-                  className="form-select"
-                  onChange={(e) => {
-                    const selectedId = e.target.value;
-                    const selected = counselors.find((c) => c.id.toString() === selectedId);
-                    setSelectedCounselor(selected); // Set the full object
-                  }}
-                  value={selectedCounselor ? selectedCounselor.id : ""}
-                >
-                  <option value="">Select Counselor</option>
-                  {counselors?.map((counselor) => (
-                    <option key={counselor.id} value={counselor.id}>
-                      {counselor.full_name}
-                    </option>
-                  ))}
-                </select>
+             <Form.Group controlId="counselorSelect" className="mb-3">
+  <Form.Label>Counselor *</Form.Label>
+  <Form.Select
+    className="form-select"
+    onChange={(e) => {
+      const selectedId = e.target.value;
+      const selected = counselors.find((c) => c.id.toString() === selectedId);
+      setSelectedCounselor(selected);
+    }}
+    value={selectedCounselor ? selectedCounselor.id : ""}
+  >
+    <option value="">Select Counselor</option>
+    {counselors?.map((counselor) => (
+      <option key={counselor.id} value={counselor.id}>
+        {counselor.full_name}
+      </option>
+    ))}
+  </Form.Select>
+</Form.Group>
 
+<Form.Group controlId="followUpDate" className="mb-3">
+  <Form.Label>Follow-Up Date *</Form.Label>
+  <Form.Control
+    type="date"
+    value={followUpDate}
+    onChange={(e) => setFollowUpDate(e.target.value)}
+  />
+</Form.Group>
 
+<Form.Group controlId="notes" className="mb-3">
+  <Form.Label>Notes</Form.Label>
+  <Form.Control
+    as="textarea"
+    rows={3}
+    placeholder="Enter any notes here..."
+    value={notes}
+    onChange={(e) => setNotes(e.target.value)}
+  />
+</Form.Group>
 
-              </Form.Group>
             </div>
           )}
         </Modal.Body>
@@ -585,13 +672,16 @@ const [filteredData, setFilteredData] = useState([]);
     <tr>
       <th>Inquiry ID</th>
       <th>Name</th>
+      <th>Email</th>
       <th>Phone</th>
       <th>Source</th>
       <th>Branch</th>
       <th>Inquiry Type</th>
       <th>Date of Inquiry</th>
       <th>Country</th>
+     <th>Counselor  Name </th>
       <th>Status</th>
+      <th>Check Eligibility</th>
       <th>Action</th>
     </tr>
   </thead>
@@ -601,33 +691,94 @@ const [filteredData, setFilteredData] = useState([]);
         <tr key={inq.id}>
           <td>{index + 1}</td>
           <td>{inq.full_name}</td>
+           <td>{inq.email}</td>
           <td>{inq.phone_number}</td>
           <td>{inq.source}</td>
           <td>{inq.branch}</td>
           <td>{inq.inquiry_type}</td>
          <td>{new Date(inq.date_of_inquiry).toISOString().split('T')[0]}</td>
           <td>{inq.country}</td>
+           <td>
+  {String(inq.counselor_id) === "1" ? (
+    <Badge bg="warning">Not Assigned</Badge>
+  ) : (
+    inq.counselor_name || <Badge bg="secondary">N/A</Badge>
+  )}
+</td>
+
           {/* Status Column */}
-          <td>
-            {inq.status === "0" ? (
-              <Badge bg="warning">Not Assigned</Badge>
-            ) : (
-              <Badge bg="success">Assigned</Badge>
-            )}
-          </td>
+         <td>
+  {(inq.lead_status === "0" || inq.lead_status === "New")? (
+    <Badge bg="success">New</Badge>
+  ) : inq.lead_status === "In Review" ? (
+    <Badge bg="warning text-dark">In Review</Badge>
+  ) : inq.lead_status === "Check Eligibility" ? (
+    <Badge bg="info text-dark">Check Eligibility</Badge>
+  ) : inq.lead_status === "Converted to Lead" ? (
+    <Badge bg="primary">Converted to Lead</Badge>
+  ) : inq.lead_status === "Not Eligible" ? (
+    <Badge bg="danger">Not Eligible</Badge>
+  ) : inq.lead_status === "Not Interested" ? (
+    <Badge bg="secondary">Not Interested</Badge>
+  ) : inq.lead_status === "Duplicate" ? (
+    <Badge style={{ backgroundColor: "#fd7e14", color: "#fff" }}>Duplicate</Badge>
+  ) : (
+    <Badge bg="dark">Unknown</Badge>
+  )}
+</td>
+
+
+<td>
+  {(inq.lead_status === "0" || inq.lead_status === "New") ? (
+    <span
+      style={{ cursor: 'pointer', color: '#0d6efd', fontWeight: 'bold' }}
+      onClick={() => {
+        setSelectedInquiry(inq);
+        setInquiryDetailsModal(true);
+      }}
+    >
+      Check Eligibility
+    </span>
+  ) : inq.lead_status === "In Review" ? (
+    <Badge bg="warning text-dark" style={{ fontWeight: "bold" }}>
+      In Review
+    </Badge>
+  ) : inq.lead_status === "Check Eligibility" ? (
+    <Badge bg="info text-dark" style={{ fontWeight: "bold" }}>
+      Check Eligibility
+    </Badge>
+  ) : inq.lead_status === "Converted to Lead" ? (
+    <Badge bg="primary" style={{ fontWeight: "bold" }}>
+      Converted to Lead
+    </Badge>
+  ) : inq.lead_status === "Not Eligible" ? (
+    <Badge bg="danger" style={{ fontWeight: "bold" }}>
+      Not Eligible
+    </Badge>
+  ) : inq.lead_status === "Not Interested" ? (
+    <Badge bg="secondary" style={{ fontWeight: "bold" }}>
+      Not Interested
+    </Badge>
+  ) : inq.lead_status === "Duplicate" ? (
+    <Badge style={{ backgroundColor: "#fd7e14", color: "#fff", fontWeight: "bold" }}>
+      Duplicate
+    </Badge>
+  ) : (
+    <Badge bg="dark" style={{ fontWeight: "bold" }}>-</Badge>
+  )}
+</td>
+
 
                 <td>
-                  {/* Assign Counselor Button */}
-                  {inq.status === "0" ? (
-                    <Button variant="info" size="sm" onClick={() => handleOpenAssignModal(inq)}>
-                      Assign Counselor
-                    </Button>
-                  ) : (
-                    // If assigned, show "Already Assigned" with the counselor's name
-                    <Button variant="success" size="sm" disabled>
-                      Already Assigned
-                    </Button>
-                  )}
+                 {(inq.status === "0" && (inq.lead_status !== "0" && inq.lead_status !== "New")) ? (
+    <Button variant="info" size="sm" onClick={() => handleOpenAssignModal(inq)}>
+      Assign Counselor
+    </Button>
+  ) : (
+    <Button variant="info" size="sm" disabled>
+      Assign Counselor
+    </Button>
+  )}
 
             {/* Delete Button */}
             <Button   variant="danger" 
@@ -1365,23 +1516,40 @@ const [filteredData, setFilteredData] = useState([]);
                 </Col>
               </Row>
 
-              <h5 className="mt-4">Education & Background</h5>
-              <Row className="mb-3">
-                <Col md={12}>
-                  <p>
-                    <strong>Education:</strong>{" "}
-                    {selectedInquiry.education_background.join(", ")}
-                  </p>
-                </Col>
-              </Row>
-              <Row className="mb-3">
-                <Col md={12}>
-                  <p>
-                    <strong>English Proficiency:</strong>{" "}
-                    {selectedInquiry?.english_proficiency?.join(", ")}
-                  </p>
-                </Col>
-              </Row>
+             <h5 className="mt-4">Education & Background</h5>
+<Row className="mb-3">
+  <Col md={12}>
+    <p>
+      <strong>Education:</strong>{" "}
+      {selectedInquiry?.education_background?.length > 0
+        ? selectedInquiry?.education_background
+            .map((edu) => `${edu?.level?.toUpperCase()} (GPA: ${edu.gpa}, Year: ${edu.year})`)
+            .join(" | ")
+        : "No data"}
+    </p>
+  </Col>
+</Row>
+
+             <Row className="mb-3">
+  <Col md={12}>
+    <p>
+      <strong>English Proficiency:</strong><br />
+      {selectedInquiry ? (
+        <>
+          <strong>Test:</strong> {selectedInquiry.test_type}<br />
+          <strong>Overall:</strong> {selectedInquiry.overall_score}<br />
+          <strong>Reading:</strong> {selectedInquiry.reading_score} |{" "}
+          <strong>Writing:</strong> {selectedInquiry.writing_score} |{" "}
+          <strong>Speaking:</strong> {selectedInquiry.speaking_score} |{" "}
+          <strong>Listening:</strong> {selectedInquiry.listening_score}
+        </>
+      ) : (
+        "No data"
+      )}
+    </p>
+  </Col>
+</Row>
+
 
               {selectedInquiry?.job_title && (
                 <>
@@ -1423,15 +1591,31 @@ const [filteredData, setFilteredData] = useState([]);
                 <Col md={12}>
                   <p>
                     <strong>Preferred Countries:</strong>{" "}
-                    {selectedInquiry.preferred_countries.join(", ")}
+                    {selectedInquiry?.preferred_countries?.join(", ")}
                   </p>
                 </Col>
               </Row>
+              {/* Add buttons here */}
+<Row className="mb-3">
+  <Col className="d-flex gap-3">
+    <Button variant="danger" onClick={() => handleStatusChange("Not Eligible")}>
+      Not Eligible
+    </Button>
+    <Button variant="warning" onClick={() => handleStatusChange("Not Interested")}>
+      Not Interested
+    </Button>
+    <Button variant="success" onClick={() => handleStatusChange("Converted to Lead")}>
+      Convert to Lead
+    </Button>
+  </Col>
+</Row>
+
             </div>
+            
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowInquiryModal(false)}>
+          <Button variant="secondary" onClick={() => setInquiryDetailsModal(false)}>
             Close
           </Button>
         </Modal.Footer>

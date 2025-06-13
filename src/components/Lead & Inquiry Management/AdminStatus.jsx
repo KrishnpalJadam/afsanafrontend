@@ -102,32 +102,37 @@ function AdminStatus() {
   };
 
   const getStatusBadge = (status) => {
-    let variant = 'dark';
-    let textColor = '#fff';
+    let variant = 'dark'; // default
+  let textColor = '#fff'; // default text color
 
-    switch (status) {
-      case 'Not Interested':
-        variant = 'secondary';
-        break;
-      case 'In Review':
-        variant = 'warning';
-        textColor = '#000';
-        break;
-      case 'New':
-        variant = 'info';
-        textColor = '#000';
-        break;
-      case 'Converted to Lead':
-        variant = 'success';
-        break;
-      case 'Not Eligible':
-        variant = 'danger';
-        break;
-      case 'Follow-up':
-        variant = 'primary';
-        break;
-      default:
-        variant = 'dark';
+  switch (status) {
+    case 'New':
+      variant = 'success'; // Green
+      textColor = '#000';
+      break;
+    case 'In Review':
+      variant = 'warning'; // Yellow
+      textColor = '#000';
+      break;
+    case 'Check Eligibility':
+      variant = 'info'; // Light Blue
+      textColor = '#000';
+      break;
+    case 'Converted to Lead':
+      variant = 'primary'; // Blue
+      break;
+    case 'Not Eligible':
+      variant = 'danger'; // Red
+      break;
+    case 'Not Interested':
+      variant = 'secondary'; // Gray
+      break;
+    case 'Duplicate':
+      variant = 'warning'; // Using 'warning' for orange-like feel
+      textColor = '#000';
+      break;
+    default:
+      variant = 'dark';
     }
 
     const handleDeleteInquiry = async (id) => {
@@ -145,16 +150,18 @@ function AdminStatus() {
     };
 
     return (
-      <Badge
-        bg={variant}
-        style={{
-          padding: '5px 10px',
-          borderRadius: '4px',
-          color: textColor,
-        }}
-      >
-        {status}
-      </Badge>
+     <Badge
+      bg={variant}
+      style={{
+        padding: '5px 10px',
+        borderRadius: '4px',
+        color: textColor,
+        fontSize: '0.85rem',
+        textTransform: 'capitalize',
+      }}
+    >
+      {status}
+    </Badge>
     );
   };
 
