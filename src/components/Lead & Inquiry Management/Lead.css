@@ -11,6 +11,20 @@
   gap: 10px;
   margin-bottom: 15px;
 }
+.bg-orange {
+  background-color: #fd7e14 !important;  /* Bootstrap warning dark */
+  color: #fff;
+}
+
+.bg-light-purple {
+  background-color: #b19cd9 !important;
+  color: #fff;
+}
+
+.bg-purple {
+  background-color: #6f42c1 !important;
+  color: #fff;
+}
 
 .search-container {
   display: flex;
