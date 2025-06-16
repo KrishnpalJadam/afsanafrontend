@@ -586,27 +586,27 @@ const LeadTable = () => {
     }
 
     // Follow-Up Date
-// Follow-Up Date Filter
-if (filters.followUp) {
-  const today = new Date();
-  const dateOnly = (d) => new Date(d).toISOString().slice(0, 10);
+    // Follow-Up Date Filter
+    if (filters.followUp) {
+      const today = new Date();
+      const dateOnly = (d) => new Date(d).toISOString().slice(0, 10);
 
-  if (filters.followUp === "today") {
-    data = data.filter((lead) => dateOnly(lead.follow_up_date) === dateOnly(today));
-  } else if (filters.followUp === "thisWeek") {
-    const endOfWeek = new Date();
-    endOfWeek.setDate(today.getDate() + 7);
-    data = data.filter(
-      (lead) =>
-        new Date(lead.follow_up_date) >= today &&
-        new Date(lead.follow_up_date) <= endOfWeek
-    );
-  } else if (filters.followUp === "overdue") {
-    data = data.filter(
-      (lead) => new Date(lead.follow_up_date) < today
-    );
-  }
-}
+      if (filters.followUp === "today") {
+        data = data.filter((lead) => dateOnly(lead.follow_up_date) === dateOnly(today));
+      } else if (filters.followUp === "thisWeek") {
+        const endOfWeek = new Date();
+        endOfWeek.setDate(today.getDate() + 7);
+        data = data.filter(
+          (lead) =>
+            new Date(lead.follow_up_date) >= today &&
+            new Date(lead.follow_up_date) <= endOfWeek
+        );
+      } else if (filters.followUp === "overdue") {
+        data = data.filter(
+          (lead) => new Date(lead.follow_up_date) < today
+        );
+      }
+    }
 
 
     // Country
@@ -705,6 +705,7 @@ if (filters.followUp) {
     }
   };
 
+  
   return (
     <div className="p-2">
       <h3 className="mt-3">Lead Table</h3>
@@ -756,7 +757,7 @@ if (filters.followUp) {
               <option value="">Follow-Up</option>
               <option value="today">Today</option>
               <option value="thisWeek">This Week</option>
-<option value="overdue">Overdue</option>
+              <option value="overdue">Overdue</option>
 
             </Form.Select>
           </Col>
@@ -842,10 +843,12 @@ if (filters.followUp) {
                 <td>{lead.course_name || "N/A"}</td>
                 <td>{lead.source || "N/A"}</td>
                 <td>
-                  <span className={`badge ${getStatusBadgeColor(lead.new_leads)}`}>
-                    {lead.new_leads || "N/A"}
+                  <span className={`badge ${getStatusBadgeColor(lead.new_leads == 0 ? "New Lead" : lead.new_leads)}`}>
+                    {lead.new_leads == 0 ? "New Lead" : lead.new_leads || "N/A"}
                   </span>
                 </td>
+
+
                 <td>
                   {lead.counselor_name ? (
                     lead.counselor_name
@@ -881,7 +884,7 @@ if (filters.followUp) {
                     <option value="Dropped">Dropped</option>
                   </Form.Select>
                   {lead.new_leads === "Registered" && (
-                    <Button variant="outline-primary" size="sm" className="ms-2 me-2">
+                    <Button  variant="outline-primary" size="sm" className="ms-2 me-2">
                       <BsArrowRepeat className="me-1" /> Convert to Student
                     </Button>
                   )}
@@ -891,13 +894,13 @@ if (filters.followUp) {
                   </Button>
 
 
-                 <Button
-  variant="outline-success"
-  size="sm"
-  onClick={() => window.open(`https://wa.me/${lead.phone_number}`, '_blank')}
->
-  <BsWhatsapp className="me-1" /> WhatsApp
-</Button>
+                  <Button
+                    variant="outline-success"
+                    size="sm"
+                    onClick={() => window.open(`https://wa.me/${lead.phone_number}`, '_blank')}
+                  >
+                    <BsWhatsapp className="me-1" /> WhatsApp
+                  </Button>
 
 
 

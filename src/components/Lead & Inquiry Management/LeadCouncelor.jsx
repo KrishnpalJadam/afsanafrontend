@@ -375,24 +375,24 @@ const LeadCouncelor = ({ lead }) => {
     setSelectedLeadForInvoice(lead);
     setShowInvoiceModal(true);
   };
-const getStatusClass = (status) => {
-  switch (status) {
-    case 'New':
-      return 'bg-success text-white'; // Green background, white text for 'New'
-    case 'In Review':
-      return 'bg-warning text-dark'; // Yellow background, dark text for 'In Review'
-    case 'Converted to Lead':
-      return 'bg-primary text-white'; // Blue background, white text for 'Converted to Lead'
-    case 'Not Eligible':
-      return 'bg-danger text-white'; // Red background, white text for 'Not Eligible'
-    case 'Not Interested':
-      return 'bg-secondary text-white'; // Grey background, white text for 'Not Interested'
-    case 'Duplicate':
-      return 'bg-warning text-white'; // Dark background, white text for 'Duplicate'
-    default:
-      return 'bg-success text-white'; // Default is 'New' (Green)
-  }
-};
+  const getStatusClass = (status) => {
+    switch (status) {
+      case 'New':
+        return 'bg-success text-white'; // Green background, white text for 'New'
+      case 'In Review':
+        return 'bg-warning text-dark'; // Yellow background, dark text for 'In Review'
+      case 'Converted to Lead':
+        return 'bg-primary text-white'; // Blue background, white text for 'Converted to Lead'
+      case 'Not Eligible':
+        return 'bg-danger text-white'; // Red background, white text for 'Not Eligible'
+      case 'Not Interested':
+        return 'bg-secondary text-white'; // Grey background, white text for 'Not Interested'
+      case 'Duplicate':
+        return 'bg-warning text-white'; // Dark background, white text for 'Duplicate'
+      default:
+        return 'bg-success text-white'; // Default is 'New' (Green)
+    }
+  };
 
   return (
     <Container fluid className="py-3">
@@ -401,7 +401,7 @@ const getStatusClass = (status) => {
         <h2>Leads Management</h2>
       </div>
       <div className="d-flex justify-content-between mb-3 pt-3">
-       
+
 
         <div className="d-flex gap-2">
 
@@ -489,25 +489,25 @@ const getStatusClass = (status) => {
 
                 </td>
 
-          
-<td>
-  {/* Styled dropdown for lead status */}
-  <Form.Control
-    as="select"
-   
-    style={{ fontWeight: "bold", fontSize: "14px", height: "35px", textAlign: "center" }} // Adjust font size and height for a smaller dropdown
-    value={lead.lead_status}
-    onChange={(e) => handleChangeLeadStatus(lead.id, e.target.value)}
-    className={`${getStatusClass(lead.lead_status)} p-1`}
-  >
-    <option value="New">New</option>
-    <option value="In Review">In Review</option>
-    <option value="Converted to Lead">Converted to Lead</option>
-    <option value="Not Eligible">Not Eligible</option>
-    <option value="Not Interested">Not Interested</option>
-    <option value="Duplicate">Duplicate</option>
-  </Form.Control>
-</td>
+
+                <td>
+                  {/* Styled dropdown for lead status */}
+                  <Form.Control
+                    as="select"
+
+                    style={{ fontWeight: "bold", fontSize: "14px", height: "35px", textAlign: "center" }} // Adjust font size and height for a smaller dropdown
+                    value={lead.lead_status}
+                    onChange={(e) => handleChangeLeadStatus(lead.id, e.target.value)}
+                    className={`${getStatusClass(lead.lead_status)} p-1`}
+                  >
+                    <option value="New">New</option>
+                    <option value="In Review">In Review</option>
+                    <option value="Converted to Lead">Converted to Lead</option>
+                    <option value="Not Eligible">Not Eligible</option>
+                    <option value="Not Interested">Not Interested</option>
+                    <option value="Duplicate">Duplicate</option>
+                  </Form.Control>
+                </td>
 
 
                 <td>
