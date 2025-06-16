@@ -1197,3 +1197,93 @@ tbody{
 .payment-status-dropdown option {
   font-weight: 500 !important;  /* Option font weight */
 }
+
+
+
+
+.dashboard-container {
+  padding: 20px;
+  background: #f4f6f9;
+  min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
+}
+
+.filters-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 15px;
+}
+
+.filter-select {
+  border-radius: 10px;
+  padding: 8px 12px;
+  box-shadow: 0 0 4px rgba(0,0,0,0.1);
+}
+
+.kpi-card {
+  border-radius: 15px;
+  background: linear-gradient(135deg, #0d1b3d, #1f3a93);
+  color: #fff !important  ;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  transition: transform 0.3s;
+}
+
+.kpi-card:hover {
+  transform: translateY(-5px);
+}
+
+.kpi-card .icon {
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+
+.growth-bar {
+  background: linear-gradient(135deg, #ff6600, #ff8533);
+  color: #fff;
+  padding: 20px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.growth-icon {
+  margin-right: 20px;
+}
+
+.big-card {
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  background: #fff;
+}
+
+.funnel-placeholder, .heatmap-placeholder, .map-placeholder {
+  height: 200px;
+  background: #eef1f5;
+  border-radius: 10px;
+  text-align: center;
+  line-height: 200px;
+  color: #aaa;
+  margin-top: 15px;
+}
+
+.small-table {
+  font-size: 14px;
+}
+
+.activities-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.activities-list li {
+  margin-bottom: 10px;
+  font-size: 15px;
+  color: #333;
+}
+
+.activities-list li svg {
+  margin-right: 10px;
+  color: #0d1b3d;
+}
