@@ -27,6 +27,17 @@ const Dashboard = () => {
         country_wise_converted_leads: []
     });
 
+const handleResetFilters = () => {
+  setFilters({
+    dateRange: '',
+    country: '',
+    counselor: '',
+    status: '',
+    intake: '',
+    leadSource: ''
+  });
+  setCustomRange({ start: '', end: '' });
+};
 
 
     const [filters, setFilters] = useState({
@@ -180,18 +191,30 @@ const Dashboard = () => {
         }]
     };
 
+// Day mapping for labels
+const dayShortMap = {
+  Monday: "Mon",
+  Tuesday: "Tue",
+  Wednesday: "Wed",
+  Thursday: "Thu",
+  Friday: "Fri",
+  Saturday: "Sat",
+  Sunday: "Sun"
+};
 
-    // Heatmap Dummy Chart (using Line for now)
-    const heatmapData = {
-        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-        datasets: [{
-            label: 'Inquiries',
-            data: [5, 9, 12, 7, 15, 20, 10],
-            borderColor: '#ff6600',
-            backgroundColor: 'rgba(255, 102, 0, 0.3)',
-            fill: true
-        }]
-    };
+// Heatmap Data
+const heatmapData = {
+  labels: (growthData.weekly_inquiries_by_day || []).map(item => dayShortMap[item.day]),
+  datasets: [{
+    label: 'Inquiries',
+    data: (growthData.weekly_inquiries_by_day || []).map(item => item.total_inquiries),
+    borderColor: '#ff6600',
+    backgroundColor: 'rgba(255, 102, 0, 0.3)',
+    fill: true
+  }]
+};
+
+
 
     // World Map simulation with Pie chart
     const countryData = {
@@ -286,6 +309,7 @@ const Dashboard = () => {
 
             {/* Filters */}
             <div className="filters-row mb-4">
+ 
                 {[
                     { name: 'dateRange', label: 'Date Range', options: ['Today', 'This Week', 'This Month', 'Custom'] },
                     {
@@ -332,6 +356,9 @@ const Dashboard = () => {
                         ))}
                     </Form.Select>
                 ))}
+                                <Button variant="outline-danger" className='btn' onClick={handleResetFilters}>
+    Reset Filters
+  </Button>
             </div>
 
             {/* KPI Cards */}
@@ -407,7 +434,7 @@ const Dashboard = () => {
                 </Col>
             </Row>
 
-            <Row>
+            {/* <Row>
                 <Col md={12}>
                     <Card className="big-card">
                         <h5>Recent Activities & Tasks</h5>
@@ -418,7 +445,7 @@ const Dashboard = () => {
                         </ul>
                     </Card>
                 </Col>
-            </Row>
+            </Row> */}
             {loading && (
                 <div style={{
                     position: 'fixed',

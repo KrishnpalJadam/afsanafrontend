@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import "../layout/Navbar.css";
 import api from "../interceptors/axiosInterceptor";
 import BASE_URL from "../Config";
-
+import { RiMenuFold3Line } from "react-icons/ri";
 const Navbar = ({ toggleSidebar }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -63,11 +63,12 @@ const Navbar = ({ toggleSidebar }) => {
               alt="Logo"
               height={"90px"}
               width={"140px"}
-              style={{ marginTop: "-16px" }}
+              style={{ marginTop: "-10px" }}
             />
             <div className="nav-taggle-icon text-white" onClick={toggleSidebar}>
-              <a href="#">
-                <i className="fa fa-bars" aria-hidden="true" style={{ color: "black" }}></i>
+              <a href="#" style={{marginLeft: "50px"}}>
+             
+                <RiMenuFold3Line style={{ color: "black" }} />
               </a>
             </div>
           </div>

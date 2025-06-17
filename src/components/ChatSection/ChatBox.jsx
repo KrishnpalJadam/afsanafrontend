@@ -115,7 +115,7 @@ const ChatBox = ({ userId }) => {
   };
 
   return (
-    <div style={{ display: "flex" }}>
+    <div className="p-2" style={{ display: "flex" }}>
       <div> <ChatList userId={userId} /></div>
       <div className="chat-container">
         <div className="chat-header">

@@ -19,66 +19,68 @@ const Login = ({ setLogin }) => {
   };
 
 
-const handleLogin = async (e) => {
-  e.preventDefault();  // Prevent form submission default behavior
+  const handleLogin = async (e) => {
+    e.preventDefault();  // Prevent form submission default behavior
 
-  if (!formData.email || !formData.password) {
-    toast.error("Please enter email and password.");
-    return;
-  }
-
-  try {
-    const response = await axios.post(`${BASE_URL}auth/login`, formData);
-    const { token, user } = response.data;
-    const role = user.role;
-
-    if (role && token) {
-      setLogin(role);
-      localStorage.setItem("login", role);  
-      localStorage.setItem("role", user.role);        
-      localStorage.setItem("authToken", token);
-      localStorage.setItem("user_id", user.id);
-      localStorage.setItem("login_detail", JSON.stringify(response.data.user));
-      localStorage.setItem("counselor_id", user.counselor_id);
-      localStorage.setItem("student_id", user.student_id);
-
-      const permissionsResponse = await api.get(`permission?role_name=${role}`);
-      localStorage.setItem("permissions", JSON.stringify(permissionsResponse.data));
-
-      Swal.fire({
-        title: 'Success!',
-        text: 'You have logged in successfully.',
-        icon: 'success',
-        confirmButtonText: 'Ok',
-      });
-
-      setTimeout(() => {
-        if (role === "admin") {
-          navigate("/dashboard");
-        } else if (role === "student") {
-          navigate("/UniversityCards");
-        } else if (role === "counselor") {
-          navigate("/councelor");
-        }
-      }, 300);
-    } else {
-      toast.error("Invalid credentials! Please check your email or password.");
+    if (!formData.email || !formData.password) {
+      toast.error("Please enter email and password.");
+      return;
     }
 
-  } catch (error) {
-    console.error("Error during login:", error);
-    if (error.response && error.response.status === 401) {
-      toast.error("Invalid credentials! Please try again.");
-    } else {
-      toast.error("Something went wrong. Please try again later.");
+    try {
+      const response = await axios.post(`${BASE_URL}auth/login`, formData);
+      const { token, user } = response.data;
+      const role = user.role;
+
+      if (role && token) {
+        setLogin(role);
+        localStorage.setItem("login", role);
+        localStorage.setItem("role", user.role);
+        localStorage.setItem("authToken", token);
+        localStorage.setItem("user_id", user.id);
+        localStorage.setItem("login_detail", JSON.stringify(response.data.user));
+        localStorage.setItem("counselor_id", user.counselor_id);
+        localStorage.setItem("student_id", user.student_id);
+
+        const permissionsResponse = await api.get(`permission?role_name=${role}`);
+        localStorage.setItem("permissions", JSON.stringify(permissionsResponse.data));
+
+        Swal.fire({
+          title: 'Success!',
+          text: 'You have logged in successfully.',
+          icon: 'success',
+          confirmButtonText: 'Ok',
+        });
+
+        setTimeout(() => {
+          if (role === "admin") {
+            navigate("/dashboard");
+          } else if (role === "student") {
+            navigate("/UniversityCards");
+          } else if (role === "counselor") {
+            navigate("/councelor");
+          }
+        }, 300);
+      } else {
+        toast.error("Invalid credentials! Please check your email or password.");
+      }
+
+    } catch (error) {
+      console.error("Error during login:", error);
+      if (error.response && error.response.status === 401) {
+        toast.error("Invalid credentials! Please try again.");
+      } else {
+        toast.error("Something went wrong. Please try again later.");
+      }
     }
-  }
-};
+  };
 
 
   return (
-    <main style={{  display: "flex",  minHeight: "100vh",  backgroundColor: "#b4ccf0",
-      alignItems: "center", justifyContent: "center", }}>
+    <main style={{
+      display: "flex", minHeight: "100vh", backgroundColor: "#b4ccf0",
+      alignItems: "center", justifyContent: "center",
+    }}>
       <div style={{
         backgroundColor: "#fff",
         width: "90%",
@@ -86,7 +88,8 @@ const handleLogin = async (e) => {
         display: "flex",
         borderRadius: "20px",
         overflow: "hidden",
-        boxShadow: "0 8px 16px rgba(0,0,0,0.1)"}}>
+        boxShadow: "0 8px 16px rgba(0,0,0,0.1)"
+      }}>
         {/* Left Image Section */}
         <div style={{
           flex: 1,
@@ -117,7 +120,7 @@ const handleLogin = async (e) => {
               <input type="email" name="email"
                 placeholder="Enter your username/email"
                 value={formData.email}
-                autoComplete="off"   
+                autoComplete="off"
                 onChange={handleChange}
                 style={{
                   width: "100%",
@@ -166,7 +169,7 @@ const handleLogin = async (e) => {
             textAlign: "center", fontSize: "14px", color: "#666"
           }}>
 
- <Link
+            <Link
               to="/signup"
               style={{
                 color: "#1d4ed8",
@@ -181,19 +184,19 @@ const handleLogin = async (e) => {
             </p> */}
             <div className="mt-4">
 
-          
-            <Link to="/" style={{
-              width: "35%",
-              padding: "8px",
-              borderRadius: "8px",
-              backgroundColor: "#1d4ed8",
-              color: "#fff",
-              border: "none",
-              cursor: "pointer"
-            }}>
-              <IoChevronBackCircleSharp />  Back To Home
-            </Link>
-              </div>
+
+              <Link to="/" style={{
+                width: "35%",
+                padding: "8px",
+                borderRadius: "8px",
+                backgroundColor: "#1d4ed8",
+                color: "#fff",
+                border: "none",
+                cursor: "pointer"
+              }}>
+                <IoChevronBackCircleSharp />  Back To Home
+              </Link>
+            </div>
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
- import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import api from "../../interceptors/axiosInterceptor";
@@ -20,7 +20,7 @@ const ChatList = ({ userId }) => {
           `https://afsana-backend-production.up.railway.app/api/chats/getChatList/${userId}`
         );
         if (response.data.success) {
-          console.log("chatList",response.data.chatList)
+          console.log("chatList", response.data.chatList)
           setChatList(response.data.chatList);
 
           // Fetch user details (name and id) for each chat
@@ -59,12 +59,13 @@ const ChatList = ({ userId }) => {
     let [first, second] = chatId.split("_");
     first = parseInt(first);
     second = parseInt(second);
-    let id1 ="" 
-    if(userId==first){
-      id1=second }
-    else{ 
+    let id1 = ""
+    if (userId == first) {
+      id1 = second
+    }
+    else {
       id1 = first
-     }
+    }
 
     try {
       const response = await api.get(`auth/getUser/${id1}`); // Fetch user by receiverId (second part of chatId)
@@ -84,7 +85,7 @@ const ChatList = ({ userId }) => {
   const openChat = (chatId) => {
     navigate(`/chat/${chatId}`);
   };
-   
+
   const handleCounselorSelect = (e) => {
     const counselorId = e.target.value;
     if (counselorId) {
@@ -97,7 +98,7 @@ const ChatList = ({ userId }) => {
         localStorage.setItem("receiver_name", selectedCounselor?.full_name);
         openChat(`${selectedCounselor?.id}`);
       }
-      else{
+      else {
         openChat("1");
       }
     }
@@ -108,25 +109,25 @@ const ChatList = ({ userId }) => {
       <h3>Your Chats</h3>
       {/* Counselor Select dropdown */}
       <div>
-  {role === "student" && (
-    <div className="counselor-select">
-      <label htmlFor="counselor-select">Choose Admin or Counselor to Chat:</label>
-      <select id="counselor-select" onChange={handleCounselorSelect}>
-        <option value="">Select to chat</option>
-        <option value="1">Admin</option>
-        {counselors.length > 0 ? (
-          counselors.map((counselor) => (
-            <option key={counselor.id} value={counselor.id}>
-              {counselor.full_name}
-            </option>
-          ))
-        ) : (
-          <option disabled>Loading counselors...</option>
+        {role === "student" && (
+          <div className="counselor-select">
+            <label htmlFor="counselor-select">Choose Admin or Counselor to Chat:</label>
+            <select id="counselor-select" onChange={handleCounselorSelect}>
+              <option value="">Select to chat</option>
+              <option value="1">Admin</option>
+              {counselors.length > 0 ? (
+                counselors.map((counselor) => (
+                  <option key={counselor.id} value={counselor.id}>
+                    {counselor.full_name}
+                  </option>
+                ))
+              ) : (
+                <option disabled>Loading counselors...</option>
+              )}
+            </select>
+          </div>
         )}
-      </select>
-    </div>
-  )}
-</div>
+      </div>
 
 
       {chatList.length > 0 ? (
@@ -141,7 +142,8 @@ const ChatList = ({ userId }) => {
           >
             {/* Profile image with fallback */}
             <img
-              src={userDetails[chat.chatId]?.profile_photo || "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png"}
+           
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnBfB52cT5We6HCyYO5QMjSNP1sYzeelLDJloXKKhBQSntRowtvMNsLEeJ0yzUAOtGA1g&usqp=CAU"
               alt="Profile"
               className="profile-img"
               crossorigin=""

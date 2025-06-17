@@ -6,9 +6,9 @@ import BASE_URL from "../Config";
 import api from "../interceptors/axiosInterceptor";
 const InquiryForm = () => {
   const [showInquiryModal, setShowInquiryModal] = useState(false);
-   const [getData, setData] = useState([])
-   const [gpa, setGpa] = useState("");
-   const [year, setYear] = useState("");
+  const [getData, setData] = useState([])
+  const [gpa, setGpa] = useState("");
+  const [year, setYear] = useState("");
   const [newInquiry, setNewInquiry] = useState({
     name: "",
     email: "",
@@ -40,9 +40,9 @@ const InquiryForm = () => {
       console.log(error);
     }
   };
-   useEffect(() => {
-      fetchBranchData();
-    }, []);
+  useEffect(() => {
+    fetchBranchData();
+  }, []);
   const handleCloseInquiryModal = () => {
     setShowInquiryModal(false);
     setNewInquiry({
@@ -98,7 +98,7 @@ const InquiryForm = () => {
     e.preventDefault(); // Prevent form submission
 
     const requestData = {
-      // counselor_id: 1,
+      counselor_id: 1,
       inquiry_type: newInquiry.inquiryType,
       source: newInquiry.source,
       branch: newInquiry.branch,
@@ -182,7 +182,7 @@ const InquiryForm = () => {
 
   return (
     <div>
-      <h4> New Inquiry Form</h4>
+      {/* <h4> New Inquiry Form</h4> */}
 
       {/* Modal for Adding New Inquiry */}
       {/* <Modal
@@ -311,14 +311,25 @@ const InquiryForm = () => {
           </Col>
           <Col md={3}>
             <Form.Group controlId="country">
-              <Form.Label>Country</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter country"
+              <Form.Label>Interested Country</Form.Label>
+              <Form.Select
                 name="country"
                 value={newInquiry.country}
                 onChange={handleInquiryInputChange}
-                required />
+                required
+              >
+                <option value="">Select Country</option>
+                <option value="Hungary">Hungary</option>
+                <option value="UK">UK</option>
+                <option value="Cyprus">Cyprus</option>
+                <option value="Canada">Canada</option>
+                <option value="Malaysia">Malaysia</option>
+                <option value="Lithuania">Lithuania</option>
+                <option value="Latvia">Latvia</option>
+                <option value="Germany">Germany</option>
+                <option value="New Zealand">New Zealand</option>
+                <option value="Others">Others</option>
+              </Form.Select>
             </Form.Group>
           </Col>
         </Row>
