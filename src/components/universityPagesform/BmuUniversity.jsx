@@ -13,6 +13,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  CircularProgress,
 } from "@mui/material";
 import api from "../../interceptors/axiosInterceptor";
 import { useParams } from "react-router-dom";
@@ -24,10 +25,13 @@ const UniversityStepper = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [status, setStatus] = useState(false)
   const [applicationId, setApplicationId] = useState(null)
-  const [interviewBtn,setInterviewBtn] = useState(0)
+  const [interviewBtn, setInterviewBtn] = useState(0)
   const student_id = parseInt(localStorage.getItem("student_id"));
   const university_id = useParams("university.id");
-  const [universities,setUniversities] = ([])
+  const [universities, setUniversities] = ([])
+  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
     registrationFeePayment: "",
@@ -70,77 +74,83 @@ const UniversityStepper = () => {
     arrivalInCountry: "",
     residencePermitForm: "",
     emailSentForSubmission: "",
-    conditional_offer_letter:"",
+    conditional_offer_letter: "",
     // Application_stage:"0",
     // interview:"0",
     // Visa_process:"0",
-    appointmentDateConfirmation:""
+    appointmentDateConfirmation: ""
 
   });
-useEffect(() => {
-    const getApplication = async () => {
-      try {
-        const res = await api.get(`/application/${student_id}/${university_id.id}`);
-        if (res.data.status) {
-          setStatus(true);
-          const applicationData = res.data.data[0];
-  
-          // Populate formData with fetched application data
-          setFormData({
-            ...formData,
-            registrationFeePayment: applicationData.registration_fee_payment,
-            registration: applicationData.registration_date,
-            applicationSubmission: applicationData.application_submission_date,
-            applicationFeePayment: applicationData.application_fee_payment,
-            applicationFeeConfirmation: applicationData.fee_confirmation_document,
-            interviewDate: applicationData.university_interview_date,
-            interviewOutcome: applicationData.university_interview_outcome,
-            conditionalOfferLetter: applicationData.conditional_offer_letter,
-            invoiceWithOfferLetter: applicationData.invoice_with_conditional_offer,
-            tuitionFeeTransferProof: applicationData.tuition_fee_transfer_proof,
-            finalOfferLetter: applicationData.final_university_offer_letter,
-            offerLetterServiceCharge: applicationData.offer_letter_service_charge_paid,
-            universityOfferLetterReceived: applicationData.university_offer_letter_received,
-            appendixFormCompleted: applicationData.appendix_form_completed,
-            passportCopy: applicationData.passport_copy_prepared,
-            emailSentForSubmission: applicationData.email_sent_for_documentation,
-            financialSupportDeclaration: applicationData.financial_support_declaration,
-            validOfferLetter: applicationData.final_offer_letter,
-            relationshipProofWithSponsor: applicationData.proof_of_relationship,
-            englishProof: applicationData.english_language_proof,
-            incomeProof: applicationData.proof_of_income,
-            airplaneTicket: applicationData.airplane_ticket_booking,
-            policeClearance: applicationData.police_clearance_certificate,
-            europassCV: applicationData.europass_cv,
-            birthCertificate: applicationData.birth_certificate,
-            bankStatement: applicationData.bank_statement,
-            accommodationProof: applicationData.accommodation_proof,
-            motivationLetter: applicationData.motivation_letter,
-            previousCertificates: applicationData.previous_studies_certificates,
-            travelInsurance: applicationData.travel_insurance,
-            europeanPhoto: applicationData.european_photo,
-            healthInsurance: applicationData.health_insurance,
-            visaInterviewDate: applicationData.visa_interview_date,
-            visaDecision: applicationData.visa_decision,
-            visaServiceChargePaid: applicationData.visa_service_charge_paid,
-            flightBookingConfirmed: applicationData.flight_booking_confirmed,
-            onlineEnrollmentCompleted: applicationData.online_enrollment_completed,
-            accommodationConfirmationReceived: applicationData.accommodation_confirmation,
-            arrivalInCountry: applicationData.arrival_country,
-            residencePermitForm: applicationData.residence_permit_form,
-            appointmentDateConfirmation:applicationData.appointment_date,
-            // Application_stage: applicationData.application_stage,
-          });
-          setApplicationId(applicationData.id); // Set the application ID
-          setInterviewBtn(applicationData.Interview)
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    
-    getApplication();
+  useEffect(() => {
+    const submitted = localStorage.getItem(`app_step1_submitted_${student_id}_${university_id.id}`);
+    if (submitted === "true") {
+      setIsFormSubmitted(true);
+    }
+    getApplication(); // ✅ This will now work
   }, []);
+
+  const getApplication = async () => {
+    try {
+      const res = await api.get(`/application/${student_id}/${university_id.id}`);
+      if (res.data.status) {
+        setStatus(true);
+        const applicationData = res.data.data[0];
+
+        // Populate formData with fetched application data
+        setFormData({
+          ...formData,
+          registrationFeePayment: applicationData.registration_fee_payment,
+          registration: applicationData.registration_date,
+          applicationSubmission: applicationData.application_submission_date,
+          applicationFeePayment: applicationData.application_fee_payment,
+          applicationFeeConfirmation: applicationData.fee_confirmation_document,
+          interviewDate: applicationData.university_interview_date,
+          interviewOutcome: applicationData.university_interview_outcome,
+          conditionalOfferLetter: applicationData.conditional_offer_letter,
+          invoiceWithOfferLetter: applicationData.invoice_with_conditional_offer,
+          tuitionFeeTransferProof: applicationData.tuition_fee_transfer_proof,
+          finalOfferLetter: applicationData.final_university_offer_letter,
+          offerLetterServiceCharge: applicationData.offer_letter_service_charge_paid,
+          universityOfferLetterReceived: applicationData.university_offer_letter_received,
+          appendixFormCompleted: applicationData.appendix_form_completed,
+          passportCopy: applicationData.passport_copy_prepared,
+          emailSentForSubmission: applicationData.email_sent_for_documentation,
+          financialSupportDeclaration: applicationData.financial_support_declaration,
+          validOfferLetter: applicationData.final_offer_letter,
+          relationshipProofWithSponsor: applicationData.proof_of_relationship,
+          englishProof: applicationData.english_language_proof,
+          incomeProof: applicationData.proof_of_income,
+          airplaneTicket: applicationData.airplane_ticket_booking,
+          policeClearance: applicationData.police_clearance_certificate,
+          europassCV: applicationData.europass_cv,
+          birthCertificate: applicationData.birth_certificate,
+          bankStatement: applicationData.bank_statement,
+          accommodationProof: applicationData.accommodation_proof,
+          motivationLetter: applicationData.motivation_letter,
+          previousCertificates: applicationData.previous_studies_certificates,
+          travelInsurance: applicationData.travel_insurance,
+          europeanPhoto: applicationData.european_photo,
+          healthInsurance: applicationData.health_insurance,
+          visaInterviewDate: applicationData.visa_interview_date,
+          visaDecision: applicationData.visa_decision,
+          visaServiceChargePaid: applicationData.visa_service_charge_paid,
+          flightBookingConfirmed: applicationData.flight_booking_confirmed,
+          onlineEnrollmentCompleted: applicationData.online_enrollment_completed,
+          accommodationConfirmationReceived: applicationData.accommodation_confirmation,
+          arrivalInCountry: applicationData.arrival_country,
+          residencePermitForm: applicationData.residence_permit_form,
+          appointmentDateConfirmation: applicationData.appointment_date,
+          // Application_stage: applicationData.application_stage,
+        });
+        setApplicationId(applicationData.id); // Set the application ID
+        setInterviewBtn(applicationData.Interview)
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
 
   const handleFileChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.files[0] });
@@ -189,10 +199,13 @@ useEffect(() => {
   formDataToSubmit.append("appointment_date", formData.appointmentDateConfirmation);
   formDataToSubmit.append("visa_interview_date", formData.visaInterviewDate);
   formDataToSubmit.append("university_id", university_id.id);
- 
+
 
   const handleNext = () => {
-    setActiveStep((prev) => prev + 1);
+    // Proceed to next step only if the form has been submitted
+    if (isFormSubmitted) {
+      setActiveStep((prev) => prev + 1);
+    }
   };
 
   const handleBack = () => {
@@ -204,39 +217,48 @@ useEffect(() => {
   };
   const handleSubmit = async () => {
     // setFormData({ ...formData, Application_stage: "1" });
-     
+
     formDataToSubmit.append("Application_stage", "1");
     formDataToSubmit.append("interview", "0");
     formDataToSubmit.append("Visa_process", "0");
     try {
+      setIsLoading(true);
       const response = await api.post("/application", formDataToSubmit);
-        Swal.fire({
-              title: 'Success!',
-              text: 'Data submitted successfully!',
-              icon: 'success',
-              confirmButtonText: 'OK',
-            });
-            navigate("/UniversityCards")
-            // window.location.reload(true);
+      Swal.fire({
+        title: 'Success!',
+        text: 'Data submitted successfully!',
+        icon: 'success',
+        confirmButtonText: 'OK',
+      });
+      localStorage.setItem(`app_step1_submitted_${student_id}_${university_id.id}`, "true");
+      setIsFormSubmitted(true);
+      // window.location.reload(true);
     } catch (error) {
+      alert(error)
       console.error("Error submitting form:", error);
     }
+    finally {
+      setIsLoading(false); // Stop loading
+    }
   };
+
+
   const handleUpdate = async (id) => {
-    if(interviewBtn === 0){
+    if (interviewBtn === 0) {
       formDataToSubmit.append("Application_stage", "1");
-    formDataToSubmit.append("interview", "1");
-    formDataToSubmit.append("Visa_process", "0");
-    }else{
+      formDataToSubmit.append("interview", "1");
+      formDataToSubmit.append("Visa_process", "0");
+    } else {
       // setFormData({ ...formData, "interview": 1 });
       // setFormData({ ...formData, "Visa_process": 1 });
       formDataToSubmit.append("Application_stage", "1");
       formDataToSubmit.append("interview", "1");
       formDataToSubmit.append("Visa_process", "1");
-      
+
     }
-    
+
     try {
+      setIsLoading(true);
       const response = await api.put(`/application/${id}`, formDataToSubmit);
       Swal.fire({
         title: 'Success!',
@@ -244,17 +266,21 @@ useEffect(() => {
         icon: 'success',
         confirmButtonText: 'OK',
       });
-       navigate("/UniversityCards")
+
     } catch (error) {
       console.error("Error submitting form:", error);
+    } finally {
+      setIsLoading(false); // Stop loading
     }
   };
 
-  const renderStepContent = (step) => {    
+  const renderStepContent = (step) => {
     switch (step) {
       case 0:
         return (
           <>
+
+
             <Typography variant="h6" gutterBottom>
               Application Stage
             </Typography>
@@ -312,41 +338,41 @@ useEffect(() => {
 
             {/* 5. Fee Confirmation Note or Upload (text for now) */}
             <Box
-  mt={2}
-  display="flex"
-  justifyContent="space-between"
-  alignItems="center"
-  sx={{
-    border: "1px solid #ddd",
-    borderRadius: "6px",
-    padding: "10px",
-    background: "#f9f9f9",
-    flexWrap: "wrap",
-  }}
->
-  <Typography variant="subtitle1" gutterBottom>
-    Application Fee Confirmation (Upload PDF / Screenshot)
-  </Typography>
-  <div>
-    {formData?.applicationFeeConfirmation ? (
-  <Typography variant="body2" mt={1}>
-    Selected file: {typeof formData.applicationFeeConfirmation === 'string'
-      ? formData.applicationFeeConfirmation  // If it's just the file name (from backend)
-      : formData.applicationFeeConfirmation.name  // If it's the File object (from form upload)
-    }
-  </Typography>
-) : (
-  ''
-)}
-    <input
-        type="file"
-        name="applicationFeeConfirmation"
-        onChange={handleFileChange}
-        accept=".pdf,.jpg,.jpeg,.png"
-        style={{ maxWidth: 250 }}
-      />
-  </div>
-</Box>
+              mt={2}
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              sx={{
+                border: "1px solid #ddd",
+                borderRadius: "6px",
+                padding: "10px",
+                background: "#f9f9f9",
+                flexWrap: "wrap",
+              }}
+            >
+              <Typography variant="subtitle1" gutterBottom>
+                Application Fee Confirmation (Upload PDF / Screenshot)
+              </Typography>
+              <div>
+                {formData?.applicationFeeConfirmation ? (
+                  <Typography variant="body2" mt={1}>
+                    Selected file: {typeof formData.applicationFeeConfirmation === 'string'
+                      ? formData.applicationFeeConfirmation  // If it's just the file name (from backend)
+                      : formData.applicationFeeConfirmation.name  // If it's the File object (from form upload)
+                    }
+                  </Typography>
+                ) : (
+                  ''
+                )}
+                <input
+                  type="file"
+                  name="applicationFeeConfirmation"
+                  onChange={handleFileChange}
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  style={{ maxWidth: 250 }}
+                />
+              </div>
+            </Box>
 
           </>
         );
@@ -401,16 +427,16 @@ useEffect(() => {
               <Typography gutterBottom>
                 Upload Conditional Offer Letter
               </Typography>
-               {formData?.conditionalOfferLetter ? (
-  <Typography variant="body2" mt={1}>
-    Selected file: {typeof formData.conditionalOfferLetter === 'string'
-      ? formData.conditionalOfferLetter  // If it's just the file name (from backend)
-      : formData.conditionalOfferLetter.name  // If it's the File object (from form upload)
-    }
-  </Typography>
-) : (
-  ''
-)}
+              {formData?.conditionalOfferLetter ? (
+                <Typography variant="body2" mt={1}>
+                  Selected file: {typeof formData.conditionalOfferLetter === 'string'
+                    ? formData.conditionalOfferLetter  // If it's just the file name (from backend)
+                    : formData.conditionalOfferLetter.name  // If it's the File object (from form upload)
+                  }
+                </Typography>
+              ) : (
+                ''
+              )}
               <input
                 type="file"
                 name="conditionalOfferLetter"
@@ -418,7 +444,7 @@ useEffect(() => {
                 accept=".pdf,.jpg,.png"
                 style={{ maxWidth: 250 }}
               />
-              
+
             </Box>
 
             {/* 4. Invoice with Conditional Offer Letter */}
@@ -439,15 +465,15 @@ useEffect(() => {
                 Upload Invoice with Conditional Offer Letter
               </Typography>
               {formData?.invoiceWithOfferLetter ? (
-  <Typography variant="body2" mt={1}>
-    Selected file: {typeof formData.invoiceWithOfferLetter === 'string'
-      ? formData.invoiceWithOfferLetter  // If it's just the file name (from backend)
-      : formData.invoiceWithOfferLetter.name  // If it's the File object (from form upload)
-    }
-  </Typography>
-) : (
-  ''
-)}
+                <Typography variant="body2" mt={1}>
+                  Selected file: {typeof formData.invoiceWithOfferLetter === 'string'
+                    ? formData.invoiceWithOfferLetter  // If it's just the file name (from backend)
+                    : formData.invoiceWithOfferLetter.name  // If it's the File object (from form upload)
+                  }
+                </Typography>
+              ) : (
+                ''
+              )}
               <input
                 type="file"
                 name="invoiceWithOfferLetter"
@@ -455,7 +481,7 @@ useEffect(() => {
                 accept=".pdf,.jpg,.png"
                 style={{ maxWidth: 250 }}
               />
-               
+
             </Box>
 
             {/* 5. Tuition Fee Transfer Completed */}
@@ -476,15 +502,15 @@ useEffect(() => {
                 Tuition Fee Transfer Proof
               </Typography>
               {formData?.tuitionFeeTransferProof ? (
-  <Typography variant="body2" mt={1}>
-    Selected file: {typeof formData.tuitionFeeTransferProof === 'string'
-      ? formData.tuitionFeeTransferProof  // If it's just the file name (from backend)
-      : formData.tuitionFeeTransferProof.name  // If it's the File object (from form upload)
-    }
-  </Typography>
-) : (
-  ''
-)}
+                <Typography variant="body2" mt={1}>
+                  Selected file: {typeof formData.tuitionFeeTransferProof === 'string'
+                    ? formData.tuitionFeeTransferProof  // If it's just the file name (from backend)
+                    : formData.tuitionFeeTransferProof.name  // If it's the File object (from form upload)
+                  }
+                </Typography>
+              ) : (
+                ''
+              )}
               <input
                 type="file"
                 name="tuitionFeeTransferProof"
@@ -511,17 +537,17 @@ useEffect(() => {
               <Typography gutterBottom>
                 Upload Final University Offer Letter
               </Typography>
-               {formData?.finalOfferLetter ? (
-  <Typography variant="body2" mt={1}>
-    Selected file: {typeof formData.finalOfferLetter === 'string'
-      ? formData.finalOfferLetter  // If it's just the file name (from backend)
-      : formData.finalOfferLetter.name  // If it's the File object (from form upload)
-    }
-  </Typography>
-) : (
-  ''
-)}
-              
+              {formData?.finalOfferLetter ? (
+                <Typography variant="body2" mt={1}>
+                  Selected file: {typeof formData.finalOfferLetter === 'string'
+                    ? formData.finalOfferLetter  // If it's just the file name (from backend)
+                    : formData.finalOfferLetter.name  // If it's the File object (from form upload)
+                  }
+                </Typography>
+              ) : (
+                ''
+              )}
+
               <input
                 type="file"
                 name="finalOfferLetter"
@@ -529,7 +555,7 @@ useEffect(() => {
                 accept=".pdf,.jpg,.png"
                 style={{ maxWidth: 250 }}
               />
-               
+
             </Box>
           </>
         );
@@ -581,15 +607,15 @@ useEffect(() => {
             >
               <Typography>Appendix Form Completed</Typography>
               {formData?.appendixFormCompleted ? (
-  <Typography variant="body2" mt={1}>
-    Selected file: {typeof formData.appendixFormCompleted === 'string'
-      ? formData.appendixFormCompleted  // If it's just the file name (from backend)
-      : formData.appendixFormCompleted.name  // If it's the File object (from form upload)
-    }
-  </Typography>
-) : (
-  ''
-)}
+                <Typography variant="body2" mt={1}>
+                  Selected file: {typeof formData.appendixFormCompleted === 'string'
+                    ? formData.appendixFormCompleted  // If it's just the file name (from backend)
+                    : formData.appendixFormCompleted.name  // If it's the File object (from form upload)
+                  }
+                </Typography>
+              ) : (
+                ''
+              )}
               <input
                 type="file"
                 name="appendixFormCompleted"
@@ -597,7 +623,7 @@ useEffect(() => {
                 accept=".pdf,.jpg,.jpeg,.png"
                 style={{ maxWidth: 250 }}
               />
-               
+
             </Box>
 
             {/* Passport Copy Prepared */}
@@ -615,15 +641,15 @@ useEffect(() => {
             >
               <Typography>Passport Copy Prepared</Typography>
               {formData?.passportCopy ? (
-  <Typography variant="body2" mt={1}>
-    Selected file: {typeof formData.passportCopy === 'string'
-      ? formData.passportCopy  // If it's just the file name (from backend)
-      : formData.passportCopy.name  // If it's the File object (from form upload)
-    }
-  </Typography>
-) : (
-  ''
-)}
+                <Typography variant="body2" mt={1}>
+                  Selected file: {typeof formData.passportCopy === 'string'
+                    ? formData.passportCopy  // If it's just the file name (from backend)
+                    : formData.passportCopy.name  // If it's the File object (from form upload)
+                  }
+                </Typography>
+              ) : (
+                ''
+              )}
               <input
                 type="file"
                 name="passportCopy"
@@ -631,7 +657,7 @@ useEffect(() => {
                 accept=".pdf,.jpg,.jpeg,.png"
                 style={{ maxWidth: 250 }}
               />
-              
+
             </Box>
 
             {/* Email Sent for Documents Submission */}
@@ -678,15 +704,15 @@ useEffect(() => {
                 Declaration of Financial Support (Affidavit)
               </Typography>
               {formData?.financialSupportDeclaration ? (
-  <Typography variant="body2" mt={1}>
-    Selected file: {typeof formData.financialSupportDeclaration === 'string'
-      ? formData.financialSupportDeclaration  // If it's just the file name (from backend)
-      : formData.financialSupportDeclaration.name  // If it's the File object (from form upload)
-    }
-  </Typography>
-) : (
-  ''
-)}
+                <Typography variant="body2" mt={1}>
+                  Selected file: {typeof formData.financialSupportDeclaration === 'string'
+                    ? formData.financialSupportDeclaration  // If it's just the file name (from backend)
+                    : formData.financialSupportDeclaration.name  // If it's the File object (from form upload)
+                  }
+                </Typography>
+              ) : (
+                ''
+              )}
               <input
                 type="file"
                 name="financialSupportDeclaration"
@@ -694,7 +720,7 @@ useEffect(() => {
                 accept=".pdf,.jpg,.jpeg,.png"
                 style={{ maxWidth: 250 }}
               />
-              
+
             </Box>
 
             {/* Valid Final Offer Letter Issued by the University */}
@@ -713,17 +739,17 @@ useEffect(() => {
               <Typography>
                 Valid Final Offer Letter Issued by the University
               </Typography>
-              
+
               {formData?.validOfferLetter ? (
-  <Typography variant="body2" mt={1}>
-    Selected file: {typeof formData.validOfferLetter === 'string'
-      ? formData.validOfferLetter  // If it's just the file name (from backend)
-      : formData.validOfferLetter.name  // If it's the File object (from form upload)
-    }
-  </Typography>
-) : (
-  ''
-)}
+                <Typography variant="body2" mt={1}>
+                  Selected file: {typeof formData.validOfferLetter === 'string'
+                    ? formData.validOfferLetter  // If it's just the file name (from backend)
+                    : formData.validOfferLetter.name  // If it's the File object (from form upload)
+                  }
+                </Typography>
+              ) : (
+                ''
+              )}
               <input
                 type="file"
                 name="validOfferLetter"
@@ -731,7 +757,7 @@ useEffect(() => {
                 accept=".pdf,.jpg,.jpeg,.png"
                 style={{ maxWidth: 250 }}
               />
-               
+
             </Box>
 
             {/* Proof of Relationship with Sponsor */}
@@ -748,16 +774,16 @@ useEffect(() => {
               }}
             >
               <Typography>Proof of Relationship with Sponsor</Typography>
-               {formData?.relationshipProofWithSponsor ? (
-  <Typography variant="body2" mt={1}>
-    Selected file: {typeof formData.relationshipProofWithSponsor === 'string'
-      ? formData.relationshipProofWithSponsor  // If it's just the file name (from backend)
-      : formData.relationshipProofWithSponsor.name  // If it's the File object (from form upload)
-    }
-  </Typography>
-) : (
-  ''
-)}
+              {formData?.relationshipProofWithSponsor ? (
+                <Typography variant="body2" mt={1}>
+                  Selected file: {typeof formData.relationshipProofWithSponsor === 'string'
+                    ? formData.relationshipProofWithSponsor  // If it's just the file name (from backend)
+                    : formData.relationshipProofWithSponsor.name  // If it's the File object (from form upload)
+                  }
+                </Typography>
+              ) : (
+                ''
+              )}
               <input
                 type="file"
                 name="relationshipProofWithSponsor"
@@ -765,7 +791,7 @@ useEffect(() => {
                 accept=".pdf,.jpg,.jpeg,.png"
                 style={{ maxWidth: 250 }}
               />
-              
+
             </Box>
 
             {/* Proof of English Language Ability */}
@@ -784,17 +810,17 @@ useEffect(() => {
               <Typography>
                 Proof of English Language Ability (If Any)
               </Typography>
-               
-               {formData?.englishProof ? (
-  <Typography variant="body2" mt={1}>
-    Selected file: {typeof formData.englishProof === 'string'
-      ? formData.englishProof  // If it's just the file name (from backend)
-      : formData.englishProof.name  // If it's the File object (from form upload)
-    }
-  </Typography>
-) : (
-  ''
-)}
+
+              {formData?.englishProof ? (
+                <Typography variant="body2" mt={1}>
+                  Selected file: {typeof formData.englishProof === 'string'
+                    ? formData.englishProof  // If it's just the file name (from backend)
+                    : formData.englishProof.name  // If it's the File object (from form upload)
+                  }
+                </Typography>
+              ) : (
+                ''
+              )}
               <input
                 type="file"
                 name="englishProof"
@@ -802,7 +828,7 @@ useEffect(() => {
                 accept=".pdf,.jpg,.jpeg,.png"
                 style={{ maxWidth: 250 }}
               />
-               
+
             </Box>
 
             {/* Add other fields in the same way for the remaining documents */}
@@ -833,16 +859,16 @@ useEffect(() => {
               }}
             >
               <Typography>Residence Permit Form + Appendix 14</Typography>
-               {formData?.residencePermitForm ? (
-  <Typography variant="body2" mt={1}>
-    Selected file: {typeof formData.residencePermitForm === 'string'
-      ? formData.residencePermitForm  // If it's just the file name (from backend)
-      : formData.residencePermitForm.name  // If it's the File object (from form upload)
-    }
-  </Typography>
-) : (
-  ''
-)}
+              {formData?.residencePermitForm ? (
+                <Typography variant="body2" mt={1}>
+                  Selected file: {typeof formData.residencePermitForm === 'string'
+                    ? formData.residencePermitForm  // If it's just the file name (from backend)
+                    : formData.residencePermitForm.name  // If it's the File object (from form upload)
+                  }
+                </Typography>
+              ) : (
+                ''
+              )}
               <input
                 type="file"
                 name="residencePermitForm"
@@ -850,7 +876,7 @@ useEffect(() => {
                 accept=".pdf,.jpg,.jpeg,.png"
                 style={{ maxWidth: 250 }}
               />
-               
+
             </Box>
 
             {/* Proof of Income (TIN, TAX, TRADE Certificate) */}
@@ -869,16 +895,16 @@ useEffect(() => {
               <Typography>
                 Proof of Income (TIN, TAX, TRADE Certificate)
               </Typography>
-               {formData?.incomeProof ? (
-  <Typography variant="body2" mt={1}>
-    Selected file: {typeof formData.incomeProof=== 'string'
-      ? formData.incomeProof  // If it's just the file name (from backend)
-      : formData.incomeProof.name  // If it's the File object (from form upload)
-    }
-  </Typography>
-) : (
-  ''
-)}
+              {formData?.incomeProof ? (
+                <Typography variant="body2" mt={1}>
+                  Selected file: {typeof formData.incomeProof === 'string'
+                    ? formData.incomeProof  // If it's just the file name (from backend)
+                    : formData.incomeProof.name  // If it's the File object (from form upload)
+                  }
+                </Typography>
+              ) : (
+                ''
+              )}
               <input
                 type="file"
                 name="incomeProof"
@@ -886,7 +912,7 @@ useEffect(() => {
                 accept=".pdf,.jpg,.jpeg,.png"
                 style={{ maxWidth: 250 }}
               />
-               
+
             </Box>
 
             {/* One-Way Airplane Ticket Booking */}
@@ -904,15 +930,15 @@ useEffect(() => {
             >
               <Typography>One-Way Airplane Ticket Booking</Typography>
               {formData?.airplaneTicket ? (
-  <Typography variant="body2" mt={1}>
-    Selected file: {typeof formData.airplaneTicket=== 'string'
-      ? formData.airplaneTicket  // If it's just the file name (from backend)
-      : formData.airplaneTicket.name  // If it's the File object (from form upload)
-    }
-  </Typography>
-) : (
-  ''
-)}
+                <Typography variant="body2" mt={1}>
+                  Selected file: {typeof formData.airplaneTicket === 'string'
+                    ? formData.airplaneTicket  // If it's just the file name (from backend)
+                    : formData.airplaneTicket.name  // If it's the File object (from form upload)
+                  }
+                </Typography>
+              ) : (
+                ''
+              )}
               <input
                 type="file"
                 name="airplaneTicket"
@@ -920,7 +946,7 @@ useEffect(() => {
                 accept=".pdf,.jpg,.jpeg,.png"
                 style={{ maxWidth: 250 }}
               />
-               
+
             </Box>
 
             {/* Police Clearance Certificate */}
@@ -938,15 +964,15 @@ useEffect(() => {
             >
               <Typography>Police Clearance Certificate</Typography>
               {formData?.policeClearance ? (
-  <Typography variant="body2" mt={1}>
-    Selected file: {typeof formData.policeClearance=== 'string'
-      ? formData.policeClearance  // If it's just the file name (from backend)
-      : formData.policeClearance.name  // If it's the File object (from form upload)
-    }
-  </Typography>
-) : (
-  ''
-)}
+                <Typography variant="body2" mt={1}>
+                  Selected file: {typeof formData.policeClearance === 'string'
+                    ? formData.policeClearance  // If it's just the file name (from backend)
+                    : formData.policeClearance.name  // If it's the File object (from form upload)
+                  }
+                </Typography>
+              ) : (
+                ''
+              )}
               <input
                 type="file"
                 name="policeClearance"
@@ -954,7 +980,7 @@ useEffect(() => {
                 accept=".pdf,.jpg,.jpeg,.png"
                 style={{ maxWidth: 250 }}
               />
-               
+
             </Box>
 
             {/* Europass CV */}
@@ -972,15 +998,15 @@ useEffect(() => {
             >
               <Typography>Europass CV</Typography>
               {formData?.europassCV ? (
-  <Typography variant="body2" mt={1}>
-    Selected file: {typeof formData.europassCV=== 'string'
-      ? formData.europassCV  // If it's just the file name (from backend)
-      : formData.europassCV.name  // If it's the File object (from form upload)
-    }
-  </Typography>
-) : (
-  ''
-)}
+                <Typography variant="body2" mt={1}>
+                  Selected file: {typeof formData.europassCV === 'string'
+                    ? formData.europassCV  // If it's just the file name (from backend)
+                    : formData.europassCV.name  // If it's the File object (from form upload)
+                  }
+                </Typography>
+              ) : (
+                ''
+              )}
               <input
                 type="file"
                 name="europassCV"
@@ -988,7 +1014,7 @@ useEffect(() => {
                 accept=".pdf,.jpg,.jpeg,.png"
                 style={{ maxWidth: 250 }}
               />
-              
+
             </Box>
 
             {/* Birth Certificate (English) */}
@@ -1006,15 +1032,15 @@ useEffect(() => {
             >
               <Typography>Birth Certificate (English)</Typography>
               {formData?.birthCertificate ? (
-  <Typography variant="body2" mt={1}>
-    Selected file: {typeof formData.birthCertificate=== 'string'
-      ? formData.birthCertificate  // If it's just the file name (from backend)
-      : formData.birthCertificate.name  // If it's the File object (from form upload)
-    }
-  </Typography>
-) : (
-  ''
-)}
+                <Typography variant="body2" mt={1}>
+                  Selected file: {typeof formData.birthCertificate === 'string'
+                    ? formData.birthCertificate  // If it's just the file name (from backend)
+                    : formData.birthCertificate.name  // If it's the File object (from form upload)
+                  }
+                </Typography>
+              ) : (
+                ''
+              )}
               <input
                 type="file"
                 name="birthCertificate"
@@ -1045,16 +1071,16 @@ useEffect(() => {
               <Typography>
                 Bank Account Statement (Your Sponsors, Last 6 Months)
               </Typography>
-               {formData?.bankStatement ? (
-  <Typography variant="body2" mt={1}>
-    Selected file: {typeof formData.bankStatement=== 'string'
-      ? formData.bankStatement  // If it's just the file name (from backend)
-      : formData.bankStatement.name  // If it's the File object (from form upload)
-    }
-  </Typography>
-) : (
-  ''
-)}
+              {formData?.bankStatement ? (
+                <Typography variant="body2" mt={1}>
+                  Selected file: {typeof formData.bankStatement === 'string'
+                    ? formData.bankStatement  // If it's just the file name (from backend)
+                    : formData.bankStatement.name  // If it's the File object (from form upload)
+                  }
+                </Typography>
+              ) : (
+                ''
+              )}
               <input
                 type="file"
                 name="bankStatement"
@@ -1062,7 +1088,7 @@ useEffect(() => {
                 accept=".pdf,.jpg,.jpeg,.png"
                 style={{ maxWidth: 250 }}
               />
-               
+
             </Box>
 
             {/* Accommodation Proof */}
@@ -1080,15 +1106,15 @@ useEffect(() => {
             >
               <Typography>Accommodation Proof</Typography>
               {formData?.accommodationProof ? (
-  <Typography variant="body2" mt={1}>
-    Selected file: {typeof formData.accommodationProof=== 'string'
-      ? formData.accommodationProof  // If it's just the file name (from backend)
-      : formData.accommodationProof.name  // If it's the File object (from form upload)
-    }
-  </Typography>
-) : (
-  ''
-)}
+                <Typography variant="body2" mt={1}>
+                  Selected file: {typeof formData.accommodationProof === 'string'
+                    ? formData.accommodationProof  // If it's just the file name (from backend)
+                    : formData.accommodationProof.name  // If it's the File object (from form upload)
+                  }
+                </Typography>
+              ) : (
+                ''
+              )}
               <input
                 type="file"
                 name="accommodationProof"
@@ -1113,15 +1139,15 @@ useEffect(() => {
             >
               <Typography>Motivation Letter (Signed)</Typography>
               {formData?.motivationLetter ? (
-  <Typography variant="body2" mt={1}>
-    Selected file: {typeof formData.motivationLetter=== 'string'
-      ? formData.motivationLetter  // If it's just the file name (from backend)
-      : formData.motivationLetter.name  // If it's the File object (from form upload)
-    }
-  </Typography>
-) : (
-  ''
-)}
+                <Typography variant="body2" mt={1}>
+                  Selected file: {typeof formData.motivationLetter === 'string'
+                    ? formData.motivationLetter  // If it's just the file name (from backend)
+                    : formData.motivationLetter.name  // If it's the File object (from form upload)
+                  }
+                </Typography>
+              ) : (
+                ''
+              )}
               <input
                 type="file"
                 name="motivationLetter"
@@ -1129,7 +1155,7 @@ useEffect(() => {
                 accept=".pdf,.jpg,.jpeg,.png"
                 style={{ maxWidth: 250 }}
               />
-               
+
             </Box>
 
             {/* Certificates of Previous Studies (SSC & HSC) */}
@@ -1148,16 +1174,16 @@ useEffect(() => {
               <Typography>
                 Certificates of Previous Studies (SSC & HSC)
               </Typography>
-               {formData?.previousCertificates ? (
-  <Typography variant="body2" mt={1}>
-    Selected file: {typeof formData.previousCertificates=== 'string'
-      ? formData.previousCertificates  // If it's just the file name (from backend)
-      : formData.previousCertificates.name  // If it's the File object (from form upload)
-    }
-  </Typography>
-) : (
-  ''
-)}
+              {formData?.previousCertificates ? (
+                <Typography variant="body2" mt={1}>
+                  Selected file: {typeof formData.previousCertificates === 'string'
+                    ? formData.previousCertificates  // If it's just the file name (from backend)
+                    : formData.previousCertificates.name  // If it's the File object (from form upload)
+                  }
+                </Typography>
+              ) : (
+                ''
+              )}
               <input
                 type="file"
                 name="previousCertificates"
@@ -1165,7 +1191,7 @@ useEffect(() => {
                 accept=".pdf,.jpg,.jpeg,.png"
                 style={{ maxWidth: 250 }}
               />
-               
+
             </Box>
 
             {/* Travel Insurance */}
@@ -1183,16 +1209,16 @@ useEffect(() => {
             >
               <Typography>Travel Insurance</Typography>
               {formData?.travelInsurance ? (
-  <Typography variant="body2" mt={1}>
-    Selected file: {typeof formData.travelInsurance=== 'string'
-      ? formData.travelInsurance  // If it's just the file name (from backend)
-      : formData.travelInsurance.name  // If it's the File object (from form upload)
-    }
-  </Typography>
-) : (
-  ''
-)}
-  
+                <Typography variant="body2" mt={1}>
+                  Selected file: {typeof formData.travelInsurance === 'string'
+                    ? formData.travelInsurance  // If it's just the file name (from backend)
+                    : formData.travelInsurance.name  // If it's the File object (from form upload)
+                  }
+                </Typography>
+              ) : (
+                ''
+              )}
+
               <input
                 type="file"
                 name="travelInsurance"
@@ -1200,7 +1226,7 @@ useEffect(() => {
                 accept=".pdf,.jpg,.jpeg,.png"
                 style={{ maxWidth: 250 }}
               />
-              
+
             </Box>
 
             {/* European Photo (3.5 x 4.5 cm) */}
@@ -1218,15 +1244,15 @@ useEffect(() => {
             >
               <Typography>European Photo (3.5 x 4.5 cm)</Typography>
               {formData?.europeanPhoto ? (
-  <Typography variant="body2" mt={1}>
-    Selected file: {typeof formData.europeanPhoto=== 'string'
-      ? formData.europeanPhoto  // If it's just the file name (from backend)
-      : formData.europeanPhoto.name  // If it's the File object (from form upload)
-    }
-  </Typography>
-) : (
-  ''
-)}
+                <Typography variant="body2" mt={1}>
+                  Selected file: {typeof formData.europeanPhoto === 'string'
+                    ? formData.europeanPhoto  // If it's just the file name (from backend)
+                    : formData.europeanPhoto.name  // If it's the File object (from form upload)
+                  }
+                </Typography>
+              ) : (
+                ''
+              )}
               <input
                 type="file"
                 name="europeanPhoto"
@@ -1234,7 +1260,7 @@ useEffect(() => {
                 accept=".jpg,.jpeg,.png"
                 style={{ maxWidth: 250 }}
               />
-               
+
             </Box>
 
             {/* Health Insurance */}
@@ -1251,16 +1277,16 @@ useEffect(() => {
               }}
             >
               <Typography>Health Insurance (Signed)</Typography>
-                {formData?.healthInsurance ? (
-  <Typography variant="body2" mt={1}>
-    Selected file: {typeof formData.healthInsurance=== 'string'
-      ? formData.healthInsurance  // If it's just the file name (from backend)
-      : formData.healthInsurance.name  // If it's the File object (from form upload)
-    }
-  </Typography>
-) : (
-  ''
-)}
+              {formData?.healthInsurance ? (
+                <Typography variant="body2" mt={1}>
+                  Selected file: {typeof formData.healthInsurance === 'string'
+                    ? formData.healthInsurance  // If it's just the file name (from backend)
+                    : formData.healthInsurance.name  // If it's the File object (from form upload)
+                  }
+                </Typography>
+              ) : (
+                ''
+              )}
               <input
                 type="file"
                 name="healthInsurance"
@@ -1370,54 +1396,91 @@ useEffect(() => {
   };
 
   return (
-    <Paper elevation={4} sx={{ p: 4, maxWidth: 1100, margin: "auto", mt: 5 }}>
-      <Stepper activeStep={activeStep} alternativeLabel>
-        {steps.map((label) => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
-
-      <Box sx={{ mt: 4 }}>
-         
-          <>
-            {renderStepContent(activeStep)}
-
-            <Box
-              sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}
+    <>
+      {isLoading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <>
+          <div className="d-flex mt-4">
+            {/* Back Home Button */}
+            <Button
+              onClick={() => navigate('/UniversityCards')}
+              variant="contained"
+              color="primary"
+              sx={{ mb: 2 }}
             >
-              <Button
-                disabled={activeStep === 0}
-                onClick={handleBack}
-                variant="outlined"
-              >
-                Back
-              </Button>
-              <Button variant="contained" onClick={handleNext} disabled={!status|| (activeStep === steps.length-1)}>
-                Next
-              </Button>
-              {status === false ? (
-  <Button variant="contained" onClick={handleSubmit}>
-    Submit Application
-  </Button>
-) : (
-  interviewBtn === 1 ? (
-    <Button variant="contained" onClick={() => handleUpdate(applicationId)}>
-      Submit Visa Details
-    </Button>
-  ) : (
-    <Button variant="contained" onClick={() => handleUpdate(applicationId)}>
-      Submit Interview Details
-    </Button>
-  )
-)}
+              <i className="fas fa-arrow-left me-2"></i> Back
+            </Button>
+            <div style={{ textAlign: "center", marginLeft: "auto", marginRight: "auto" }}>
+              <Typography variant="h5" align="center" gutterBottom>
+                University Application Process
+              </Typography>
+            </div>
 
+
+
+          </div>
+          <Paper elevation={4} sx={{ p: 4, mt: 3 }}>
+            {/* Top Heading */}
+
+
+
+            {/* Stepper */}
+            <Stepper activeStep={activeStep} alternativeLabel>
+              {steps.map((label) => (
+                <Step key={label}>
+                  <StepLabel>{label}</StepLabel>
+                </Step>
+              ))}
+            </Stepper>
+
+            <Box sx={{ mt: 4 }}>
+              {/* Centered Heading inside Stepper Body */}
+
+
+              {renderStepContent(activeStep)}
+
+              <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
+                <Button
+                  disabled={activeStep === 0}
+                  onClick={handleBack}
+                  variant="outlined"
+                >
+                  Back
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={handleNext}
+                  disabled={!isFormSubmitted || activeStep === steps.length - 1}
+                >
+                  Next
+                </Button>
+
+                {status === false ? (
+                  <Button variant="contained" onClick={handleSubmit}>
+                    Submit Application
+                  </Button>
+                ) : (
+                  interviewBtn === 1 ? (
+                    <Button variant="contained" onClick={() => handleUpdate(applicationId)}>
+                      Submit Visa Details
+                    </Button>
+                  ) : (
+                    <Button variant="contained" onClick={() => handleUpdate(applicationId)}>
+                      Submit Interview Details
+                    </Button>
+                  )
+                )}
+              </Box>
             </Box>
-          </>
-        
-      </Box>
-    </Paper>
+          </Paper>
+        </>
+      )}
+
+    </>
+
   );
 };
 

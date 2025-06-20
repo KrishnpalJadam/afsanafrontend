@@ -46,8 +46,11 @@ const ApplicationDetails = () => {
 
   // Check if a document link is valid for viewing
   const canViewDocument = (value) => {
-    return typeof value === "string" && value.includes("uploads");
+    return typeof value === "string" && (
+      value.includes("uploads") || value.includes("res.cloudinary.com")
+    );
   };
+
 
   const handleBack = () => {
     navigate(-1);
@@ -116,7 +119,7 @@ const ApplicationDetails = () => {
                   <td>{label}</td>
                   <td>
                     {isDocument ? (
-                      value && value.includes("uploads") ? (
+                      canViewDocument(value) ? (
                         <Badge bg="success">
                           <FaCheckCircle /> Completed
                         </Badge>
@@ -150,13 +153,14 @@ const ApplicationDetails = () => {
 
 
                   <td>
-                    {isDocument && value && value.includes("uploads") ? (
+                    {isDocument && canViewDocument(value) ? (
                       <a href={value} target="_blank" rel="noreferrer">
                         <FaFilePdf /> View
                       </a>
                     ) : (
                       "-"
                     )}
+
                   </td>
                 </tr>
               );
