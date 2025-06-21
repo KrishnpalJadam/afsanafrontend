@@ -10,7 +10,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
   const [openSubmenu, setOpenSubmenu] = useState(null); // Tracks the open submenu
   const navigate = useNavigate();
   const location = useLocation();
-  
+
 
 
   const toggleSubmenu = (menuName) => {
@@ -51,7 +51,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
               </div>
             </li>
           )}
-          {login == "counselor"  && (
+          {login == "counselor" && (
             <li
               className={`menu-item ${isActive("/councelor") ? "active" : ""}`}
             >
@@ -70,12 +70,12 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                 <span className="menu-text">Dashboard</span>
               </div>
             </li>
+
           )}
-          {login == "student"  && (
+          {login == "student" && (
             <li
-              className={`menu-item ${
-                isActive("/studentProfile") ? "active" : ""
-              }`}
+              className={`menu-item ${isActive("/studentProfile") ? "active" : ""
+                }`}
             >
               <div
                 className="menu-link menu-i"
@@ -96,21 +96,20 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
           {/* Lead & Inquiry Management */}
           {login == "admin" ? (
             <li
-              className={`menu-item ${
-                isSubmenuActive([
-                  "/LeadInquiryManagement",
-                  "/inquiry",
-                  "/lead",
-                  "/deal",
-                  // "/dashboard",
-                  "/contract",
-                  "/quotes",
-                  "/analytics",
-                  "/adminstatus",
-                ])
+              className={`menu-item ${isSubmenuActive([
+                "/LeadInquiryManagement",
+                "/inquiry",
+                "/lead",
+                "/deal",
+                // "/dashboard",
+                "/contract",
+                "/quotes",
+                "/analytics",
+                "/adminstatus",
+              ])
                   ? "active"
                   : ""
-              }`}
+                }`}
             >
               <div
                 className="menu-link menu-i"
@@ -125,9 +124,8 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                 ></i>
                 <span className="menu-text">Leads & Inquiries</span>
                 <i
-                  className={`fa-solid fa-chevron-${
-                    openSubmenu === "leadInquiry" ? "up" : "down"
-                  } submenu-arrow`}
+                  className={`fa-solid fa-chevron-${openSubmenu === "leadInquiry" ? "up" : "down"
+                    } submenu-arrow`}
                 ></i>
               </div>
 
@@ -153,9 +151,8 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                     Contact
                   </li> */}
                   <li
-                    className={`menu-item submenu-item ${
-                      isActive("/inquiry") ? "active" : ""
-                    }`}
+                    className={`menu-item submenu-item ${isActive("/inquiry") ? "active" : ""
+                      }`}
                     onClick={() => {
                       navigate("/inquiry");
                       menuItemClick();
@@ -164,9 +161,8 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                     Inquiry
                   </li>
                   <li
-                    className={`menu-item submenu-item ${
-                      isActive("/lead") ? "active" : ""
-                    }`}
+                    className={`menu-item submenu-item ${isActive("/lead") ? "active" : ""
+                      }`}
                     onClick={() => {
                       navigate("/lead");
                       menuItemClick();
@@ -175,9 +171,8 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                     Lead
                   </li>
                   <li
-                    className={`menu-item submenu-item ${
-                      isActive("/adminstatus") ? "active" : ""
-                    }`}
+                    className={`menu-item submenu-item ${isActive("/adminstatus") ? "active" : ""
+                      }`}
                     onClick={() => {
                       navigate("/adminstatus");
                       menuItemClick();
@@ -209,21 +204,20 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
           )}
           {login == "counselor" ? (
             <li
-              className={`menu-item ${
-                isSubmenuActive([
-                  "/LeadInquiryManagement",
-                  "/inquiry",
-                  "//leadCouncelor",
-                  "/deal",
-                  // "/dashboard",
-                  "/contract",
-                  "/quotes",
-                  "/analytics",
-                  "/status",
-                ])
+              className={`menu-item ${isSubmenuActive([
+                "/LeadInquiryManagement",
+                "/inquiry",
+                "//leadCouncelor",
+                "/deal",
+                // "/dashboard",
+                "/contract",
+                "/quotes",
+                "/analytics",
+                "/status",
+              ])
                   ? "active"
                   : ""
-              }`}
+                }`}
             >
               <div
                 className="menu-link menu-i"
@@ -235,19 +229,18 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                 ></i>
                 <span className="menu-text">Leads & Inquiries</span>
                 <i
-                  className={`fa-solid fa-chevron-${
-                    openSubmenu === "leadInquiry" ? "up" : "down"
-                  } submenu-arrow`}
+                  className={`fa-solid fa-chevron-${openSubmenu === "leadInquiry" ? "up" : "down"
+                    } submenu-arrow`}
                 ></i>
               </div>
 
-              {openSubmenu === "leadInquiry" &&(
+
+              {openSubmenu === "leadInquiry" && (
                 <ul className={`submenu `}>
-             
-                  {hasPermission("Lead","view") &&<li
-                    className={`menu-item submenu-item ${
-                      isActive("/leadCouncelor") ? "active" : ""
-                    }`}
+
+                  {hasPermission("Lead", "view") && <li
+                    className={`menu-item submenu-item ${isActive("/leadCouncelor") ? "active" : ""
+                      }`}
                     onClick={() => {
                       navigate("/leadCouncelor");
                       menuItemClick();
@@ -255,10 +248,9 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   >
                     Lead
                   </li>}
-                  {hasPermission("Status","view")&&<li
-                    className={`menu-item submenu-item ${
-                      isActive("/status") ? "active" : ""
-                    }`}
+                  {hasPermission("Status", "view") && <li
+                    className={`menu-item submenu-item ${isActive("/status") ? "active" : ""
+                      }`}
                     onClick={() => {
                       navigate("/status");
                       menuItemClick();
@@ -266,10 +258,9 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   >
                     Status
                   </li>}
-                  {hasPermission("Task","view")&&<li
-                    className={`menu-item submenu-item ${
-                      isActive("/councelorTask") ? "active" : ""
-                    }`}
+                  {hasPermission("Task", "view") && <li
+                    className={`menu-item submenu-item ${isActive("/councelorTask") ? "active" : ""
+                      }`}
                     onClick={() => navigate("/councelorTask")}
                   >
                     Task
@@ -311,15 +302,14 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
           {/* Student Management */}
           {login == "admin" ? (
             <li
-              className={`menu-item ${
-                isSubmenuActive([
-                  "/studentDetails",
-                  "/admission",
-                  "/communication",
-                ])
+              className={`menu-item ${isSubmenuActive([
+                "/studentDetails",
+                "/admission",
+                "/communication",
+              ])
                   ? "active"
                   : ""
-              }`}
+                }`}
             >
               <div
                 className="menu-link menu-i"
@@ -334,18 +324,16 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   Student Management
                 </span>
                 <i
-                  className={`fa-solid fa-chevron-${
-                    openSubmenu === "student" ? "up" : "down"
-                  } submenu-arrow`}
+                  className={`fa-solid fa-chevron-${openSubmenu === "student" ? "up" : "down"
+                    } submenu-arrow`}
                 ></i>
               </div>
 
               {openSubmenu === "student" && (
                 <ul className={`submenu `}>
                   <li
-                    className={`menu-item submenu-item ${
-                      isActive("/studentDetails") ? "active" : ""
-                    }`}
+                    className={`menu-item submenu-item ${isActive("/studentDetails") ? "active" : ""
+                      }`}
                     onClick={() => {
                       navigate("/studentDetails");
                       menuItemClick();
@@ -365,9 +353,8 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                     Student Admission
                   </li> */}
                   <li
-                    className={`menu-item submenu-item ${
-                      isActive("/communication") ? "active" : ""
-                    }`}
+                    className={`menu-item submenu-item ${isActive("/communication") ? "active" : ""
+                      }`}
                     onClick={() => {
                       navigate("/communication");
                       menuItemClick();
@@ -383,15 +370,14 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
           )}
           {login == "counselor" ? (
             <li
-              className={`menu-item ${
-                isSubmenuActive([
-                  "/studentDetails",
-                  "/admission",
-                  "/communication",
-                ])
+              className={`menu-item ${isSubmenuActive([
+                "/studentDetails",
+                "/admission",
+                "/communication",
+              ])
                   ? "active"
                   : ""
-              }`}
+                }`}
             >
               <div
                 className="menu-link menu-i"
@@ -406,18 +392,16 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   Student Management
                 </span>
                 <i
-                  className={`fa-solid fa-chevron-${
-                    openSubmenu === "student" ? "up" : "down"
-                  } submenu-arrow`}
+                  className={`fa-solid fa-chevron-${openSubmenu === "student" ? "up" : "down"
+                    } submenu-arrow`}
                 ></i>
               </div>
 
               {openSubmenu === "student" && (
                 <ul className={`submenu `}>
-                  {hasPermission("Student Details","view")&&<li
-                    className={`menu-item submenu-item ${
-                      isActive("/studentDetails") ? "active" : ""
-                    }`}
+                  {hasPermission("Student Details", "view") && <li
+                    className={`menu-item submenu-item ${isActive("/studentDetails") ? "active" : ""
+                      }`}
                     onClick={() => {
                       navigate("/studentDetails");
                       menuItemClick();
@@ -436,10 +420,9 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   >
                     Student Admission
                   </li> */}
-                  {hasPermission("Communication","view")&&<li
-                    className={`menu-item submenu-item ${
-                      isActive("/communication") ? "active" : ""
-                    }`}
+                  {hasPermission("Communication", "view") && <li
+                    className={`menu-item submenu-item ${isActive("/communication") ? "active" : ""
+                      }`}
                     onClick={() => {
                       navigate("/communication");
                       menuItemClick();
@@ -453,18 +436,17 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
           ) : (
             ""
           )}
-          {login == "student"  ? (
+          {login == "student" ? (
             <li
-              className={`menu-item ${
-                isSubmenuActive([
-                  "/MainStudentDetails",
-                  "/admission",
-                  "/Searchprograms",
-                  "/ContactSupport",
-                ])
+              className={`menu-item ${isSubmenuActive([
+                "/MainStudentDetails",
+                "/admission",
+                "/Searchprograms",
+                "/ContactSupport",
+              ])
                   ? "active"
                   : ""
-              }`}
+                }`}
             >
               <div
                 className="menu-link menu-i"
@@ -479,18 +461,16 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   Student Management
                 </span>
                 <i
-                  className={`fa-solid fa-chevron-${
-                    openSubmenu === "student" ? "up" : "down"
-                  } submenu-arrow`}
+                  className={`fa-solid fa-chevron-${openSubmenu === "student" ? "up" : "down"
+                    } submenu-arrow`}
                 ></i>
               </div>
 
-              {openSubmenu === "student"  && (
+              {openSubmenu === "student" && (
                 <ul className={`submenu `}>
                   {hasPermission("Student Details", "view") && <li
-                    className={`menu-item submenu-item ${
-                      isActive("/MainStudentDetails") ? "active" : ""
-                    }`}
+                    className={`menu-item submenu-item ${isActive("/MainStudentDetails") ? "active" : ""
+                      }`}
                     onClick={() => {
                       navigate("/MainStudentDetails");
                       menuItemClick();
@@ -500,9 +480,8 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   </li>}
 
                   {hasPermission("Student Programs", "view") && <li
-                    className={`menu-item submenu-item ${
-                      isActive("/Searchprograms") ? "active" : ""
-                    }`}
+                    className={`menu-item submenu-item ${isActive("/Searchprograms") ? "active" : ""
+                      }`}
                     onClick={() => {
                       navigate("/Searchprograms");
                       menuItemClick();
@@ -532,16 +511,15 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
           {/*  Application & Admission Tracking */}
           {login == "admin" ? (
             <li
-              className={`menu-item ${
-                isSubmenuActive([
-                  "/tracker",
-                  "/PaymentInvoiceManagement",
-                  "/university",
-                  "/applications",
-                ])
+              className={`menu-item ${isSubmenuActive([
+                "/tracker",
+                "/PaymentInvoiceManagement",
+                "/university",
+                "/applications",
+              ])
                   ? "active"
                   : ""
-              }`}
+                }`}
             >
               <div
                 className="menu-link menu-i"
@@ -554,18 +532,16 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                 ></i>
                 <span className="menu-text text-nowrap">Applications</span>
                 <i
-                  className={`fa-solid fa-chevron-${
-                    openSubmenu === "application" ? "up" : "down"
-                  } submenu-arrow`}
+                  className={`fa-solid fa-chevron-${openSubmenu === "application" ? "up" : "down"
+                    } submenu-arrow`}
                 ></i>
               </div>
 
               {openSubmenu === "application" && (
                 <ul className={`submenu `}>
                   <li
-                    className={`menu-item submenu-item ${
-                      isActive("/PaymentInvoiceManagement") ? "active" : ""
-                    }`}
+                    className={`menu-item submenu-item ${isActive("/PaymentInvoiceManagement") ? "active" : ""
+                      }`}
                     onClick={() => {
                       navigate("/PaymentInvoiceManagement");
                       menuItemClick();
@@ -573,10 +549,10 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   >
                     Course & University
                   </li>
+
                   <li
-                    className={`menu-item submenu-item ${
-                      isActive("/tracker") ? "active" : ""
-                    }`}
+                    className={`menu-item submenu-item ${isActive("/tracker") ? "active" : ""
+                      }`}
                     onClick={() => {
                       navigate("/tracker");
                       menuItemClick();
@@ -597,9 +573,8 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                     University Details
                   </li> */}
                   <li
-                    className={`menu-item submenu-item ${
-                      isActive("/applications") ? "active" : ""
-                    }`}
+                    className={`menu-item submenu-item ${isActive("/applications") ? "active" : ""
+                      }`}
                     onClick={() => {
                       navigate("/applications");
                       menuItemClick();
@@ -614,11 +589,10 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
             ""
           )}
 
-          {login == "student" && hasPermission( "Application Management", "view")? (
+          {login == "student" && hasPermission("Application Management", "view") ? (
             <li
-              className={`menu-item ${
-                isActive("/myapplication") ? "active" : ""
-              }`}
+              className={`menu-item ${isActive("/myapplication") ? "active" : ""
+                }`}
             >
               <div
                 className="menu-link menu-i"
@@ -641,11 +615,10 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
           {/* Task Management */}
           {login == "admin" ? (
             <li
-              className={`menu-item ${
-                isSubmenuActive(["/addcounselor", "/tasks", "/tasksreminder"])
+              className={`menu-item ${isSubmenuActive(["/addcounselor", "/tasks", "/tasksreminder"])
                   ? "active"
                   : ""
-              }`}
+                }`}
             >
               <div
                 className="menu-link menu-i"
@@ -657,18 +630,16 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                 ></i>
                 <span className="menu-text text-nowrap">Task Management</span>
                 <i
-                  className={`fa-solid fa-chevron-${
-                    openSubmenu === "tasks" ? "up" : "down"
-                  } submenu-arrow`}
+                  className={`fa-solid fa-chevron-${openSubmenu === "tasks" ? "up" : "down"
+                    } submenu-arrow`}
                 ></i>
               </div>
 
               {openSubmenu === "tasks" && (
                 <ul className={`submenu `}>
                   <li
-                    className={`menu-item submenu-item ${
-                      isActive("/addcounselor") ? "active" : ""
-                    }`}
+                    className={`menu-item submenu-item ${isActive("/addcounselor") ? "active" : ""
+                      }`}
                     onClick={() => {
                       navigate("/addcounselor");
                       menuItemClick();
@@ -677,9 +648,8 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                     Counselor
                   </li>
                   <li
-                    className={`menu-item submenu-item ${
-                      isActive("/tasks") ? "active" : ""
-                    }`}
+                    className={`menu-item submenu-item ${isActive("/tasks") ? "active" : ""
+                      }`}
                     onClick={() => {
                       navigate("/tasks");
                       menuItemClick();
@@ -688,9 +658,8 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                     Tasks
                   </li>
                   <li
-                    className={`menu-item submenu-item ${
-                      isActive("/tasksreminder") ? "active" : ""
-                    }`}
+                    className={`menu-item submenu-item ${isActive("/tasksreminder") ? "active" : ""
+                      }`}
                     onClick={() => {
                       navigate("/tasksreminder");
                       menuItemClick();
@@ -705,11 +674,10 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
             ""
           )}
 
-          {login == "student" && hasPermission("Task Management","view") ? (
+          {login == "student" && hasPermission("Task Management", "view") ? (
             <li
-              className={`menu-item ${
-                isActive("/studenttasks") ? "active" : ""
-              }`}
+              className={`menu-item ${isActive("/studenttasks") ? "active" : ""
+                }`}
             >
               <div
                 className="menu-link menu-i"
@@ -731,9 +699,8 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
           {/* Roles Permissions */}
           {login == "admin" ? (
             <li
-              className={`menu-item ${
-                isActive("/RolesManagement") ? "active" : ""
-              }`}
+              className={`menu-item ${isActive("/RolesManagement") ? "active" : ""
+                }`}
             >
               <div
                 className="menu-link menu-i"
@@ -755,9 +722,8 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
           {/* Reporting & Analytics */}
           {login == "admin" ? (
             <li
-              className={`menu-item ${
-                isActive("/CourseUniversityDatabase") ? "active" : ""
-              }`}
+              className={`menu-item ${isActive("/CourseUniversityDatabase") ? "active" : ""
+                }`}
             >
               <div
                 className="menu-link menu-i"
@@ -780,9 +746,8 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
           {/* Payments & Invoices */}
           {login == "admin" ? (
             <li
-              className={`menu-item ${
-                isActive("/ReportingAnalytics") ? "active" : ""
-              }`}
+              className={`menu-item ${isActive("/ReportingAnalytics") ? "active" : ""
+                }`}
             >
               <div
                 className="menu-link menu-i"
@@ -846,11 +811,10 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
           ) : (
             ""
           )} */}
-          {login == "student" && hasPermission("Course & University","view") ? (
+          {login == "student" && hasPermission("Course & University", "view") ? (
             <li
-              className={`menu-item ${
-                isActive("/UniversityCards") ? "active" : ""
-              }`}
+              className={`menu-item ${isActive("/UniversityCards") ? "active" : ""
+                }`}
             >
               <div
                 className="menu-link menu-i"
@@ -869,11 +833,10 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
           ) : (
             ""
           )}
-          {login == "counselor" && hasPermission("Course & University","view") ? (
+          {login == "counselor" && hasPermission("Course & University", "view") ? (
             <li
-              className={`menu-item ${
-                isActive("/UniversityCards") ? "active" : ""
-              }`}
+              className={`menu-item ${isActive("/UniversityCards") ? "active" : ""
+                }`}
             >
               <div
                 className="menu-link menu-i"
@@ -887,6 +850,19 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   className="fa-solid fa-university "
                 ></i>
                 <span className="menu-text">Course & University</span>
+              </div>
+              <div
+                className="menu-link menu-i"
+                onClick={() => {
+                  navigate("/applicationtracking");
+                  // menuItemClick();
+                }}
+              >
+                <i
+                  onClick={() => toggleSidebar()}
+                  className="fa-solid fa-chart-line "
+                ></i>
+                <span className="menu-text">Application Tracking</span>
               </div>
             </li>
           ) : (

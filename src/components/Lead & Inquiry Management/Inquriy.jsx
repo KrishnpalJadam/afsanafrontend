@@ -32,7 +32,6 @@ const Inquiry = () => {
   const [notes, setNotes] = useState("");
   const [selectedInquiries, setSelectedInquiries] = useState([]);
 
-  console.log(selectedInquiry)
   const [selectedCounselor, setSelectedCounselor] = useState(null);
   const [gpa, setGpa] = useState("");
   const [year, setYear] = useState("");
