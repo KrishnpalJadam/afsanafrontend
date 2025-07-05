@@ -12,8 +12,8 @@ const AddCounselor = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
-const [currentPage, setCurrentPage] = useState(1);
-const itemsPerPage = 10;  
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const [formData, setFormData] = useState({
     full_name: "",
@@ -129,16 +129,16 @@ const itemsPerPage = 10;
     setEditingId(null);
   };
 
-const filtered = Array.isArray(counselors)
-  ? counselors.filter((c) =>
+  const filtered = Array.isArray(counselors)
+    ? counselors.filter((c) =>
       c.full_name.toLowerCase().includes(searchTerm.toLowerCase())
     )
-  : [];
+    : [];
 
-const totalPages = Math.ceil(filtered.length / itemsPerPage);
-const indexOfLastItem = currentPage * itemsPerPage;
-const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-const currentItems = filtered.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filtered.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
     <div className="container py-4">
@@ -185,71 +185,71 @@ const currentItems = filtered.slice(indexOfFirstItem, indexOfLastItem);
               <th>Actions</th>
             </tr>
           </thead>
-        <tbody>
-  {currentItems.map((c, index) => (
-    <tr key={c.id}>
-      <td>{indexOfFirstItem + index + 1}</td>
-      <td>{c.full_name}</td>
-      <td>{c.email}</td>
-      <td>{c.phone}</td>
-      <td>{c.university || "N/A"}</td>
-      <td>{c.status}</td>
-      <td>
-        {c.created_at
-          ? new Date(c.created_at).toLocaleDateString()
-          : "N/A"}
-      </td>
-      <td>
-        <button
-          className="btn btn-warning btn-sm me-2"
-          onClick={() => handleEdit(c)}
-        >
-          Edit
-        </button>
-        <button
-          className="btn btn-danger btn-sm"
-          onClick={() => handleDelete(c.id)}
-        >
-          Delete
-        </button>
-      </td>
-    </tr>
-  ))}
-</tbody>
+          <tbody>
+            {currentItems.map((c, index) => (
+              <tr key={c.id}>
+                <td>{indexOfFirstItem + index + 1}</td>
+                <td>{c.full_name}</td>
+                <td>{c.email}</td>
+                <td>{c.phone}</td>
+                <td>{c.university || "N/A"}</td>
+                <td>{c.status}</td>
+                <td>
+                  {c.created_at
+                    ? new Date(c.created_at).toLocaleDateString()
+                    : "N/A"}
+                </td>
+                <td>
+                  <button
+                    className="btn btn-warning btn-sm me-2"
+                    onClick={() => handleEdit(c)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="btn btn-danger btn-sm"
+                    onClick={() => handleDelete(c.id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
 
         </table>
       </div>
-<div className="mt-4 d-flex justify-content-center">
-  <nav>
-    <ul className="pagination">
-      <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-        <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>
-          &laquo;
-        </button>
-      </li>
+      <div className="mt-4 d-flex justify-content-center">
+        <nav>
+          <ul className="pagination">
+            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+              <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>
+                &laquo;
+              </button>
+            </li>
 
-      {[...Array(totalPages)].map((_, i) => (
-        <li
-          key={i}
-          className={`page-item ${currentPage === i + 1 ? "active" : ""}`}
-        >
-          <button
-            className="page-link"
-            onClick={() => setCurrentPage(i + 1)}
-          >
-            {i + 1}
-          </button>
-        </li>
-      ))}
+            {[...Array(totalPages)].map((_, i) => (
+              <li
+                key={i}
+                className={`page-item ${currentPage === i + 1 ? "active" : ""}`}
+              >
+                <button
+                  className="page-link"
+                  onClick={() => setCurrentPage(i + 1)}
+                >
+                  {i + 1}
+                </button>
+              </li>
+            ))}
 
-      <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-        <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>
-          &raquo;
-        </button>
-      </li>
-    </ul>
-  </nav>
-</div>
+            <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+              <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>
+                &raquo;
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </div>
 
 
       {showModal && (
@@ -304,17 +304,20 @@ const currentItems = filtered.slice(indexOfFirstItem, indexOfLastItem);
                       required
                     />
                   </div>
-                  <div className="mb-3">
-                    <input
-                      type="password"
-                      className="form-control"
-                      name="password"
-                      placeholder="Password"
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      required={!editingId} // optional during edit
-                    />
-                  </div>
+                  {!editingId && (
+                    <div className="mb-3">
+                      <input
+                        type="password"
+                        className="form-control"
+                        name="password"
+                        placeholder="Password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+                  )}
+
                   <div className="mb-3">
                     <Form.Select
                       name="university_id"

@@ -20,6 +20,12 @@ const permissionsDataCounselor = [
   { module: "Course & University", features: [{ name: "Course & University" }] },
 ];
 
+const permissionsDataStaff = [
+  { module: "Dashboard", features: [{ name: "Dashboard" }] },
+  { module: "Leads & Inquiries", features: [{ name: "Inquiry" }, { name: "Lead" }, { name: "Status" }, { name: "Task" }] },
+  { module: "Course & University", features: [{ name: "Course & University" }] },
+];
+
 const PermissionsTable = () => {
   const { role } = useParams(); // Get role from route
   const [permissions, setPermissions] = useState([]);
@@ -29,9 +35,11 @@ const PermissionsTable = () => {
   useEffect(() => {
     let permissionsData;
     if (role === "Student") {
-      permissionsData = permissionsDataStudent; // Student data
+      permissionsData = permissionsDataStudent;
     } else if (role === "Counselor") {
-      permissionsData = permissionsDataCounselor; // Counselor data
+      permissionsData = permissionsDataCounselor;
+    } else if (role === "staff") {
+      permissionsData = permissionsDataStaff;
     }
 
     // Fetch role-specific permissions from the backend
@@ -52,7 +60,7 @@ const PermissionsTable = () => {
                 add: false,
                 edit: false,
                 delete: false,
-                id: null, // Store permission ID for updating
+                id: null,
               };
 
               // Find matching permission from backend data

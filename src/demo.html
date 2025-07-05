@@ -1,69 +1,226 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>CRM Inquiry Module</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    .badge-new { background-color: #28a745; }
-    .badge-review { background-color: #ffc107; }
-    .badge-eligible { background-color: #0dcaf0; }
-    .badge-lead { background-color: #007bff; }
-    .badge-ineligible { background-color: #dc3545; }
-    .badge-not-interested { background-color: #6c757d; }
-    .badge-duplicate { background-color: #fd7e14; }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visa Processing CRM</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css">
 </head>
-<body class="p-4">
+<style>
+  body {
+    background-color: #f7f9fc;
+  }
 
+  .filter-card {
+    border-left: 4px solid #ff6b00;
+    background-color: #fff3e6;
+  }
 
+  .filter-section-title {
+    background-color: #ff6b00;
+    padding: 8px 16px;
+    border-radius: 5px;
+  }
 
+  .accordion-button {
+    font-weight: bold;
+  }
 
-<h4 class="mt-5">Lead Table</h4>
-<table class="table table-bordered table-hover">
-  <thead class="table-light">
-    <tr>
-      <th>ID</th>
-      <th>Name</th>
-      <th>Phone</th>
-      <th>Email</th>
-      <th>Country</th>
-      <th>Status</th>
-      <th>Counselor</th>
-      <th>Follow-Up</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>201</td>
-      <td>Jane Doe</td>
-      <td>9876543210</td>
-      <td>jane@example.com</td>
-      <td>Canada</td>
-      <td><span class="badge bg-purple text-white" style="background-color:#6f42c1;">Registered</span></td>
-      <td>Priya Shah</td>
-      <td>2025-06-18</td>
-      <td>
-        <select class="form-select form-select-sm mb-1">
-          <option selected>Update Status</option>
-          <option>Contacted</option>
-          <option>Follow-Up Needed</option>
-          <option>Visited Office</option>
-          <option>Not Interested</option>
-          <option>Next Intake Interested</option>
-          <option>Registered</option>
-          <option>Dropped</option>
-        </select>
-        <input type="date" class="form-control form-control-sm mb-1" />
-        <textarea class="form-control form-control-sm mb-1" placeholder="Remarks"></textarea>
-        <button class="btn btn-sm btn-secondary mb-1">Upload Docs</button>
-        <button class="btn btn-sm btn-info mb-1">WhatsApp</button>
-        <button class="btn btn-sm btn-primary" style="display:inline-block;">Convert to Student</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
+  .accordion-body {
+    font-size: 14px;
+    background-color: #f9f9f9;
+  }
+</style>
 
+<body>
+
+  <div class="container my-4">
+    <h2 class="mb-4 text-center text-primary">Visa Processing CRM Dashboard</h2>
+
+    <!-- FILTER SECTION -->
+    <div class="card p-4 mb-5 filter-card">
+      <h5 class="mb-3 text-white filter-section-title">🎯 Filter Options</h5>
+      <div class="row g-3">
+
+        <div class="col-md-4">
+          <label>Compliance Officer</label>
+          <select class="form-select">
+            <option selected>Select</option>
+            <option>Officer A</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label>University</label>
+          <select class="form-select">
+            <option selected>Select</option>
+            <option>University X</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label>Program Level</label>
+          <select class="form-select">
+            <option selected>Select</option>
+            <option>Bachelor's</option>
+            <option>Master's</option>
+            <option>Foundation</option>
+          </select>
+        </div>
+
+        <div class="col-md-6">
+          <label>Application Stage</label>
+          <select class="form-select">
+            <option selected>Select</option>
+            <option>Application Submitted</option>
+            <option>Zoom Interview Scheduled</option>
+          </select>
+        </div>
+
+        <div class="col-md-6">
+          <label>Visa Status</label>
+          <select class="form-select">
+            <option selected>Select</option>
+            <option>Applied</option>
+            <option>Approved</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label>Tuition Fee</label>
+          <select class="form-select">
+            <option selected>Select</option>
+            <option>Not Paid</option>
+            <option>Fully Paid</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label>Compliance Verification</label>
+          <select class="form-select">
+            <option selected>Select</option>
+            <option>Verified</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label>Intake</label>
+          <select class="form-select">
+            <option selected>Select</option>
+            <option>Feb 2025</option>
+            <option>Sept 2025</option>
+          </select>
+        </div>
+
+        <div class="col-md-6">
+          <label>Embassy Appointment Date From</label>
+          <input type="date" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label>To</label>
+          <input type="date" class="form-control" />
+        </div>
+
+        <div class="col-md-4">
+          <label>Country</label>
+          <select class="form-select">
+            <option selected>Hungary</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label>Registration Date</label>
+          <select class="form-select">
+            <option selected>This Week</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label>Document Completion</label>
+          <select class="form-select">
+            <option selected>100%</option>
+          </select>
+        </div>
+
+        <div class="col-12 text-end">
+          <button class="btn btn-primary">Apply Filters</button>
+          <button class="btn btn-outline-secondary">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- WORKFLOW SECTION -->
+    <div class="accordion" id="workflowAccordion">
+
+      <!-- Auto Transfer -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="heading0">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse0">
+            0. Auto-Transfer from Student Portal
+          </button>
+        </h2>
+        <div id="collapse0" class="accordion-collapse collapse show">
+          <div class="accordion-body">
+            Automatically pull: Name, Email, DOB, Passport No, Applied Program, Assigned Counselor, Registration Date.
+          </div>
+        </div>
+      </div>
+
+      <!-- Document Upload -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="heading1">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapse1">
+            1. Document Upload
+          </button>
+        </h2>
+        <div id="collapse1" class="accordion-collapse collapse">
+          <div class="accordion-body">
+            Passport, Photo, SSC/HSC, Bachelor's, IELTS, CV, SOP, Medical, etc.
+          </div>
+        </div>
+      </div>
+
+      <!-- Continue like this for Steps 2 to 12 -->
+      <!-- Sample: Application Submission -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="heading2">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapse2">
+            2. Application Submission
+          </button>
+        </h2>
+        <div id="collapse2" class="accordion-collapse collapse">
+          <div class="accordion-body">
+            University Name, Program, Submission Date, Method, Proof, Application ID, Status.
+          </div>
+        </div>
+      </div>
+
+      <!-- Add more steps based on PDF (3 to 12) -->
+
+      <!-- System Features -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="heading13">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapse13">
+            13. System Features
+          </button>
+        </h2>
+        <div id="collapse13" class="accordion-collapse collapse">
+          <div class="accordion-body">
+            Timeline View, File Upload, Application Summary PDF, Internal Notes, Reminders, Status Dashboard, Tag
+            System.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

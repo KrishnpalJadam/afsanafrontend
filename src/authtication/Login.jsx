@@ -7,9 +7,10 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FaUser, FaLock } from "react-icons/fa";
 import { IoChevronBackCircleSharp } from "react-icons/io5";
-
 import axios from "axios";
 import api from "../interceptors/axiosInterceptor";
+
+
 const Login = ({ setLogin }) => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const navigate = useNavigate();
@@ -59,6 +60,9 @@ const Login = ({ setLogin }) => {
             navigate("/UniversityCards");
           } else if (role === "counselor") {
             navigate("/councelor");
+          }
+          else if (role === "staff") {
+            navigate("/staffDashboard");
           }
         }, 300);
       } else {

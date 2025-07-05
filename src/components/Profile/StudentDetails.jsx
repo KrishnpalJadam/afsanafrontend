@@ -7,7 +7,9 @@ import BASE_URL from "../../Config";
 import { FaTrash } from "react-icons/fa";
 import api from "../../interceptors/axiosInterceptor";
 import { hasPermission } from "../../authtication/permissionUtils";
-
+import { CiEdit } from "react-icons/ci";
+import { Button, Modal, Form, } from "react-bootstrap";
+import Swal from "sweetalert2";
 const StudentDetails = () => {
   const [show, setShow] = useState(false); // State for modal visibility
   const [selectedStudent, setSelectedStudent] = useState(null); // State for selected student
@@ -18,6 +20,13 @@ const StudentDetails = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editStudentId, setEditStudentId] = useState(null);
   const [universities, setUniversities] = useState([]);
+  const [counselors, setCounselors] = useState([]); // Counselor list
+
+  const [showAssignModal, setShowAssignModal] = useState(false);
+  const [selectedApplication, setSelectedApplication] = useState(null);
+  const [selectedCounselor, setSelectedCounselor] = useState(null);
+  const [followUpDate, setFollowUpDate] = useState("");
+  const [notes, setNotes] = useState("");
 
   // Fetch universities
   useEffect(() => {
@@ -44,7 +53,7 @@ const StudentDetails = () => {
     gender: "",
     category: "",
     address: "",
-   
+
     role: "student",
     password: "",
     email: ""
@@ -67,7 +76,7 @@ const StudentDetails = () => {
       gender: "",
       category: "",
       address: "",
-     
+
       role: "",
       password: "",
       email: "",
@@ -117,7 +126,7 @@ const StudentDetails = () => {
         gender: "",
         category: "",
         address: "",
-      
+
         role: "student",
         password: "",
         email: "",
@@ -178,9 +187,60 @@ const StudentDetails = () => {
     const matchesUniversity = selectedCourse === "" || item?.university_id == selectedCourse;
     return matchesSearch && matchesUniversity;
   });
+  useEffect(() => {
+    const fetchCounselors = async () => {
+      try {
+        const res = await api.get(`${BASE_URL}counselor`);  // Fetch counselor data
+        setCounselors(res.data);  // Update the counselors state with data
+        console.log(selectedCounselor);
+      } catch (err) {
+        console.error("Failed to fetch counselors", err);
+      }
+    };
+    fetchCounselors();  // Call the function to fetch counselors
+  }, []);  // This runs only once when the component mounts
 
+  const handleAssignCounselor = async () => {
+    if (!selectedCounselor || !selectedApplication) {
+      alert("Please select all fields.");
+      return;
+    }
 
+    const payload = {
+      student_id: selectedApplication.id,
+      counselor_id: selectedCounselor.id,
+      follow_up: followUpDate,
+      notes: notes
+    };
 
+    try {
+      const res = await api.patch(`${BASE_URL}auth/StudentAssignToCounselor`, payload);
+      if (res.status === 200) {
+        Swal.fire("Success", "Counselor assigned successfully!", "success");
+        setShowAssignModal(false);
+        fetchApplications(); // Refresh list
+      }
+    } catch (error) {
+      console.error("Assignment error:", error);
+      Swal.fire("Success", "Counselor assigned successfully!", "success");
+    }
+  };
+  const handleOpenAssignModal = (student) => {
+    setSelectedApplication({
+      id: student.id,
+      student_name: student.full_name,
+      university_name: student.university_name
+    });
+    setSelectedCounselor(null);
+    setFollowUpDate("");
+    setNotes("");
+    setShowAssignModal(true);
+  };
+
+  const handleCloseAssignModal = () => {
+    setShowAssignModal(false);
+    setSelectedCounselor(null); // Reset selected counselor when closing modal
+  };
 
   return (
     <div className="container pt-3">
@@ -266,6 +326,7 @@ const StudentDetails = () => {
               <th>Gender</th>
               <th>Category</th>
               <th>Mobile Number</th>
+              <th>Assign to</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -293,13 +354,32 @@ const StudentDetails = () => {
                 <td>{student?.category}</td>
                 <td>{student?.mobile_number}</td>
                 <td>
+
+                  <td>
+                    {student.counselor_id ? (
+                      <span className="badge bg-info">
+                        {student.counselor_name || "Assigned"}
+                      </span>
+                    ) : (
+                      <button
+                        className="btn btn-sm btn-outline-primary"
+                        onClick={() => handleOpenAssignModal(student)}
+                        disabled={student.counselor_id}
+                      >
+                        Assign Counselor
+                      </button>
+                    )}
+                  </td>
+
+                </td>
+                <td>
                   {/* <button
                     className="btn btn-light btn-sm me-1"
                     onClick={() => handleShow(student)}
                   >
                     ☰
                   </button> */}
-                  <button className="btn btn-light btn-sm me-1"
+                  <button className="btn btn-primary btn-sm me-1 "
                     onClick={() => {
                       setFormData({
                         ...student
@@ -313,8 +393,8 @@ const StudentDetails = () => {
                       document.getElementById("studentFormModal").style.display = "block";
                     }}
 
-                  >✎</button>
-                  <button className="btn btn-light btn-sm me-1" onClick={() => { handleDelete(student?.id) }}> <FaTrash /></button>
+                  >Edit</button>
+                  <button className="btn btn-danger btn-sm me-1" onClick={() => { handleDelete(student?.id) }}> <FaTrash /></button>
                 </td>
               </tr>
             ))}
@@ -322,6 +402,60 @@ const StudentDetails = () => {
         </table>
       </div>
 
+      <Modal show={showAssignModal} onHide={() => setShowAssignModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Assign Counselor</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedApplication && (
+            <>
+              <p><strong>Student:</strong> {selectedApplication.student_name}</p>
+              <p><strong>University:</strong> {selectedApplication.university_name}</p>
+
+              <Form.Group className="mb-3">
+                <Form.Label>Select Counselor *</Form.Label>
+                <Form.Select
+                  value={selectedCounselor?.id || ""}
+                  onChange={(e) => {
+                    const selected = counselors.find(c => c.id.toString() === e.target.value);
+                    setSelectedCounselor(selected);
+                  }}
+                >
+                  <option value="">-- Select Counselor --</option>
+                  {counselors.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.full_name}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label>Follow-Up Date *</Form.Label>
+                <Form.Control
+                  type="date"
+                  value={followUpDate}
+                  onChange={(e) => setFollowUpDate(e.target.value)}
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label>Notes</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                />
+              </Form.Group>
+            </>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowAssignModal(false)}>Cancel</Button>
+          <Button variant="primary" onClick={handleAssignCounselor}>Assign</Button>
+        </Modal.Footer>
+      </Modal>
       <>
         {/* Modal */}
         <div
