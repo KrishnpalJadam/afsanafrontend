@@ -39,9 +39,9 @@ const StaffInquiry = () => {
   const [counselors, setCounselors] = useState([]); // Counselor list
   const [inquiries, setInquiries] = useState([]); // Inquiries data
   const role = localStorage.getItem("role");
+  console.log("role", role);
   const [bulkAction, setBulkAction] = useState("");
-
-  console.log("details", role);
+ const [inquiryDetails, setInquiryDetails] = useState(null);
   // console.log("login_detail", login_detail); 
   // State for new inquiry form data
   const [newInquiry, setNewInquiry] = useState({
@@ -105,19 +105,19 @@ const StaffInquiry = () => {
   });
 
   // CSV Headers for export (you can modify as needed)
-  const csvHeaders = [
+  // const csvHeaders = [
 
-    { label: "Name", key: "full_name" },
-    { label: "Email", key: "email" },
-    { label: "Phone", key: "phone_number" },
-    { label: "Source", key: "source" },
-    { label: "Branch", key: "branch" },
-    { label: "Inquiry Type", key: "inquiry_type" },
-    { label: "Date", key: "date_of_inquiry" },
-    { label: "Country", key: "country" },
-    { label: "Counselor", key: "counselor_name" },
-    { label: "Status", key: "lead_status" },
-  ];
+  //   { label: "Name", key: "full_name" },
+  //   { label: "Email", key: "email" },
+  //   { label: "Phone", key: "phone_number" },
+  //   { label: "Source", key: "source" },
+  //   { label: "Branch", key: "branch" },
+  //   { label: "Inquiry Type", key: "inquiry_type" },
+  //   { label: "Date", key: "date_of_inquiry" },
+  //   { label: "Country", key: "country" },
+  //   { label: "Counselor", key: "counselor_name" },
+  //   { label: "Status", key: "lead_status" },
+  // ];
 
   // Excel Export
   const handleExportExcel = () => {
@@ -270,7 +270,18 @@ const StaffInquiry = () => {
     fetchCounselors();  // Call the function to fetch counselors
   }, []);  // This runs only once when the component mounts
 
-
+useEffect(() => {
+    const fetchCounselors = async () => {
+      try {
+        const res = await api.get(`${BASE_URL}inquiries`);  // Fetch counselor data
+        setInquiryDetails(res.data);  // Update the counselors state with data
+        console.log(selectedCounselor);
+      } catch (err) {
+        console.error("Failed to fetch counselors", err);
+      }
+    };
+    fetchCounselors();  // Call the function to fetch counselors
+  }, []); 
   // Fetch inquiries when the component mounts
   // 🟢 Function outside
   // 🟢 Function to fetch inquiries
@@ -290,8 +301,7 @@ const StaffInquiry = () => {
 
       setInquiries(filteredInquiries); // Update the inquiries state with the filtered inquiries
       // Extract unique countries from filtered inquiries
-      const uniqueCountries = [...new Set(filteredInquiries
-        .map(inq => inq.country)
+      const uniqueCountries = [...new Set(filteredInquiries?.map(inq => inq.country)
         .filter(country => country && country.trim() !== ""))];
 
       setCountryOptions(uniqueCountries); // Store for dropdown options
@@ -313,7 +323,7 @@ const StaffInquiry = () => {
   }, [inquiries, filters]);
 
   const filterInquiries = () => {
-    let data = [...inquiries];
+    let data = inquiryDetails;
     // Search Filter (Name or Phone)
     if (filters.search) {
       data = data.filter(
@@ -538,7 +548,7 @@ const StaffInquiry = () => {
   };
   const handleBulkStatusChange = async (status) => {
     try {
-      await Promise.all(selectedInquiries.map(async (id) => {
+      await Promise.all(selectedInquiries?.map(async (id) => {
         await api.patch(`fee/update-lesd-status`, { id, lead_status: status });
       }));
       alert("Bulk status updated successfully!");
@@ -574,6 +584,45 @@ const StaffInquiry = () => {
       toast.error("Failed to update status.");
     }
   };
+  const csvHeaders = [
+  { label: "ID", key: "id" },
+  { label: "Name", key: "full_name" },
+  { label: "Email", key: "email" },
+  { label: "Phone", key: "phone_number" },
+  { label: "Course", key: "course_name" },
+  { label: "Country", key: "country" },
+  { label: "Branch", key: "branch" },
+  { label: "Source", key: "source" },
+  { label: "Lead Status", key: "lead_status" },
+  { label: "Inquiry Type", key: "inquiry_type" },
+  { label: "Payment Status", key: "payment_status" },
+  { label: "City", key: "city" },
+  { label: "Date of Inquiry", key: "date_of_inquiry" },
+  { label: "Counselor", key: "counselor_name" },
+  { label: "Address", key: "address" },
+  { label: "Notes", key: "notes" }
+];
+
+// ✅ 2. Map filteredData to flatten it (if needed)
+const flatData = filteredData?.map(item => ({
+  id: item.id,
+  full_name: item.full_name,
+  email: item.email,
+  phone_number: item.phone_number,
+  course_name: item.course_name,
+  country: item.country,
+  branch: item.branch,
+  source: item.source,
+  lead_status: item.lead_status,
+  inquiry_type: item.inquiry_type,
+  payment_status: item.payment_status === "paid" ? "Paid" : "Unpaid",
+  city: item.city,
+  date_of_inquiry: item.date_of_inquiry?.slice(0, 10),
+  counselor_name: item.counselor_name ?? "",
+  address: item.address ?? "",
+  notes: item.notes ?? ""
+}));
+//  const role = localStorage.getItem("role");
 
   return (
     <div className="container mt-4">
@@ -584,26 +633,33 @@ const StaffInquiry = () => {
 
             <div className="  gap-2">
               <div className="btn-group ">
-                <Button variant="outline-success">
-                  <CSVLink data={filteredData} headers={csvHeaders} filename={"inquiries.csv"} style={{ color: "#000", textDecoration: "none" }}>
-                    Export CSV
-                  </CSVLink>
-                </Button>
+                {/* <Button variant="outline-success">
+                  <CSVLink
+    data={flatData}
+    headers={csvHeaders}
+    filename={"inquiries.csv"}
+    style={{ color: "#000", textDecoration: "none" }}
+  >
+    Export CSV
+  </CSVLink>
+                </Button> */}
                 <Button variant="outline-info" onClick={handleExportExcel}>Export Excel</Button>
                 <Button variant="outline-danger" onClick={handleExportPDF}>Export PDF</Button>
               </div>
 
 
+{role != "staff" && (
 
-              <Button
+           <Button
                 variant="secondary"
                 className="me-2 ms-3"
                 onClick={handleShowInquiryModal}
                 style={{ border: "none" }}
               >
                 Add Inquiry
-              </Button>
+              </Button>)}
             </div>
+   
 
             {/* Filter Button */}
 
@@ -634,7 +690,7 @@ const StaffInquiry = () => {
             }
           >
             <option value="">All Countries</option>
-            {countryOptions.map((country, idx) => (
+            {countryOptions?.map((country, idx) => (
               <option key={idx} value={country}>{country}</option>
             ))}
           </Form.Select>
@@ -1073,7 +1129,7 @@ Study First Info Team`
                     onChange={handleInquiryInputChange}
                     required>
                     <option value="">Select Branch</option>
-                    {getData.map((item) => (
+                    {getData?.map((item) => (
                       <option key={item.id} value={item.branch_name}>
                         {item.branch_name}
                       </option>
@@ -1367,7 +1423,7 @@ Study First Info Team`
               <Col md={8}>
                 <Form.Label>Preferred Countries</Form.Label>
                 <div>
-                  {["Hungary", "UK", "Cyprus", "Canada", "Malaysia", "Lithuania", "Latvia", "Germany", "New Zealand", "Others",].map((country) => (
+                  {["Hungary", "UK", "Cyprus", "Canada", "Malaysia", "Lithuania", "Latvia", "Germany", "New Zealand", "Others",]?.map((country) => (
                     <Form.Check
                       inline
                       key={country}
@@ -1741,8 +1797,7 @@ Study First Info Team`
                   <p>
                     <strong>Education:</strong>{" "}
                     {selectedInquiry?.education_background?.length > 0
-                      ? selectedInquiry?.education_background
-                        .map((edu) => `${edu?.level?.toUpperCase()} (GPA: ${edu.gpa}, Year: ${edu.year})`)
+                      ? selectedInquiry?.education_background?.map((edu) => `${edu?.level?.toUpperCase()} (GPA: ${edu.gpa}, Year: ${edu.year})`)
                         .join(" | ")
                       : "No data"}
                   </p>
