@@ -107,11 +107,13 @@ const Dashboard = () => {
   ];
 
   const role = localStorage.getItem("login");
+  const userId = localStorage.getItem('user_id');
 
   useEffect(() => {
     const fetchPermissions = async () => {
       try {
         const permissionsResponse = await api.get(`/permission?role_name=${role}`);
+        // const permissionsResponse = await api.get(`/permissions?user_id=${userId}`);
         localStorage.setItem("permissions", JSON.stringify(permissionsResponse.data));
       } catch (error) {
         console.error("Error fetching permissions:", error);
@@ -120,6 +122,7 @@ const Dashboard = () => {
 
     fetchPermissions();
   }, [role]);
+  // }, [userId]);
 
   // Fetch universities and set the first university as the default
   useEffect(() => {

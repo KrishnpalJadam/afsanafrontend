@@ -80,6 +80,7 @@ import StaffInquiry from "./components/Lead & Inquiry Management/StaffInquiry";
 import Visaprocesing from "./components/AdmissionTracking/Visaprocesing";
 import StaffDashboard from "./components/universityPagesform/StaffDashboard";
 import Stafflead from "./components/Lead & Inquiry Management/Stafflead";
+import VisaProcessList from "./components/AdmissionTracking/VisaProcessingList";
 
 
 
@@ -232,16 +233,17 @@ function App() {
               <Route path="/chat/:receiverId" element={<ChatBox2 userId={user_id} />} />
               <Route path="/chatHistory" element={<ChatHistory userId={user_id} />} />
               <Route path="/chatList" element={<ChatList userId={user_id} />} />
-            
+
               {/* <Route path="/inquirydemo" element={<Inquirydemo/>} /> */}
-              <Route path="/inquryTabledemo" element={<InquryTabledemo/>} />
-              <Route path="/applicationtracking" element={<Applicationtracking/>} />
-              <Route path="/counslerStudentTable" element={<CounslerStudentTable/>} />
-              <Route path="/addStaff" element={<Addstaff/>} />
-              <Route path="/staffInquiry" element={<StaffInquiry/>} />
-              <Route path="/visaprocesing" element={<Visaprocesing/>} />
-              <Route path="/staffDashboard" element={<StaffDashboard/>} />
-              <Route path="/stafflead" element={<Stafflead/>} />
+              <Route path="/inquryTabledemo" element={<InquryTabledemo />} />
+              <Route path="/applicationtracking" element={<Applicationtracking />} />
+              <Route path="/counslerStudentTable" element={<CounslerStudentTable />} />
+              <Route path="/addStaff" element={<Addstaff />} />
+              <Route path="/staffInquiry" element={<StaffInquiry />} />
+              <Route path="/visaprocesing" element={<Visaprocesing />} />
+              <Route path="/visaprocesinglist" element={<VisaProcessList />} />
+              <Route path="/staffDashboard" element={<StaffDashboard />} />
+              <Route path="/stafflead" element={<Stafflead />} />
 
 
 

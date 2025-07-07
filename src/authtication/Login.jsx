@@ -44,7 +44,9 @@ const Login = ({ setLogin }) => {
         localStorage.setItem("student_id", user.student_id);
 
         const permissionsResponse = await api.get(`permission?role_name=${role}`);
+        const userpermissionsResponse = await api.get(`permissions?user_id=${user.id}`);
         localStorage.setItem("permissions", JSON.stringify(permissionsResponse.data));
+        localStorage.setItem("userpermissions", JSON.stringify(userpermissionsResponse.data));
 
         Swal.fire({
           title: 'Success!',

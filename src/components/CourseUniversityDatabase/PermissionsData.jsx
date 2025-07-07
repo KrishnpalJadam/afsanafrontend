@@ -42,10 +42,14 @@ const PermissionsTable = () => {
       permissionsData = permissionsDataStaff;
     }
 
+
+    const userId = localStorage.getItem('user_id');
+
     // Fetch role-specific permissions from the backend
     const fetchPermissions = async () => {
       try {
         const response = await api.get(`permission?role_name=${role}`);
+        // const response = await api.get(`permissions?user_id=${userId}`);
         const backendPermissions = response.data;
 
         // Map backend data to permissions structure

@@ -34,20 +34,22 @@ const Visaprocesing = () => {
             try {
                 setLoading(true);
                 const studentId = localStorage.getItem('student_id');
-                
+
                 // Get student basic info
                 const studentResponse = await api.get(`${BASE_URL}auth/getStudentById/${studentId}`);
                 const studentData = studentResponse.data;
-                
+
                 // Check if visa process record exists
                 try {
-                    const visaProcessResponse = await api.get(`${BASE_URL}api/getVisaProcessByStudent/${studentId}`);
+                    const visaProcessResponse = await api.get(`${BASE_URL}getVisaProcessByStudentId/VisaProcess/${studentId}`);
+                    // const visaProcessResponse = await api.get(`${BASE_URL}api/getVisaProcessByStudent/${studentId}`);
                     const visaData = visaProcessResponse.data;
-                    
+                    console.log(visaData);
+
                     if (visaData) {
                         setRecordId(visaData.id);
                         setFormData(visaData);
-                        
+
                         // Determine completed steps
                         const completed = [];
                         if (visaData.full_name) completed.push("application");
@@ -62,13 +64,13 @@ const Visaprocesing = () => {
                         if (visaData.appointment_location) completed.push("embassyappoint");
                         if (visaData.embassy_result) completed.push("embassyinterview");
                         if (visaData.visa_status) completed.push("visaStatus");
-                        
+
                         setCompletedSteps(completed);
                     }
                 } catch (e) {
                     console.log("No existing visa process record found");
                 }
-                
+
                 // Set initial form data
                 setFormData(prev => ({
                     ...prev,
@@ -78,7 +80,7 @@ const Visaprocesing = () => {
                     date_of_birth: studentData.date_of_birth ? studentData.date_of_birth.split('T')[0] : '',
                     passport_no: studentData.id_no || '',
                 }));
-                
+
             } catch (err) {
                 console.error("Failed to load initial data:", err);
                 setError("Failed to load initial data");
@@ -86,7 +88,7 @@ const Visaprocesing = () => {
                 setLoading(false);
             }
         };
-        
+
         loadInitialData();
     }, []);
 
@@ -106,118 +108,121 @@ const Visaprocesing = () => {
         }));
     };
 
-const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
-    
-    try {
-        const formDataToSend = new FormData();
-        
-        // Prepare the data object with proper formatting
-        const submissionData = {
-            ...formData,
-            // Convert dates to ISO string format if they exist
-            date_of_birth: formData.date_of_birth ? new Date(formData.date_of_birth).toISOString() : null,
-            registration_date: formData.registration_date ? new Date(formData.registration_date).toISOString() : null,
-            // Add other date fields if needed
-        };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError(null);
+        setSuccess(null);
+        const studentId = localStorage.getItem('student_id');
 
-        // Remove undefined/null values and prepare FormData
-        Object.entries(submissionData).forEach(([key, value]) => {
-            if (value !== null && value !== undefined && value !== '') {
-                if (value instanceof File) {
-                    formDataToSend.append(key, value, value.name);
-                } else if (typeof value === 'object') {
-                    formDataToSend.append(key, JSON.stringify(value));
-                } else {
-                    formDataToSend.append(key, value);
-                }
-            }
-        });
+        try {
+            const formDataToSend = new FormData();
 
-        // Debug: Log what's being sent
-        const formDataObj = {};
-        formDataToSend.forEach((value, key) => formDataObj[key] = value);
-        console.log("Form data being sent:", formDataObj);
+            // Prepare the data object with proper formatting
+            const submissionData = {
+                ...formData,
+                // Convert dates to ISO string format if they exist
+                date_of_birth: formData.date_of_birth ? new Date(formData.date_of_birth).toISOString() : null,
+                registration_date: formData.registration_date ? new Date(formData.registration_date).toISOString() : null,
+                student_id: studentId
+                // Add other date fields if needed
+            };
 
-        let response;
-        
-        if (activeStep === "application") {
-            // First step - create new record with POST
-            response = await api.post(`${BASE_URL}createVisaProcess`, formDataToSend, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
+            // Remove the 'message' key if it exists
+            delete submissionData.message;
+            delete submissionData.affectedRows;
+
+            // Remove undefined/null values and prepare FormData
+            Object.entries(submissionData).forEach(([key, value]) => {
+                if (value !== null && value !== undefined && value !== '') {
+                    if (value instanceof File) {
+                        formDataToSend.append(key, value, value.name);
+                    } else if (typeof value === 'object') {
+                        formDataToSend.append(key, JSON.stringify(value));
+                    } else {
+                        formDataToSend.append(key, value);
+                    }
                 }
             });
-            
-            if (!response.data.id) {
-                throw new Error("No ID returned from server after creation");
-            }
-            
-            setRecordId(response.data.id);
-            setCompletedSteps(prev => [...prev, "application"]);
-        } else {
-            // Subsequent steps - update existing record with PUT
-            if (!recordId) {
-                throw new Error("No record ID available for update");
-            }
-            
-            // Ensure ID is included in the data
-            formDataToSend.append('id', recordId);
-            
-            response = await api.put(`${BASE_URL}createVisaProcess/${recordId}`, formDataToSend, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-            
-            if (!completedSteps.includes(activeStep)) {
-                setCompletedSteps(prev => [...prev, activeStep]);
-            }
-        }
 
-        // Update form data with response
-        setFormData(prev => ({
-            ...prev,
-            ...response.data
-        }));
-        
-        setSuccess(`${steps.find(s => s.key === activeStep).label} data saved successfully!`);
-        
-        // Auto-advance to next step if available
-        const currentIndex = steps.findIndex(step => step.key === activeStep);
-        if (currentIndex < steps.length - 1) {
-            setTimeout(() => {
-                setActiveStep(steps[currentIndex + 1].key);
-                setSuccess(null);
-            }, 1500);
-        }
-        
-    } catch (err) {
-        console.error("Submission error:", err);
-        
-        let errorMessage = "Failed to save data";
-        
-        if (err.response) {
-            // Handle MySQL syntax errors specifically
-            if (err.response.data?.error?.includes("You have an error in your SQL syntax")) {
-                errorMessage = "Data format error. Please check your inputs.";
-            } else if (err.response.data?.error?.includes("Unknown column")) {
-                errorMessage = "Invalid data field detected. Please contact support.";
+            // Debug: Log what's being sent
+            const formDataObj = {};
+            formDataToSend.forEach((value, key) => formDataObj[key] = value);
+            console.log("Form data being sent:", formDataObj);
+
+            let response;
+
+            if (activeStep === "application") {
+                // First step - create new record with POST
+                response = await api.post(`${BASE_URL}createVisaProcess`, formDataToSend, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+
+                if (!response.data.id) {
+                    throw new Error("No ID returned from server after creation");
+                }
+
+                setRecordId(response.data.id);
+                setCompletedSteps(prev => [...prev, "application"]);
             } else {
-                errorMessage = err.response.data?.message || err.response.statusText || errorMessage;
+                // Subsequent steps - update existing record with PUT
+                if (!recordId) {
+                    throw new Error("No record ID available for update");
+                }
+
+                response = await api.put(`${BASE_URL}createVisaProcess/${recordId}`, formDataToSend, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+
+                if (!completedSteps.includes(activeStep)) {
+                    setCompletedSteps(prev => [...prev, activeStep]);
+                }
             }
-        } else if (err.message) {
-            errorMessage = err.message;
+
+            // Update form data with response
+            setFormData(prev => ({
+                ...prev,
+                ...response.data
+            }));
+
+            setSuccess(`${steps.find(s => s.key === activeStep).label} data saved successfully!`);
+
+            // Auto-advance to next step if available
+            const currentIndex = steps.findIndex(step => step.key === activeStep);
+            if (currentIndex < steps.length - 1) {
+                setTimeout(() => {
+                    setActiveStep(steps[currentIndex + 1].key);
+                    setSuccess(null);
+                }, 1500);
+            }
+
+        } catch (err) {
+            console.error("Submission error:", err);
+
+            let errorMessage = "Failed to save data";
+
+            if (err.response) {
+                // Handle MySQL syntax errors specifically
+                if (err.response.data?.error?.includes("You have an error in your SQL syntax")) {
+                    errorMessage = "Data format error. Please check your inputs.";
+                } else if (err.response.data?.error?.includes("Unknown column")) {
+                    errorMessage = "Invalid data field detected. Please contact support.";
+                } else {
+                    errorMessage = err.response.data?.message || err.response.statusText || errorMessage;
+                }
+            } else if (err.message) {
+                errorMessage = err.message;
+            }
+
+            setError(errorMessage);
+        } finally {
+            setLoading(false);
         }
-        
-        setError(errorMessage);
-    } finally {
-        setLoading(false);
-    }
-};
+    };
 
     const renderStepper = () => (
         <Card className="mb-4 border-0 shadow-sm">
@@ -299,7 +304,7 @@ const handleSubmit = async (e) => {
                 <Form onSubmit={handleSubmit}>
                     {error && <Alert variant="danger">{error}</Alert>}
                     {success && <Alert variant="success">{success}</Alert>}
-                    
+
                     <Row>
                         <Col md={6}>
                             <Form.Group className="mb-3">
@@ -486,7 +491,7 @@ const handleSubmit = async (e) => {
                 <Form onSubmit={handleSubmit}>
                     {error && <Alert variant="danger">{error}</Alert>}
                     {success && <Alert variant="success">{success}</Alert>}
-                    
+
                     <Row>
                         {[
                             { name: "passport_doc", label: "Passport" },
@@ -563,7 +568,7 @@ const handleSubmit = async (e) => {
                 <Form onSubmit={handleSubmit}>
                     {error && <Alert variant="danger">{error}</Alert>}
                     {success && <Alert variant="success">{success}</Alert>}
-                    
+
                     <Row>
                         <Col md={6}>
                             <Form.Group className="mb-3">
@@ -660,7 +665,7 @@ const handleSubmit = async (e) => {
                         <Col md={6}>
                             <Form.Group className="mb-3">
                                 <Form.Label className="fw-bold">Status</Form.Label>
-                                <Form.Select 
+                                <Form.Select
                                     name="application_status"
                                     onChange={handleChange}
                                     value={formData.application_status || ''}
@@ -710,7 +715,7 @@ const handleSubmit = async (e) => {
                 <Form onSubmit={handleSubmit}>
                     {error && <Alert variant="danger">{error}</Alert>}
                     {success && <Alert variant="success">{success}</Alert>}
-                    
+
                     <Row>
                         <Col md={6}>
                             <Form.Group className="mb-3">
@@ -732,7 +737,7 @@ const handleSubmit = async (e) => {
                         <Col md={6}>
                             <Form.Group className="mb-3">
                                 <Form.Label className="fw-bold">Payment Method</Form.Label>
-                                <Form.Select 
+                                <Form.Select
                                     name="fee_method"
                                     onChange={handleChange}
                                     value={formData.fee_method || ''}
@@ -783,7 +788,7 @@ const handleSubmit = async (e) => {
                         <Col md={6}>
                             <Form.Group className="mb-3">
                                 <Form.Label className="fw-bold">Status</Form.Label>
-                                <Form.Select 
+                                <Form.Select
                                     name="fee_status"
                                     onChange={handleChange}
                                     value={formData.fee_status || ''}
@@ -832,7 +837,7 @@ const handleSubmit = async (e) => {
                 <Form onSubmit={handleSubmit}>
                     {error && <Alert variant="danger">{error}</Alert>}
                     {success && <Alert variant="success">{success}</Alert>}
-                    
+
                     <Row>
                         <Col md={6}>
                             <Form.Group className="mb-3">
@@ -867,7 +872,7 @@ const handleSubmit = async (e) => {
                         <Col md={6}>
                             <Form.Group className="mb-3">
                                 <Form.Label className="fw-bold">Status</Form.Label>
-                                <Form.Select 
+                                <Form.Select
                                     name="interview_status"
                                     onChange={handleChange}
                                     value={formData.interview_status || ''}
@@ -919,7 +924,7 @@ const handleSubmit = async (e) => {
                         <Col md={6}>
                             <Form.Group className="mb-3">
                                 <Form.Label className="fw-bold">Result</Form.Label>
-                                <Form.Select 
+                                <Form.Select
                                     name="interview_result"
                                     onChange={handleChange}
                                     value={formData.interview_result || ''}
@@ -1013,7 +1018,7 @@ const handleSubmit = async (e) => {
                 <Form onSubmit={handleSubmit}>
                     {error && <Alert variant="danger">{error}</Alert>}
                     {success && <Alert variant="success">{success}</Alert>}
-                    
+
                     <Row>
                         <Col md={6}>
                             <Form.Group className="mb-3">
@@ -1065,7 +1070,7 @@ const handleSubmit = async (e) => {
                         <Col md={6}>
                             <Form.Group className="mb-3">
                                 <Form.Label className="fw-bold">Status</Form.Label>
-                                <Form.Select 
+                                <Form.Select
                                     name="conditional_offer_status"
                                     onChange={handleChange}
                                     value={formData.conditional_offer_status || ''}
@@ -1114,7 +1119,7 @@ const handleSubmit = async (e) => {
                 <Form onSubmit={handleSubmit}>
                     {error && <Alert variant="danger">{error}</Alert>}
                     {success && <Alert variant="success">{success}</Alert>}
-                    
+
                     <Row>
                         <Col md={6}>
                             <Form.Group className="mb-3">
@@ -1166,7 +1171,7 @@ const handleSubmit = async (e) => {
                         <Col md={6}>
                             <Form.Group className="mb-3">
                                 <Form.Label className="fw-bold">Status</Form.Label>
-                                <Form.Select 
+                                <Form.Select
                                     name="tuition_fee_status"
                                     onChange={handleChange}
                                     value={formData.tuition_fee_status || ''}
@@ -1232,7 +1237,7 @@ const handleSubmit = async (e) => {
                 <Form onSubmit={handleSubmit}>
                     {error && <Alert variant="danger">{error}</Alert>}
                     {success && <Alert variant="success">{success}</Alert>}
-                    
+
                     <Row>
                         <Col md={6}>
                             <Form.Group className="mb-3">
@@ -1267,7 +1272,7 @@ const handleSubmit = async (e) => {
                         <Col md={6}>
                             <Form.Group className="mb-3">
                                 <Form.Label className="fw-bold">Status</Form.Label>
-                                <Form.Select 
+                                <Form.Select
                                     name="main_offer_status"
                                     onChange={handleChange}
                                     value={formData.main_offer_status || ''}
@@ -1333,7 +1338,7 @@ const handleSubmit = async (e) => {
                     <Form onSubmit={handleSubmit}>
                         {error && <Alert variant="danger">{error}</Alert>}
                         {success && <Alert variant="success">{success}</Alert>}
-                        
+
                         <Row>
                             {documentFields.map((field, idx) => (
                                 <Col md={6} key={idx}>
@@ -1390,7 +1395,7 @@ const handleSubmit = async (e) => {
                 <Form onSubmit={handleSubmit}>
                     {error && <Alert variant="danger">{error}</Alert>}
                     {success && <Alert variant="success">{success}</Alert>}
-                    
+
                     <Row>
                         <Col md={6}>
                             <Form.Group className="mb-3">
@@ -1439,7 +1444,7 @@ const handleSubmit = async (e) => {
                         <Col md={6}>
                             <Form.Group className="mb-3">
                                 <Form.Label className="fw-bold">Status</Form.Label>
-                                <Form.Select 
+                                <Form.Select
                                     name="appointment_status"
                                     onChange={handleChange}
                                     value={formData.appointment_status || ''}
@@ -1488,7 +1493,7 @@ const handleSubmit = async (e) => {
                 <Form onSubmit={handleSubmit}>
                     {error && <Alert variant="danger">{error}</Alert>}
                     {success && <Alert variant="success">{success}</Alert>}
-                    
+
                     <Row>
                         <Col md={6}>
                             <Form.Group className="mb-3">
@@ -1506,7 +1511,7 @@ const handleSubmit = async (e) => {
                         <Col md={6}>
                             <Form.Group className="mb-3">
                                 <Form.Label className="fw-bold">Result</Form.Label>
-                                <Form.Select 
+                                <Form.Select
                                     name="embassy_result"
                                     onChange={handleChange}
                                     value={formData.embassy_result || ''}
@@ -1606,12 +1611,12 @@ const handleSubmit = async (e) => {
                 <Form onSubmit={handleSubmit}>
                     {error && <Alert variant="danger">{error}</Alert>}
                     {success && <Alert variant="success">{success}</Alert>}
-                    
+
                     <Row>
                         <Col md={6}>
                             <Form.Group className="mb-3">
                                 <Form.Label className="fw-bold">Status</Form.Label>
-                                <Form.Select 
+                                <Form.Select
                                     name="visa_status"
                                     onChange={handleChange}
                                     value={formData.visa_status || ''}
@@ -1658,7 +1663,7 @@ const handleSubmit = async (e) => {
                         <Col md={6}>
                             <Form.Group className="mb-3">
                                 <Form.Label className="fw-bold">Appeal Status</Form.Label>
-                                <Form.Select 
+                                <Form.Select
                                     name="appeal_status"
                                     onChange={handleChange}
                                     value={formData.appeal_status || ''}
@@ -1715,6 +1720,8 @@ const handleSubmit = async (e) => {
             </Card.Body>
         </Card>
     );
+
+
 
     return (
         <div className="py-4 p-5" style={{ backgroundColor: "#f8f9fc" }}>

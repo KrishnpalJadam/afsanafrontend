@@ -1,0 +1,99 @@
+/* Container styling */
+.inquiry-container {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Header Title */
+.inquiry-title {
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+/* Action buttons */
+.inquiry-actions .inquiry-btn {
+    min-width: 120px;
+    font-size: 0.9rem;
+}
+
+/* Select and input fields */
+.inquiry-select,
+.inquiry-input {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+}
+
+/* Apply / Reset buttons */
+
+.inquiry-btn {
+    white-space: nowrap;
+    font-size: 14px;
+    padding: 6px 12px;
+}
+
+
+/* Responsive table container */
+.table-responsive {
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+/* Table styling */
+.inquiry-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    table-layout: auto;
+}
+
+.inquiry-table thead {
+    background-color: #f8f9fa;
+}
+
+.inquiry-table th,
+.inquiry-table td {
+    border: 1px solid #dee2e6;
+    padding: 6px 10px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+/* Fixed heading font */
+.inquiry-table th {
+    font-weight: 600;
+}
+
+/* Zebra striping */
+.inquiry-table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+
+@media (max-width: 768px) {
+    .inquiry-title {
+        font-size: 18px;
+    }
+
+    .inquiry-actions {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .inquiry-filters .form-label {
+        font-size: 14px;
+    }
+
+    .form-select.inquiry-select {
+        font-size: 14px;
+    }
+
+    .inquiry-table {
+        font-size: 12px;
+    }
+}

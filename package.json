@@ -26,6 +26,7 @@
     "dayjs": "^1.11.13",
     "file-saver": "^2.0.5",
     "formik": "^2.4.6",
+    "html2canvas": "^1.4.1",
     "html2pdf.js": "^0.10.3",
     "json2csv": "^6.0.0-alpha.2",
     "jspdf": "^3.0.1",

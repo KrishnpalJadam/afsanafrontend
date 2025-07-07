@@ -4,6 +4,7 @@ import "./Sidebar.css";
 import { FaUsers, FaRegFileAlt } from "react-icons/fa"; // FontAwesome
 import { BsFillPersonLinesFill } from "react-icons/bs"; // Bootstrap
 import { hasPermission } from "../authtication/permissionUtils";
+import { hasUserPermission } from "../authtication/hasuserpermission";
 
 
 const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
@@ -754,7 +755,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
             ""
           )}
 
-          {login == "staff" ? (
+          {login == "staff" && hasUserPermission("Inquiry", "view") && (
             <li
               className={`menu-item ${isActive("/staffInquiry") ? "active" : ""
                 }`}
@@ -773,10 +774,8 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                 <span className="menu-text">Inquiry</span>
               </div>
             </li>
-          ) : (
-            ""
           )}
-          {login == "staff" ? (
+          {login == "staff" && hasUserPermission("Lead", "view") && (
             <li
               className={`menu-item ${isActive("/stafflead") ? "active" : ""
                 }`}
@@ -795,10 +794,29 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                 <span className="menu-text">Lead</span>
               </div>
             </li>
+          )}
+          {login == "staff" && hasUserPermission("Payments & Invoice", "view") ? (
+            <li className={`menu-item ${isActive("/payment") ? "active" : ""}`}>
+              <div
+                className="menu-link menu-i"
+                onClick={() => {
+                  navigate("/payment");
+                  // menuItemClick();
+                }}
+              >
+                <i
+                  onClick={() => toggleSidebar()}
+                  className="fa-solid fa-chart-line "
+                ></i>
+                <span className="menu-text">Payments & Invoices</span>
+              </div>
+            </li>
           ) : (
             ""
           )}
-            {login == "staff" ? (
+
+
+          {login == "staff" ? (
             <li
               className={`menu-item ${isActive("/") ? "active" : ""
                 }`}
@@ -810,10 +828,10 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   // menuItemClick();
                 }}
               >
-               <i
-  onClick={() => toggleSidebar()}
-  className="fa-solid fa-right-from-bracket"
-></i>
+                <i
+                  onClick={() => toggleSidebar()}
+                  className="fa-solid fa-right-from-bracket"
+                ></i>
 
                 <span className="menu-text">Logout</span>
               </div>
@@ -865,6 +883,30 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   className="fa-solid fa-chart-line "
                 ></i>
                 <span className="menu-text">Payments & Invoices</span>
+              </div>
+            </li>
+          ) : (
+            ""
+          )}
+
+          {/* Visa Process List */}
+          {login == "admin" ? (
+            <li
+              className={`menu-item ${isActive("/visaprocesinglist") ? "active" : ""
+                }`}
+            >
+              <div
+                className="menu-link menu-i"
+                onClick={() => {
+                  navigate("/visaprocesinglist");
+                  // menuItemClick();
+                }}
+              >
+                <i
+                  onClick={() => toggleSidebar()}
+                  className="fa-solid fa-passport"
+                ></i>
+                <span className="menu-text">Visa procesing list</span>
               </div>
             </li>
           ) : (
@@ -952,9 +994,31 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
               >
                 <i
                   onClick={() => toggleSidebar()}
-                  className="fa-solid fa-university "
+                  className="fa-solid fa-plane-departure"
                 ></i>
                 <span className="menu-text">Visa procesing</span>
+              </div>
+            </li>
+          ) : (
+            ""
+          )}
+          {login == "student" && hasPermission("Course & University", "view") ? (
+            <li
+              className={`menu-item ${isActive("/visaprocesinglist") ? "active" : ""
+                }`}
+            >
+              <div
+                className="menu-link menu-i"
+                onClick={() => {
+                  navigate("/visaprocesinglist");
+                  // menuItemClick();
+                }}
+              >
+                <i
+                  onClick={() => toggleSidebar()}
+                  className="fa-solid fa-passport"
+                ></i>
+                <span className="menu-text">Visa procesing list</span>
               </div>
             </li>
           ) : (
