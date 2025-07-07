@@ -131,6 +131,8 @@ const Visaprocesing = () => {
             // Remove the 'message' key if it exists
             delete submissionData.message;
             delete submissionData.affectedRows;
+            delete submissionData.updatedFields;
+
 
             // Remove undefined/null values and prepare FormData
             Object.entries(submissionData).forEach(([key, value]) => {
@@ -436,7 +438,7 @@ const Visaprocesing = () => {
                                     type="date"
                                     name="registration_date"
                                     onChange={handleChange}
-                                    value={formData.registration_date || ''}
+                                    value={formData.registration_date ? formData.registration_date.split('T')[0] : ''}
                                     className="border-0 border-bottom rounded-0"
                                     required
                                 />
@@ -608,7 +610,7 @@ const Visaprocesing = () => {
                                     type="date"
                                     name="submission_date"
                                     onChange={handleChange}
-                                    value={formData.submission_date || ''}
+                                    value={formData.submission_date ? formData.submission_date.split('T')[0] : ''}
                                     className="border-0 border-bottom rounded-0"
                                     required
                                 />
@@ -762,7 +764,7 @@ const Visaprocesing = () => {
                                     type="date"
                                     name="fee_date"
                                     onChange={handleChange}
-                                    value={formData.fee_date || ''}
+                                    value={formData.fee_date ? formData.fee_date.split('T')[0] : ''}
                                     className="border-0 border-bottom rounded-0"
                                     required
                                 />
@@ -846,7 +848,11 @@ const Visaprocesing = () => {
                                     type="datetime-local"
                                     name="interview_date"
                                     onChange={handleChange}
-                                    value={formData.interview_date || ''}
+                                    value={
+                                        formData.interview_date
+                                            ? new Date(formData.interview_date).toISOString().slice(0, 16)
+                                            : ''
+                                    }
                                     className="border-0 border-bottom rounded-0"
                                     required
                                 />
@@ -944,7 +950,7 @@ const Visaprocesing = () => {
                                     type="date"
                                     name="interview_result_date"
                                     onChange={handleChange}
-                                    value={formData.interview_result_date || ''}
+                                    value={formData.interview_result_date ? formData.interview_result_date.split('T')[0] : ''}
                                     className="border-0 border-bottom rounded-0"
                                 />
                             </Form.Group>
@@ -1041,7 +1047,7 @@ const Visaprocesing = () => {
                                     type="date"
                                     name="conditional_offer_date"
                                     onChange={handleChange}
-                                    value={formData.conditional_offer_date || ''}
+                                    value={formData.conditional_offer_date ? formData.conditional_offer_date : ''}
                                     className="border-0 border-bottom rounded-0"
                                     required
                                 />
@@ -1145,7 +1151,7 @@ const Visaprocesing = () => {
                                     type="date"
                                     name="tuition_fee_date"
                                     onChange={handleChange}
-                                    value={formData.tuition_fee_date || ''}
+                                    value={formData.tuition_fee_date ? formData.tuition_fee_date : ''}
                                     className="border-0 border-bottom rounded-0"
                                     required
                                 />
@@ -1260,7 +1266,7 @@ const Visaprocesing = () => {
                                     type="date"
                                     name="main_offer_date"
                                     onChange={handleChange}
-                                    value={formData.main_offer_date || ''}
+                                    value={formData.main_offer_date ? formData.main_offer_date : ''}
                                     className="border-0 border-bottom rounded-0"
                                     required
                                 />
@@ -1418,7 +1424,11 @@ const Visaprocesing = () => {
                                     type="datetime-local"
                                     name="appointment_datetime"
                                     onChange={handleChange}
-                                    value={formData.appointment_datetime || ''}
+                                    value={
+                                        formData.appointment_datetime
+                                            ? new Date(formData.appointment_datetime).toISOString().slice(0, 16)
+                                            : ''
+                                    }
                                     className="border-0 border-bottom rounded-0"
                                     required
                                 />
@@ -1502,7 +1512,7 @@ const Visaprocesing = () => {
                                     type="date"
                                     name="embassy_result_date"
                                     onChange={handleChange}
-                                    value={formData.embassy_result_date || ''}
+                                    value={formData.embassy_result_date ? formData.embassy_result_date : ''}
                                     className="border-0 border-bottom rounded-0"
                                     required
                                 />
@@ -1637,7 +1647,7 @@ const Visaprocesing = () => {
                                     type="date"
                                     name="decision_date"
                                     onChange={handleChange}
-                                    value={formData.decision_date || ''}
+                                    value={formData.decision_date ? formData.decision_date : ''}
                                     className="border-0 border-bottom rounded-0"
                                     required
                                 />

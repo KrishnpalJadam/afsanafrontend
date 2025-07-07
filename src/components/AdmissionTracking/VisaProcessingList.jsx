@@ -27,6 +27,10 @@ const headings = [
 const VisaProcessingList = () => {
     const [data, setData] = useState([]);
     const [filter, setFilter] = useState(""); // State for filter input
+    const [appointmentDate, setAppointmentDate] = useState('');
+    const [registrationDate, setRegistrationDate] = useState('');
+    const [visaStatus, setVisaStatus] = useState('');
+    const [stageFilter, setStageFilter] = useState('');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -42,6 +46,9 @@ const VisaProcessingList = () => {
                     // Fetch all data if not a student
                     response = await axios.get(`${BASE_URL}VisaProcess`);
                 }
+
+                console.log(response.data);
+
 
                 // Check if the response is an object (single student) and wrap it in an array
                 if (Array.isArray(response.data)) {
@@ -111,14 +118,61 @@ const VisaProcessingList = () => {
         return `${day}/${month}/${year}`;
     };
 
+    const calculateStages = (visaData) => {
+        const stages = [];
+        if (visaData.full_name) stages.push("application");
+        if (visaData.passport_doc) stages.push("interview");
+        if (visaData.university_name) stages.push("visa");
+        if (visaData.fee_amount) stages.push("fee");
+        if (visaData.interview_date) stages.push("zoom");
+        if (visaData.conditional_offer_upload) stages.push("conditionalOffer");
+        if (visaData.tuition_fee_amount) stages.push("tuitionFee");
+        if (visaData.main_offer_upload) stages.push("mainofferletter");
+        if (visaData.motivation_letter) stages.push("embassydocument");
+        if (visaData.appointment_location) stages.push("embassyappoint");
+        if (visaData.embassy_result) stages.push("embassyinterview");
+        if (visaData.visa_status) stages.push("visaStatus");
+        return stages;
+    };
+
+
     // Filtered data based on the filter input
-    const filteredData = data.filter(row => {
-        return (
-            row.full_name.toLowerCase().includes(filter.toLowerCase()) ||
-            row.email.toLowerCase().includes(filter.toLowerCase()) ||
-            row.phone.toLowerCase().includes(filter.toLowerCase())
-        );
+    // const filteredData = data.filter(row => {
+    //     return (
+    //         row.full_name.toLowerCase().includes(filter.toLowerCase()) ||
+    //         row.email.toLowerCase().includes(filter.toLowerCase()) ||
+    //         row.phone.toLowerCase().includes(filter.toLowerCase())
+    //     );
+    // });
+    const filteredData = data.filter((row) => {
+        const stageList = calculateStages(row);
+
+        const lowerCaseFilter = filter.toLowerCase();
+        const lowerCaseFullName = row.full_name ? row.full_name.toLowerCase() : '';
+        const lowerCaseEmail = row.email ? row.email.toLowerCase() : '';
+        const lowerCasePhone = row.phone ? row.phone.toLowerCase() : '';
+
+        const matchFilter =
+            lowerCaseFullName.includes(lowerCaseFilter) ||
+            lowerCaseEmail.includes(lowerCaseFilter) ||
+            lowerCasePhone.includes(lowerCaseFilter);
+
+        const matchAppointmentDate = appointmentDate
+            ? new Date(row.appointment_datetime).toISOString().split('T')[0] === appointmentDate
+            : true;
+
+        const matchRegistrationDate = registrationDate
+            ? new Date(row.registration_date).toISOString().split('T')[0] === registrationDate
+            : true;
+
+        const lowerCaseVisaStatus = visaStatus.toLowerCase();
+        const matchVisaStatus = visaStatus ? row.visa_status.toLowerCase() === lowerCaseVisaStatus : true;
+
+        const matchStage = stageFilter ? stageList.includes(stageFilter) : true;
+
+        return matchFilter && matchAppointmentDate && matchRegistrationDate && matchVisaStatus && matchStage;
     });
+
 
     return (
         <div className="inquiry-container container-fluid py-4">
@@ -167,7 +221,7 @@ const VisaProcessingList = () => {
 
                 <div className="col-12 col-sm-6 col-md-4 col-lg-3">
                     <label className="form-label fw-bold mb-1">Application Stage</label>
-                    <select className="form-select inquiry-select">
+                    {/* <select className="form-select inquiry-select">
                         <option>Document Upload Pending</option>
                         <option>Application Submitted</option>
                         <option>Application Fee Paid</option>
@@ -186,18 +240,39 @@ const VisaProcessingList = () => {
                         <option>Visa Status: Approved</option>
                         <option>Visa Status: Rejected</option>
                         <option>Visa Status: Appealed</option>
+                    </select> */}
+                    <select
+                        className="form-select"
+                        value={stageFilter}
+                        onChange={(e) => setStageFilter(e.target.value)}
+                    >
+                        <option value="">All Stages</option>
+                        <option value="application">Application</option>
+                        <option value="interview">Interview</option>
+                        <option value="visa">Visa</option>
+                        <option value="fee">Fee</option>
+                        <option value="zoom">Zoom</option>
+                        <option value="conditionalOffer">Conditional Offer</option>
+                        <option value="tuitionFee">Tuition Fee</option>
+                        <option value="mainofferletter">Main Offer Letter</option>
+                        <option value="embassydocument">Embassy Document</option>
+                        <option value="embassyappoint">Embassy Appointment</option>
+                        <option value="embassyinterview">Embassy Interview</option>
+                        <option value="visaStatus">Visa Status</option>
                     </select>
                 </div>
 
                 <div className="col-12 col-sm-6 col-md-4 col-lg-3">
                     <label className="form-label fw-bold mb-1">Visa Status</label>
-                    <select className="form-select inquiry-select">
-                        <option>Applied</option>
-                        <option>In Process</option>
-                        <option>Approved</option>
-                        <option>Rejected</option>
-                        <option>Appealed</option>
-                        <option>Resubmitted</option>
+                    <select
+                        className="form-select"
+                        value={visaStatus}
+                        onChange={(e) => setVisaStatus(e.target.value)}
+                    >
+                        <option value="">All</option>
+                        <option value="Approved">Approved</option>
+                        <option value="Rejected">Rejected</option>
+                        <option value="Appealed">Appealed</option>
                     </select>
                 </div>
 
@@ -231,9 +306,12 @@ const VisaProcessingList = () => {
 
                 <div className="col-12 col-sm-6 col-md-4 col-lg-3">
                     <label className="form-label fw-bold mb-1">Embassy Appointment Date</label>
-                    <select className="form-select inquiry-select">
-                        <option>Select Option</option>
-                    </select>
+                    <input
+                        type="date"
+                        className="form-control"
+                        value={appointmentDate}
+                        onChange={(e) => setAppointmentDate(e.target.value)}
+                    />
                 </div>
 
                 <div className="col-12 col-sm-6 col-md-4 col-lg-3">
@@ -247,11 +325,12 @@ const VisaProcessingList = () => {
 
                 <div className="col-12 col-sm-6 col-md-4 col-lg-3">
                     <label className="form-label fw-bold mb-1">Registration Date</label>
-                    <select className="form-select inquiry-select">
-                        <option>This week</option>
-                        <option>This month</option>
-                        <option>Custom range</option>
-                    </select>
+                    <input
+                        type="date"
+                        className="form-control"
+                        value={registrationDate}
+                        onChange={(e) => setRegistrationDate(e.target.value)}
+                    />
                 </div>
 
                 <div className="col-12 col-sm-6 col-md-4 col-lg-3">
@@ -287,19 +366,36 @@ const VisaProcessingList = () => {
                         {filteredData.map((row, i) => (
                             <tr key={i}>
                                 <td>{i + 1}</td>
-                                {headings.map((head, idx) => (
-                                    <td key={idx}>
-                                        {head.includes('date') ? formatDate(row[head]) : (
-                                            row[head] && (head.includes('_doc') || head.includes('proof')) ? (
-                                                <span onClick={() => handleDownload(row[head])} style={{ cursor: 'pointer', color: 'blue' }}>
-                                                    <FaFileDownload /> Download
-                                                </span>
+                                {headings.map((head, idx) => {
+                                    const value = row[head];
+
+                                    const isFile =
+                                        head.toLowerCase().includes('doc') ||
+                                        head.toLowerCase().includes('file') ||
+                                        head.toLowerCase().includes('proof') ||
+                                        (typeof value === 'string' && value.includes('cloudinary'));
+
+                                    return (
+                                        <td key={idx}>
+                                            {head.toLowerCase().includes('date') ? (
+                                                formatDate(value)
+                                            ) : value ? (
+                                                isFile ? (
+                                                    <span
+                                                        onClick={() => handleDownload(value)}
+                                                        style={{ cursor: 'pointer', color: 'blue' }}
+                                                    >
+                                                        <FaFileDownload /> Download
+                                                    </span>
+                                                ) : (
+                                                    value
+                                                )
                                             ) : (
-                                                row[head] !== null ? row[head] : 'N/A'
-                                            )
-                                        )}
-                                    </td>
-                                ))}
+                                                'N/A'
+                                            )}
+                                        </td>
+                                    );
+                                })}
                             </tr>
                         ))}
                     </tbody>
