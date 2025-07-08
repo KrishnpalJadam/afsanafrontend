@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../layout/Navbar.css";
 import api from "../interceptors/axiosInterceptor";
@@ -45,35 +45,54 @@ const Navbar = ({ toggleSidebar }) => {
     navigate("/");
   };
   const role = localStorage.getItem("login");
- const handleChat = ()=> {
-  // if(role=="student"){
-  //   navigate("/chat/1")
-  // }
-  // else {
+  const handleChat = () => {
+    // if(role=="student"){
+    //   navigate("/chat/1")
+    // }
+    // else {
     navigate("/chatList")
-  // }
- }
+    // }
+  }
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowNotifications(false);
+      }
+    };
+
+    if (showNotifications) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showNotifications]);
+
   return (
     <nav className="navbar shadow-lg" style={{ position: "fixed", backgroundColor: "white", color: "black", width: "100%" }}>
       <div className="container-fluid nav-conter">
         <div className="nav-content">
           <div className="nav-bran">
-            <img
+            {/* <img
               src="/img/logo.png"
               alt="Logo"
               height={"90px"}
               width={"140px"}
               style={{ marginTop: "-10px" }}
-            />
-            <div className="nav-taggle-icon text-white" onClick={toggleSidebar}>
-              <a href="#" style={{marginLeft: "50px"}}>
-             
+            /> */}
+            {/* <div className="nav-taggle-icon text-white" onClick={toggleSidebar}> */}
+            {/* <a href="#" style={{ marginLeft: "50px" }}> */}
+            {/* <a href="#">
+
                 <RiMenuFold3Line style={{ color: "black" }} />
               </a>
-            </div>
+            </div> */}
           </div>
 
-          <div className="nav-main-icon">
+          <div className="nav-main-icon" ref={dropdownRef}>
             {/* Notification Section */}
             <div className="notification-icon">
               <a
@@ -105,7 +124,7 @@ const Navbar = ({ toggleSidebar }) => {
                               {item.title}
                             </div>
                             <div>
-                              <span><strong>Due Date:</strong>  <br/>{item.due_date}</span>
+                              <span><strong>Due Date:</strong>  <br />{item.due_date}</span>
                             </div>
                           </div>
                         </li>

@@ -5,6 +5,7 @@ import { FaUsers, FaRegFileAlt } from "react-icons/fa"; // FontAwesome
 import { BsFillPersonLinesFill } from "react-icons/bs"; // Bootstrap
 import { hasPermission } from "../authtication/permissionUtils";
 import { hasUserPermission } from "../authtication/hasuserpermission";
+import { RiMenuFold3Line } from "react-icons/ri";
 
 
 const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
@@ -29,6 +30,29 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
   };
   return (
     <div className={`sidebar-container ${collapsed ? "collapsed" : ""}`}>
+
+      {!collapsed ? <div className="d-flex justify-content-between p-2">
+        <img
+          src="/img/logo.png"
+          alt="Logo"
+          height={collapsed ? "90px" : "90px"}
+          width={collapsed ? "60px" : "140px"}
+          style={{ marginTop: "-10px" }}
+        />
+        <div className="nav-taggle-icon text-white" onClick={toggleSidebar}>
+          {/* <a href="#" style={{ marginLeft: "50px" }}> */}
+          <a href="#">
+            <RiMenuFold3Line style={{ color: "black" }} />
+          </a>
+        </div>
+      </div>
+        : <div className="nav-taggle-icon text-white" onClick={toggleSidebar} style={{ marginBottom: "50px", textAlign: 'center' }}>
+          {/* <a href="#"> */}
+          <a href="#" style={{ position: "relative", right: "12px", top: "30px" }}>
+            <RiMenuFold3Line style={{ color: "black" }} />
+          </a>
+        </div>}
+      {/* </div> */}
       <div className="sidebar">
         <ul className="menu">
           {/* Dashboard Section */}

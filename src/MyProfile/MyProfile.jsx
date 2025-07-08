@@ -43,7 +43,8 @@ const MyProfile = () => {
           id_no: res.data.user.id_no || "",
           category: res.data.user.category || "",
           role: res.data.user.role || "",
-          university_name: res.data.user.university_name || ""
+          // university_name: res.data.user.university_name || ""
+          university_id: res.data.user.university_id || 0
         });
       }
     } catch (error) {
