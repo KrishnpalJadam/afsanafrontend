@@ -105,7 +105,7 @@ const ChatList = ({ userId }) => {
   };
 
   return (
-    <div>
+    <div className="container p-4">
       <h3>Your Chats</h3>
       {/* Counselor Select dropdown */}
       <div>

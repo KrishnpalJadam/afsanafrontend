@@ -96,6 +96,7 @@ function App() {
   }, [login]);
 
   const [counselors, setCounselors] = useState([]);
+const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   const [tasks, setTasks] = useState([
     {
@@ -124,7 +125,14 @@ function App() {
   const user_id = localStorage.getItem("user_id")
   const noLayoutPaths = ["/", "/login", "/signup"];
   const hideLayout = noLayoutPaths.includes(location.pathname);
-
+// Detect screen size on resize
+useEffect(() => {
+  const handleResize = () => {
+    setIsMobile(window.innerWidth <= 768);
+  };
+  window.addEventListener("resize", handleResize);
+  return () => window.removeEventListener("resize", handleResize);
+}, []);
   return (
     <>
       {/* navbar */}
@@ -134,12 +142,13 @@ function App() {
       <div className={`main-content ${hideLayout ? "full-width" : ""}`}>
         {!hideLayout && (
           <Sidebar
-            collapsed={isSidebarCollapsed}
-            menuItemClick={menusidebarcollaps}
-            login={login}
-            // login={"admin"}
-            toggleSidebar={toggleSidebar}
-          />
+  collapsed={isSidebarCollapsed}
+  isMobile={isMobile}
+  menuItemClick={menusidebarcollaps}
+  login={login}
+  toggleSidebar={toggleSidebar}
+/>
+
         )}
         {/* sidebar end */}
         {/* right side  */}

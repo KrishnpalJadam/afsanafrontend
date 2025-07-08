@@ -1,59 +1,55 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "../layout/Navbar.css";
+import {
+  Bell,
+  MessageCircle,
+  UserCircle,
+  LogOut,
+  ChevronDown
+} from "lucide-react";
 import api from "../interceptors/axiosInterceptor";
-import BASE_URL from "../Config";
-import { RiMenuFold3Line } from "react-icons/ri";
+import "../layout/Navbar.css";
+
 const Navbar = ({ toggleSidebar }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
-
-  const [showChats, setShowChats] = useState(false);
-  const [chats, setChats] = useState([
-    { sender: "Alice", message: "Hi, are you available for a quick call?" },
-    { sender: "Bob", message: "Let's finalize the report today." },
-  ]);
-
+  const [userName, setUserName] = useState("User");
   const navigate = useNavigate();
+  const dropdownRef = useRef(null);
 
-  const toggleNotifications = () => {
-    setShowNotifications(!showNotifications);
-    setShowChats(false); // Hide chat if open
-  };
 
-  const toggleChats = () => {
-    setShowChats(!showChats);
-    setShowNotifications(false); // Hide notifications if open
-  };
+const loginDetail = JSON.parse(localStorage.getItem("login_detail"));
+
+const loginName  = loginDetail?.full_name;
+
+
 
   useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const response = await api.get(`remainder`);
-        console.log(response.data); // verify the data
-        setNotifications(response.data); // correct: storing data in state
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchNotifications();
+    const seen = sessionStorage.getItem("notificationsSeen");
+    if (!seen) {
+      fetchNotifications();
+      sessionStorage.setItem("notificationsSeen", "true");
+    }
   }, []);
 
+  const fetchNotifications = async () => {
+    try {
+      const response = await api.get(`remainder`);
+      setNotifications(response.data || []);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const logout = () => {
     localStorage.clear();
+    sessionStorage.clear();
     navigate("/");
   };
-  const role = localStorage.getItem("login");
+
   const handleChat = () => {
-    // if(role=="student"){
-    //   navigate("/chat/1")
-    // }
-    // else {
-    navigate("/chatList")
-    // }
-  }
-  const dropdownRef = useRef(null);
+    navigate("/chatList");
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -65,140 +61,94 @@ const Navbar = ({ toggleSidebar }) => {
     if (showNotifications) {
       document.addEventListener("mousedown", handleClickOutside);
     }
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showNotifications]);
 
   return (
-    <nav className="navbar shadow-lg" style={{ position: "fixed", backgroundColor: "white", color: "black", width: "100%" }}>
-      <div className="container-fluid nav-conter">
-        <div className="nav-content">
-          <div className="nav-bran">
-            {/* <img
-              src="/img/logo.png"
-              alt="Logo"
-              height={"90px"}
-              width={"140px"}
-              style={{ marginTop: "-10px" }}
-            /> */}
-            {/* <div className="nav-taggle-icon text-white" onClick={toggleSidebar}> */}
-            {/* <a href="#" style={{ marginLeft: "50px" }}> */}
-            {/* <a href="#">
+    <nav className="navbar  bg-white fixed-top w-100 z-50">
+      <div className="container-fluid d-flex justify-content-between align-items-center px-3 py-2">
+        {/* Logo + Sidebar Toggle */}
+        <div className="d-flex align-items-center gap-3" style={{marginTop: "-20px"}}>
+          <img src="/img/logo.png" alt="Logo" height={100} />
+          <button
+            className="btn btn-light border"
+            onClick={toggleSidebar}
+          >
+            ☰
+          </button>
+        </div>
 
-                <RiMenuFold3Line style={{ color: "black" }} />
-              </a>
-            </div> */}
+        {/* Right Icons */}
+        <div className="d-flex align-items-center gap-4" style={{marginTop: "-20px"}} ref={dropdownRef}>
+          {/* Notifications */}
+          <div className="position-relative">
+            <Bell
+              size={22}
+              onClick={() => setShowNotifications(!showNotifications)}
+              style={{ cursor: "pointer" }}
+            />
+            {notifications.length > 0 && (
+              <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                {notifications.length}
+              </span>
+            )}
+            {showNotifications && (
+              <div
+                className="bg-white shadow p-3 rounded position-absolute"
+                style={{ right: 0, top: "120%", width: "300px", zIndex: 1000 }}
+              >
+                <div className="d-flex justify-content-between align-items-center mb-2">
+                  <strong>Notifications</strong>
+                  <button
+                    className="btn btn-sm btn-outline-secondary"
+                    onClick={() => setNotifications([])}
+                  >
+                    Clear All
+                  </button>
+                </div>
+                <ul className="list-unstyled mb-0" style={{ maxHeight: "200px", overflowY: "auto" }}>
+                  {notifications.length > 0 ? (
+                    notifications.map((item, index) => (
+                      <li key={index} className="border-bottom py-2">
+                        <div><strong>{item.title}</strong></div>
+                        <small className="text-muted">Due: {item.due_date}</small>
+                      </li>
+                    ))
+                  ) : (
+                    <li className="text-muted text-center py-2">No notifications</li>
+                  )}
+                </ul>
+              </div>
+            )}
           </div>
 
-          <div className="nav-main-icon" ref={dropdownRef}>
-            {/* Notification Section */}
-            <div className="notification-icon">
-              <a
-                className="bell-icon"
-                href="#"
-                style={{ color: "black" }}
-                onClick={toggleNotifications}
-              >
-                <i className="fa-regular fa-bell"></i>
-                {notifications.length > 0 && (
-                  <span className="notification-badge">{notifications.length}</span>
-                )}
-              </a>
-              {showNotifications && (
-                <div className="notification-dropdown" style={{ marginRight: "-50px", marginTop: "20px" }}>
-                  <div className="notification-header">
-                    <h6>Notifications</h6>
-                    <button className="clear-all" onClick={() => setNotifications([])}>
-                      Clear All
-                    </button>
-                  </div>
-                  <ul className="notification-list">
-                    {notifications.map((item) => (
-                      <>
+          {/* Chat Icon */}
+          <MessageCircle size={22} style={{ cursor: "pointer" }} onClick={handleChat} />
 
-                        <li className="notification-item">
-                          <div style={{ display: "flex", justifyContent: "space-between" }}>
-                            <div>
-                              {item.title}
-                            </div>
-                            <div>
-                              <span><strong>Due Date:</strong>  <br />{item.due_date}</span>
-                            </div>
-                          </div>
-                        </li>
-
-                      </>
-                    ))}
-                  </ul>
-                </div>
-              )}
+          {/* Profile Dropdown */}
+          <div className="dropdown">
+            <div
+              className="d-flex align-items-center gap-2"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <UserCircle size={26} />
+              <span className="fw-semibold loginName">{loginName}</span>
+              <ChevronDown size={16} />
             </div>
-
-            {/* Chat Section */}
-            <div className="chat-icon-section" style={{ marginBottom: "10px" }}>
-              {/* <a
-                className="chat-icon"
-                href="#"
-                style={{ color: "black" }}
-                onClick={toggleChats}
-              > */}
-              <button style={{ backgroundColor: "#fff", color: "#000", height: '10px', width: '', marginBottom: "10px" }}
-
-                onClick={handleChat}
-              ><i className="fa-regular fa-message"></i></button>
-
-              {/* {chats.length > 0 && (
-                  <span className="chat-badge">{chats.length}</span>
-                )}
-              </a> */}
-              {/* {showChats && (
-                <div className="chat-dropdown" style={{ marginRight: "-50px", marginTop: "20px",backgroundColor:"#fff" }}>
-                  <div className="notification-header">
-                    <h6>Chats</h6>
-                    <button className="clear-all" onClick={() => setChats([])}>
-                      Clear All
-                    </button>
-                  </div>
-                  <ul className="chat-list">
-                    {chats.map((chat, index) => (
-                      <li key={index} className="chat-item"  >
-                       <button style={{color:'#000' , backgroundColor:'#fff'}} onClick={()=>{navigate("/chat")}}><strong>{chat.sender}</strong>: {chat.message}</button> 
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )} */}
-            </div>
-
-            {/* Profile Dropdown */}
-            <div className="dropdown profile-elemen">
-              <div
-                className="me-2 fw-bold p-1 rounded-4 profile d-flex align-items-center"
-                style={{ cursor: "pointer" }}
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                <div className="profile-element">
-                  <div className="avatar online">
-                    <i className="fa-solid user-icon fa-circle-user" style={{ color: "black" }}></i>
-                    <span className="text-dark ms-2"></span>
-                  </div>
-                </div>
-              </div>
-              <ul className="dropdown-menu dropdown-menu-end">
-                <li><Link className="dropdown-item" to="/profile">Profile</Link></li>
-                <li><Link className="dropdown-item" to="/change-password">Change Password</Link></li>
-                <li><hr className="dropdown-divider" /></li>
-                <li>
-                  <button className="dropdown-item" onClick={logout}>
-                    Logout
-                  </button>
-                </li>
-              </ul>
-            </div>
-
+            <ul className="dropdown-menu dropdown-menu-end mt-2 shadow-sm">
+              <li><Link className="dropdown-item" to="/profile">Profile</Link></li>
+              <li><Link className="dropdown-item" to="/change-password">Change Password</Link></li>
+              <li><hr className="dropdown-divider" /></li>
+              <li>
+                <button className="dropdown-item text-danger d-flex align-items-center gap-2" onClick={logout}>
+                  <LogOut size={16} /> Logout
+                </button>
+              </li>
+            </ul>
           </div>
         </div>
       </div>

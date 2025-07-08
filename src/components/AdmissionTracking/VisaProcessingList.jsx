@@ -175,8 +175,8 @@ const VisaProcessingList = () => {
 
 
     return (
-        <div className="inquiry-container container-fluid py-4">
-            <div className="inquiry-header d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+        <div className=" container p-4">
+            <div className="inquiry-header inquiry-container d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
                 <h4 className="m-0 inquiry-title">Visa Process List</h4>
                 <div className="inquiry-actions d-flex gap-2 flex-wrap">
                     <input

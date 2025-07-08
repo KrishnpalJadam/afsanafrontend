@@ -6,13 +6,25 @@ import { BsFillPersonLinesFill } from "react-icons/bs"; // Bootstrap
 import { hasPermission } from "../authtication/permissionUtils";
 import { hasUserPermission } from "../authtication/hasuserpermission";
 import { RiMenuFold3Line } from "react-icons/ri";
+import {
+  LayoutDashboard,
+  FileText,
+  GraduationCap,
+  User,
+  ClipboardList,
+  ShieldCheck,
+  BarChart2,
+  CreditCard,
+  Globe,
+  LogOut
+} from "lucide-react";
 
 
 const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
   const [openSubmenu, setOpenSubmenu] = useState(null); // Tracks the open submenu
   const navigate = useNavigate();
   const location = useLocation();
-
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768); // ✅ New
 
 
   const toggleSubmenu = (menuName) => {
@@ -24,12 +36,17 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
     return location.pathname === path;
   };
 
+
   // Function to check if any of the submenu items are active
   const isSubmenuActive = (paths) => {
     return paths.some((path) => location.pathname.startsWith(path));
   };
   return (
-    <div className={`sidebar-container ${collapsed ? "collapsed" : ""}`}>
+    <div className={`sidebar-container 
+  ${collapsed === true ? "collapsed" : ""}
+  ${collapsed === "mini" ? "collapsed-desktop" : ""}
+`}>
+
 
       {!collapsed ? <div className="d-flex justify-content-between p-2">
         <img
@@ -68,10 +85,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   // toggleSidebar();
                 }}
               >
-                <i
-                  onClick={() => toggleSidebar()}
-                  className="fa-solid fa-cubes"
-                ></i>
+                <LayoutDashboard size={18} className="mr-2" />
                 <span className="menu-text">Dashboard</span>
               </div>
             </li>
@@ -88,10 +102,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   // toggleSidebar();
                 }}
               >
-                <i
-                  onClick={() => toggleSidebar()}
-                  className="fa-solid fa-cubes"
-                ></i>
+                <LayoutDashboard size={18} className="mr-2" />
                 <span className="menu-text">Dashboard</span>
               </div>
             </li>
@@ -110,10 +121,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   // toggleSidebar();
                 }}
               >
-                <i
-                  onClick={() => toggleSidebar()}
-                  className="fa-solid fa-cubes"
-                ></i>
+                <LayoutDashboard size={18} className="mr-2" />
                 <span className="menu-text">Dashboard</span>
               </div>
             </li>
@@ -143,10 +151,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   // toggleSidebar();
                 }}
               >
-                <i
-                  onClick={() => toggleSidebar()}
-                  className="fa-solid fa-file-contract"
-                ></i>
+                <FileText size={18} className="mr-2" />
                 <span className="menu-text">Leads & Inquiries</span>
                 <i
                   className={`fa-solid fa-chevron-${openSubmenu === "leadInquiry" ? "up" : "down"
@@ -248,10 +253,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                 className="menu-link menu-i"
                 onClick={() => toggleSubmenu("leadInquiry")}
               >
-                <i
-                  onClick={() => toggleSidebar()}
-                  className="fa-solid fa-file-contract"
-                ></i>
+                <GraduationCap size={18} className="mr-2" />
                 <span className="menu-text">Leads & Inquiries</span>
                 <i
                   className={`fa-solid fa-chevron-${openSubmenu === "leadInquiry" ? "up" : "down"
@@ -340,11 +342,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                 className="menu-link menu-i"
                 onClick={() => toggleSubmenu("student")}
               >
-                <i
-                  onClick={() => toggleSidebar()}
-                  className="fa fa-graduation-cap"
-                  aria-hidden="true"
-                ></i>
+                <GraduationCap size={18} className="mr-2" />
                 <span className="menu-text text-nowrap">
                   Student Management
                 </span>
@@ -408,11 +406,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                 className="menu-link menu-i"
                 onClick={() => toggleSubmenu("student")}
               >
-                <i
-                  onClick={() => toggleSidebar()}
-                  className="fa fa-graduation-cap"
-                  aria-hidden="true"
-                ></i>
+                <GraduationCap size={20} className="mr-2" />
                 <span className="menu-text text-nowrap">
                   Student Management
                 </span>
@@ -477,11 +471,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                 className="menu-link menu-i"
                 onClick={() => toggleSubmenu("student")}
               >
-                <i
-                  onClick={() => toggleSidebar()}
-                  className="fa fa-graduation-cap"
-                  aria-hidden="true"
-                ></i>
+                <GraduationCap size={18} className="mr-2" />
                 <span className="menu-text text-nowrap">
                   Student Management
                 </span>
@@ -550,11 +540,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                 className="menu-link menu-i"
                 onClick={() => toggleSubmenu("application")}
               >
-                <i
-                  onClick={() => toggleSidebar()}
-                  className="fa fa-user"
-                  aria-hidden="true"
-                ></i>
+                <User size={18} className="mr-2" />
                 <span className="menu-text text-nowrap">Applications</span>
                 <i
                   className={`fa-solid fa-chevron-${openSubmenu === "application" ? "up" : "down"
@@ -626,10 +612,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   // menuItemClick();
                 }}
               >
-                <i
-                  onClick={() => toggleSidebar()}
-                  className="fa-solid fa-university "
-                ></i>
+                <User size={18} className="mr-2" />
                 <span className="menu-text">Application Managment</span>
               </div>
             </li>
@@ -649,10 +632,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                 className="menu-link menu-i"
                 onClick={() => toggleSubmenu("tasks")}
               >
-                <i
-                  onClick={() => toggleSidebar()}
-                  className="fa-solid fa-calendar-check"
-                ></i>
+                <ClipboardList size={18} className="mr-2" />
                 <span className="menu-text text-nowrap">Task Management</span>
                 <i
                   className={`fa-solid fa-chevron-${openSubmenu === "tasks" ? "up" : "down"
@@ -721,10 +701,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   // menuItemClick();
                 }}
               >
-                <i
-                  onClick={() => toggleSidebar()}
-                  className="fa-solid fa-university "
-                ></i>
+                <ClipboardList size={18} className="mr-2" />
                 <span className="menu-text">Task Management</span>
               </div>
             </li>
@@ -744,10 +721,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   // menuItemClick();
                 }}
               >
-                <i
-                  onClick={() => toggleSidebar()}
-                  className="fa-solid fa-bolt"
-                ></i>
+                <ShieldCheck size={18} className="mr-2" />
                 <span className="menu-text"> Roles Permissions</span>
               </div>
             </li>
@@ -767,10 +741,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   // menuItemClick();
                 }}
               >
-                <i
-                  onClick={() => toggleSidebar()}
-                  className="fa-solid fa-chart-line"
-                ></i>
+                <LayoutDashboard size={18} className="mr-2" />
 
                 <span className="menu-text">Dashboard</span>
               </div>
@@ -791,10 +762,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   // menuItemClick();
                 }}
               >
-                <i
-                  onClick={() => toggleSidebar()}
-                  className="fa-solid fa-bolt"
-                ></i>
+                <FileText size={18} className="mr-2" />
                 <span className="menu-text">Inquiry</span>
               </div>
             </li>
@@ -811,10 +779,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   // menuItemClick();
                 }}
               >
-                <i
-                  onClick={() => toggleSidebar()}
-                  className="fa-solid fa-bell"
-                ></i>
+                <FileText size={18} className="mr-2" />
                 <span className="menu-text">Lead</span>
               </div>
             </li>
@@ -828,10 +793,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   // menuItemClick();
                 }}
               >
-                <i
-                  onClick={() => toggleSidebar()}
-                  className="fa-solid fa-chart-line "
-                ></i>
+                <CreditCard size={18} className="mr-2" />
                 <span className="menu-text">Payments & Invoices</span>
               </div>
             </li>
@@ -852,10 +814,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   // menuItemClick();
                 }}
               >
-                <i
-                  onClick={() => toggleSidebar()}
-                  className="fa-solid fa-right-from-bracket"
-                ></i>
+                <LogOut size={18} className="mr-2" />
 
                 <span className="menu-text">Logout</span>
               </div>
@@ -878,10 +837,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   // menuItemClick();
                 }}
               >
-                <i
-                  onClick={() => toggleSidebar()}
-                  className="fa-solid fa-receipt"
-                ></i>
+                <BarChart2 size={18} className="mr-2" />
                 <span className="menu-text"> Reports & Analytics</span>
               </div>
             </li>
@@ -902,10 +858,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   // menuItemClick();
                 }}
               >
-                <i
-                  onClick={() => toggleSidebar()}
-                  className="fa-solid fa-chart-line "
-                ></i>
+                <CreditCard size={18} className="mr-2" />
                 <span className="menu-text">Payments & Invoices</span>
               </div>
             </li>
@@ -926,10 +879,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   // menuItemClick();
                 }}
               >
-                <i
-                  onClick={() => toggleSidebar()}
-                  className="fa-solid fa-passport"
-                ></i>
+                <Globe size={18} className="mr-2" />
                 <span className="menu-text">Visa procesing list</span>
               </div>
             </li>
@@ -946,10 +896,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   // menuItemClick();
                 }}
               >
-                <i
-                  onClick={() => toggleSidebar()}
-                  className="fa-solid fa-chart-line "
-                ></i>
+                <CreditCard size={18} className="mr-2" />
                 <span className="menu-text">Payments & Invoices</span>
               </div>
             </li>
@@ -994,10 +941,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   // menuItemClick();
                 }}
               >
-                <i
-                  onClick={() => toggleSidebar()}
-                  className="fa-solid fa-university "
-                ></i>
+                <GraduationCap size={18} className="mr-2" />
                 <span className="menu-text">Course & University</span>
               </div>
             </li>
@@ -1016,10 +960,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   // menuItemClick();
                 }}
               >
-                <i
-                  onClick={() => toggleSidebar()}
-                  className="fa-solid fa-plane-departure"
-                ></i>
+                <Globe size={18} className="mr-2" />
                 <span className="menu-text">Visa procesing</span>
               </div>
             </li>
@@ -1038,10 +979,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   // menuItemClick();
                 }}
               >
-                <i
-                  onClick={() => toggleSidebar()}
-                  className="fa-solid fa-passport"
-                ></i>
+                <Globe size={18} className="mr-2" />
                 <span className="menu-text">Visa procesing list</span>
               </div>
             </li>
@@ -1060,10 +998,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   // menuItemClick();
                 }}
               >
-                <i
-                  onClick={() => toggleSidebar()}
-                  className="fa-solid fa-university "
-                ></i>
+                <GraduationCap size={18} className="mr-2" />
                 <span className="menu-text">Course & University</span>
               </div>
               <div
@@ -1085,6 +1020,10 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
           )}
         </ul>
       </div>
+      {isMobile && collapsed === true && (
+        <div className="sidebar-overlay" onClick={toggleSidebar}></div>
+      )}
+
     </div>
   );
 };

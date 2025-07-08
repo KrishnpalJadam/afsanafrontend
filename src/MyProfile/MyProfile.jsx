@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Card, ListGroup, Container, Row, Col, Form, Button, Modal } from "react-bootstrap";
-import api from "../interceptors/axiosInterceptor"; // your axios setup with interceptors
+import api from "../interceptors/axiosInterceptor";
 
 const MyProfile = () => {
   const loginDetail = JSON.parse(localStorage.getItem("login_detail"));
 
   const [showModal, setShowModal] = useState(false);
   const [userData, setUserData] = useState(null);
+
   const [formData, setFormData] = useState({
     full_name: "",
     email: "",
@@ -18,33 +19,29 @@ const MyProfile = () => {
     admission_no: "",
     id_no: "",
     category: "",
-    role: "",
-    university_name: ""
+    university_id: ""
   });
 
-  // ✅ Fetch profile data
   const fetchUserData = async () => {
     if (!loginDetail) return;
 
     try {
       const res = await api.get(`auth/getUser/${loginDetail.id}`);
-
       if (res.data.user) {
-        setUserData(res.data.user);
+        const user = res.data.user;
+        setUserData(user);
         setFormData({
-          full_name: res.data.user.full_name || "",
-          email: res.data.user.email || "",
-          phone: res.data.user.phone || "",
-          address: res.data.user.address || "",
-          gender: res.data.user.gender || "",
-          date_of_birth: res.data.user.date_of_birth ? res.data.user.date_of_birth.split("T")[0] : "",
-          father_name: res.data.user.father_name || "",
-          admission_no: res.data.user.admission_no || "",
-          id_no: res.data.user.id_no || "",
-          category: res.data.user.category || "",
-          role: res.data.user.role || "",
-          // university_name: res.data.user.university_name || ""
-          university_id: res.data.user.university_id || 0
+          full_name: user.full_name || "",
+          email: user.email || "",
+          phone: user.phone || "",
+          address: user.address || "",
+          gender: user.gender || "",
+          date_of_birth: user.date_of_birth ? user.date_of_birth.split("T")[0] : "",
+          father_name: user.father_name || "",
+          admission_no: user.admission_no || "",
+          id_no: user.id_no || "",
+          category: user.category || "",
+          university_id: user.university_id || ""
         });
       }
     } catch (error) {
@@ -56,23 +53,25 @@ const MyProfile = () => {
     fetchUserData();
   }, []);
 
-  // ✅ Form input change handler
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // ✅ Profile update handler
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
-    const data = new FormData();
+
+    const filteredFormData = {};
     Object.entries(formData).forEach(([key, value]) => {
-      data.append(key, value);
+      if (value !== "" && value !== null && value !== undefined) {
+        filteredFormData[key] = value;
+      }
     });
 
-    try {
-      const res = await api.put(`auth/updateUser/${loginDetail.id}`, data);
+    filteredFormData["user_id"] = loginDetail.id;
 
+    try {
+      const res = await api.put(`auth/updateUser/${loginDetail.id}`, filteredFormData);
       if (res.status === 200) {
         alert("Profile updated successfully!");
         setShowModal(false);
@@ -86,7 +85,6 @@ const MyProfile = () => {
     }
   };
 
-  // ✅ Helper for displaying profile fields
   const renderItem = (label, value) => {
     if (!value) return null;
     return (
@@ -97,7 +95,6 @@ const MyProfile = () => {
     );
   };
 
-  // ✅ Show message if no user logged in
   if (!loginDetail) {
     return (
       <Container className="mt-5 text-center">
@@ -123,7 +120,7 @@ const MyProfile = () => {
               {renderItem("Date of Birth", userData?.date_of_birth && new Date(userData.date_of_birth).toLocaleDateString())}
               {renderItem("Address", userData?.address)}
               {renderItem("Father's Name", userData?.father_name)}
-              {renderItem("Admission No.", userData?.admission_no)}
+            
               {renderItem("ID No.", userData?.id_no)}
             </ListGroup>
 
@@ -136,7 +133,6 @@ const MyProfile = () => {
         </Col>
       </Row>
 
-      {/* ✅ Update Profile Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Update Profile</Modal.Title>
@@ -148,7 +144,7 @@ const MyProfile = () => {
               <Form.Control
                 type="text"
                 name="full_name"
-                value={formData.full_name || ""}
+                value={formData.full_name}
                 onChange={handleChange}
               />
             </Form.Group>
@@ -158,7 +154,7 @@ const MyProfile = () => {
               <Form.Control
                 type="email"
                 name="email"
-                value={formData.email || ""}
+                value={formData.email}
                 onChange={handleChange}
               />
             </Form.Group>
@@ -168,7 +164,7 @@ const MyProfile = () => {
               <Form.Control
                 type="text"
                 name="phone"
-                value={formData.phone || ""}
+                value={formData.phone}
                 onChange={handleChange}
               />
             </Form.Group>
@@ -178,70 +174,65 @@ const MyProfile = () => {
               <Form.Control
                 type="text"
                 name="address"
-                value={formData.address || ""}
+                value={formData.address}
                 onChange={handleChange}
               />
             </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Gender</Form.Label>
-              <Form.Select
-                name="gender"
-                value={formData.gender || ""}
-                onChange={handleChange}
-              >
-                <option value="">Select Gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </Form.Select>
-            </Form.Group>
+            {loginDetail.role !== "admin" && (
+              <>
+                <Form.Group className="mb-3">
+                  <Form.Label>Gender</Form.Label>
+                  <Form.Select
+                    name="gender"
+                    value={formData.gender}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                  </Form.Select>
+                </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Date of Birth</Form.Label>
-              <Form.Control
-                type="date"
-                name="date_of_birth"
-                value={formData.date_of_birth || ""}
-                onChange={handleChange}
-              />
-            </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Date of Birth</Form.Label>
+                  <Form.Control
+                    type="date"
+                    name="date_of_birth"
+                    value={formData.date_of_birth}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Father's Name</Form.Label>
-              <Form.Control
-                type="text"
-                name="father_name"
-                value={formData.father_name || ""}
-                onChange={handleChange}
-              />
-            </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Father's Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="father_name"
+                    value={formData.father_name}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Admission No.</Form.Label>
-              <Form.Control
-                type="text"
-                name="admission_no"
-                value={formData.admission_no || ""}
-                onChange={handleChange}
-              />
-            </Form.Group>
+               
 
-            <Form.Group className="mb-3">
-              <Form.Label>ID No.</Form.Label>
-              <Form.Control
-                type="text"
-                name="id_no"
-                value={formData.id_no || ""}
-                onChange={handleChange}
-              />
-            </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>ID No.</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="id_no"
+                    value={formData.id_no}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+              </>
+            )}
 
             <Button variant="primary" type="submit">
               Save Changes
             </Button>
           </Form>
         </Modal.Body>
-
       </Modal>
     </Container>
   );

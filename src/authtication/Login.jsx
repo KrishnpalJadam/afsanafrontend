@@ -7,12 +7,16 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FaUser, FaLock } from "react-icons/fa";
 import { IoChevronBackCircleSharp } from "react-icons/io5";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+
 import axios from "axios";
 import api from "../interceptors/axiosInterceptor";
-
+import { auth, provider, signInWithPopup } from "../interceptors/firebase"; // adjust path as needed
 
 const Login = ({ setLogin }) => {
   const [formData, setFormData] = useState({ email: '', password: '' });
+  const [showPassword, setShowPassword] = useState(false);
+
   const navigate = useNavigate();
 
   const handleChange = (event) => {
@@ -81,6 +85,62 @@ const Login = ({ setLogin }) => {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const token = await result.user.getIdToken(); // Firebase token
+
+      // Call your backend Google login API
+      const response = await axios.post(`${BASE_URL}auth/student/google-signup`, { token });
+
+      const { token: authToken, user } = response.data;
+
+      if (user.role !== "student") {
+        toast.error("Only students are allowed to login from Google!");
+        return;
+      }
+
+      // Save user info in localStorage
+      setLogin(user.role);
+      localStorage.setItem("login", user.role);
+      localStorage.setItem("role", user.role);
+      localStorage.setItem("authToken", authToken);
+      localStorage.setItem("user_id", user.id);
+      localStorage.setItem("login_detail", JSON.stringify(user));
+      localStorage.setItem("counselor_id", user.counselor_id);
+      localStorage.setItem("student_id", user.student_id);
+
+      // Fetch permissions
+      const permissionsResponse = await api.get(`permission?role_name=${user.role}`);
+      const userpermissionsResponse = await api.get(`permissions?user_id=${user.id}`);
+      localStorage.setItem("permissions", JSON.stringify(permissionsResponse.data));
+      localStorage.setItem("userpermissions", JSON.stringify(userpermissionsResponse.data));
+
+      // Show success alert
+      Swal.fire({
+        title: "Success!",
+        text: "Google login successful for Student Portal.",
+        icon: "success",
+        confirmButtonText: "Ok",
+      });
+
+      // Redirect to Student dashboard
+      setTimeout(() => {
+        navigate("/UniversityCards");
+      }, 300);
+
+    } catch (error) {
+      console.error("Google Sign-in error:", error);
+
+      // Show backend message if available, else fallback message
+      const backendMessage =
+        error?.response?.data?.message || "Google login failed. Try again.";
+
+      toast.error(backendMessage);
+    }
+
+  };
+
 
   return (
     <main style={{
@@ -96,6 +156,8 @@ const Login = ({ setLogin }) => {
         overflow: "hidden",
         boxShadow: "0 8px 16px rgba(0,0,0,0.1)"
       }}>
+
+
         {/* Left Image Section */}
         <div style={{
           flex: 1,
@@ -113,7 +175,48 @@ const Login = ({ setLogin }) => {
         <div style={{ flex: 1, padding: "40px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
           <h2 style={{ color: "#1d4ed8", marginBottom: "10px" }}>Student Recruitment</h2>
           <p style={{ marginBottom: "20px", color: "#555" }}>Enter your details to login to your account</p>
+          {/* Divider */}
 
+
+          {/* Google Button */}
+          <button
+            onClick={handleGoogleLogin}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "10px",
+              backgroundColor: "#fff",
+              color: "#444",
+              border: "1px solid #ccc",
+              borderRadius: "8px",
+              padding: "10px",
+              width: "100%",
+              fontWeight: "500",
+              fontSize: "15px",
+              cursor: "pointer",
+              transition: "background 0.3s"
+            }}
+            onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#f7f7f7"}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#fff"}
+          >
+            {/* Google Icon */}
+            <img
+              src="https://developers.google.com/identity/images/g-logo.png"
+              alt="Google"
+              style={{ width: "20px", height: "20px" }}
+            />
+            Continue with Google
+          </button>
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            margin: "20px 0"
+          }}>
+            <hr style={{ flex: 1, border: "none", height: "1px", backgroundColor: "#ccc" }} />
+            <span style={{ margin: "0 10px", color: "#888", fontSize: "14px" }}>or continue with</span>
+            <hr style={{ flex: 1, border: "none", height: "1px", backgroundColor: "#ccc" }} />
+          </div>
           <form onSubmit={handleLogin}>
             <div style={{ marginBottom: "15px", position: "relative" }}>
               <FaUser style={{
@@ -136,31 +239,45 @@ const Login = ({ setLogin }) => {
                   outline: "none"
                 }} required />
             </div>
+<div style={{ marginBottom: "20px", position: "relative" }}>
+  <FaLock style={{
+    position: "absolute", left: "12px",
+    top: "50%", transform: "translateY(-50%)", color: "#888"
+  }} />
+  
+  <input
+    type={showPassword ? "text" : "password"}
+    name="password"
+    autoComplete="off"
+    placeholder="Enter your password"
+    value={formData.password}
+    onChange={handleChange}
+    style={{
+      width: "100%",
+      padding: "10px 40px 10px 40px", // leave room for the icon
+      borderRadius: "8px",
+      border: "1px solid #ccc",
+      outline: "none"
+    }}
+    required
+  />
 
-            <div style={{ marginBottom: "20px", position: "relative" }}>
-              <FaLock style={{
-                position: "absolute", left: "12px",
-                top: "50%",
-                transform: "translateY(-50%)",
-                color: "#888"
-              }} />
-              <input
-                type="password"
-                name="password"
-                autoComplete="off"
-                placeholder="Enter your password"
-                value={formData.password}
-                onChange={handleChange}
-                style={{
-                  width: "100%",
-                  padding: "10px 10px 10px 40px",
-                  borderRadius: "8px",
-                  border: "1px solid #ccc",
-                  outline: "none"
-                }}
-                required
-              />
-            </div>
+  {/* Eye Icon Toggle */}
+  <span
+    onClick={() => setShowPassword(!showPassword)}
+    style={{
+      position: "absolute",
+      right: "12px",
+      top: "50%",
+      transform: "translateY(-50%)",
+      cursor: "pointer",
+      color: "#888"
+    }}
+  >
+    {showPassword ? <FaEyeSlash /> : <FaEye />}
+  </span>
+</div>
+
 
             <button type="submit" style={{
               width: "100%", padding: "10px", borderRadius: "8px",
