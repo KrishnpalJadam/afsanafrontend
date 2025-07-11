@@ -67,7 +67,7 @@ const Signup = () => {
         }}
       >
         {/* Left Image Section */}
-        <div
+        <div className="loginimg"
           style={{
             flex: 1,
             backgroundColor: "#eef3fc",

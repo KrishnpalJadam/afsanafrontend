@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Card, ListGroup, Container, Row, Col, Form, Button, Modal } from "react-bootstrap";
 import api from "../interceptors/axiosInterceptor";
 
+
 const MyProfile = () => {
   const loginDetail = JSON.parse(localStorage.getItem("login_detail"));
 

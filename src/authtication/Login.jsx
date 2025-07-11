@@ -159,7 +159,7 @@ const Login = ({ setLogin }) => {
 
 
         {/* Left Image Section */}
-        <div style={{
+        <div className="loginimg" style={{
           flex: 1,
           backgroundColor: "#eef3fc",
           display: "flex",
@@ -179,35 +179,63 @@ const Login = ({ setLogin }) => {
 
 
           {/* Google Button */}
-          <button
-            onClick={handleGoogleLogin}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "10px",
-              backgroundColor: "#fff",
-              color: "#444",
-              border: "1px solid #ccc",
-              borderRadius: "8px",
-              padding: "10px",
-              width: "100%",
-              fontWeight: "500",
-              fontSize: "15px",
-              cursor: "pointer",
-              transition: "background 0.3s"
-            }}
-            onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#f7f7f7"}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#fff"}
-          >
-            {/* Google Icon */}
-            <img
-              src="https://developers.google.com/identity/images/g-logo.png"
-              alt="Google"
-              style={{ width: "20px", height: "20px" }}
-            />
-            Continue with Google
-          </button>
+<>
+  <style>
+    {`
+      .google-login-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        background-color: #fff;
+        color: #444;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 10px;
+        width: 100%;
+        font-weight: 500;
+        font-size: 15px;
+        cursor: pointer;
+        transition: background 0.3s;
+        text-align: center;
+      }
+
+      .google-login-btn:hover {
+        background-color: #f7f7f7;
+      }
+
+      .google-login-btn img {
+        width: 22px;
+        height: 22px;
+        object-fit: contain;
+      }
+
+      @media (max-width: 480px) {
+        .google-login-btn {
+          font-size: 14px;
+          padding: 8px;
+        }
+
+        .google-login-btn img {
+          width: 20px;
+          height: 20px;
+        }
+      }
+    `}
+  </style>
+
+  <button className="google-login-btn" onClick={handleGoogleLogin}>
+    <img
+      src="https://developers.google.com/identity/images/g-logo.png"
+      alt="Google"
+    />
+    <span>Continue with Google</span>
+  </button>
+</>
+
+
+
+
           <div style={{
             display: "flex",
             alignItems: "center",
@@ -239,44 +267,44 @@ const Login = ({ setLogin }) => {
                   outline: "none"
                 }} required />
             </div>
-<div style={{ marginBottom: "20px", position: "relative" }}>
-  <FaLock style={{
-    position: "absolute", left: "12px",
-    top: "50%", transform: "translateY(-50%)", color: "#888"
-  }} />
-  
-  <input
-    type={showPassword ? "text" : "password"}
-    name="password"
-    autoComplete="off"
-    placeholder="Enter your password"
-    value={formData.password}
-    onChange={handleChange}
-    style={{
-      width: "100%",
-      padding: "10px 40px 10px 40px", // leave room for the icon
-      borderRadius: "8px",
-      border: "1px solid #ccc",
-      outline: "none"
-    }}
-    required
-  />
+            <div style={{ marginBottom: "20px", position: "relative" }}>
+              <FaLock style={{
+                position: "absolute", left: "12px",
+                top: "50%", transform: "translateY(-50%)", color: "#888"
+              }} />
 
-  {/* Eye Icon Toggle */}
-  <span
-    onClick={() => setShowPassword(!showPassword)}
-    style={{
-      position: "absolute",
-      right: "12px",
-      top: "50%",
-      transform: "translateY(-50%)",
-      cursor: "pointer",
-      color: "#888"
-    }}
-  >
-    {showPassword ? <FaEyeSlash /> : <FaEye />}
-  </span>
-</div>
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                autoComplete="off"
+                placeholder="Enter your password"
+                value={formData.password}
+                onChange={handleChange}
+                style={{
+                  width: "100%",
+                  padding: "10px 40px 10px 40px", // leave room for the icon
+                  borderRadius: "8px",
+                  border: "1px solid #ccc",
+                  outline: "none"
+                }}
+                required
+              />
+
+              {/* Eye Icon Toggle */}
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: "absolute",
+                  right: "12px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  cursor: "pointer",
+                  color: "#888"
+                }}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
+            </div>
 
 
             <button type="submit" style={{

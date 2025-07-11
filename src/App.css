@@ -1825,4 +1825,10 @@ tbody{
   .cd-filters.full-width > * {
     min-width: 100%;
   }
+  .loginimg{
+    display: none !important;
+  }
 }
+
+
+

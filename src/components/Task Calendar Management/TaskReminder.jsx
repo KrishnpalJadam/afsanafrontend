@@ -168,49 +168,6 @@ const TaskReminderDashboard = () => {
           )}
         </Col>
       </Row>
-
-      {/* New Reminders */}
-      <Row className="g-4 mt-4">
-        <Col md={6}>
-          <h5>📌 Upcoming Reminders</h5>
-          {paginate(activeReminders, activePage).length > 0 ? (
-            paginate(activeReminders, activePage).map((rem) => (
-              <Card key={rem.id} className="mb-3 p-2 bg-light shadow-sm">
-                <Card.Body>
-                  <Card.Title>{rem.title}</Card.Title>
-                  <Card.Text>
-                    Due: {rem.due_date}
-                    {rem.due_time ? ` at ${rem.due_time}` : ""}
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-            ))
-          ) : (
-            <Alert variant="secondary">No upcoming reminders found.</Alert>
-          )}
-          {renderPagination(activeReminders, activePage, setActivePage)}
-        </Col>
-
-        <Col md={6}>
-          <h5>⚠️ Missed Alerts</h5>
-          {paginate(missedAlerts, missedPage).length > 0 ? (
-            paginate(missedAlerts, missedPage).map((rem) => (
-              <Card key={rem.id} className="mb-3 p-2 bg-light shadow-sm border-danger">
-                <Card.Body>
-                  <Card.Title className="text-danger">{rem.title}</Card.Title>
-                  <Card.Text>
-                    Due: {rem.due_date}
-                    {rem.due_time ? ` at ${rem.due_time}` : ""}
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-            ))
-          ) : (
-            <Alert variant="secondary">No missed alerts.</Alert>
-          )}
-          {renderPagination(missedAlerts, missedPage, setMissedPage)}
-        </Col>
-      </Row>
     </Container>
   );
 };
