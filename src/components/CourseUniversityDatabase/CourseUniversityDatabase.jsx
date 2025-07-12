@@ -318,7 +318,7 @@ const CourseUniversityDatabase = () => {
         </Tab>
 
         {/* Application Trends Tab */}
-        <Tab eventKey="trends" title="Application Trends">
+        {/* <Tab eventKey="trends" title="Application Trends">
           <Row className="g-4">
 
           </Row>
@@ -370,7 +370,7 @@ const CourseUniversityDatabase = () => {
               </Card>
             </Col>
           </Row>
-        </Tab>
+        </Tab> */}
 
         {/* Follow-up Analytics Tab */}
 

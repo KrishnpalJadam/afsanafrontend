@@ -361,7 +361,7 @@ const Inquiry = () => {
     e.preventDefault(); // Prevent form submission
 
     const requestData = {
-      counselor_id: councolerid,
+      // counselor_id: councolerid,
       inquiry_type: newInquiry.inquiryType,
       source: newInquiry.source,
       branch: newInquiry.branch,
@@ -842,7 +842,7 @@ const Inquiry = () => {
                 <td>{new Date(inq.date_of_inquiry).toISOString().split('T')[0]}</td>
                 <td>{inq.country}</td>
                 <td>
-                  {String(inq.counselor_id) === "1" ? (
+                  {String(inq.counselor_id)  ? (
                     <Badge bg="warning">Not Assigned</Badge>
                   ) : (
                     inq.counselor_name || <Badge bg="secondary">N/A</Badge>

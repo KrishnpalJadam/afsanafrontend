@@ -288,7 +288,7 @@ const counselor_id = localStorage.getItem("counselor_id")
 
       <ul className="nav nav-tabs ">
         <li className="nav-item">
-          <Link className="nav-link active" to="/studentDetails">
+          <Link className="nav-link active">
             List View
           </Link>
         </li>

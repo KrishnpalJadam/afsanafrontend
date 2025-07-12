@@ -275,7 +275,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   >
                     Lead
                   </li>}
-                  {hasPermission("Status", "view") && <li
+                  {/* {hasPermission("Status", "view") && <li
                     className={`menu-item submenu-item ${isActive("/status") ? "active" : ""
                       }`}
                     onClick={() => {
@@ -284,7 +284,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                     }}
                   >
                     Status
-                  </li>}
+                  </li>} */}
                   {hasPermission("Task", "view") && <li
                     className={`menu-item submenu-item ${isActive("/councelorTask") ? "active" : ""
                       }`}

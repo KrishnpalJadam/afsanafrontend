@@ -21,11 +21,12 @@ const Payment = () => {
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [payments, setPayments] = useState([]);
   const [dedline, setdedline] = useState([]);
-  const [paidTransactions, setpaidTransactions] = useState([]);
+
   const [studentFees, setStudentFees] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   // Static data for Upcoming Deadlines tab
+const [paidTransactions, setpaidTransactions] = useState([]);
 
   const user = JSON.parse(localStorage.getItem("login_detail"));
   const studentId = localStorage.getItem("student_id")
@@ -46,31 +47,33 @@ const Payment = () => {
   };
 
 
-  const statusUpdate = async (payment) => {
-    try {
-      // Backend patch call
-      console.log("payment", payment)
-      await api.patch(`${BASE_URL}payment_status/${payment.id}`, {
-        payment_status: "paid",
-      });
+const statusUpdate = async (payment) => {
+  try {
+    await api.patch(`${BASE_URL}payment_status/${payment.id}`, {
+      payment_status: "paid",
+    });
 
+    // Move to paid list
+    setPayments((prev) => [
+      ...prev,
+      {
+        ...payment,
+        updated_at: new Date().toISOString(), // update paid date
+      },
+    ]);
 
-      setPaidTransactions((prev) => [
-        ...prev,
-        {
-          id: payment.id,
-          description: payment.additional_notes || "Payment",
-          amount: `$${payment.total}`,
-          paidOn: new Date().toLocaleDateString(),
-        },
-      ]);
+    // Remove from due (unpaid) list
+    setPaidTransactions((prev) =>
+      prev.filter((item) => item.id !== payment.id)
+    );
 
-      alert("Payment status updated to Paid.");
-    } catch (error) {
-      console.error(error);
-      alert("Failed to update payment status.");
-    }
-  };
+    alert("✅ Payment status updated successfully!");
+  } catch (error) {
+    console.error(error);
+    alert("❌ Failed to update payment status.");
+  }
+};
+
 
 
   useEffect(() => {
@@ -214,7 +217,8 @@ const Payment = () => {
                       <td>{item.email}</td>
                       <td>{item.additional_notes}</td>
                       <td>${item.total}</td>
-                      <td>{new Date(item.updated_at).toDateString()}</td>
+                <td>{new Date(item.updated_at).toDateString()}</td>
+
                       <td>
                         <Button variant="info" size="sm" onClick={() => handleDownload(item)}>
                           Download Receipt
@@ -226,93 +230,14 @@ const Payment = () => {
               </Table>
             </Tab>
 
-            {/* Upcoming Deadlines Tab */}
-            <Tab eventKey="upcoming" title="Upcoming Deadlines">
-              <Table striped bordered hover responsive>
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Task</th>
-                    <th>Deadline</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {payments
-                    .filter(
-                      (item) =>
-                        new Date(item.payment_date) > new Date(item.created_at) && // payment_date created_at se badh
-                        item.payment_status !== "paid" // status paid nahi hona chahiye
-                    )
-                    .map((item, index) => (
-                      <tr key={index}>
-                        <td>{item.id}</td>
-                        <td>{item.additional_notes}</td>
-                        <td>{new Date(item.payment_date).toLocaleString()}</td>
-                        <td>
-                          <Alert variant="warning" className="mb-0 py-1 px-2">
-                            {getCountdown(item.payment_date)}
-                          </Alert>
-                        </td>
-                      </tr>
-                    ))}
-
-                </tbody>
-              </Table>
-            </Tab>
+       
 
           </Tabs>
         </Card.Body>
       </Card>
 
 
-      {/* leade invoice details */}
-      <div className="mt-5">
-        <Card className="mt-4">
-          <Card.Body>
-            <h4>Lead Invoice Details</h4>
 
-            {/* Student Invoice Details Table */}
-            <Card className="mt-4">
-              <Card.Body>
-
-                <Table striped bordered hover responsive>
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Description</th>
-                      <th>Amount</th>
-                      <th>Paid On</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {/* Static data for now */}
-                    <tr>
-                      <td>1</td>
-                      <td>Course Fee</td>
-                      <td>$500.00</td>
-                      <td>05/30/2025</td>
-                      <td>
-                        <Badge bg="success">Paid</Badge>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>2</td>
-                      <td>Library Fee</td>
-                      <td>$50.00</td>
-                      <td>06/05/2025</td>
-                      <td>
-                        <Badge bg="danger">Unpaid</Badge>
-                      </td>
-                    </tr>
-                  </tbody>
-                </Table>
-              </Card.Body>
-            </Card>
-          </Card.Body>
-        </Card>
-      </div>
 
 
       {/* Pay Now Modal */}
