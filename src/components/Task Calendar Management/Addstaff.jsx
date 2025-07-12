@@ -602,7 +602,6 @@ const Addstaff = () => {
                                     <th>Email</th>
                                     <th>Phone</th>
                                     <th>Status</th>
-                                    <th>Permissions</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -618,9 +617,7 @@ const Addstaff = () => {
                                                 {staff.status}
                                             </span>
                                         </td>
-                                        <td>
-                                            {staff.permissions?.map(p => p.permission_name).join(', ')}
-                                        </td>
+                                       
                                         <td>
                                             <div className="d-flex gap-2">
                                                 {/* <button

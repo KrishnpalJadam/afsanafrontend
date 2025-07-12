@@ -138,7 +138,7 @@ const Payment = () => {
 }, []); // Empty array ensures it runs only once when the component mounts
 
   if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  // if (error) return <div>Error: {error}</div>;
 
   return (
     <Container className="mt-4">

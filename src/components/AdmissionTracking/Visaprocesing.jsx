@@ -229,7 +229,7 @@ const Visaprocesing = () => {
     const renderStepper = () => (
         <Card className="mb-4 border-0 shadow-sm">
             <h2 className="text-center mt-3">Visa Processing CRM Workflow</h2>
-            <Card.Body className="p-3">
+            <Card.Body className="p-3"> 
                 <div className="d-flex justify-content-between align-items-center overflow-auto py-2">
                     {steps.map((step, index) => {
                         const isActive = activeStep === step.key;
