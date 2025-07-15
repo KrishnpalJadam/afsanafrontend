@@ -37,15 +37,8 @@ const Profile = () => {
       <Card className="shadow mb-4">
         <Card.Body>
           <Row>
-            <Col md={2} className="text-center">
-              <img
-                src={student?.photo}
-                alt="Student Photo" crossorigin="anonymous"
-                style={{ height: "150px", width: "150px", objectFit: "cover", borderRadius: "50%" }}
-              />
-
-            </Col>
-            <Col md={10} className="text-center mt-3">
+           
+            <Col md={12} className="text-center mt-3">
               <h3>{student?.full_name}</h3>
               <p>Email: {student?.email}</p>
               <p>Phone: {student?.mobile_number}</p>

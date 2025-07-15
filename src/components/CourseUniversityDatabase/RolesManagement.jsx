@@ -17,7 +17,7 @@ const RolesManagement = () => {
     { name: "Counselor", type: "Customer" }, 
 
     { name: "Student", type: "Customer" },
-    { name: "Staff", type: "Customer" },
+    // { name: "Staff", type: "Customer" },
   ]);
 
   const [newRole, setNewRole] = useState("");

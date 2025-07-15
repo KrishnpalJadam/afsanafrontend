@@ -174,7 +174,7 @@ const AddCounselor = () => {
       <div className="table-responsive mt-5">
         <table className="table table-bordered table-striped">
           <thead className="table-light">
-            <tr>
+            <tr className="text-center">
               <th>#</th>
               <th>Name</th>
               <th>Email</th>

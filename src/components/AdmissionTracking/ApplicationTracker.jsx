@@ -295,7 +295,7 @@ const handleResetFilters = () => {
       <div className="table-responsive">
         <table className="table table-bordered table-hover">
           <thead className="table-light">
-            <tr>
+            <tr className="text-center">
               <th>#</th>
               <th>Student Name</th>
               <th>University Name</th>

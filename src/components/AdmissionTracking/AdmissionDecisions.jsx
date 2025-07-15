@@ -223,7 +223,7 @@ const AdmissionDecisions = () => {
 
       <Table striped bordered hover responsive>
         <thead>
-          <tr>
+          <tr className="text-center">
             <th>Student</th>
             <th>University</th>
             <th>Status</th>

@@ -101,66 +101,92 @@ const SearchPrograms = () => {
             const highlights = Array.isArray(university.highlights) ? university.highlights : [];
 
             return (
-              <animated.div key={index} className="col-md-4 mb-4" style={animation}>
-                <div className="card shadow-sm">
-                  <div className="card-body">
-                    <div className="d-flex align-items-center mb-4">
-                      <img
-                        src={university.logo_url}
-                        alt={`${university.name} Logo`}
-                        className="rounded-circle"
-                         crossorigin="anonymous"
-                        style={{ width: "50px", height: "50px", objectFit: "cover", padding: "5px" }}
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = "/default-logo.png";
-                        }}
-                      />
-                      <h5 className="ml-3">{university.name}</h5>
-                    </div>
+          <animated.div key={index} className="col-md-4 mb-4" style={animation}>
+  <div className="card shadow-sm" style={{ height: "450px" }}>
+    <div
+      className="card-body"
+      style={{
+        maxHeight: "100%",
+        overflowY: "scroll",
+        scrollbarWidth: "none", // Firefox
+        msOverflowStyle: "none", // IE 10+
+      }}
+    >
+      <style>
+        {`
+          .card-body::-webkit-scrollbar {
+            display: none;
+          }
+        `}
+      </style>
 
-                    <div className="mb-3">
-                      <div className="d-flex align-items-center text-muted mb-2">
-                        📬 <span className="ml-2">{university.location}</span>
-                      </div>
-                    </div>
+      <div className="d-flex align-items-center mb-4">
+        <img
+          src={university.logo_url}
+          alt={`${university.name} Logo`}
+          className="rounded-circle"
+          crossOrigin="anonymous"
+          style={{
+            width: "50px",
+            height: "50px",
+            objectFit: "cover",
+            padding: "5px",
+          }}
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = "/default-logo.png";
+          }}
+        />
+        <h5 className="ml-3">{university.name}</h5>
+      </div>
 
-                    <div className="mb-3">
-                      <h6 className="font-weight-bold">Popular Programs:</h6>
-                      <ul className="text-muted">
-                        {programs.length > 0 ? (
-                          programs.map((program, idx) => <li key={idx}>• {program}</li>)
-                        ) : (
-                          <li>No programs available</li>
-                        )}
-                      </ul>
-                    </div>
+      <div className="mb-3">
+        <div className="d-flex align-items-center text-muted mb-2">
+          📬 <span className="ml-2">{university.location}</span>
+        </div>
+      </div>
 
-                    <div className="mb-3">
-                      <h6 className="font-weight-bold">Key Highlights:</h6>
-                      <ul className="text-muted">
-                        {highlights.length > 0 ? (
-                          highlights.map((highlight, idx) => <li key={idx}>• {highlight}</li>)
-                        ) : (
-                          <li>No highlights available</li>
-                        )}
-                      </ul>
-                    </div>
+      <div className="mb-3">
+        <h6 className="font-weight-bold">Popular Programs:</h6>
+        <ul className="text-muted">
+          {programs.length > 0 ? (
+            programs.map((program, idx) => <li key={idx}>• {program}</li>)
+          ) : (
+            <li>No programs available</li>
+          )}
+        </ul>
+      </div>
 
-                    <div className="mb-4">
-                      <h6 className="font-weight-bold">Contact:</h6>
-                      <div className="text-muted">
-                        <p>📞 {university.contact_phone || "N/A"}</p>
-                        <p>📧 {university.contact_email || "N/A"}</p>
-                      </div>
-                    </div>
+      <div className="mb-3">
+        <h6 className="font-weight-bold">Key Highlights:</h6>
+        <ul className="text-muted">
+          {highlights.length > 0 ? (
+            highlights.map((highlight, idx) => <li key={idx}>• {highlight}</li>)
+          ) : (
+            <li>No highlights available</li>
+          )}
+        </ul>
+      </div>
 
-                    <Link to={`/university/${university.id}`} className="btn btn-primary w-100">
-                      Apply Now
-                    </Link>
-                  </div>
-                </div>
-              </animated.div>
+      <div className="mb-4">
+        <h6 className="font-weight-bold">Contact:</h6>
+        <div className="text-muted">
+          <p>📞 {university.contact_phone || "N/A"}</p>
+          <p>📧 {university.contact_email || "N/A"}</p>
+        </div>
+      </div>
+
+      <Link
+        to={`/university/${university.id}`}
+        className="btn btn-primary w-100"
+      >
+        Apply Now
+      </Link>
+    </div>
+  </div>
+</animated.div>
+
+
             );
           })
         ) : (
