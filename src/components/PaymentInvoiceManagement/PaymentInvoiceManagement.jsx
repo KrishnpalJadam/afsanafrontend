@@ -97,43 +97,40 @@ const PaymentInvoiceMangament = () => {
       formData.append(`highlights[${i}]`, highlight);
     });
 
-    try {
-      const response = await api.post(`${BASE_URL}universities`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+   try {
+  const response = await api.post(`${BASE_URL}universities`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
 
-      // Update the state with the new university
-      setUniversities([...universities, response.data]);
+  Swal.fire({
+    title: "Success!",
+    text: "University added successfully.",
+    icon: "success",
+    confirmButtonText: "Ok",
+  });
 
-      // Close the modal and reset form
-      setShowModal(false);
-      setNewUniversity({
-        name: "",
-        logo_url: null,
-        location: "",
-        programs: [],
-        highlights: [],
-        contact_phone: "",
-        contact_email: "",
-      });
+  await fetchData(); // ✅ call the get API to refresh the list
 
-      // Show success alert
-      Swal.fire({
-        title: "Success!",
-        text: "University added successfully. Please refresh this page.",
-        icon: "success",
-        confirmButtonText: "Ok",
-      });
- 
-    } catch (error) {
-      console.log("Error adding university:", error);
-      Swal.fire({
-        title: "Error!",
-        text: "Something went wrong. Please try again.",
-        icon: "error",
-        confirmButtonText: "Close",
-      });
-    }
+  setShowModal(false);
+  setNewUniversity({
+    name: "",
+    logo_url: null,
+    location: "",
+    programs: [],
+    highlights: [],
+    contact_phone: "",
+    contact_email: "",
+  });
+} catch (error) {
+  console.log("Error adding university:", error);
+  Swal.fire({
+    title: "Error!",
+    text: "Something went wrong. Please try again.",
+    icon: "error",
+    confirmButtonText: "Close",
+  });
+}
+
   };
 
   // Fetch universities

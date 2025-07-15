@@ -121,7 +121,7 @@ const MyTasks = () => {
         <td>
           <Badge
             bg={
-              task.status === "Completed"
+              task.status === "Complete"
                 ? "success"
                 : task.status === "Pending"
                 ? "secondary"

@@ -100,7 +100,7 @@ function ManaDetails() {
             >
               <Card className="mb-3 shadow-sm">
                 <Card.Body className="d-flex align-items-center">
-                  <img
+                  {/* <img
                     src={student?.photo}
                     alt="Profile"
                     className="rounded-circle border me-3"
@@ -111,7 +111,7 @@ function ManaDetails() {
                       objectFit: "cover",
                       padding: "5px",
                     }}
-                  />
+                  /> */}
                   <div className="flex-grow-1">
                     <h5 className="text-primary">{student?.full_name}</h5>
                     <p className="mb-1">

@@ -803,7 +803,7 @@ const Inquiry = () => {
       {/* Today's Inquiries */}
       <Table striped bordered hover responsive>
         <thead>
-          <tr>
+          <tr className="text-center">
             <th>#</th>
             <th>Inquiry ID</th>
             <th>Name</th>

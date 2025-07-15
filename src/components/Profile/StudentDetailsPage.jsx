@@ -87,13 +87,13 @@ function StudentDetailsPage() {
       {/* Profile Header */}
       <Row className="mb-4 align-items-center text-center">
         <Col>
-          <img
+          {/* <img
             src={student?.photo}
             alt="Profile"
             style={{ height: '150px', width: '150px', objectFit: 'cover' }}
             className="img-fluid rounded-circle shadow-sm mb-3 bg-white"
             crossOrigin=''
-          />
+          /> */}
           <h2 className="text-primary">{student?.full_name}</h2>
         </Col>
       </Row>

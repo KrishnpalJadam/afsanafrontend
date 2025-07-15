@@ -672,7 +672,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   >
                     Tasks
                   </li>
-                  <li
+                  {/* <li
                     className={`menu-item submenu-item ${isActive("/tasksreminder") ? "active" : ""
                       }`}
                     onClick={() => {
@@ -681,7 +681,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                     }}
                   >
                     Reminder
-                  </li>
+                  </li> */}
                 </ul>
               )}
             </li>

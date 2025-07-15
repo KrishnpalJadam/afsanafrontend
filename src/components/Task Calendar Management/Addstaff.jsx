@@ -596,7 +596,7 @@ const Addstaff = () => {
                     <div className="table-responsive">
                         <table className="table table-hover">
                             <thead className="table-light">
-                                <tr>
+                                <tr className="text-center">
                                     <th>#</th>
                                     <th>Name</th>
                                     <th>Email</th>
@@ -618,21 +618,16 @@ const Addstaff = () => {
                                             </span>
                                         </td>
                                        
-                                        <td>
-                                            <div className="d-flex gap-2">
-                                                {/* <button
-                                                    className="btn btn-sm btn-outline-primary"
-                                                    onClick={() => handleEdit(staff)}
-                                                >
-                                                    Edit
-                                                </button> */}
+                                        <td className="" style={{alignItems:"center"}}>
+                                            
+                                               
                                                 <button
-                                                    className="btn btn-sm btn-outline-danger"
+                                                    className="btn btn-sm btn-outline-danger "
                                                     onClick={() => handleDelete(staff.id)}
                                                 >
                                                     Delete
                                                 </button>
-                                            </div>
+                                           
                                         </td>
                                     </tr>
                                 ))}
