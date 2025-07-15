@@ -401,7 +401,7 @@ const Inquiry = () => {
       present_address: newInquiry.presentAddress,
       date_of_inquiry: newInquiry.date_of_inquiry, // Use the date of inquiry from the form
       additional_notes: newInquiry.additionalNotes,
-
+  
     };
 
     try {
