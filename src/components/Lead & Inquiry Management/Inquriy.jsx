@@ -401,7 +401,7 @@ const Inquiry = () => {
       present_address: newInquiry.presentAddress,
       date_of_inquiry: newInquiry.date_of_inquiry, // Use the date of inquiry from the form
       additional_notes: newInquiry.additionalNotes,
-  
+
     };
 
     try {
@@ -496,9 +496,9 @@ const Inquiry = () => {
   // Handle delete inquiry
   const handleDeleteInquiry = async (id) => {
     try {
-     const res= await api.delete(`${BASE_URL}inquiries/${id}`);
+      const res = await api.delete(`${BASE_URL}inquiries/${id}`);
       console.log(res)
-      await fetchInquiries ();
+      await fetchInquiries();
     } catch (error) {
       console.error("Error deleting inquiry:", error);
     }
@@ -837,8 +837,15 @@ const Inquiry = () => {
                 <td>{inq.inquiry_type}</td>
                 <td>{new Date(inq.date_of_inquiry).toISOString().split('T')[0]}</td>
                 <td>{inq.country}</td>
-                <td>
+                {/* <td>
                   {String(inq.counselor_id)  ? (
+                    <Badge bg="warning">Not Assigned</Badge>
+                  ) : (
+                    inq.counselor_name || <Badge bg="secondary">N/A</Badge>
+                  )}
+                </td> */}
+                <td>
+                  {(inq.counselor_id === null || inq.counselor_id === 0 || inq.counselor_id === "0") ? (
                     <Badge bg="warning">Not Assigned</Badge>
                   ) : (
                     inq.counselor_name || <Badge bg="secondary">N/A</Badge>

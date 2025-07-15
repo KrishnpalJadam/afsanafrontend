@@ -505,17 +505,17 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                     Student Programs
                   </li>}
 
-                  {/* {hasPermission("Communication", "view")&&<li
+                  {hasPermission("Communication", "view")&&<li
                     className={`menu-item submenu-item ${
-                      isActive("/ContactSupport") ? "active" : ""
+                      isActive("/studentDecision") ? "active" : ""
                     }`}
                     onClick={() => {
-                      navigate("/ContactSupport");
+                      navigate("/studentDecision");
                       menuItemClick();
                     }}
                   >
-                    Communication
-                  </li>} */}
+                    Student Decision
+                  </li>}
                 </ul>
               )}
             </li>

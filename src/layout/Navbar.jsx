@@ -24,41 +24,41 @@ const Navbar = ({ toggleSidebar }) => {
 
 
 
-  useEffect(() => {
-    // Initial fetch
-    fetchNotifications();
+  // useEffect(() => {
+  //   // Initial fetch
+  //   fetchNotifications();
 
 
-    const interval = setInterval(() => {
-      fetchNotifications();
-    }, 7000);
+  //   const interval = setInterval(() => {
+  //     fetchNotifications();
+  //   }, 7000);
 
 
-    return () => clearInterval(interval);
-  }, []);
+  //   return () => clearInterval(interval);
+  // }, []);
 
 
-  const fetchNotifications = async () => {
-    try {
-      const response = await api.get(`notification`);
+  // const fetchNotifications = async () => {
+  //   try {
+  //     const response = await api.get(`notification`);
 
-      const tasks = (response.data.tasks || []).map((task) => ({
-        ...task,
-        type: "task",
-      }));
+  //     const tasks = (response.data.tasks || []).map((task) => ({
+  //       ...task,
+  //       type: "task",
+  //     }));
 
-      const inquiries = (response.data.inquiries || []).map((inquiry) => ({
-        ...inquiry,
-        type: "inquiry",
-      }));
+  //     const inquiries = (response.data.inquiries || []).map((inquiry) => ({
+  //       ...inquiry,
+  //       type: "inquiry",
+  //     }));
 
-      const allNotifications = [...tasks, ...inquiries];
+  //     const allNotifications = [...tasks, ...inquiries];
 
-      setNotifications(allNotifications);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  //     setNotifications(allNotifications);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
 
 const handleClearAllNotifications = async () => {

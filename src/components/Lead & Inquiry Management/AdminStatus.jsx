@@ -54,7 +54,9 @@ function AdminStatus() {
     const fetchPerformance = async () => {
       try {
         const response = await api.get(`${BASE_URL}counselor-performance`);
+        
         setPerformance(response.data || []);
+
       } catch (error) {
         console.log('Error fetching performance data:', error);
         setPerformance([]);

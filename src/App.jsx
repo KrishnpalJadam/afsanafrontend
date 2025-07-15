@@ -81,6 +81,7 @@ import Visaprocesing from "./components/AdmissionTracking/Visaprocesing";
 import StaffDashboard from "./components/universityPagesform/StaffDashboard";
 import Stafflead from "./components/Lead & Inquiry Management/Stafflead";
 import VisaProcessList from "./components/AdmissionTracking/VisaProcessingList";
+import StudentDecisions from "./components/StudentDecision/StudentDewcision";
 
 
 
@@ -204,6 +205,7 @@ useEffect(() => {
               {/* Admission Decisions */}
               <Route path="/applications" element={<ProtectedRoute><AdmissionDecisions /></ProtectedRoute>} />
               <Route path="/AdmissionTracking" element={<ProtectedRoute><AdmissionTracking /></ProtectedRoute>} />
+              <Route path="/studentDecision" element={<ProtectedRoute><StudentDecisions /></ProtectedRoute>} />
 
               {/* Follow Up */}
               <Route path="/followup" element={<ProtectedRoute><FollowUpScheduling /></ProtectedRoute>} />
