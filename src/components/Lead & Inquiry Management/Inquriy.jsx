@@ -496,13 +496,9 @@ const Inquiry = () => {
   // Handle delete inquiry
   const handleDeleteInquiry = async (id) => {
     try {
-      await api.delete(`${BASE_URL}inquiries/${id}`);
-      setInquiries({
-        ...inquiries,
-        todayInquiries: inquiries.todayInquiries.filter(
-          (inq) => inq.id !== id
-        ),
-      });
+     const res= await api.delete(`${BASE_URL}inquiries/${id}`);
+      console.log(res)
+      await fetchInquiries ();
     } catch (error) {
       console.error("Error deleting inquiry:", error);
     }
