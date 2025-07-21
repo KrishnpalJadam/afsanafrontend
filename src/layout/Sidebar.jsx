@@ -462,6 +462,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                 "/admission",
                 "/Searchprograms",
                 "/ContactSupport",
+                "/studentDecision", 
               ])
                 ? "active"
                 : ""
@@ -502,7 +503,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                       // menuItemClick();
                     }}
                   >
-                    Student Programs
+                    Apply University
                   </li>}
 
                   {hasPermission("Communication", "view")&&<li
@@ -967,7 +968,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
           ) : (
             ""
           )}
-          {login == "student" && hasPermission("Course & University", "view") ? (
+          {/* {login == "student" && hasPermission("Course & University", "view") ? (
             <li
               className={`menu-item ${isActive("/visaprocesinglist") ? "active" : ""
                 }`}
@@ -985,7 +986,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
             </li>
           ) : (
             ""
-          )}
+          )} */}
 
            {login == "counselor" && hasPermission("Course & University", "view") ? (
             <li

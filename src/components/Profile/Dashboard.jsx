@@ -19,7 +19,15 @@ import api from "../../interceptors/axiosInterceptor";
 import { hasPermission } from "../../authtication/permissionUtils";
 import BASE_URL from "../../Config";
 
-ChartJS.register(LineElement, ArcElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend);
+ChartJS.register(
+  LineElement,
+  ArcElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  Tooltip,
+  Legend
+);
 
 const lineOptions = {
   maintainAspectRatio: false,
@@ -35,7 +43,7 @@ const lineOptions = {
 const Dashboard = () => {
   const [universities, setUniversities] = useState([]);
   const [selectedUniversityId, setSelectedUniversityId] = useState(null);
-   const [data, setData] = useState({ totaltasks: 0, totalpayment: 0 });
+  const [data, setData] = useState({ totaltasks: 0, totalpayment: 0 });
   const [applicationStatus, setApplicationStatus] = useState({
     Application_stage: 0,
     Interview: 0,
@@ -103,8 +111,13 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchPermissions = async () => {
       try {
-        const permissionsResponse = await api.get(`/permission?role_name=${role}`);
-        localStorage.setItem("permissions", JSON.stringify(permissionsResponse.data));
+        const permissionsResponse = await api.get(
+          `/permission?role_name=${role}`
+        );
+        localStorage.setItem(
+          "permissions",
+          JSON.stringify(permissionsResponse.data)
+        );
       } catch (error) {
         console.error("Error fetching permissions:", error);
       }
@@ -144,15 +157,14 @@ const Dashboard = () => {
     return <div>You don't have access for Dashboard</div>;
   }
 
-
-   useEffect(() => {
+  useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await axios.get(
           `https://ssknf82q-3009.inc1.devtunnels.ms/api/studentsdashboard/${stuId}`
         );
         console.log(res);
-        
+
         setData(res?.data?.data);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
@@ -185,7 +197,9 @@ const Dashboard = () => {
                 value={selectedUniversityId}
                 onChange={(e) => setSelectedUniversityId(e.target.value)}
               >
-                <option value="">-- Select University For Status Check --</option>
+                <option value="">
+                  -- Select University For Status Check --
+                </option>
                 {universities.map((uni) => (
                   <option key={uni.id} value={uni.id}>
                     {uni.name}
@@ -195,40 +209,46 @@ const Dashboard = () => {
             </Form.Group>
           </div>
 
-         <Row className="row gx-3 mt-3">
-  <div className="col-6">
-    <div
-      className="card p-3 text-center"
-      style={{
-        background: "linear-gradient(145deg, #2a2fbd, #091d50)",
-        color: "white",
-      }}
-    >
-      <i class="fa-solid fa-list-check" style={{fontSize:"24px"}}></i>
-      <h5 className="mt-3">Total Tasks</h5>
-      <h3>{data.totaltasks}</h3>
-    </div>
-  </div>
+          <Row className="row gx-3 mt-3">
+            <div className="col-6">
+              <div
+                className="card p-3 text-center"
+                style={{
+                  background: "linear-gradient(145deg, #2a2fbd, #091d50)",
+                  color: "white",
+                }}
+              >
+                <i
+                  class="fa-solid fa-list-check"
+                  style={{ fontSize: "24px" }}
+                ></i>
+                <h5 className="mt-3">Total Tasks</h5>
+                <h3>{data.totaltasks}</h3>
+              </div>
+            </div>
 
-  <div className="col-6">
-    <div
-      className="card p-3 text-center"
-      style={{
-        background: "linear-gradient(145deg, #2a2fbd, #091d50)",
-        color: "white",
-      }}
-    >
-      <i class="fa-solid fa-money-check-dollar " style={{fontSize:"24px"}}></i>
-      <h5 className="mt-3">Total Payment</h5>
-      <h3>{data.totalpayments}</h3>
-    </div>
-  </div>
-</Row>
+            <div className="col-6">
+              <div
+                className="card p-3 text-center"
+                style={{
+                  background: "linear-gradient(145deg, #2a2fbd, #091d50)",
+                  color: "white",
+                }}
+              >
+                <i
+                  class="fa-solid fa-money-check-dollar "
+                  style={{ fontSize: "24px" }}
+                ></i>
+                <h5 className="mt-3">Total Payment</h5>
+                <h3>{data.totalpayments}</h3>
+              </div>
+            </div>
+          </Row>
 
-
-          <Row className="text-center g-4 mt-3">
+          {/* <Row className="text-center g-4 mt-3">
             {cards.map((item, index) => {
-              const status = applicationStatus[item.key] === "1" ? "complete" : "incomplete";
+              const status =
+                applicationStatus[item.key] === "1" ? "complete" : "incomplete";
               const badgeClass =
                 status === "complete"
                   ? "bg-success"
@@ -240,18 +260,20 @@ const Dashboard = () => {
                 <Col md={4} key={index}>
                   <Card className="p-3" style={{ backgroundColor: item.bg }}>
                     <div style={{ fontSize: "1.2rem" }}>{item.label}</div>
-                    <span className={`badge px-3 py-2 mt-2 fs-6 rounded-pill ${badgeClass}`}>
+                    <span
+                      className={`badge px-3 py-2 mt-2 fs-6 rounded-pill ${badgeClass}`}
+                    >
                       {status.charAt(0).toUpperCase() + status.slice(1)}
                     </span>
                   </Card>
                 </Col>
               );
             })}
-          </Row>
+          </Row> */}
         </Card.Body>
       </Card>
 
-      <Row>
+      {/* <Row>
         <Col md={6}>
           <Card className="mb-4">
             <Card.Body style={{ height: "400px" }}>
@@ -269,7 +291,7 @@ const Dashboard = () => {
             </Card.Body>
           </Card>
         </Col>
-      </Row>
+      </Row> */}
     </Container>
   );
 };

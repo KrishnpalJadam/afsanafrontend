@@ -56,7 +56,7 @@ const SearchPrograms = () => {
   return (
     <div className="container">
       <div className="p-4">
-        <h2 className="text-center">Search Programs & Schools</h2>
+        <h2 className="text-center">Apply For University</h2>
       </div>
 
       <div className="row mb-4">
