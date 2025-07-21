@@ -18,6 +18,7 @@ import {
 import api from "../../interceptors/axiosInterceptor";
 import { hasPermission } from "../../authtication/permissionUtils";
 import BASE_URL from "../../Config";
+import Visaprocesing from "../AdmissionTracking/Visaprocesing";
 
 ChartJS.register(
   LineElement,
@@ -189,25 +190,7 @@ const Dashboard = () => {
 
       <Card className="mb-4">
         <Card.Body>
-          <div className="d-flex justify-content-between align-items-center">
-            <h5>Check Application Journey</h5>
-            <Form.Group className="mb-0 d-flex">
-              <Form.Select
-                name="university_id"
-                value={selectedUniversityId}
-                onChange={(e) => setSelectedUniversityId(e.target.value)}
-              >
-                <option value="">
-                  -- Select University For Status Check --
-                </option>
-                {universities.map((uni) => (
-                  <option key={uni.id} value={uni.id}>
-                    {uni.name}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group>
-          </div>
+          <Visaprocesing/>
 
           <Row className="row gx-3 mt-3">
             <div className="col-6">
