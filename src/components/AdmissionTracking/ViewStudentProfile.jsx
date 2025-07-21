@@ -353,7 +353,7 @@ const ApplicationDetails = () => {
             <div className="col-md-4">
               <p>
                 <strong>Identifying Name:</strong>{" "}
-                {application.identifying_name}
+                {application.identify_name}
               </p>
             </div>
             <div className="col-md-4">
@@ -366,7 +366,7 @@ const ApplicationDetails = () => {
             </div>
           </div>
           <div className="row">
-            <div className="col-md-4">
+            <div className="col-md-6">
               <p>
                 <strong>Application Submission Date:</strong>{" "}
                 {application.application_submission_date

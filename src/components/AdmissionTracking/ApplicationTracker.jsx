@@ -305,6 +305,7 @@ const handleResetFilters = () => {
               <th>Proof of Income</th>
               <th>Assign to</th>
               <th>Document Verify</th>
+              <th>Status</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -345,6 +346,17 @@ const handleResetFilters = () => {
                       {app.status === 1 ? "Mark Pending" : "Verify"}
                     </button>
                   </td>
+        <td>
+  {app.Visa_process == 1 ? (
+    <span className="badge bg-success">Visa Process</span>
+  ) : app.Interview == 1 ? (
+    <span className="badge bg-warning text-dark">Interview</span>
+  ) : app.Application_stage == 1 ? (
+    <span className="badge bg-info">Application </span>
+  ) : (
+    <span className="badge bg-secondary">Not Started</span>
+  )}
+</td>
 
                   <td>
                     <Link to={`/student/${app.id}`}>
