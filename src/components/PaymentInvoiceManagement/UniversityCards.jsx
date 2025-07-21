@@ -10,7 +10,7 @@ import api from "../../interceptors/axiosInterceptor";
 const UniversityCards = () => {
   const [universities, setUniversities] = useState([]);
   const role = localStorage.getItem("login"); // To check if the user is an admin
-  
+
   // Spring animation for the cards
   const animation = useSpring({
     opacity: 1,
@@ -66,26 +66,36 @@ const UniversityCards = () => {
       <div className="row mt-4">
         {universities.length > 0 ? (
           universities.map((university, index) => {
-            const programs = Array.isArray(university.programs) ? university.programs : [];
-            const highlights = Array.isArray(university.highlights) ? university.highlights : [];
+            const programs = Array.isArray(university.programs)
+              ? university.programs
+              : [];
+            const highlights = Array.isArray(university.highlights)
+              ? university.highlights
+              : [];
 
             return (
-              <animated.div key={index} className="col-md-4 mb-4" style={animation}>
+              <animated.div
+                key={index}
+                className="col-md-4 mb-4"
+                style={animation}
+              >
                 <div className="card shadow-sm" style={{ height: "450px" }}>
-                  <div className="card-body"
-                   style={{
-        maxHeight: "100%",
-        overflowY: "scroll",
-        scrollbarWidth: "none", // Firefox
-        msOverflowStyle: "none", // IE 10+
-      }}>
-         <style>
-        {`
+                  <div
+                    className="card-body"
+                    style={{
+                      maxHeight: "100%",
+                      overflowY: "scroll",
+                      scrollbarWidth: "none", // Firefox
+                      msOverflowStyle: "none", // IE 10+
+                    }}
+                  >
+                    <style>
+                      {`
           .card-body::-webkit-scrollbar {
             display: none;
           }
         `}
-      </style>
+                    </style>
                     <div className="d-flex align-items-center mb-4">
                       <img
                         src={university.logo_url}
@@ -141,21 +151,22 @@ const UniversityCards = () => {
                     <div className="mb-4">
                       <h6 className="font-weight-bold">Contact:</h6>
                       <div className="text-muted">
-                        <p>📞 {university.contact_phone || 'N/A'}</p>
-                        <p>📧 {university.contact_email || 'N/A'}</p>
+                        <p>📞 {university.contact_phone || "N/A"}</p>
+                        <p>📧 {university.contact_email || "N/A"}</p>
                       </div>
                     </div>
-                    {
-                      (role == "student" || role == "counselor")
-                        ?
-                        <Link to={`/university/${university.id}`} className="btn btn-primary w-100">
-                          Apply Now
-                        </Link>
-                        :
-                        <Link to={"/login"} className="btn btn-primary w-100">
-                          Apply Now
-                        </Link>
-                    }
+                    {role == "student" || role == "counselor" ? (
+                      <Link
+                        to={`/university/${university.id}`}
+                        className="btn btn-primary w-100"
+                      >
+                        Apply Now
+                      </Link>
+                    ) : (
+                      <Link to={"/login"} className="btn btn-primary w-100">
+                        Apply Now
+                      </Link>
+                    )}
                     {role === "admin" && (
                       <div>
                         <Button
