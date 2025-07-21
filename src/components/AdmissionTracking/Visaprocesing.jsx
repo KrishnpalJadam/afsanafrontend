@@ -12,6 +12,7 @@ import {
 import "bootstrap-icons/font/bootstrap-icons.css";
 import api from "../../interceptors/axiosInterceptor";
 import BASE_URL from "../../Config";
+import Swal from "sweetalert2";
 
 const Visaprocesing = () => {
   const [activeStep, setActiveStep] = useState("application");
@@ -50,6 +51,25 @@ const Visaprocesing = () => {
         const studentResponse = await api.get(
           `${BASE_URL}auth/getStudentById/${studentId}`
         );
+          Swal.fire({
+                title: "Processing...",
+                html: "Please wait while we submit your data.",
+                allowOutsideClick: false,
+                didOpen: () => {
+                  Swal.showLoading();
+        
+                  // Simulate API call (replace with your actual API call)
+                  setTimeout(() => {
+                    // This is where your API success would be
+                    Swal.fire({
+                      title: "Success!",
+                      text: "Data submitted successfully!",
+                      icon: "success",
+                      confirmButtonText: "OK",
+                    });
+                  },true); // Remove this timeout and replace with your API call
+                },
+              });
         const studentData = studentResponse.data;
 
         // Check if visa process record exists
@@ -57,6 +77,25 @@ const Visaprocesing = () => {
           const visaProcessResponse = await api.get(
             `${BASE_URL}getVisaProcessByStudentId/VisaProcess/${studentId}`
           );
+            Swal.fire({
+                  title: "Processing...",
+                  html: "Please wait while we submit your data.",
+                  allowOutsideClick: false,
+                  didOpen: () => {
+                    Swal.showLoading();
+          
+                    // Simulate API call (replace with your actual API call)
+                    setTimeout(() => {
+                      // This is where your API success would be
+                      Swal.fire({
+                        title: "Success!",
+                        text: "Data submitted successfully!",
+                        icon: "success",
+                        confirmButtonText: "OK",
+                      });
+                    }, 2000); // Remove this timeout and replace with your API call
+                  },
+                });
           // const visaProcessResponse = await api.get(`${BASE_URL}api/getVisaProcessByStudent/${studentId}`);
           const visaData = visaProcessResponse.data;
           console.log(visaData);
@@ -186,6 +225,26 @@ const Visaprocesing = () => {
           }
         );
 
+          Swal.fire({
+                title: "Processing...",
+                html: "Please wait while we submit your data.",
+                allowOutsideClick: false,
+                didOpen: () => {
+                  Swal.showLoading();
+        
+                  // Simulate API call (replace with your actual API call)
+                  setTimeout(() => {
+                    // This is where your API success would be
+                    Swal.fire({
+                      title: "Success!",
+                      text: "Data submitted successfully!",
+                      icon: "success",
+                      confirmButtonText: "OK",
+                    });
+                  }, 2000); // Remove this timeout and replace with your API call
+                },
+              });
+
         if (!response.data.id) {
           throw new Error("No ID returned from server after creation");
         }
@@ -207,6 +266,25 @@ const Visaprocesing = () => {
             },
           }
         );
+          Swal.fire({
+                title: "Processing...",
+                html: "Please wait while we submit your data.",
+                allowOutsideClick: false,
+                didOpen: () => {
+                  Swal.showLoading();
+        
+                  // Simulate API call (replace with your actual API call)
+                  setTimeout(() => {
+                    // This is where your API success would be
+                    Swal.fire({
+                      title: "Success!",
+                      text: "Data submitted successfully!",
+                      icon: "success",
+                      confirmButtonText: "OK",
+                    });
+                  }, 2000); // Remove this timeout and replace with your API call
+                },
+              });
 
         if (!completedSteps.includes(activeStep)) {
           setCompletedSteps((prev) => [...prev, activeStep]);
@@ -273,6 +351,7 @@ const Visaprocesing = () => {
           setSelectedUniversityId(res.data[0].id);
         }
       })
+        
       .catch((err) => console.error("Error fetching universities:", err));
   }, []);
 
