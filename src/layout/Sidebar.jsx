@@ -110,13 +110,13 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
           )}
           {login == "student" && (
             <li
-              className={`menu-item ${isActive("/studentProfile") ? "active" : ""
+              className={`menu-item ${isActive("/dashboardvisa") ? "active" : ""
                 }`}
             >
               <div
                 className="menu-link menu-i"
                 onClick={() => {
-                  navigate("/studentProfile");
+                  navigate("/dashboardvisa");
                   // menuItemClick();
                   // toggleSidebar();
                 }}

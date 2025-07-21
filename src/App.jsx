@@ -83,6 +83,7 @@ import Stafflead from "./components/Lead & Inquiry Management/Stafflead";
 import VisaProcessList from "./components/AdmissionTracking/VisaProcessingList";
 import StudentDecisions from "./components/StudentDecision/StudentDewcision";
 import BASE_URL from "./Config";
+import DashboardVisa from "./components/AdmissionTracking/DashboardVisa";
 
 
 
@@ -241,6 +242,7 @@ useEffect(() => {
 
               {/* Protected Route for Dashboard */}
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/dashboardvisa" element={<ProtectedRoute><DashboardVisa /></ProtectedRoute>} />
 
               {/* Other Protected Routes */}
               <Route path="/councelor" element={<ProtectedRoute><Councelor /></ProtectedRoute>} />

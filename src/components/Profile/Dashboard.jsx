@@ -176,7 +176,7 @@ const Dashboard = () => {
 
   return (
     <Container fluid className="mt-4">
-      <Card className="p-3 mb-4">
+      {/* <Card className="p-3 mb-4">
         <div className="d-flex justify-content-between">
           <h3>
             Welcome,{" "}
@@ -185,11 +185,11 @@ const Dashboard = () => {
             </Link>
           </h3>
         </div>
-      </Card>
+      </Card> */}
 
       <Card className="mb-4">
         <Card.Body>
-          <div className="d-flex justify-content-between align-items-center">
+          {/* <div className="d-flex justify-content-between align-items-center">
             <h5>Check Application Journey</h5>
             <Form.Group className="mb-0 d-flex">
               <Form.Select
@@ -207,7 +207,7 @@ const Dashboard = () => {
                 ))}
               </Form.Select>
             </Form.Group>
-          </div>
+          </div> */}
 
           <Row className="row gx-3 mt-3">
             <div className="col-6">
