@@ -17,11 +17,13 @@ import {
   BsSearch,
 } from "react-icons/bs";
 import api from "../../interceptors/axiosInterceptor";
-import BASE_URL from "../../Config";
+
 import { toast } from "react-toastify";
 import "./Lead.css";
+import AddLead from "./AddLead";
+import BASE_URL from "../../Config";
 
-const LeadTable = () => {
+const LeadTable = ({ show, handleClose }) => {
   const [convertData, setConvertData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [showAssignModal, setShowAssignModal] = useState(false);
@@ -29,6 +31,7 @@ const LeadTable = () => {
   const [counselors, setCounselors] = useState([]);
   const [selectedCounselor, setSelectedCounselor] = useState(null);
   const [followUpDate, setFollowUpDate] = useState("");
+  const [showModal, setShowModal] = useState(false);
   const [notes, setNotes] = useState("");
 
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -466,7 +469,7 @@ const handleConvertToStudent = (lead) => {
             </Form.Select>
           </Col>
 
-          <Col md={3}>
+          <Col md={2}>
             <InputGroup size="sm">
               <Form.Control
                 placeholder="Search by name, email or phone"
@@ -495,8 +498,36 @@ const handleConvertToStudent = (lead) => {
             >
               Reset
             </Button>
+            
           </Col>
+          
         </Row>
+  <Row className="mt-2">
+        <Col md="auto" className="ms-auto">
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() => setShowModal(true)}
+          >
+            Add Lead
+          </Button>
+        </Col>
+      </Row>
+ <Modal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        backdrop="static"
+        size="lg"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Add Lead</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <AddLead />
+        </Modal.Body>
+      </Modal>
+      
 
       </div>
 
@@ -569,7 +600,7 @@ const handleConvertToStudent = (lead) => {
                     <option value="Registered">Registered</option>
                     <option value="Dropped">Dropped</option>
                   </Form.Select>
-                 {lead.new_leads === "Registered" && (
+                 {/* {lead.new_leads === "Registered" && (
   <Button  
     variant="outline-primary" 
     size="sm" 
@@ -578,7 +609,7 @@ const handleConvertToStudent = (lead) => {
   >
     <BsArrowRepeat className="me-1" /> Convert to Student
   </Button>
-)}
+)} */}
 
 
                   {/* <Button variant="outline-secondary" size="sm" className="me-2" onClick={() => handleOpenUploadModal(lead)}>
