@@ -118,22 +118,22 @@ function App() {
 
 // Currently  for checking using this  
 
- useEffect(() => {
-  const authToken = localStorage.getItem("authToken");
-  const role = localStorage.getItem("role");
+//  useEffect(() => {
+//   const authToken = localStorage.getItem("authToken");
+//   const role = localStorage.getItem("role");
 
-  if (authToken && role) {
-    if (role === "admin") {
-      navigate("/dashboard");
-    } else if (role === "student") {
-      navigate("/UniversityCards");
-    } else if (role === "counselor") {
-      navigate("/councelor");
-    } else if (role === "staff") {
-      navigate("/staffDashboard");
-    }
-  }
-}, []);
+//   if (authToken && role) {
+//     if (role === "admin") {
+//       navigate("/dashboard");
+//     } else if (role === "student") {
+//       navigate("/UniversityCards");
+//     } else if (role === "counselor") {
+//       navigate("/councelor");
+//     } else if (role === "staff") {
+//       navigate("/staffDashboard");
+//     }
+//   }
+// }, []);
 
   useEffect(() => {
 

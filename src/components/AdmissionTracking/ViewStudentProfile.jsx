@@ -51,7 +51,6 @@
 //     );
 //   };
 
-
 //   const handleBack = () => {
 //     navigate(-1);
 //   };
@@ -151,7 +150,6 @@
 //                     })()}
 //                   </td>
 
-
 //                   <td>
 //                     {isDocument && canViewDocument(value) ? (
 //                       <a href={value} target="_blank" rel="noreferrer">
@@ -175,20 +173,15 @@
 
 // export default ApplicationDetails;
 
-
-
-
-
-
-
-
-
-
-
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, Table, Button, Badge } from "react-bootstrap";
-import { FaArrowLeft, FaCheckCircle, FaTimesCircle, FaFilePdf } from "react-icons/fa";
+import {
+  FaArrowLeft,
+  FaCheckCircle,
+  FaTimesCircle,
+  FaFilePdf,
+} from "react-icons/fa";
 import api from "../../interceptors/axiosInterceptor";
 
 const ApplicationDetails = () => {
@@ -206,7 +199,9 @@ const ApplicationDetails = () => {
       } catch (error) {
         try {
           const fallback = await api.get(`studentApplication/${id}`);
-          setApplication(Array.isArray(fallback.data) ? fallback.data[0] : fallback.data);
+          setApplication(
+            Array.isArray(fallback.data) ? fallback.data[0] : fallback.data
+          );
         } catch (err) {
           console.error("Failed to fetch application data", err);
         }
@@ -219,27 +214,56 @@ const ApplicationDetails = () => {
   }, [id]);
 
   const documentFields = [
-    "accommodation_proof", "airplane_ticket_booking", "appendix_form_completed", "bank_statement",
-    "birth_certificate", "conditional_offer_letter", "english_language_proof", "europass_cv",
-    "european_photo", "fee_confirmation_document", "final_university_offer_letter", "final_offer_letter",
-    "financial_support_declaration", "health_insurance", "invoice_with_conditional_offer",
-    "motivation_letter", "passport_copy_prepared", "police_clearance_certificate",
-    "previous_studies_certificates", "proof_of_income", "proof_of_relationship",
-    "residence_permit_form", "travel_insurance", "tuition_fee_transfer_proof"
+    "accommodation_proof",
+    "airplane_ticket_booking",
+    "appendix_form_completed",
+    "bank_statement",
+    "birth_certificate",
+    "conditional_offer_letter",
+    "english_language_proof",
+    "europass_cv",
+    "european_photo",
+    "fee_confirmation_document",
+    "final_university_offer_letter",
+    "final_offer_letter",
+    "financial_support_declaration",
+    "health_insurance",
+    "invoice_with_conditional_offer",
+    "motivation_letter",
+    "passport_copy_prepared",
+    "police_clearance_certificate",
+    "previous_studies_certificates",
+    "proof_of_income",
+    "proof_of_relationship",
+    "residence_permit_form",
+    "travel_insurance",
+    "tuition_fee_transfer_proof",
   ];
 
   const applicationFields = [
-    "registration_date", "application_submission_date", "passport_copy_prepared", "english_language_proof",
-    "conditional_offer_letter", "fee_confirmation_document"
+    "registration_date",
+    "application_submission_date",
+    "passport_copy_prepared",
+    "english_language_proof",
+    "conditional_offer_letter",
+    "fee_confirmation_document",
   ];
 
   const interviewFields = [
-    "motivation_letter", "europass_cv", "interview_date", "interview_feedback"
+    "motivation_letter",
+    "europass_cv",
+    "interview_date",
+    "interview_feedback",
   ];
 
   const visaFields = [
-    "health_insurance", "travel_insurance", "residence_permit_form", "flight_booking_confirmed",
-    "visa_status", "police_clearance_certificate", "tuition_fee_transfer_proof"
+    "health_insurance",
+    "travel_insurance",
+    "residence_permit_form",
+    "flight_booking_confirmed",
+    "visa_status",
+    "police_clearance_certificate",
+    "tuition_fee_transfer_proof",
   ];
 
   const getFieldsForStep = () => {
@@ -259,26 +283,40 @@ const ApplicationDetails = () => {
   const getBadge = (key, value) => {
     if (documentFields.includes(key)) {
       return canViewDocument(value) ? (
-        <Badge bg="success"><FaCheckCircle /> Completed</Badge>
+        <Badge bg="success">
+          <FaCheckCircle /> Completed
+        </Badge>
       ) : (
-        <Badge bg="warning text-dark"><FaTimesCircle /> Pending</Badge>
+        <Badge bg="warning text-dark">
+          <FaTimesCircle /> Pending
+        </Badge>
       );
     }
 
     let label =
-      (key === "flight_booking_confirmed" && (value === "1" ? "Confirmed" : "Pending")) ||
-      (key === "online_enrollment_completed" && (value === "1" ? "Completed" : "Pending")) ||
-      (key === "accommodation_confirmation" && (value === "1" ? "Received" : "Pending")) ||
-      (key === "Application_stage" && (value === "1" ? "Completed" : "Pending")) ||
+      (key === "flight_booking_confirmed" &&
+        (value === "1" ? "Confirmed" : "Pending")) ||
+      (key === "online_enrollment_completed" &&
+        (value === "1" ? "Completed" : "Pending")) ||
+      (key === "accommodation_confirmation" &&
+        (value === "1" ? "Received" : "Pending")) ||
+      (key === "Application_stage" &&
+        (value === "1" ? "Completed" : "Pending")) ||
       (key === "Interview" && (value === "1" ? "Done" : "Pending")) ||
       (key === "Visa_process" && (value === "1" ? "Started" : "Pending")) ||
       value;
 
-    const badgeVariant = ["Confirmed", "Completed", "Received", "Done", "Started"].includes(label)
+    const badgeVariant = [
+      "Confirmed",
+      "Completed",
+      "Received",
+      "Done",
+      "Started",
+    ].includes(label)
       ? "success"
       : label === "Pending"
-        ? "warning text-dark"
-        : "secondary";
+      ? "warning text-dark"
+      : "secondary";
 
     return <Badge bg={badgeVariant}>{label}</Badge>;
   };
@@ -288,10 +326,11 @@ const ApplicationDetails = () => {
   };
 
   if (loading) return <div className="text-center mt-5">Loading...</div>;
-  if (!application) return <div className="text-danger mt-5">Application not found.</div>;
+  if (!application)
+    return <div className="text-danger mt-5">Application not found.</div>;
   // ✅ Determine if steps are complete
-  const isApplicationComplete = applicationFields.every(k => application[k]);
-  const isInterviewComplete = interviewFields.every(k => application[k]);
+  const isApplicationComplete = applicationFields.every((k) => application[k]);
+  const isInterviewComplete = interviewFields.every((k) => application[k]);
 
   return (
     <div className="container mt-5">
@@ -302,10 +341,42 @@ const ApplicationDetails = () => {
       {/* Student Info */}
       <Card className="mb-3">
         <Card.Body>
-          <h4>{application.student_name}</h4>
-          <p><strong>University:</strong> {application.university_name}</p>
-          <p><strong>Registration Date:</strong> {application.registration_date ? new Date(application.registration_date).toLocaleDateString() : "-"}</p>
-          <p><strong>Application Submission Date:</strong> {application.application_submission_date ? new Date(application.application_submission_date).toLocaleDateString() : "-"}</p>
+          <h4>
+            <strong>Student Name:</strong> {application.student_name}
+          </h4>
+          <div className="row">
+            <div className="col-md-4">
+              <p>
+                <strong>University:</strong> {application.university_name}
+              </p>
+            </div>
+            <div className="col-md-4">
+              <p>
+                <strong>Identifying Name:</strong>{" "}
+                {application.identifying_name}
+              </p>
+            </div>
+            <div className="col-md-4">
+              <p>
+                <strong>Registration Date:</strong>{" "}
+                {application.registration_date
+                  ? new Date(application.registration_date).toLocaleDateString()
+                  : "-"}
+              </p>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-md-4">
+              <p>
+                <strong>Application Submission Date:</strong>{" "}
+                {application.application_submission_date
+                  ? new Date(
+                      application.application_submission_date
+                    ).toLocaleDateString()
+                  : "-"}
+              </p>
+            </div>
+          </div>
         </Card.Body>
       </Card>
 
@@ -313,26 +384,45 @@ const ApplicationDetails = () => {
       <div className="mb-4">
         {/* Professional Stepper UI */}
         <ul className="stepper">
-          <li className={step === 1 ? "active" : step > 1 ? "completed" : ""} onClick={() => setStep(1)} style={{ cursor: "pointer" }}>
-            <div className="step-icon">{step > 1 ? <FaCheckCircle /> : "1"}</div>
+          <li
+            className={step === 1 ? "active" : step > 1 ? "completed" : ""}
+            onClick={() => setStep(1)}
+            style={{ cursor: "pointer" }}
+          >
+            <div className="step-icon">
+              {step > 1 ? <FaCheckCircle /> : "1"}
+            </div>
             <span>Application</span>
           </li>
-          <li className={step === 2 ? "active" : step > 2 ? "completed" : ""} onClick={() => setStep(2)} style={{ cursor: "pointer" }}>
-            <div className="step-icon">{step > 2 ? <FaCheckCircle /> : "2"}</div>
+          <li
+            className={step === 2 ? "active" : step > 2 ? "completed" : ""}
+            onClick={() => setStep(2)}
+            style={{ cursor: "pointer" }}
+          >
+            <div className="step-icon">
+              {step > 2 ? <FaCheckCircle /> : "2"}
+            </div>
             <span>Interview</span>
           </li>
-          <li className={step === 3 ? "active" : ""} onClick={() => setStep(3)} style={{ cursor: "pointer" }}>
+          <li
+            className={step === 3 ? "active" : ""}
+            onClick={() => setStep(3)}
+            style={{ cursor: "pointer" }}
+          >
             <div className="step-icon">3</div>
             <span>Visa Process</span>
           </li>
         </ul>
-
-
       </div>
 
       {/* Status Table */}
       <Card>
-        <Card.Header><h5>{step === 1 ? "Application" : step === 2 ? "Interview" : "Visa"} Stage Details</h5></Card.Header>
+        <Card.Header>
+          <h5>
+            {step === 1 ? "Application" : step === 2 ? "Interview" : "Visa"}{" "}
+            Stage Details
+          </h5>
+        </Card.Header>
         <Table responsive bordered hover>
           <thead>
             <tr>
