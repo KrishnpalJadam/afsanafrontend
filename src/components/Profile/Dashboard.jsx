@@ -43,7 +43,7 @@ const lineOptions = {
 const Dashboard = () => {
   const [universities, setUniversities] = useState([]);
   const [selectedUniversityId, setSelectedUniversityId] = useState(null);
-  const [data, setData] = useState({ totaltasks: 0, totalpayment: 0 });
+  const [data, setData] = useState({ totaltasks: 0, totalpayment: 0,});
   const [applicationStatus, setApplicationStatus] = useState({
     Application_stage: 0,
     Interview: 0,
@@ -240,7 +240,7 @@ const Dashboard = () => {
                   style={{ fontSize: "24px" }}
                 ></i>
                 <h5 className="mt-3">Total Payment</h5>
-                <h3>{data.totalpayments}</h3>
+                <h3>{data.totalpayment}</h3>
               </div>
             </div>
           </Row>
