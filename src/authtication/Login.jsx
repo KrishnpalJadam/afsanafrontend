@@ -344,7 +344,7 @@ const Login = ({ setLogin }) => {
             textAlign: "center", fontSize: "14px", color: "#666"
           }}>
 
-            <Link
+            {/* <Link
               to="/signup"
               style={{
                 color: "#1d4ed8",
@@ -353,7 +353,7 @@ const Login = ({ setLogin }) => {
               }}
             >
               You don't have an account? signup
-            </Link>
+            </Link> */}
             {/* <p style={{ marginTop: "15px" }}>
               Don’t have an account? <a href="#" style={{ color: "#1d4ed8" }}>Sign up Now</a>
             </p> */}

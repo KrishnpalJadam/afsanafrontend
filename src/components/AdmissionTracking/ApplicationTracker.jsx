@@ -304,7 +304,7 @@ const handleResetFilters = () => {
               <th>Travel Insurance</th>
               <th>Proof of Income</th>
               <th>Assign to</th>
-              <th>Status</th>
+              <th>Document Verify</th>
               <th>Action</th>
             </tr>
           </thead>
