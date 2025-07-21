@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Bar, Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -9,31 +9,52 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import axios from "axios";
+import BASE_URL from "../../Config";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, ArcElement, Tooltip, Legend);
 
 const StaffDashboard = () => {
-  const totalLeads = 5;
-  const totalInquiries = 12;
+  const [totalLeads, setTotalLeads] = useState(0);
+  const [totalInquiries, setTotalInquiries] = useState(0);
+  const [chartData, setChartData] = useState([]);
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}sataffdashboard`);
+      if (res.data.success) {
+        const { total_leads, total_inquiries, chart_data } = res.data.data;
+        setTotalLeads(total_leads);
+        setTotalInquiries(total_inquiries);
+        setChartData(chart_data);
+      }
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+    }
+  };
 
   const barData = {
-    labels: ["Inquiries", "Leads"],
+    labels: chartData.map((item) => item.label),
     datasets: [
       {
         label: "Count",
-        data: [totalInquiries, totalLeads],
-        backgroundColor: ["#FF6B00", "#0049B7"],
+        data: chartData.map((item) => item.value),
+        backgroundColor: ["#0049B7", "#FF6B00"],
         borderRadius: 6,
       },
     ],
   };
 
   const pieData = {
-    labels: ["Leads", "Inquiries"],
+    labels: chartData.map((item) => item.label),
     datasets: [
       {
         label: "Distribution",
-        data: [totalLeads, totalInquiries],
+        data: chartData.map((item) => item.value),
         backgroundColor: ["#0049B7", "#FF6B00"],
         borderWidth: 1,
       },

@@ -185,7 +185,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                       }`}
                     onClick={() => {
                       navigate("/inquiry");
-                      menuItemClick();
+                      
                     }}
                   >
                     Inquiry
@@ -195,7 +195,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                       }`}
                     onClick={() => {
                       navigate("/lead");
-                      menuItemClick();
+                      // menuItemClick();
                     }}
                   >
                     Lead
@@ -205,7 +205,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                       }`}
                     onClick={() => {
                       navigate("/adminstatus");
-                      menuItemClick();
+                      // menuItemClick();
                     }}
                   >
                     All Lead
@@ -270,7 +270,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                       }`}
                     onClick={() => {
                       navigate("/leadCouncelor");
-                      menuItemClick();
+                      // menuItemClick();
                     }}
                   >
                     Lead
@@ -285,13 +285,13 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   >
                     Status
                   </li>} */}
-                  {hasPermission("Task", "view") && <li
+                  {/* {hasPermission("Task", "view") && <li
                     className={`menu-item submenu-item ${isActive("/councelorTask") ? "active" : ""
                       }`}
                     onClick={() => navigate("/councelorTask")}
                   >
                     Task
-                  </li>}
+                  </li>} */}
                   {/* <li
                     className={`menu-item submenu-item ${
                       isActive("/deal") ? "active" : ""
@@ -359,7 +359,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                       }`}
                     onClick={() => {
                       navigate("/studentDetails");
-                      menuItemClick();
+                      // menuItemClick();
                     }}
                   >
                     Student Details
@@ -380,7 +380,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                       }`}
                     onClick={() => {
                       navigate("/communication");
-                      menuItemClick();
+                      // menuItemClick();
                     }}
                   >
                     Communication
@@ -423,7 +423,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                       }`}
                     onClick={() => {
                       navigate("/counslerStudentTable");
-                      menuItemClick();
+                      // menuItemClick();
                     }}
                   >
                     Student Details
@@ -444,7 +444,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                       }`}
                     onClick={() => {
                       navigate("/communication");
-                      menuItemClick();
+                      // menuItemClick();
                     }}
                   >
                     Communication
@@ -488,7 +488,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                       }`}
                     onClick={() => {
                       navigate("/MainStudentDetails");
-                      menuItemClick();
+                      // menuItemClick();
                     }}
                   >
                     Student Details
@@ -499,7 +499,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                       }`}
                     onClick={() => {
                       navigate("/Searchprograms");
-                      menuItemClick();
+                      // menuItemClick();
                     }}
                   >
                     Student Programs
@@ -511,7 +511,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                     }`}
                     onClick={() => {
                       navigate("/studentDecision");
-                      menuItemClick();
+                      // menuItemClick();
                     }}
                   >
                     Student Decision
@@ -555,7 +555,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                       }`}
                     onClick={() => {
                       navigate("/PaymentInvoiceManagement");
-                      menuItemClick();
+                      // menuItemClick();
                     }}
                   >
                     Course & University
@@ -566,7 +566,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                       }`}
                     onClick={() => {
                       navigate("/tracker");
-                      menuItemClick();
+                      // menuItemClick();
                     }}
                   >
                     Application Tracker
@@ -588,7 +588,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                       }`}
                     onClick={() => {
                       navigate("/applications");
-                      menuItemClick();
+                      // menuItemClick();
                     }}
                   >
                     Admission Decision
@@ -647,7 +647,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                       }`}
                     onClick={() => {
                       navigate("/addcounselor");
-                      menuItemClick();
+                      // menuItemClick();
                     }}
                   >
                     Add Counselor
@@ -657,7 +657,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                       }`}
                     onClick={() => {
                       navigate("/addStaff");
-                      menuItemClick();
+                      // menuItemClick();
                     }}
                   >
                     Add Staff
@@ -667,7 +667,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                       }`}
                     onClick={() => {
                       navigate("/tasks");
-                      menuItemClick();
+                      // menuItemClick();
                     }}
                   >
                     Tasks
@@ -986,12 +986,32 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
           ) : (
             ""
           )}
+
+           {login == "counselor" && hasPermission("Course & University", "view") ? (
+            <li
+              className={`menu-item ${isActive("/councelorTask") ? "active" : ""
+                }`}
+            >
+              <div
+                className="menu-link menu-i"
+                onClick={() => {
+                  navigate("/councelorTask");
+                  // menuItemClick();
+                }}
+              >
+                <Globe size={18} className="mr-2" />
+                <span className="menu-text">Task</span>
+              </div>
+            </li>
+          ) : (
+            ""
+          )}
           {login == "counselor" && hasPermission("Course & University", "view") ? (
             <li
               className={`menu-item ${isActive("/UniversityCards") ? "active" : ""
                 }`}
             >
-              <div
+              {/* <div
                 className="menu-link menu-i"
                 onClick={() => {
                   navigate("/UniversityCards");
@@ -1000,7 +1020,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
               >
                 <GraduationCap size={18} className="mr-2" />
                 <span className="menu-text">Course & University</span>
-              </div>
+              </div> */}
               <div
                 className="menu-link menu-i"
                 onClick={() => {

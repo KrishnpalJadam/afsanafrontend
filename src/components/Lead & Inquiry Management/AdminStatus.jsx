@@ -341,7 +341,7 @@ function AdminStatus() {
               </Table>
             </Tab>
 
-            <Tab eventKey="counselorPerformance" title="Counselor-wise Performance">
+            {/* <Tab eventKey="counselorPerformance" title="Counselor-wise Performance">
               <Table striped bordered hover responsive>
                 <thead>
                   <tr>
@@ -364,7 +364,7 @@ function AdminStatus() {
                   ))}
                 </tbody>
               </Table>
-            </Tab>
+            </Tab> */}
           </Tabs>
         </div>
       </div>

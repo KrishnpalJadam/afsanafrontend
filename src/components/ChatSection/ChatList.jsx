@@ -9,6 +9,7 @@ const ChatList = ({ userId }) => {
   const [chatList, setChatList] = useState([]);
   const [userDetails, setUserDetails] = useState({}); // State to store user details (name, id, photo)
   const [counselors, setCounselors] = useState([]);
+   const [ student , setStudent] = useState ([])
   const navigate = useNavigate();
   const role = localStorage.getItem("login");
 
@@ -17,7 +18,9 @@ const ChatList = ({ userId }) => {
     const fetchChatList = async () => {
       try {
         const response = await axios.get(
-          `https://afsana-backend-production.up.railway.app/api/chats/getChatList/${userId}`
+          // `https://afsana-backend-production.up.railway.app/api/chats/getChatList/${userId}`
+          `${BASE_URL}chats/getChatList/${userId}`
+
         );
         if (response.data.success) {
           console.log("chatList", response.data.chatList)
@@ -52,6 +55,25 @@ const ChatList = ({ userId }) => {
     };
 
     fetchCounselors();
+  }, []);
+   useEffect(() => {
+    const fetchStudent = async () => {
+      try {
+        const counselorId = localStorage.getItem("counselor_id"); // or sessionStorage if you're using that
+        if (!counselorId) {
+          console.error("Counselor ID not found in localStorage");
+          return;
+        }
+
+        const res = await api.get(`${BASE_URL}auth/getAssignedStudents/${counselorId}`);
+        console.log("Fetched students:", res.data);
+        setStudent(res.data); // Store student data
+      } catch (err) {
+        console.error("Failed to fetch assigned students", err);
+      }
+    };
+
+    fetchStudent();
   }, []);
 
   // Function to fetch user details (full_name, id, and photo) based on chatId
@@ -104,6 +126,25 @@ const ChatList = ({ userId }) => {
     }
   };
 
+   const handleStudentSelect = (e) => {
+    const studentId = e.target.value;
+    if (studentId) {
+      const selectedStudent = student.find(
+        (studentid) => studentid.id === parseInt(studentId)
+      );
+      // You can now open chat with the selected counselor
+      if (selectedStudent) {
+        // console.log(selectedCounselor)
+        localStorage.setItem("receiver_name", selectedStudent?.full_name);
+        openChat(`${selectedStudent?.id}`);
+      }
+      else {
+        openChat("1");
+      }
+    }
+  };
+
+
   return (
     <div className="container p-4">
       <h3>Your Chats</h3>
@@ -126,6 +167,24 @@ const ChatList = ({ userId }) => {
               )}
             </select>
           </div>
+        )}
+         {role === "counselor" && (
+         <div className="counselor-select">
+      <label htmlFor="counselor-select">Choose Admin or Student to Chat:</label>
+      <select id="counselor-select" onChange={handleStudentSelect}>
+        <option value="">Select to chat</option>
+        <option value="1">Admin</option>
+        {student.length > 0 ? (
+          student.map((students) => (
+            <option key={students.id} value={students.id}>
+              {students.full_name} ({students.role})
+            </option>
+          ))
+        ) : (
+          <option disabled>Loading students...</option>
+        )}
+      </select>
+    </div>
         )}
       </div>
 

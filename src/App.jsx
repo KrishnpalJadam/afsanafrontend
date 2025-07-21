@@ -1,4 +1,4 @@
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import "./App.css";
 import Navbar from "./layout/Navbar";
 import Sidebar from "./layout/Sidebar";
@@ -82,12 +82,58 @@ import StaffDashboard from "./components/universityPagesform/StaffDashboard";
 import Stafflead from "./components/Lead & Inquiry Management/Stafflead";
 import VisaProcessList from "./components/AdmissionTracking/VisaProcessingList";
 import StudentDecisions from "./components/StudentDecision/StudentDewcision";
+import BASE_URL from "./Config";
 
 
 
 function App() {
   //show details to admin
+
+ const navigate = useNavigate();
   const [login, setLogin] = useState(localStorage.getItem("login") || "");
+
+
+  // THIS IS THE GOOD approach to check whether the toekn is valid or not 
+//   useEffect(() => {
+//   const token = localStorage.getItem("authToken");
+//   if (token) {
+//     fetch(`${BASE_URL}/validate-token`, {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//       },
+//     })
+//       .then((res) => {
+//         if (!res.ok) {
+//           localStorage.clear();
+//           setLogin("");
+//         }
+//       })
+//       .catch(() => {
+//         localStorage.clear();
+//         setLogin("");
+//       });
+//   }
+// }, []);
+
+
+// Currently  for checking using this  
+
+ useEffect(() => {
+  const authToken = localStorage.getItem("authToken");
+  const role = localStorage.getItem("role");
+
+  if (authToken && role) {
+    if (role === "admin") {
+      navigate("/dashboard");
+    } else if (role === "student") {
+      navigate("/UniversityCards");
+    } else if (role === "counselor") {
+      navigate("/councelor");
+    } else if (role === "staff") {
+      navigate("/staffDashboard");
+    }
+  }
+}, []);
 
   useEffect(() => {
 
@@ -95,6 +141,31 @@ function App() {
       localStorage.setItem("login", login);
     }
   }, [login]);
+
+  // Cross-tab login/logout sync
+  useEffect(() => {
+    const handleStorage = (event) => {
+      if (event.key === 'authEvent') {
+        const authToken = localStorage.getItem("authToken");
+        const role = localStorage.getItem("role");
+        if (authToken && role) {
+          if (role === "admin") {
+            navigate("/dashboard");
+          } else if (role === "student") {
+            navigate("/UniversityCards");
+          } else if (role === "counselor") {
+            navigate("/councelor");
+          } else if (role === "staff") {
+            navigate("/staffDashboard");
+          }
+        } else {
+          navigate("/login");
+        }
+      }
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, [navigate]);
 
   const [counselors, setCounselors] = useState([]);
 const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);

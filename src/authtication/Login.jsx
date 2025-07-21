@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BASE_URL from "../Config";
 // import axios from 'axios';
@@ -18,6 +18,24 @@ const Login = ({ setLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+  const authToken = localStorage.getItem("authToken");
+  const role = localStorage.getItem("role");
+
+  if (authToken && role) {
+    if (role === "admin") {
+      navigate("/dashboard");
+    } else if (role === "student") {
+      navigate("/UniversityCards");
+    } else if (role === "counselor") {
+      navigate("/councelor");
+    } else if (role === "staff") {
+      navigate("/staffDashboard");
+    }
+  }
+}, []);
+
 
   const handleChange = (event) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });
@@ -51,6 +69,9 @@ const Login = ({ setLogin }) => {
         const userpermissionsResponse = await api.get(`permissions?user_id=${user.id}`);
         localStorage.setItem("permissions", JSON.stringify(permissionsResponse.data));
         localStorage.setItem("userpermissions", JSON.stringify(userpermissionsResponse.data));
+
+        // Cross-tab login sync
+        localStorage.setItem('authEvent', Date.now());
 
         Swal.fire({
           title: 'Success!',
@@ -115,6 +136,9 @@ const Login = ({ setLogin }) => {
       const userpermissionsResponse = await api.get(`permissions?user_id=${user.id}`);
       localStorage.setItem("permissions", JSON.stringify(permissionsResponse.data));
       localStorage.setItem("userpermissions", JSON.stringify(userpermissionsResponse.data));
+
+      // Cross-tab login sync
+      localStorage.setItem('authEvent', Date.now());
 
       // Show success alert
       Swal.fire({
@@ -224,13 +248,13 @@ const Login = ({ setLogin }) => {
     `}
   </style>
 
-  <button className="google-login-btn" onClick={handleGoogleLogin}>
+  {/* <button className="google-login-btn" onClick={handleGoogleLogin}>
     <img
       src="https://developers.google.com/identity/images/g-logo.png"
       alt="Google"
     />
     <span>Continue with Google</span>
-  </button>
+  </button> */}
 </>
 
 
@@ -242,7 +266,7 @@ const Login = ({ setLogin }) => {
             margin: "20px 0"
           }}>
             <hr style={{ flex: 1, border: "none", height: "1px", backgroundColor: "#ccc" }} />
-            <span style={{ margin: "0 10px", color: "#888", fontSize: "14px" }}>or continue with</span>
+            {/* <span style={{ margin: "0 10px", color: "#888", fontSize: "14px" }}>or continue with</span> */}
             <hr style={{ flex: 1, border: "none", height: "1px", backgroundColor: "#ccc" }} />
           </div>
           <form onSubmit={handleLogin}>

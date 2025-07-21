@@ -581,9 +581,9 @@ const handleConvertToStudent = (lead) => {
 )}
 
 
-                  <Button variant="outline-secondary" size="sm" className="me-2" onClick={() => handleOpenUploadModal(lead)}>
+                  {/* <Button variant="outline-secondary" size="sm" className="me-2" onClick={() => handleOpenUploadModal(lead)}>
                     <BsUpload className="me-1" /> Upload Docs
-                  </Button>
+                  </Button> */}
 
 
                   <Button

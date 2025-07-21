@@ -223,7 +223,7 @@ const AdminTaskManager = () => {
                   <td>{task?.title}</td>
                   <td>{new Date(task?.due_date).toLocaleDateString()}</td>
                   <td>
-                    <Badge
+                    {/* <Badge
                       bg={
                         task?.status === "completed"
                           ? "success"
@@ -233,6 +233,18 @@ const AdminTaskManager = () => {
                       }
                     >
                       {task?.status === "completed" ? "Completed" : "Pending"}
+                    </Badge> */}
+
+                    <Badge
+                      bg={
+                        task?.status === "Complete"
+                          ? "success"
+                          : task?.status === "Pending"
+                            ? "warning"
+                            : "secondary"
+                      }
+                    >
+                      {task?.status === "Complete" ? "Completed" : "Pending"}
                     </Badge>
                   </td>
                   <td>

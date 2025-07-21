@@ -313,8 +313,8 @@ const counselor_id = localStorage.getItem("counselor_id")
             <tr>
               <th>#</th>
               <th>Student Name</th>
-              <th>Admission No</th>
-              <th>ID No.</th>
+              <th>Identifying Name</th>
+              <th>Mother NAme</th>
               <th>University Name</th>
               <th>Father Name</th>
               <th>Date of Birth</th>
@@ -340,8 +340,8 @@ const counselor_id = localStorage.getItem("counselor_id")
                     {student?.full_name}
                   </Link>
                 </td>
-                <td>{student?.admission_no}</td>
-                <td>{student?.id_no}</td>
+                <td>{student?.identifying_name}</td>
+                <td>{student?.mother_name}</td>
                 <td>{student?.university_name}</td>
                 <td>{student?.father_name}</td>
                 <td>{new Date(student?.date_of_birth).toLocaleDateString()}</td>
@@ -389,7 +389,7 @@ const counselor_id = localStorage.getItem("counselor_id")
                     }}
 
                   >Edit</button>
-                  <button className="btn btn-danger btn-sm me-1" onClick={() => { handleDelete(student?.id) }}> <FaTrash /></button>
+                  {/* <button className="btn btn-danger btn-sm me-1" onClick={() => { handleDelete(student?.id) }}> <FaTrash /></button> */}
                 </td>
               </tr>
             ))}

@@ -5,103 +5,135 @@ import { useParams } from "react-router-dom";
 import ChatList from "./ChatList";
 
 const ChatBox = ({ userId }) => {
-  const { receiverId } = useParams(); // from route
+  const { receiverId } = useParams();
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [offset, setOffset] = useState(0);
-  const [socket, setSocket] = useState(null);
+  const socketRef = useRef(null);
   const messageEndRef = useRef(null);
 
-  // Format message object from server
   const formatMessage = (msg) => ({
+    id: msg._id || `${msg.senderId || msg.sender_id}-${msg.timestamp}`,
     senderId: msg.senderId || msg.sender_id,
     content: msg.content || msg.message,
     timestamp: msg.timestamp,
   });
 
-  // Connect socket and join room when userId & receiverId change
+  // Avoid duplicates by message ID
+  const addUniqueMessages = (incomingMessages) => {
+    setMessages((prev) => {
+      const existingIds = new Set(prev.map((m) => m.id));
+      const uniqueMessages = incomingMessages.filter((m) => !existingIds.has(m.id));
+      return [...prev, ...uniqueMessages];
+    });
+  };
+
   useEffect(() => {
     if (userId && receiverId) {
-      // Clean up previous socket
-      if (socket) {
-        socket.emit("leaveRoom", {
-          user_id: userId,
-          other_user_id: receiverId,
-        });
-        socket.disconnect();
-      }
+      if (socketRef.current) socketRef.current.disconnect();
 
-      // Reset state
+      const socket = io("https://afsana-backend-production.up.railway.app", {
+        forceNew: true,
+      });
+
+      socketRef.current = socket;
       setMessages([]);
       setOffset(0);
 
-      const newSocket = io("https://afsana-backend-production.up.railway.app", {
-        forceNew: true,
-      });
-      setSocket(newSocket);
-
-      newSocket.emit("registerUser", userId);
-      newSocket.emit("joinRoom", {
+      socket.emit("registerUser", userId);
+      socket.emit("joinRoom", {
         user_id: userId,
         other_user_id: receiverId,
       });
 
       const chatId = [userId, receiverId].sort((a, b) => a - b).join("_");
-      newSocket.emit("getChatHistory", {
+      socket.emit("getChatHistory", {
         chatId,
         limit: 50,
         offset: 0,
       });
 
-      return () => newSocket.disconnect(); // cleanup
+      return () => socket.disconnect();
     }
   }, [userId, receiverId]);
 
-  // Listen to socket events
   useEffect(() => {
+    const socket = socketRef.current;
     if (!socket) return;
 
-    socket.on("receiveMessage", (msg) => {
-      setMessages((prev) =>
-        Array.isArray(msg)
-          ? [...prev, ...msg.map(formatMessage)]
-          : [...prev, formatMessage(msg)]
-      );
-    });
+    const handleReceiveMessage = (msg) => {
+      const formatted = Array.isArray(msg)
+        ? msg.map(formatMessage)
+        : [formatMessage(msg)];
 
-    socket.on("chatHistory", ({ messages: oldMessages }) => {
+      // Add only messages from others
+      const filtered = formatted.filter((m) => m.senderId !== userId);
+      addUniqueMessages(filtered);
+    };
+
+    const handleChatHistory = ({ messages: oldMessages }) => {
       const formatted = oldMessages.map(formatMessage);
-      setMessages((prev) => [...formatted, ...prev]);
-    });
+      addUniqueMessages(formatted);
+    };
+
+    socket.on("receiveMessage", handleReceiveMessage);
+    socket.on("chatHistory", handleChatHistory);
 
     return () => {
-      socket.off("receiveMessage");
-      socket.off("chatHistory");
+      socket.off("receiveMessage", handleReceiveMessage);
+      socket.off("chatHistory", handleChatHistory);
     };
-  }, [socket]);
+  }, [userId, receiverId]);
 
-  // Scroll to bottom on message update
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Send message
+  // const sendMessage = () => {
+  //   const socket = socketRef.current;
+  //   if (!message.trim() || !socket) return;
+
+  //   const newMsg = {
+  //     sender_id: userId,
+  //     receiver_id: receiverId,
+  //     message,
+  //     timestamp: new Date().toISOString(),
+  //   };
+
+  //   socket.emit("sendMessage", newMsg);
+  //   setMessage("");
+  // };
+
   const sendMessage = () => {
-    if (!message.trim() || !socket) return;
+  const socket = socketRef.current;
+  if (!message.trim() || !socket) return;
 
-    const newMsg = {
-      sender_id: userId,
-      receiver_id: receiverId,
-      message,
-    };
-
-    socket.emit("sendMessage", newMsg);
-    setMessage("");
+  const newMsg = {
+    sender_id: userId,
+    receiver_id: receiverId,
+    message,
+    timestamp: new Date().toISOString(),
   };
 
-  // Load older messages (optional)
+  // Emit to server
+  socket.emit("sendMessage", newMsg);
+
+  // Optimistic UI update
+  const formatted = {
+    id: `${userId}-${newMsg.timestamp}`,
+    senderId: userId,
+    content: newMsg.message,
+    timestamp: newMsg.timestamp,
+  };
+
+  setMessages((prev) => [...prev, formatted]);
+  setMessage("");
+};
+
   const loadOlderMessages = () => {
+    const socket = socketRef.current;
     if (!socket) return;
+
     const chatId = [userId, receiverId].sort((a, b) => a - b).join("_");
     const nextOffset = offset + 50;
 
@@ -116,24 +148,20 @@ const ChatBox = ({ userId }) => {
 
   return (
     <div className="p-2" style={{ display: "flex" }}>
-      <div> <ChatList userId={userId} /></div>
+      <div><ChatList userId={userId} /></div>
       <div className="chat-container">
         <div className="chat-header">
           {userId == 1 ? (
             <span>Chat with admin</span>
           ) : (
             <span>Chat with {localStorage.getItem("receiver_name")}</span>
-            //  <span></span>
           )}
         </div>
-
-        {/* Uncomment if needed */}
-        {/* <button onClick={loadOlderMessages} className="load-more">Load Older Messages</button> */}
 
         <div className="chat-messages">
           {messages.map((m, i) => (
             <div
-              key={i}
+              key={m.id}
               className={`message ${m.senderId == userId ? "sent" : "received"}`}
             >
               {m.content}

@@ -81,7 +81,8 @@ const InvoiceTemplate = forwardRef(({ invoice }, invoiceRef) => {
                             <td>{invoice.student_name}</td>
                             <td>{invoice.course_name}</td>
                             <td>{invoice.phone_number}</td>
-                            <td>{invoice.payment_status}</td>
+                            <td>{invoice.payment_status == 0 ? "Unpaid" : "Paid"}</td>
+
                             <td>${parseFloat(invoice.amount).toFixed(2)}</td>
                         </tr>
                     </tbody>
@@ -89,7 +90,7 @@ const InvoiceTemplate = forwardRef(({ invoice }, invoiceRef) => {
 
                 <div className="text-end mt-4">
                     <p><strong>Subtotal:</strong> ${parseFloat(invoice.amount).toFixed(2)}</p>
-                    <p><strong>Tax (0%):</strong> $0.00</p>
+                   
                     <h5><strong>Total:</strong> ${parseFloat(invoice.amount).toFixed(2)}</h5>
                 </div>
 

@@ -45,8 +45,8 @@ const StudentDetails = () => {
     user_id: user_id,
     full_name: "",
     father_name: "",
-    admission_no: "",
-    id_no: "",
+    identifying_name:"",
+    mother_name: "",
     mobile_number: "",
     university_id: "",
     date_of_birth: "",
@@ -68,8 +68,8 @@ const StudentDetails = () => {
       user_id: "",
       full_name: "",
       father_name: "",
-      admission_no: "",
-      id_no: "",
+      identifying_name: "",
+      mother_name: "",
       mobile_number: "",
       university_id: "",
       date_of_birth: "",
@@ -118,8 +118,8 @@ const StudentDetails = () => {
         user_id: user_id,
         full_name: "",
         father_name: "",
-        admission_no: "",
-        id_no: "",
+        identifying_name: "",
+        mother_name: "",
         mobile_number: "",
         university_id: "",
         date_of_birth: "",
@@ -242,6 +242,20 @@ const StudentDetails = () => {
     setSelectedCounselor(null); // Reset selected counselor when closing modal
   };
 
+  useEffect(() => {
+  if (formData.full_name && formData.date_of_birth) {
+    const dob = new Date(formData.date_of_birth);
+    const month = dob.toLocaleString("default", { month: "short" }); // e.g., Sep
+    const day = String(dob.getDate()).padStart(2, "0"); // e.g., 25
+    const identifying = `${formData.full_name} ${month}-${day} Deb`;
+    setFormData((prev) => ({
+      ...prev,
+      identifying_name: identifying,
+    }));
+  }
+}, [formData.full_name, formData.date_of_birth]);
+
+
   return (
     <div className="container pt-3">
       <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -318,8 +332,8 @@ const StudentDetails = () => {
             <tr>
               <th>#</th>
               <th>Student Name</th>
-              <th>Admission No</th>
-              <th>ID No.</th>
+              <th>Identifying_Name</th>
+              <th>Mother_Name</th>
               <th>University Name</th>
               <th>Father Name</th>
               <th>Date of Birth</th>
@@ -327,6 +341,7 @@ const StudentDetails = () => {
               <th>Category</th>
               <th>Mobile Number</th>
               <th>Assign to</th>
+              {/* <th>Counselor Name</th> */}
               <th>Action</th>
             </tr>
           </thead>
@@ -345,33 +360,39 @@ const StudentDetails = () => {
                     {student?.full_name}
                   </Link>
                 </td>
-                <td>{student?.admission_no}</td>
-                <td>{student?.id_no}</td>
+                <td>{student?.identifying_name}</td>
+                <td>{student?.mother_name}</td>
                 <td>{student?.university_name}</td>
                 <td>{student?.father_name}</td>
                 <td>{new Date(student?.date_of_birth).toLocaleDateString()}</td>
                 <td>{student?.gender}</td>
                 <td>{student?.category}</td>
                 <td>{student?.mobile_number}</td>
+
+
                 <td>
-
-                  <td>
-                    {student.counselor_id ? (
-                      <span className="badge bg-info">
-                        {student.counselor_name || "Assigned"}
-                      </span>
-                    ) : (
-                      <button
-                        className="btn btn-sm btn-outline-primary"
-                        onClick={() => handleOpenAssignModal(student)}
-                        disabled={student.counselor_id}
-                      >
-                        Assign Counselor
-                      </button>
-                    )}
-                  </td>
-
+                  {student.counselor_id ? (
+                    <span className="badge bg-info">
+                      {student.counselor_name || "Assigned"}
+                    </span>
+                  ) : (
+                    <button
+                      className="btn btn-sm btn-outline-primary"
+                      onClick={() => handleOpenAssignModal(student)}
+                      disabled={student.counselor_id}
+                    >
+                      Assign Counselor
+                    </button>
+                  )}
                 </td>
+
+                {/* <td>
+                  {student.counselor_id ? (
+                    <span>{student.counselor_name || "N/A"}</span>
+                  ) : (
+                    <span>Not Assigned</span>
+                  )}
+                </td> */}
                 <td>
                   {/* <button
                     className="btn btn-light btn-sm me-1"
@@ -486,7 +507,7 @@ const StudentDetails = () => {
               <div className="modal-body">
                 <form className="student-form" onSubmit={handleSubmit} encType="multipart/form-data">
                   <div className="row">
-                    <div className="col-md-6 student-form-group">
+                    <div className="col-md-4 student-form-group">
                       <label htmlFor="studentName" className="student-form-label">
                         Student Name
                       </label>
@@ -501,7 +522,7 @@ const StudentDetails = () => {
                         }
                       />
                     </div>
-                    <div className="col-md-6 student-form-group">
+                    <div className="col-md-4 student-form-group">
                       <label htmlFor="fatherName" className="student-form-label">
                         Father Name
                       </label>
@@ -513,6 +534,19 @@ const StudentDetails = () => {
                         value={formData.father_name}
                         onChange={(e) => setFormData({ ...formData, father_name: e.target.value })}
                       />
+                    </div>
+                     <div className="col-md-4 student-form-group">
+
+                      <label className="student-form-label">Mother Name</label>
+                      <input
+                        type="text"
+                        value={formData.mother_name}
+                         className="form-control student-form-input"
+                         placeholder="Enter mother name"
+                        onChange={(e) => setFormData({ ...formData, mother_name: e.target.value })}
+                        required
+                      />
+
                     </div>
                   </div>
                   <div className="row">
@@ -544,33 +578,20 @@ const StudentDetails = () => {
                     </div>
                   </div>
                   <div className="row">
-                    <div className="col-md-4 student-form-group">
-                      <label htmlFor="admissionNo" className="student-form-label">
-                        Admission No
+                    <div className="col-md-6 student-form-group">
+                      <label htmlFor="dob" className="student-form-label">
+                        Date of Birth
                       </label>
                       <input
-                        type="text"
+                        type="date"
                         className="form-control student-form-input"
-                        id="admissionNo"
-                        placeholder="Enter admission number"
-                        value={formData.admission_no}
-                        onChange={(e) => setFormData({ ...formData, admission_no: e.target.value })}
+                        id="dob"
+                        value={formData.date_of_birth}
+                        onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
                       />
                     </div>
-                    <div className="col-md-4 student-form-group">
-                      <label htmlFor="idNo" className="student-form-label">
-                        ID No.
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control student-form-input"
-                        id="idNo"
-                        placeholder="Enter ID number"
-                        value={formData.id_no}
-                        onChange={(e) => setFormData({ ...formData, id_no: e.target.value })}
-                      />
-                    </div>
-                    <div className="col-md-4 student-form-group">
+                   
+                    <div className="col-md-6 student-form-group">
                       <label htmlFor="mobileNumber" className="student-form-label">
                         Mobile Number
                       </label>
@@ -606,17 +627,19 @@ const StudentDetails = () => {
                         ))}
                       </select>
                     </div>
-                    <div className="col-md-6 student-form-group">
-                      <label htmlFor="dob" className="student-form-label">
-                        Date of Birth
-                      </label>
-                      <input
-                        type="date"
-                        className="form-control student-form-input"
-                        id="dob"
-                        value={formData.date_of_birth}
-                        onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
+                   
+                     <div className="col-md-6 student-form-group">
+
+                      <label className="student-form-label">Student Identifying Name</label>
+                      < input
+                        type="text"
+                        value={formData.identifying_name}
+                         className="form-control student-form-input"
+                        onChange={(e) => setFormData({ ...formData, identifying_name: e.target.value })}
+                        placeholder="e.g., Rahim Sep-25 Deb"
+                        required
                       />
+
                     </div>
                   </div>
                   <div className="row">

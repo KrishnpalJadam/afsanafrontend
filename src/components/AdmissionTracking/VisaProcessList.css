@@ -8,8 +8,8 @@
 
 /* Header Title */
 .inquiry-title {
-    font-weight: 600;
-    font-size: 1.5rem;
+    font-weight: 800;
+    font-size: 2rem;
     color: #333;
 }
 
@@ -47,13 +47,14 @@
 .inquiry-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 12px;
+    font-size: 16px;
     table-layout: auto;
 }
 
 .inquiry-table thead {
     background-color: #f8f9fa;
 }
+
 
 .inquiry-table th,
 .inquiry-table td {
@@ -67,6 +68,7 @@
 /* Fixed heading font */
 .inquiry-table th {
     font-weight: 600;
+    font-weight: bold;
 }
 
 /* Zebra striping */

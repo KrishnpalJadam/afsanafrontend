@@ -133,9 +133,11 @@ const AdminUniversity = ({ university, onDelete, onEdit }) => {
 
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
+
     if (name === "logo_url") {
       setNewUniversity((prev) => ({ ...prev, [name]: files[0] }));
-    } else {
+    }
+    else {
       setNewUniversity((prev) => ({ ...prev, [name]: value }));
     }
   };
@@ -222,15 +224,21 @@ const AdminUniversity = ({ university, onDelete, onEdit }) => {
       //     formData.append(key, newUniversity[key]);
       //   }
       // }
+
+      console.log(university);
+
+
       const formData = new FormData();
       for (let key in newUniversity) {
-        if (Array.isArray(newUniversity[key])) {
-          // ✅ Send as actual array
+        if (key === "logo_url" && newUniversity[key] instanceof File) {
+          formData.append(key, newUniversity[key]);
+        } else if (Array.isArray(newUniversity[key])) {
           formData.append(key, JSON.stringify(newUniversity[key]));
         } else {
           formData.append(key, newUniversity[key]);
         }
       }
+
 
 
       await axios.put(
@@ -241,7 +249,7 @@ const AdminUniversity = ({ university, onDelete, onEdit }) => {
 
       swal("Success!", "University updated successfully!", "success");
       setShowModal(false);
-      window.location.reload();
+      // window.location.reload();
     } catch (error) {
       console.error(error);
       swal("Error!", "Something went wrong!", "error");

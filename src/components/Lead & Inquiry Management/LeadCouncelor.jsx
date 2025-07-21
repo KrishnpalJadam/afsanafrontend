@@ -4,24 +4,39 @@ import { FaSearch, FaPlus, FaEdit, FaTrash, FaEye } from "react-icons/fa";
 import BASE_URL from "../../Config";
 import api from "../../interceptors/axiosInterceptor";
 import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 import InvoiceTemplate from "./InvoiceTemplate";
-
+import {
+  BsUpload,
+  BsWhatsapp,
+  BsArrowRepeat,
+  BsSearch,
+} from "react-icons/bs";
 
 const LeadCouncelor = ({ lead }) => {
-  const invoiceRef = useRef(null);  // Create the invoiceRef here
+  const invoiceRef = useRef(null);
   const [leads, setLeads] = useState([]);
+  const [convertData, setConvertData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [status, setStatus] = useState(lead);
+  const [showStudentModal, setShowStudentModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [selectedLead, setSelectedLead] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentLeadId, setCurrentLeadId] = useState(null);
   const [counselors, setCounselors] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [universities, setUniversities] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editStudentId, setEditStudentId] = useState(null);
+  const [documents, setDocuments] = useState([]);
+  const [photo, setPhoto] = useState(null);
   const itemsPerPage = 10;
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [selectedLeadForInvoice, setSelectedLeadForInvoice] = useState(null);
-
+  const user_id = localStorage.getItem("user_id");
+  const [errorMessage, setErrorMessage] = useState("");
 
   // invoice state 
   const [paymentAmount, setPaymentAmount] = useState();
@@ -30,12 +45,11 @@ const LeadCouncelor = ({ lead }) => {
   const [paymentDate, setPaymentDate] = useState("");
   const [notes, setNotes] = useState("");
 
-
   const [newLead, setNewLead] = useState({
     name: "",
     phone: "",
     email: "",
-    counselor: "", // Fixed field name from 'counselor' to 'counselor'
+    counselor: "",
     follow_up_date: "",
     notes: "",
     preferred_countries: "",
@@ -44,32 +58,27 @@ const LeadCouncelor = ({ lead }) => {
     user_id: 1,
   });
 
-
   const [searchTerm, setSearchTerm] = useState("");
-  const counsolerId = localStorage.getItem("counselor_id")
+  const counsolerId = localStorage.getItem("counselor_id");
 
   const fetchLeads = async () => {
     try {
       const response = await api.get(`${BASE_URL}lead/getLeadByCounselorIdnew/${counsolerId}`);
       setLeads(response.data);
+      console.log("Api response", response);
 
-      // Save the lead ID in localStorage for future use
       if (response.data && response.data.length > 0) {
-        const leadId = response.data[0].id; // Assuming the first lead object contains the ID
-
+        const leadId = response.data[0].id;
       }
     } catch (error) {
       console.error("Error fetching leads:", error);
     }
   };
 
-
-
-
-  // Fetch Leads initially
   useEffect(() => {
     fetchLeads();
   }, []);
+
   const filteredLeads = leads?.filter((lead) =>
     lead.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -80,7 +89,6 @@ const LeadCouncelor = ({ lead }) => {
 
       if (response.status === 200) {
         setCounselors(response.data);
-
       } else {
         console.error("Failed to fetch counselors");
       }
@@ -93,7 +101,6 @@ const LeadCouncelor = ({ lead }) => {
     fetchCounseller();
   }, []);
 
-  // Open "Add Lead" Modal
   const handleShowModal = () => {
     setIsEditMode(false);
     setCurrentLeadId(null);
@@ -101,13 +108,13 @@ const LeadCouncelor = ({ lead }) => {
       name: "",
       phone: "",
       email: "",
-      counselor: counsolerId, // Ensure this matches your API field
+      counselor: counsolerId,
       follow_up_date: "",
       notes: "",
       preferred_countries: "",
       source: "",
       status: "",
-      user_id: lead.id, // Add user_id to the newLead state
+      user_id: lead.id,
     });
     setShowModal(true);
   };
@@ -116,7 +123,6 @@ const LeadCouncelor = ({ lead }) => {
     setShowModal(false);
   };
 
-  // Edit Lead
   const handleEditLead = (lead) => {
     setIsEditMode(true);
     setCurrentLeadId(lead.id);
@@ -139,23 +145,20 @@ const LeadCouncelor = ({ lead }) => {
     const { name, value } = e.target;
     setNewLead({
       ...newLead,
-      [name]: name === "counselor" ? value : value, // Set name as value here for counselor
+      [name]: name === "counselor" ? value : value,
     });
   };
-
 
   const handleSaveLead = async (e) => {
     e.preventDefault();
     if (isEditMode) {
-      // Update lead
       try {
         const response = await api.put(`${BASE_URL}lead/${currentLeadId}`, newLead);
-        fetchLeads()
+        fetchLeads();
       } catch (error) {
         console.error("Error updating lead:", error);
       }
     } else {
-      // Add new lead
       try {
         const response = await api.post(`${BASE_URL}lead`, newLead);
         fetchLeads();
@@ -166,14 +169,13 @@ const LeadCouncelor = ({ lead }) => {
     handleCloseModal();
   };
 
-  // Delete Lead
   const handleDeleteLead = async (leadId) => {
     try {
       const response = await api.delete(`${BASE_URL}inquiries/${leadId}`);
 
       if (response.status === 200) {
-        console.log("Deletion Success:", response.data);  // Ensure response has the expected data
-        setLeads(leads.filter((lead) => lead.id !== leadId));  // Update the local state
+        console.log("Deletion Success:", response.data);
+        setLeads(leads.filter((lead) => lead.id !== leadId));
         Swal.fire({
           icon: 'success',
           title: 'Lead Deleted',
@@ -196,13 +198,10 @@ const LeadCouncelor = ({ lead }) => {
     }
   };
 
-
-  // View Lead Details
   const handleViewLeadDetails = (lead) => {
     setSelectedLead(lead);
     setShowViewModal(true);
 
-    // Fetch invoice data from localStorage
     const invoiceData = JSON.parse(localStorage.getItem(`invoice-${lead.id}`));
 
     if (invoiceData) {
@@ -212,42 +211,29 @@ const LeadCouncelor = ({ lead }) => {
       }));
     }
 
-    // Scroll to the invoice section
     if (invoiceRef.current) {
       invoiceRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
 
-
-
   const handleCloseViewModal = () => {
     setShowViewModal(false);
     setSelectedLead(null);
   };
+
   const indexOfLastLead = currentPage * itemsPerPage;
   const indexOfFirstLead = indexOfLastLead - itemsPerPage;
   const currentLeads = filteredLeads.slice(indexOfFirstLead, indexOfLastLead);
   const totalPages = Math.ceil(filteredLeads.length / itemsPerPage);
 
-
-
-
   const handleStatusChange = (newStatus) => {
     setStatus(newStatus);
-
   };
-
-
-
-
-
-
 
   useEffect(() => {
     const calculatedTotal = paymentAmount + (paymentAmount * (tax / 100));
     setTotal(calculatedTotal);
   }, [paymentAmount, tax]);
-
 
   const handleInvoiceInputChange = (e) => {
     const { name, value } = e.target;
@@ -263,8 +249,6 @@ const LeadCouncelor = ({ lead }) => {
     }
   };
 
-
-  // Handle Generate Invoice
   const handleGenerateInvoice = async () => {
     const invoicedata = {
       student_name: selectedLeadForInvoice?.name,
@@ -305,18 +289,17 @@ const LeadCouncelor = ({ lead }) => {
     }
   };
 
-  const [getInvoice, setInvoicedata] = useState([])
+  const [getInvoice, setInvoicedata] = useState([]);
 
-  // Fetch Invoice Data
   const fetchInvoice = async (lead) => {
     try {
       const response = await api.get(`${BASE_URL}getInquiryByIdinvoice/${lead.id}`);
-      // Make sure to set the data properly in state
       setSelectedLeadForInvoice(response.data);
     } catch (error) {
       console.error("Error fetching invoice:", error);
     }
   };
+
   useEffect(() => {
     if (selectedLeadForInvoice) {
       console.log("Selected Lead Updated:", selectedLeadForInvoice);
@@ -329,19 +312,16 @@ const LeadCouncelor = ({ lead }) => {
 
   const handleChangePaymentStatus = async (leadId, newStatus) => {
     try {
-      // Update the payment status locally before making the API request
       const updatedLeads = leads.map((lead) =>
         lead.id === leadId ? { ...lead, payment_status: newStatus } : lead
       );
       setLeads(updatedLeads);
 
-      // Prepare the data to be sent to the API
       const payload = {
         id: leadId,
-        payment_status: newStatus,  // Payment status to be updated
+        payment_status: newStatus,
       };
 
-      // Send the PATCH request to update the payment status
       const response = await api.patch(`${BASE_URL}fee/update-status`, payload);
       console.log("Payment status updated successfully:", response);
     } catch (error) {
@@ -349,50 +329,236 @@ const LeadCouncelor = ({ lead }) => {
     }
   };
 
-
   const handleChangeLeadStatus = async (leadId, newStatus) => {
     try {
-      // Update the lead status locally before making the API request (optional)
       const updatedLeads = leads.map((lead) =>
         lead.id === leadId ? { ...lead, lead_status: newStatus } : lead
       );
       setLeads(updatedLeads);
 
-      // Prepare the data to be sent to the API
       const payload = {
         id: leadId,
-        lead_status: newStatus,  // Lead status to be updated
+        lead_status: newStatus,
       };
 
-      // Send the PATCH request to update the lead status
       const response = await api.patch(`${BASE_URL}fee/update-lesd-status`, payload);
       console.log("Lead status updated successfully:", response);
     } catch (error) {
       console.error("Error updating lead status:", error);
     }
   };
+
   const handleShowInvoiceModal = (lead) => {
     setSelectedLeadForInvoice(lead);
     setShowInvoiceModal(true);
   };
+
   const getStatusClass = (status) => {
     switch (status) {
       case 'New':
-        return 'bg-success text-white'; // Green background, white text for 'New'
+        return 'bg-success text-white';
       case 'In Review':
-        return 'bg-warning text-dark'; // Yellow background, dark text for 'In Review'
+        return 'bg-warning text-dark';
       case 'Converted to Lead':
-        return 'bg-primary text-white'; // Blue background, white text for 'Converted to Lead'
+        return 'bg-primary text-white';
       case 'Not Eligible':
-        return 'bg-danger text-white'; // Red background, white text for 'Not Eligible'
+        return 'bg-danger text-white';
       case 'Not Interested':
-        return 'bg-secondary text-white'; // Grey background, white text for 'Not Interested'
+        return 'bg-secondary text-white';
       case 'Duplicate':
-        return 'bg-warning text-white'; // Dark background, white text for 'Duplicate'
+        return 'bg-warning text-white';
       default:
-        return 'bg-success text-white'; // Default is 'New' (Green)
+        return 'bg-success text-white';
     }
   };
+
+  const handleStatusChangeFromTable = async (id, status) => {
+    try {
+      await api.patch(`${BASE_URL}update-lead-status-new`, {
+        inquiry_id: id,
+        new_leads: status,
+      });
+
+      toast.success("Status updated successfully!");
+      fetchLeads();
+    } catch (error) {
+      console.error("Error updating status:", error);
+      toast.error("Failed to update status.");
+    }
+  };
+
+  const fetchConvertedLeads = async () => {
+    try {
+      const response = await api.get(`${BASE_URL}AllConvertedLeadsinquiries`);
+      setConvertData(response.data);
+      setFilteredData(response.data);
+      setCurrentLeads(response.data);
+    } catch (error) {
+      console.error("Error fetching converted leads:", error);
+    }
+  };
+
+  const getStatusBadgeColor = (status) => {
+    switch (status) {
+      case "New Lead":
+        return "bg-success";
+      case "Contacted":
+        return "bg-warning text-dark";
+      case "Follow-Up Needed":
+        return "bg-primary";
+      case "Visited Office":
+        return "bg-orange text-white";
+      case "Not Interested":
+        return "bg-secondary";
+      case "Next Intake Interested":
+        return "bg-light-purple text-white";
+      case "Registered":
+        return "bg-purple text-white";
+      case "Dropped":
+        return "bg-danger";
+      default:
+        return "bg-dark";
+    }
+  };
+
+  const handleConvertToStudent = (lead) => {
+    setFormData({
+      user_id: user_id,
+      full_name: lead.full_name || "",
+      father_name: "",
+      admission_no: "",
+      id_no: "",
+      mobile_number: lead.phone_number || "",
+      university_id: "",
+      date_of_birth: "",
+      gender: "",
+      category: "",
+      address: "",
+      role: "student",
+      password: "",
+      email: lead.email || "",
+    });
+    setPhoto(null);
+    setDocuments([]);
+    setIsEditing(false);
+    setErrorMessage(""); // Clear any previous error messages
+    setShowStudentModal(true);
+  };
+
+  const [formData, setFormData] = useState({
+    user_id: user_id,
+    full_name: "",
+    father_name: "",
+    identifying_name: "",
+    mother_name: "",
+    mobile_number: "",
+    university_id: "",
+    date_of_birth: "",
+    gender: "",
+    category: "",
+    address: "",
+    role: "student",
+    password: "",
+    email: ""
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrorMessage(""); // Clear previous error messages
+
+    const formPayload = new FormData();
+    for (const key in formData) {
+      formPayload.append(key, formData[key]);
+    }
+
+    if (photo) formPayload.append("photo", photo);
+    documents.forEach((doc) => formPayload.append("documents", doc));
+
+    const url = isEditing
+      ? `${BASE_URL}auth/updateStudent/${editStudentId}`
+      : `${BASE_URL}auth/createStudent`;
+
+    const method = isEditing ? "put" : "post";
+
+    try {
+      const res = await api({
+        method,
+        url,
+        data: formPayload,
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      if (res.data && res.data.message === "User already registered") {
+        setErrorMessage("This user is already registered as a student.");
+        return;
+      }
+
+      Swal.fire({
+        icon: 'success',
+        title: isEditing ? 'Student updated' : 'Student created',
+        showConfirmButton: false,
+        timer: 1500
+      });
+
+      resetForm();
+      window.location.reload();
+    } catch (err) {
+      console.error("Error:", err);
+      if (err.response && err.response.data && err.response.data.message) {
+        setErrorMessage(err.response.data.message);
+      } else {
+        setErrorMessage("Submission failed. Please try again.");
+      }
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await api.get(`${BASE_URL}universities`);
+        setUniversities(response.data);
+      } catch (error) {
+        console.log("Error fetching universities:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const resetForm = () => {
+    setFormData({
+      user_id: user_id,
+      full_name: "",
+      father_name: "",
+      identifying_name: "",
+      mother_name: "",
+      mobile_number: "",
+      university_id: "",
+      date_of_birth: "",
+      gender: "",
+      category: "",
+      address: "",
+      role: "student",
+      password: "",
+      email: "",
+    });
+    setPhoto(null);
+    setDocuments([]);
+    setIsEditing(false);
+    setEditStudentId(null);
+    setShowStudentModal(false);
+    setErrorMessage("");
+  };
+
+  useEffect(() => {
+    if (formData.full_name && formData.date_of_birth) {
+      const formattedDob = formData.date_of_birth.replace(/-/g, '');
+      const generatedName = `${formData.full_name.trim().replace(/\s+/g, '_')}_${formattedDob}`;
+      setFormData((prev) => ({
+        ...prev,
+        identifying_name: generatedName,
+      }));
+    }
+  }, [formData.full_name, formData.date_of_birth]);
 
   return (
     <Container fluid className="py-3">
@@ -401,10 +567,7 @@ const LeadCouncelor = ({ lead }) => {
         <h2>Leads Management</h2>
       </div>
       <div className="d-flex justify-content-between mb-3 pt-3">
-
-
         <div className="d-flex gap-2">
-
           <div>
             <InputGroup>
               <InputGroup.Text>
@@ -427,11 +590,11 @@ const LeadCouncelor = ({ lead }) => {
           <tr>
             <th>Name</th>
             <th>Contact</th>
-            <th>Asign Counselor</th>
+            <th>Assign Counselor</th>
             <th>Invoice</th>
             <th>Payment Status</th>
             <th>Status</th>
-            {/* <th>Notes</th> */}
+            <th>Lead Status</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -441,10 +604,8 @@ const LeadCouncelor = ({ lead }) => {
               <tr key={lead.id}>
                 <td>{lead?.name}</td>
                 <td>{lead?.phone}</td>
-
                 <td>{lead?.counselor_name || "Unassigned"}</td>
                 <td>
-                  {/* Conditional Rendering for Create Invoice Button */}
                   {lead.is_view === "1" ? (
                     <Button variant="secondary" size="sm" disabled>
                       Already Created
@@ -469,12 +630,8 @@ const LeadCouncelor = ({ lead }) => {
                   >
                     <FaEye />
                   </button>
-
-
                 </td>
-
                 <td>
-                  {/* Styled dropdown for payment status */}
                   <Form.Control
                     as="select"
                     value={lead.payment_status}
@@ -485,17 +642,11 @@ const LeadCouncelor = ({ lead }) => {
                     <option value="paid">Paid</option>
                     <option value="unpaid">Unpaid</option>
                   </Form.Control>
-
-
                 </td>
-
-
                 <td>
-                  {/* Styled dropdown for lead status */}
                   <Form.Control
                     as="select"
-
-                    style={{ fontWeight: "bold", fontSize: "14px", height: "35px", textAlign: "center" }} // Adjust font size and height for a smaller dropdown
+                    style={{ fontWeight: "bold", fontSize: "14px", width: "auto", height: "30px", textAlign: "center", marginTop: "4px" }}
                     value={lead.lead_status}
                     onChange={(e) => handleChangeLeadStatus(lead.id, e.target.value)}
                     className={`${getStatusClass(lead.lead_status)} p-1`}
@@ -508,19 +659,52 @@ const LeadCouncelor = ({ lead }) => {
                     <option value="Duplicate">Duplicate</option>
                   </Form.Control>
                 </td>
-
-
                 <td>
-
+                  <span className={`badge ${getStatusBadgeColor(lead.new_leads == 0 ? "New Lead" : lead.new_leads)}`}>
+                    {lead.new_leads == 0 ? "New Lead" : lead.new_leads || "N/A"}
+                  </span>
+                </td>
+                <td className="d-flex">
+                  <Form.Select
+                    size="sm"
+                    className="me-2"
+                    style={{ width: "100px" }}
+                    value={lead.lead_status || ""}
+                    onChange={(e) => handleStatusChangeFromTable(lead.id, e.target.value)}
+                  >
+                    <option>Action</option>
+                    <option value="Contacted">Contacted</option>
+                    <option value="Follow-Up Needed">Follow-Up Needed</option>
+                    <option value="Visited Office">Visited Office</option>
+                    <option value="Not Interested">Not Interested</option>
+                    <option value="Next Intake Interested">Next Intake Interested</option>
+                    <option value="Registered">Registered</option>
+                    <option value="Dropped">Dropped</option>
+                  </Form.Select>
+                  {lead.new_leads === "Registered" && (
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      className="ms-2 me-2"
+                      onClick={() => handleConvertToStudent(lead)}
+                    >
+                      <BsArrowRepeat className="me-1" /> Convert to Student
+                    </Button>
+                  )}
+                  <Button
+                    variant="outline-success"
+                    size="sm"
+                    className="me-2"
+                    onClick={() => window.open(`https://wa.me/${lead.phone_number}`, '_blank')}
+                  >
+                    <BsWhatsapp className="me-1" /> WhatsApp
+                  </Button>
                   <Button variant="outline-primary" size="sm" className="me-2" onClick={() => handleViewLeadDetails(lead)}>
                     <FaEye />
                   </Button>
                   <Button variant="outline-danger" size="sm" className="me-2" onClick={() => handleDeleteLead(lead.id)}>
                     <FaTrash />
                   </Button>
-                  {/* <Button variant="outline-success" size="sm" className="me-2" onClick={() => handleEditLead(lead)}>
-                    <FaEdit />
-                  </Button> */}
                 </td>
               </tr>
             ))
@@ -530,9 +714,6 @@ const LeadCouncelor = ({ lead }) => {
             </tr>
           )}
         </tbody>
-
-
-
       </Table>
       {totalPages > 1 && (
         <nav className="mt-3">
@@ -540,13 +721,11 @@ const LeadCouncelor = ({ lead }) => {
             <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
               <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>Previous</button>
             </li>
-
             {[...Array(totalPages)].map((_, index) => (
               <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
                 <button className="page-link" onClick={() => setCurrentPage(index + 1)}>{index + 1}</button>
               </li>
             ))}
-
             <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
               <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
             </li>
@@ -575,13 +754,10 @@ const LeadCouncelor = ({ lead }) => {
               <p><strong>Payment Status:</strong> {selectedLead?.payment_status}</p>
               <p><strong>Preferred Countries:</strong> {selectedLead?.preferred_countries}</p>
               <p><strong>Notes:</strong> {selectedLead?.notes}</p>
-
-              {/* Display invoice details if available */}
               {selectedLead.invoice && (
                 <div>
                   <h5>Invoice Details</h5>
                   <p><strong>Payment Amount:</strong> ${selectedLead.invoice.amount}</p>
-                  <p><strong>Tax:</strong> ${(selectedLead.invoice.amount * (selectedLead.invoice.tax / 100)).toFixed(2)}</p>
                   <p><strong>Total:</strong> ${(selectedLead.invoice.amount + (selectedLead.invoice.amount * (selectedLead.invoice.tax / 100))).toFixed(2)}</p>
                   <p><strong>Fee Date:</strong> {selectedLead.invoice.fee_date}</p>
                   <p><strong>Description:</strong> {selectedLead.invoice.description}</p>
@@ -590,7 +766,6 @@ const LeadCouncelor = ({ lead }) => {
             </div>
           )}
         </Modal.Body>
-
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseViewModal}>
             Close
@@ -619,7 +794,6 @@ const LeadCouncelor = ({ lead }) => {
                   />
                 </Form.Group>
               </div>
-
               <div className="col-md-6">
                 <Form.Group className="mb-3">
                   <Form.Label>Phone</Form.Label>
@@ -633,7 +807,6 @@ const LeadCouncelor = ({ lead }) => {
                   />
                 </Form.Group>
               </div>
-
               <div className="col-md-6">
                 <Form.Group className="mb-3">
                   <Form.Label>Email</Form.Label>
@@ -647,26 +820,6 @@ const LeadCouncelor = ({ lead }) => {
                   />
                 </Form.Group>
               </div>
-
-              {/* <div className="col-md-6">
-                <Form.Group className="mb-3">
-                  <Form.Label>Counselor</Form.Label>
-                  <Form.Select name="counselor" value={newLead.counselor} onChange={handleInputChange}>
-                    <option value="">Select Counselor</option>
-                    {counselors.length > 0 ? (
-                      counselors.map((counselor) => (
-                        <option key={counselor.id} value={counselor.id}>
-                          {counselor.full_name}
-                        </option>
-                      ))
-                    ) : (
-                      <option disabled>No counselors available</option>
-                    )}
-                  </Form.Select>
-                </Form.Group>
-
-              </div> */}
-
               <div className="col-md-6">
                 <Form.Group className="mb-3">
                   <Form.Label>Follow-up Date</Form.Label>
@@ -678,7 +831,6 @@ const LeadCouncelor = ({ lead }) => {
                   />
                 </Form.Group>
               </div>
-
               <div className="col-md-6">
                 <Form.Group className="mb-3">
                   <Form.Label>Source</Form.Label>
@@ -696,7 +848,6 @@ const LeadCouncelor = ({ lead }) => {
                   </Form.Select>
                 </Form.Group>
               </div>
-
               <div className="col-md-6">
                 <Form.Group className="mb-3">
                   <Form.Label>Status</Form.Label>
@@ -712,7 +863,6 @@ const LeadCouncelor = ({ lead }) => {
                   </Form.Select>
                 </Form.Group>
               </div>
-
               <div className="col-md-6">
                 <Form.Group className="mb-3">
                   <Form.Label>Preferred Countries</Form.Label>
@@ -725,7 +875,6 @@ const LeadCouncelor = ({ lead }) => {
                   />
                 </Form.Group>
               </div>
-
               <div className="col-12">
                 <Form.Group className="mb-3">
                   <Form.Label>Notes</Form.Label>
@@ -750,7 +899,6 @@ const LeadCouncelor = ({ lead }) => {
         </Modal.Body>
       </Modal>
 
-
       {/* invoice model */}
       <Modal show={showInvoiceModal} onHide={() => setShowInvoiceModal(false)} centered>
         <Modal.Header closeButton>
@@ -768,18 +916,6 @@ const LeadCouncelor = ({ lead }) => {
                 placeholder="Enter payment amount"
               />
             </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Tax (%)</Form.Label>
-              <Form.Control
-                type="number"
-                name="tax"
-                value={tax}
-                onChange={handleInvoiceInputChange}
-                placeholder="Enter tax percentage"
-              />
-            </Form.Group>
-
             <Form.Group className="mb-3">
               <Form.Label>Payment Date</Form.Label>
               <Form.Control
@@ -789,7 +925,6 @@ const LeadCouncelor = ({ lead }) => {
                 onChange={handleInvoiceInputChange}
               />
             </Form.Group>
-
             <Form.Group className="mb-3">
               <Form.Label>Additional Notes</Form.Label>
               <Form.Control
@@ -800,14 +935,11 @@ const LeadCouncelor = ({ lead }) => {
                 placeholder="Enter notes"
               />
             </Form.Group>
-
             <div>
               <h5>Invoice Summary</h5>
               <p>Payment Amount: ${paymentAmount}</p>
-              <p>Tax ({tax}%): ${(paymentAmount * (tax / 100)).toFixed(2)}</p>
-              <p>Total: ${total.toFixed(2)}</p>
+              <p>Total: ${paymentAmount}</p>
             </div>
-
             <Modal.Footer>
               <Button variant="secondary" onClick={() => setShowInvoiceModal(false)}>
                 Cancel
@@ -820,6 +952,267 @@ const LeadCouncelor = ({ lead }) => {
         </Modal.Body>
       </Modal>
 
+      {/* Student Form Modal */}
+      <div
+        className={`modal fade ${showStudentModal ? 'show d-block' : ''}`}
+        id="studentFormModal"
+        tabIndex={-1}
+        aria-labelledby="studentFormModalLabel"
+        aria-hidden={!showStudentModal}
+      >
+        <div className="modal-dialog modal-xl">
+          <div className="modal-content student-form-container">
+            <div className="modal-header">
+              <h5 className="modal-title student-form-title" id="studentFormModalLabel">
+                Student Information
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                onClick={resetForm}
+              />
+            </div>
+            <div className="modal-body">
+              {errorMessage && (
+                <div className="alert alert-danger" role="alert">
+                  {errorMessage}
+                </div>
+              )}
+              <form className="student-form" onSubmit={handleSubmit} encType="multipart/form-data">
+                <div className="row">
+                  <div className="col-md-4 student-form-group">
+                    <label htmlFor="studentName" className="student-form-label">
+                      Student Name
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control student-form-input"
+                      id="studentName"
+                      placeholder="Enter student name"
+                      value={formData.full_name}
+                      onChange={(e) =>
+                        setFormData({ ...formData, full_name: e.target.value, full_name: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+                  <div className="col-md-4 student-form-group">
+                    <label htmlFor="fatherName" className="student-form-label">
+                      Father Name
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control student-form-input"
+                      id="fatherName"
+                      placeholder="Enter father name"
+                      value={formData.father_name}
+                      onChange={(e) => setFormData({ ...formData, father_name: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="col-md-4 student-form-group">
+                    <label htmlFor="idNo" className="student-form-label">
+                      Mother Name
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control student-form-input"
+                      id="idNo"
+                      placeholder="Enter Mother Name"
+                      value={formData.mother_name}
+                      onChange={(e) => setFormData({ ...formData, mother_name: e.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-6 student-form-group">
+                    <label htmlFor="studentName" className="student-form-label">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      className="form-control student-form-input"
+                      id="email"
+                      placeholder="Enter student's email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="col-md-6 student-form-group">
+                    <label htmlFor="fatherName" className="student-form-label">
+                      Enter Password
+                    </label>
+                    <input
+                      type="password"
+                      className="form-control student-form-input"
+                      id="password"
+                      placeholder="Enter Password"
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-6 student-form-group">
+                    <label htmlFor="dob" className="student-form-label">
+                      Date of Birth
+                    </label>
+                    <input
+                      type="date"
+                      className="form-control student-form-input"
+                      id="dob"
+                      value={formData.date_of_birth}
+                      onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="col-md-6 student-form-group">
+                    <label htmlFor="mobileNumber" className="student-form-label">
+                      Mobile Number
+                    </label>
+                    <input
+                      type="tel"
+                      className="form-control student-form-input"
+                      id="mobileNumber"
+                      placeholder="Enter mobile number"
+                      value={formData.mobile_number}
+                      onChange={(e) => setFormData({ ...formData, mobile_number: e.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-6 student-form-group">
+                    <label htmlFor="university" className="student-form-label">
+                      University Name
+                    </label>
+                    <select
+                      className="form-select student-form-select"
+                      id="university"
+                      value={formData.university_id}
+                      onChange={(e) => setFormData({ ...formData, university_id: e.target.value })}
+                      required
+                    >
+                      <option value="" disabled>
+                        Select university
+                      </option>
+                      {universities?.map((uni) => (
+                        <option key={uni.id} value={uni.id}>
+                          {uni.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="col-md-6 student-form-group">
+                    <label htmlFor="admissionNo" className="student-form-label">
+                      Identifying Name
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control student-form-input"
+                      id="admissionNo"
+                      placeholder="Enter admission number"
+                      value={formData.identifying_name}
+                      onChange={(e) => setFormData({ ...formData, identifying_name: e.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-6 student-form-group">
+                    <label className="student-form-label">Gender</label>
+                    <div>
+                      {["Male", "Female", "Other"].map((g) => (
+                        <div key={g} className="form-check form-check-inline">
+                          <input
+                            className="form-check-input"
+                            type="radio"
+                            name="gender"
+                            value={g}
+                            checked={formData.gender === g}
+                            onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                            required
+                          />
+                          <label className="form-check-label">{g}</label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="col-md-6 student-form-group">
+                    <label htmlFor="category" className="student-form-label">
+                      Category
+                    </label>
+                    <select
+                      className="form-select student-form-select"
+                      id="category"
+                      value={formData.category}
+                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                      required
+                    >
+                      <option selected="" disabled="" value="">
+                        Select category
+                      </option>
+                      <option value="General">General</option>
+                      <option value="SC">SC</option>
+                      <option value="ST">ST</option>
+                      <option value="OBC">OBC</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-12 student-form-group">
+                    <label htmlFor="address" className="student-form-label">
+                      Address
+                    </label>
+                    <textarea
+                      className="form-control student-form-input"
+                      id="address"
+                      rows={3}
+                      placeholder="Enter complete address"
+                      value={formData.address}
+                      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="student-form-actions d-flex justify-content-end">
+                  <div>
+                    <button
+                      type="button"
+                      className="btn student-form-btn student-form-btn-secondary"
+                      data-bs-dismiss="modal"
+                      onClick={resetForm}
+                    >
+                      Cancel
+                    </button>
+                    {isEditing == true ? (
+                      <button
+                        type="submit"
+                        className="btn student-form-btn btn-primary"
+                      >
+                        Update
+                      </button>
+                    ) : (
+                      <button
+                        type="submit"
+                        className="btn student-form-btn btn-primary"
+                      >
+                        Submit
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </Container>
   );
 };

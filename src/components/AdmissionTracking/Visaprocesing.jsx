@@ -240,8 +240,7 @@ const Visaprocesing = () => {
                             <div
                                 className={`text-center position-relative flex-shrink-0 ${isDisabled ? 'opacity-50' : ''}`}
                                 style={{ minWidth: "80px" }}
-                                key={step.key}
-                            >
+                                key={step.key}>
                                 {index !== 0 && (
                                     <div
                                         className="position-absolute top-50 start-0 translate-middle-y w-100"
@@ -1730,8 +1729,6 @@ const Visaprocesing = () => {
             </Card.Body>
         </Card>
     );
-
-
 
     return (
         <div className="py-4 p-5" style={{ backgroundColor: "#f8f9fc" }}>

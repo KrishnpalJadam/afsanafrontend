@@ -358,7 +358,9 @@ const VisaProcessingList = () => {
                         <tr>
                             <th>#</th>
                             {headings.map((head, idx) => (
-                                <th key={idx}>{head.replace(/_/g, ' ')}</th>
+                                <th key={idx}>{head
+                                 .replace(/_/g, ' ')
+    .replace(/\b\w/g, char => char.toUpperCase())}</th>
                             ))}
                         </tr>
                     </thead>
