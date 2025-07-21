@@ -292,11 +292,11 @@ const StudentDetails = () => {
         </div>
 
         <div className="col-md-5">
-          <label className="form-label">Search By Mobile Number or Identifying Name</label>
+          <label className="form-label">Search By Mobile Number /  Identifying Name</label>
           <input
             type="text"
             className="form-control p-1"
-            placeholder="Search by mobile number or identifying name"
+            placeholder="Search by mobile number /  identifying name"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
