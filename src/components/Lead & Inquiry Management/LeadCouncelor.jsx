@@ -591,7 +591,7 @@ const LeadCouncelor = ({ lead }) => {
             <th>Name</th>
             <th>Contact</th>
             <th>Assign Counselor</th>
-            <th>Invoice</th>
+            {/* <th>Invoice</th> */}
             <th>Payment Status</th>
             <th>Status</th>
             <th>Lead Status</th>
@@ -605,7 +605,7 @@ const LeadCouncelor = ({ lead }) => {
                 <td>{lead?.name}</td>
                 <td>{lead?.phone}</td>
                 <td>{lead?.counselor_name || "Unassigned"}</td>
-                <td>
+                {/* <td>
                   {lead.is_view === "1" ? (
                     <Button variant="secondary" size="sm" disabled>
                       Already Created
@@ -630,7 +630,7 @@ const LeadCouncelor = ({ lead }) => {
                   >
                     <FaEye />
                   </button>
-                </td>
+                </td> */}
                 <td>
                   <Form.Control
                     as="select"
