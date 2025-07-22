@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Container, Button, Table, Form, Modal, Badge, InputGroup, Dropdown, DropdownButton } from "react-bootstrap";
+import { Container, Button, Table, Form, Modal,Row,Col, Badge, InputGroup, Dropdown, DropdownButton } from "react-bootstrap";
 import { FaSearch, FaPlus, FaEdit, FaTrash, FaEye } from "react-icons/fa";
 import BASE_URL from "../../Config";
 import api from "../../interceptors/axiosInterceptor";
@@ -12,6 +12,7 @@ import {
   BsArrowRepeat,
   BsSearch,
 } from "react-icons/bs";
+import AddLead from "./AddLead";
 
 const LeadCouncelor = ({ lead }) => {
   const invoiceRef = useRef(null);
@@ -583,6 +584,17 @@ const LeadCouncelor = ({ lead }) => {
           </div>
         </div>
       </div>
+       <Row className="mt-2 mb-3">
+              <Col md="auto" className="ms-auto">
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => setShowModal(true)}
+                >
+                  Add Lead
+                </Button>
+              </Col>
+            </Row>
 
       {/* Leads Table */}
       <Table striped bordered hover className="text-center">
@@ -591,7 +603,7 @@ const LeadCouncelor = ({ lead }) => {
             <th>Name</th>
             <th>Contact</th>
             <th>Assign Counselor</th>
-            <th>Invoice</th>
+            {/* <th>Invoice</th> */}
             <th>Payment Status</th>
             <th>Status</th>
             <th>Lead Status</th>
@@ -605,7 +617,7 @@ const LeadCouncelor = ({ lead }) => {
                 <td>{lead?.name}</td>
                 <td>{lead?.phone}</td>
                 <td>{lead?.counselor_name || "Unassigned"}</td>
-                <td>
+                {/* <td>
                   {lead.is_view === "1" ? (
                     <Button variant="secondary" size="sm" disabled>
                       Already Created
@@ -630,7 +642,7 @@ const LeadCouncelor = ({ lead }) => {
                   >
                     <FaEye />
                   </button>
-                </td>
+                </td> */}
                 <td>
                   <Form.Control
                     as="select"
@@ -1213,6 +1225,20 @@ const LeadCouncelor = ({ lead }) => {
           </div>
         </div>
       </div>
+      <Modal
+              show={showModal}
+              onHide={() => setShowModal(false)}
+              backdrop="static"
+              size="lg"
+              centered
+            >
+              <Modal.Header closeButton>
+                <Modal.Title>Add Lead</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <AddLead />
+              </Modal.Body>
+            </Modal>
     </Container>
   );
 };
