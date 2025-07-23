@@ -6,87 +6,60 @@ import api from "../../../interceptors/axiosInterceptor";
 import BASE_URL from "../../../Config";
 
 const AddProcessor = () => {
-    const [staffMembers, setStaffMembers] = useState([]);
+    const [processors, setProcessors] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [showModal, setShowModal] = useState(false);
     const [editingId, setEditingId] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
-    const defaultPermissions = {
-        Inquiry: { view: false, add: false, edit: false, delete: false },
-        Lead: { view: false, add: false, edit: false, delete: false },
-        "Payments & Invoice": { view: false, add: false, edit: false, delete: false }
-    };
+
     const [formData, setFormData] = useState({
         full_name: "",
         email: "",
         phone: "",
         password: "",
-        status: "active",
-        permissions: JSON.parse(JSON.stringify(defaultPermissions))
+        
     });
-    const fetchStaff = async () => {
+
+    const fetchProcessors = async () => {
         try {
-            const res = await api.get(`${BASE_URL}getAllStaff`);
-            setStaffMembers(res.data);
+            const res = await api.get(`${BASE_URL}getAllProcessors`);
+            setProcessors(res.data);
         } catch (err) {
-            console.error("Failed to fetch staff", err);
-            Swal.fire("Error", "Failed to fetch staff members", "error");
+            console.error("Failed to fetch processors", err);
+            Swal.fire("Error", "Failed to fetch processor members", "error");
         }
     };
 
     useEffect(() => {
-        fetchStaff();
+        fetchProcessors();
     }, []);
 
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
-
-        if (name.startsWith("permission_")) {
-            const [_, module, action] = name.split("_");
-            setFormData(prev => ({
-                ...prev,
-                permissions: {
-                    ...prev.permissions,
-                    [module]: {
-                        ...prev.permissions[module],
-                        [action]: checked
-                    }
-                }
-            }));
-        } else {
-            setFormData(prev => ({
-                ...prev,
-                [name]: type === "checkbox" ? checked : value
-            }));
-        }
+        setFormData(prev => ({
+            ...prev,
+            [name]: type === "checkbox" ? checked : value
+        }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const permissionsArray = Object.entries(formData.permissions).map(([module, perm]) => ({
-            permission_name: module,
-            view_permission: perm.view ? 1 : 0,
-            add_permission: perm.add ? 1 : 0,
-            edit_permission: perm.edit ? 1 : 0,
-            delete_permission: perm.delete ? 1 : 0
-        }));
         const payload = {
             ...formData,
-            user_id: 1,
-            role: "staff",
-            permissions: permissionsArray
+            role: "processors"  // Changed from "staff" to "processor"
         };
+
         try {
             if (editingId) {
-                await api.put(`${BASE_URL}updateStaff/${editingId}`, payload);
-                Swal.fire("Success", "Staff updated successfully", "success");
+                await api.put(`${BASE_URL}updateProcessor/${editingId}`, payload);
+                Swal.fire("Success", "Processor updated successfully", "success");
             } else {
-                await api.post(`${BASE_URL}createStaff`, payload);
-                Swal.fire("Success", "Staff member added", "success");
+                await api.post(`${BASE_URL}createprocessor`, payload);
+                Swal.fire("Success", "Processor added successfully", "success");
             }
-            fetchStaff();
+            fetchProcessors();
             setShowModal(false);
             resetForm();
         } catch (err) {
@@ -94,32 +67,29 @@ const AddProcessor = () => {
             console.error("API Error:", err);
         }
     };
-    const handleEdit = (staff) => {
-        const permissionsObj = staff.permissions?.reduce((acc, perm) => {
-            acc[perm.permission_name] = {
-                view: perm.view_permission === 1,
-                add: perm.add_permission === 1,
-                edit: perm.edit_permission === 1,
-                delete: perm.delete_permission === 1
-            };
-            return acc;
-        }, JSON.parse(JSON.stringify(defaultPermissions)));
-        setFormData({
-            full_name: staff.full_name,
-            email: staff.email,
-            phone: staff.phone,
-            password: "",
-            status: staff.status,
-            permissions: permissionsObj
-        });
-        setEditingId(staff.id);
-        setShowModal(true);
+
+    const handleEdit = async (id) => {
+        try {
+            const res = await api.get(`${BASE_URL}getProcessorById/${id}`);
+            const processor = res.data;
+            setFormData({
+                full_name: processor.full_name,
+                email: processor.email,
+                phone: processor.phone,
+                password: "",
+                
+            });
+            setEditingId(processor.id);
+            setShowModal(true);
+        } catch (err) {
+            Swal.fire("Error", "Failed to fetch processor details", "error");
+        }
     };
 
     const handleDelete = async (id) => {
         const result = await Swal.fire({
             title: "Confirm Delete",
-            text: "Are you sure you want to delete this staff member?",
+            text: "Are you sure you want to delete this processor?",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#d33",
@@ -128,9 +98,9 @@ const AddProcessor = () => {
         });
         if (result.isConfirmed) {
             try {
-                await api.delete(`${BASE_URL}deleteStaff/${id}`);
-                Swal.fire("Deleted", "Staff member removed", "success");
-                fetchStaff();
+                await api.delete(`${BASE_URL}deleteProcessor/${id}`);
+                Swal.fire("Deleted", "Processor removed successfully", "success");
+                fetchProcessors();
             } catch (err) {
                 Swal.fire("Error", "Delete operation failed", "error");
             }
@@ -143,29 +113,22 @@ const AddProcessor = () => {
             email: "",
             phone: "",
             password: "",
-            status: "active",
-            permissions: JSON.parse(JSON.stringify(defaultPermissions))
+          
         });
         setEditingId(null);
     };
 
     // Filter and pagination logic
-    const filteredStaff = staffMembers.filter(staff =>
-        staff.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        staff.email.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredProcessors = processors.filter(processor =>
+        processor.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        processor.email.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-
-
-    const totalPages = Math.ceil(filteredStaff.length / itemsPerPage);
-    const currentItems = filteredStaff.slice(
+    const totalPages = Math.ceil(filteredProcessors.length / itemsPerPage);
+    const currentItems = filteredProcessors.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
-
-
-    console.log(currentItems);
-
 
     return (
         <div className="container py-4">
@@ -190,10 +153,9 @@ const AddProcessor = () => {
                                 setShowModal(true);
                             }}
                         >
-                            + Add Processors
+                            + Add Processor
                         </button>
                     </div>
-
                 </div>
             </div>
 
@@ -207,40 +169,32 @@ const AddProcessor = () => {
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Phone</th>
-                                    <th>Status</th>
+                                   
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {currentItems.map((staff, index) => (
-                                    <tr key={staff.id}>
+                                {currentItems.map((processor, index) => (
+                                    <tr key={processor.id}>
                                         <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                                        <td>{staff.full_name}</td>
-                                        <td>{staff.email}</td>
-                                        <td>{staff.phone}</td>
-                                        <td>
-                                            <span className={`badge ${staff.status === 'active' ? 'bg-success' : 'bg-secondary'}`}>
-                                                {staff.status}
-                                            </span>
-                                        </td>
+                                        <td>{processor.full_name}</td>
+                                        <td>{processor.email}</td>
+                                        <td>{processor.phone}</td>
                                        
                                         <td className="" style={{alignItems:"center"}}>
-                                            
-                                               
-                                                <button
-                                                    className="btn btn-sm btn-outline-danger "
-                                                    onClick={() => handleDelete(staff.id)}
-                                                >
-                                                    Delete
-                                                </button>
-                                           
+                                            <button
+                                                className="btn btn-sm btn-outline-danger"
+                                                onClick={() => handleDelete(processor.id)}
+                                            >
+                                                Delete
+                                            </button>
                                         </td>
                                     </tr>
                                 ))}
                                 {currentItems.length === 0 && (
                                     <tr>
                                         <td colSpan="7" className="text-center py-4 text-muted">
-                                            No staff members found
+                                            No processors found
                                         </td>
                                     </tr>
                                 )}
@@ -281,163 +235,97 @@ const AddProcessor = () => {
                     )}
                 </div>
             </div>
-            {/* Add/Edit Staff Modal */}
-            {
-                showModal && (
-                    <div className="modal show" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
-                        <div className="modal-dialog modal-lg modal-dialog-centered">
-                            <div className="modal-content">
-                                <div className="modal-header">
-                                    <h5 className="modal-title">
-                                        {editingId ? 'Edit Staff Member' : 'Add New Processor Member'}
-                                    </h5>
+            
+            {/* Add/Edit Processor Modal */}
+            {showModal && (
+                <div className="modal show" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                    <div className="modal-dialog modal-lg modal-dialog-centered">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">
+                                    {editingId ? 'Edit Processor' : 'Add New Processor'}
+                                </h5>
+                                <button
+                                    type="button"
+                                    className="btn-close"
+                                    onClick={() => setShowModal(false)}
+                                ></button>
+                            </div>
+                            <form onSubmit={handleSubmit}>
+                                <div className="modal-body">
+                                    <div className="row g-3">
+                                        <div className="col-md-6">
+                                            <label className="form-label">Full Name</label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                name="full_name"
+                                                placeholder="Full Name"
+                                                value={formData.full_name}
+                                                onChange={handleInputChange}
+                                                required
+                                            />
+                                        </div>
+                                        <div className="col-md-6">
+                                            <label className="form-label">Email</label>
+                                            <input
+                                                type="email"
+                                                className="form-control"
+                                                name="email"
+                                                placeholder="Email"
+                                                value={formData.email}
+                                                onChange={handleInputChange}
+                                                required
+                                            />
+                                        </div>
+                                        <div className="col-md-6">
+                                            <label className="form-label">Phone</label>
+                                            <input
+                                                type="tel"
+                                                className="form-control"
+                                                name="phone"
+                                                placeholder="Phone"
+                                                value={formData.phone}
+                                                onChange={handleInputChange}
+                                                required
+                                            />
+                                        </div>
+                                      
+                                        {!editingId && (
+                                            <div className="col-md-12">
+                                                <label className="form-label">Password</label>
+                                                <input
+                                                    type="password"
+                                                    className="form-control"
+                                                    name="password"
+                                                    placeholder="Password"
+                                                    value={formData.password}
+                                                    onChange={handleInputChange}
+                                                    required={!editingId}
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="modal-footer">
                                     <button
                                         type="button"
-                                        className="btn-close"
+                                        className="btn btn-secondary"
                                         onClick={() => setShowModal(false)}
-                                    ></button>
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button type="submit" className="btn btn-primary">
+                                        {editingId ? 'Save Changes' : 'Add Processor'}
+                                    </button>
                                 </div>
-                                <form onSubmit={handleSubmit}>
-                                    <div className="modal-body">
-                                        <div className="row g-3">
-                                            <div className="col-md-6">
-                                                <label className="form-label">Full Name</label>
-                                                <input
-                                                    type="text"
-                                                    className="form-control"
-                                                    name="full_name"
-                                                    placeholder="Full Name"
-                                                    value={formData.full_name}
-                                                    onChange={handleInputChange}
-                                                    required
-                                                />
-                                            </div>
-                                            <div className="col-md-6">
-                                                <label className="form-label">Email</label>
-                                                <input
-                                                    type="email"
-                                                    className="form-control"
-                                                    name="email"
-                                                    placeholder="Email"
-                                                    value={formData.email}
-                                                    onChange={handleInputChange}
-                                                    required
-                                                />
-                                            </div>
-                                            <div className="col-md-6">
-                                                <label className="form-label">Phone</label>
-                                                <input
-                                                    type="tel"
-                                                    className="form-control"
-                                                    name="phone"
-                                                    placeholder="Phone"
-                                                    value={formData.phone}
-                                                    onChange={handleInputChange}
-                                                    required
-                                                />
-                                            </div>
-                                            <div className="col-md-6">
-                                                <label className="form-label">Status</label>
-                                                <select
-                                                    className="form-select"
-                                                    name="status"
-                                                    value={formData.status}
-                                                    onChange={handleInputChange}
-                                                >
-                                                    <option value="active">Active</option>
-                                                    <option value="inactive">Inactive</option>
-                                                </select>
-                                            </div>
-                                            {!editingId && (
-                                                <div className="col-md-12">
-                                                    <label className="form-label">Password</label>
-                                                    <input
-                                                        type="password"
-                                                        className="form-control"
-                                                        name="password"
-                                                        placeholder="Password"
-                                                        value={formData.password}
-                                                        onChange={handleInputChange}
-                                                        required={!editingId}
-                                                    />
-                                                </div>
-                                            )}
-                                        </div>
-                                        <div className="mt-4">
-                                            <h5>Permissions</h5>
-                                            <div className="table-responsive">
-                                                <table className="table table-sm table-bordered">
-                                                    <thead className="table-light">
-                                                        <tr>
-                                                            <th>Module</th>
-                                                            <th className="text-center">View</th>
-                                                            <th className="text-center">Add</th>
-                                                            <th className="text-center">Edit</th>
-                                                            <th className="text-center">Delete</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {Object.entries(formData.permissions).map(([module, perms]) => (
-                                                            <tr key={module}>
-                                                                <td>{module}</td>
-                                                                <td className="text-center">
-                                                                    <input
-                                                                        type="checkbox"
-                                                                        name={`permission_${module}_view`}
-                                                                        checked={perms.view}
-                                                                        onChange={handleInputChange}
-                                                                    />
-                                                                </td>
-                                                                <td className="text-center">
-                                                                    <input
-                                                                        type="checkbox"
-                                                                        name={`permission_${module}_add`}
-                                                                        checked={perms.add}
-                                                                        onChange={handleInputChange}
-                                                                    />
-                                                                </td>
-                                                                <td className="text-center">
-                                                                    <input
-                                                                        type="checkbox"
-                                                                        name={`permission_${module}_edit`}
-                                                                        checked={perms.edit}
-                                                                        onChange={handleInputChange}
-                                                                    />
-                                                                </td>
-                                                                <td className="text-center">
-                                                                    <input
-                                                                        type="checkbox"
-                                                                        name={`permission_${module}_delete`}
-                                                                        checked={perms.delete}
-                                                                        onChange={handleInputChange}
-                                                                    />
-                                                                </td>
-                                                            </tr>
-                                                        ))}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="modal-footer">
-                                        <button
-                                            type="button"
-                                            className="btn btn-secondary"
-                                            onClick={() => setShowModal(false)}
-                                        >
-                                            Cancel
-                                        </button>
-                                        <button type="submit" className="btn btn-primary">
-                                            {editingId ? 'Save Changes' : 'Add Staff'}
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
+                            </form>
                         </div>
                     </div>
-                )
-            }
+                </div>
+            )}
         </div>
     );
 };
+
 export default AddProcessor;

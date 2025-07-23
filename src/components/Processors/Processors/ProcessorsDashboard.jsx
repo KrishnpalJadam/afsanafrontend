@@ -20,6 +20,11 @@ const ProcessorsDashboard = () => {
   const [totalInquiries, setTotalInquiries] = useState(0);
   const [chartData, setChartData] = useState([]);
 
+
+  const processors =[{
+    totalDocument : 5,
+  }
+  ]
   useEffect(() => {
     fetchDashboardData();
   }, []);

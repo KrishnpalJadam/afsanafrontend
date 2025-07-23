@@ -31,7 +31,7 @@ const Login = ({ setLogin }) => {
     } else if (role === "counselor") {
       navigate("/councelor");
     } else if (role === "staff") {
-      navigate("/processorsDashboard");
+      navigate("/staffDashboard");
     }
     else if (role === "processors") {
       navigate("/processorsDashboard");
@@ -95,7 +95,7 @@ const Login = ({ setLogin }) => {
             navigate("/staffDashboard");
           }
            else if (role === "processors") {
-            navigate("/staffDashboard");
+            navigate("/processorsDashboard");
           }
         }, 300);
       } else {
