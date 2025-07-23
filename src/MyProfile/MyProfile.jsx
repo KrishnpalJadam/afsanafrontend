@@ -157,7 +157,10 @@ const MyProfile = () => {
             </ListGroup>
           </Card>
         </Col>
+
       </Row>
+
+      
       <Row className="mt-5">
         <Col md={12}>
           <div className=" shadow-sm rounded-4 border overflow-hidden">

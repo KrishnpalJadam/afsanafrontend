@@ -33,6 +33,9 @@ const Login = ({ setLogin }) => {
     } else if (role === "staff") {
       navigate("/staffDashboard");
     }
+    else if (role === "Processors") {
+      navigate("/staffDashboard");
+    }
   }
 }, []);
 
@@ -89,6 +92,9 @@ const Login = ({ setLogin }) => {
             navigate("/councelor");
           }
           else if (role === "staff") {
+            navigate("/staffDashboard");
+          }
+           else if (role === "processors") {
             navigate("/staffDashboard");
           }
         }, 300);
