@@ -263,8 +263,20 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
 
 
               {openSubmenu === "leadInquiry" && (
+
                 <ul className={`submenu `}>
                     <li
+                    className={`menu-item submenu-item ${isActive("/inquiry") ? "active" : ""
+                      }`}
+                    onClick={() => {
+                      navigate("/inquiry");
+                      
+                    }}
+                  >
+                    Inquiry
+                  </li>
+
+                  <li
                     className={`menu-item submenu-item ${isActive("/inquiry") ? "active" : ""
                       }`}
                     onClick={() => {
@@ -285,6 +297,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                   >
                     Lead
                   </li>}
+
                   {/* {hasPermission("Status", "view") && <li
                     className={`menu-item submenu-item ${isActive("/status") ? "active" : ""
                       }`}
