@@ -1225,7 +1225,7 @@ const LeadCouncelor = ({ lead }) => {
           </div>
         </div>
       </div>
-      <Modal
+      {/* <Modal
               show={showModal}
               onHide={() => setShowModal(false)}
               backdrop="static"
@@ -1238,7 +1238,7 @@ const LeadCouncelor = ({ lead }) => {
               <Modal.Body>
                 <AddLead />
               </Modal.Body>
-            </Modal>
+            </Modal> */}
     </Container>
   );
 };
