@@ -268,9 +268,9 @@ const App = () => {
                 Log in
               </Link>
 
-              <Link to="/signup" className="btn btn-gradient px-4 py-2">
+              {/* <Link to="/signup" className="btn btn-gradient px-4 py-2">
                 Signup
-              </Link>
+              </Link> */}
 
               <Button
                 variant="outline-light"
@@ -298,8 +298,8 @@ const App = () => {
               instructors
             </p>
             <div className="hero-buttons d-flex gap-3 justify-content-center">
-              <Link to="/signup">
-                <Button variant="gradient" size="lg" className="pulse-button">
+              <Link to="">
+                <Button variant="gradient" size="lg" className="pulse-button" onClick={handleOpenInquiry}>
                   <i className="fas fa-play-circle me-2"></i>
                   Start Learning
                 </Button>

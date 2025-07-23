@@ -21,6 +21,7 @@ const StudentDetails = () => {
   const [editStudentId, setEditStudentId] = useState(null);
   const [universities, setUniversities] = useState([]);
   const [counselors, setCounselors] = useState([]); // Counselor list
+  const [assignType, setAssignType] = useState("counselor"); 
 
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [selectedApplication, setSelectedApplication] = useState(null);
@@ -240,6 +241,7 @@ const StudentDetails = () => {
     setNotes("");
     setShowAssignModal(true);
   };
+  
 
   const handleCloseAssignModal = () => {
     setShowAssignModal(false);
@@ -292,11 +294,11 @@ const StudentDetails = () => {
         </div>
 
         <div className="col-md-5">
-          <label className="form-label">Search By Mobile Number or Identifying Name</label>
+          <label className="form-label">Search By Mobile Number /  Identifying Name</label>
           <input
             type="text"
             className="form-control p-1"
-            placeholder="Search by mobile number or identifying name"
+            placeholder="Search by mobile number /  identifying name"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -331,6 +333,7 @@ const StudentDetails = () => {
               <th>Category</th>
               <th>Mobile Number</th>
               <th>Assign to</th>
+              <th>Staff Processer</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -358,21 +361,56 @@ const StudentDetails = () => {
                 <td>{student?.category}</td>
                 <td>{student?.mobile_number}</td>
 
-                <td>
-                  {student.counselor_id ? (
-                    <span className="badge bg-info">
-                      {student.counselorName || "Assigned"}
-                    </span>
-                  ) : (
-                    <button
-                      className="btn btn-sm btn-outline-primary"
-                      onClick={() => handleOpenAssignModal(student)}
-                      disabled={student.counselor_id}
-                    >
-                      Assign Counselor
-                    </button>
-                  )}
-                </td>
+             <td>
+  {student.counselor_id ? (
+    <span
+      className="badge bg-info"
+      role="button"
+      onClick={() => {
+        setAssignType("counselor");
+        handleOpenAssignModal(student);
+      }}
+    >
+      {student.counselorName || "Assigned"}
+    </span>
+  ) : (
+    <button
+      className="btn btn-sm btn-outline-primary"
+      onClick={() => {
+        setAssignType("counselor");
+        handleOpenAssignModal(student);
+      }}
+    >
+      Assign Counselor
+    </button>
+  )}
+</td>
+
+<td>
+  {student.processor_id ? (
+    <span
+      className="badge bg-info"
+      role="button"
+      onClick={() => {
+        setAssignType("processor");
+        handleOpenAssignModal(student);
+      }}
+    >
+      {student.processorName || "Assigned"}
+    </span>
+  ) : (
+    <button
+      className="btn btn-sm btn-outline-primary"
+      onClick={() => {
+        setAssignType("processor");
+        handleOpenAssignModal(student);
+      }}
+    >
+      Assign Processor
+    </button>
+  )}
+</td>
+
 
                 <td>
                   <button className="btn btn-primary btn-sm me-1 "
@@ -397,61 +435,74 @@ const StudentDetails = () => {
         </table>
       </div>
 
-      <Modal show={showAssignModal} onHide={() => setShowAssignModal(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Assign Counselor</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {selectedApplication && (
-            <>
-              <p><strong>Student:</strong> {selectedApplication.student_name}</p>
-              <p><strong>University:</strong> {selectedApplication.university_name}</p>
+    <Modal show={showAssignModal} onHide={() => setShowAssignModal(false)} centered>
+  <Modal.Header closeButton>
+    <Modal.Title>
+       {selectedCounselor ? "Update" : "Assign"}{" "}
+  {assignType === "counselor" ? "Counselor" : "Processor"}
+    </Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    {selectedApplication && (
+      <>
+        <p><strong>Student:</strong> {selectedApplication.student_name}</p>
+        <p><strong>University:</strong> {selectedApplication.university_name}</p>
 
-              <Form.Group className="mb-3">
-                <Form.Label>Select Counselor *</Form.Label>
-                <Form.Select
-                  value={selectedCounselor?.id || ""}
-                  onChange={(e) => {
-                    const selected = counselors.find(c => c.id.toString() === e.target.value);
-                    setSelectedCounselor(selected);
-                  }}
-                >
-                  <option value="">-- Select Counselor --</option>
-                  {counselors.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.full_name}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Label>
+            Select {assignType === "counselor" ? "Counselor" : "Processor"} *
+          </Form.Label>
+          <Form.Select
+            value={selectedCounselor?.id || ""}
+            onChange={(e) => {
+              const selected = counselors.find(c => c.id.toString() === e.target.value);
+              setSelectedCounselor(selected);
+            }}
+          >
+            <option value="">
+              -- Select {assignType === "counselor" ? "Counselor" : "Processor"} --
+            </option>
+            {counselors.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.full_name}
+              </option>
+            ))}
+          </Form.Select>
+        </Form.Group>
 
-              <Form.Group className="mb-3">
-                <Form.Label>Follow-Up Date *</Form.Label>
-                <Form.Control
-                  type="date"
-                  value={followUpDate}
-                  onChange={(e) => setFollowUpDate(e.target.value)}
-                />
-              </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Label>Follow-Up Date *</Form.Label>
+          <Form.Control
+            type="date"
+            value={followUpDate}
+            onChange={(e) => setFollowUpDate(e.target.value)}
+          />
+        </Form.Group>
 
-              <Form.Group className="mb-3">
-                <Form.Label>Notes</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  rows={3}
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                />
-              </Form.Group>
-            </>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowAssignModal(false)}>Cancel</Button>
-          <Button variant="primary" onClick={handleAssignCounselor}>Assign</Button>
-        </Modal.Footer>
-      </Modal>
+        <Form.Group className="mb-3">
+          <Form.Label>Notes</Form.Label>
+          <Form.Control
+            as="textarea"
+            rows={3}
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+          />
+        </Form.Group>
+      </>
+    )}
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={() => setShowAssignModal(false)}>
+      Cancel
+    </Button>
+    <Button variant="primary" onClick={handleAssignCounselor}>
+      Assign
+    </Button>
+  </Modal.Footer>
+</Modal>
 
+
+      
       {/* Student Form Modal */}
       <div
         className="modal fade"
