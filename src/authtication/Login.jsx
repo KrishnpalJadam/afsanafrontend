@@ -31,10 +31,10 @@ const Login = ({ setLogin }) => {
     } else if (role === "counselor") {
       navigate("/councelor");
     } else if (role === "staff") {
-      navigate("/staffDashboard");
+      navigate("/processorsDashboard");
     }
-    else if (role === "Processors") {
-      navigate("/staffDashboard");
+    else if (role === "processors") {
+      navigate("/processorsDashboard");
     }
   }
 }, []);

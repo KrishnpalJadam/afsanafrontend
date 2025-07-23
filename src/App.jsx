@@ -84,6 +84,9 @@ import VisaProcessList from "./components/AdmissionTracking/VisaProcessingList";
 import StudentDecisions from "./components/StudentDecision/StudentDewcision";
 import BASE_URL from "./Config";
 import DashboardVisa from "./components/AdmissionTracking/DashboardVisa";
+import ProcessorsDashboard from "./components/Processors/Processors/ProcessorsDashboard";
+import StudentDocument from "./components/Processors/StudentDocument/StudentDocument";
+import AddProcessor from "./components/Processors/AddProvessor/AddProcessor";
 
 
 
@@ -328,6 +331,14 @@ useEffect(() => {
               <Route path="/visaprocesinglist" element={<VisaProcessList />} />
               <Route path="/staffDashboard" element={<StaffDashboard />} />
               <Route path="/stafflead" element={<Stafflead />} />
+
+
+
+
+              <Route path="/processorsDashboard" element={<ProcessorsDashboard />} />
+              <Route path="/processorsDocument" element={<StudentDocument/>} />
+              <Route path="/addProcessor" element={<AddProcessor/>} />
+
 
 
 

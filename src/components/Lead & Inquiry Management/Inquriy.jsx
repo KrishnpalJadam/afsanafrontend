@@ -284,13 +284,11 @@ const Inquiry = () => {
       const userId = localStorage.getItem("user_id"); // Get the counselor ID
 
       // If the user is an admin, fetch all inquiries, otherwise, filter by counselor_id
-      const filteredInquiries = userRole === "admin"
-        ? allInquiries // Admin sees all inquiries
-        : allInquiries.filter(inquiry => inquiry.counselor_id === parseInt(userId)); // Counselor sees their assigned inquiries
+    
 
-      setInquiries(filteredInquiries); // Update the inquiries state with the filtered inquiries
+      setInquiries(allInquiries); // Update the inquiries state with the filtered inquiries
       // Extract unique countries from filtered inquiries
-      const uniqueCountries = [...new Set(filteredInquiries
+      const uniqueCountries = [...new Set(allInquiries
         .map(inq => inq.country)
         .filter(country => country && country.trim() !== ""))];
 
@@ -812,7 +810,7 @@ const Inquiry = () => {
             <th>Country</th>
             <th>Counselor Name </th>
             <th>Status</th>
-            <th>Check Eligibility</th>
+          {localStorage.getItem("role") === "admin" &&  <th>Check Eligibility</th>}
             <th >Action</th>
           </tr>
         </thead>
@@ -874,45 +872,48 @@ const Inquiry = () => {
                 </td>
 
 
-                <td>
-                  {(inq.lead_status === "0" || inq.lead_status === "New") ? (
-                    <span
-                      style={{ cursor: 'pointer', color: '#0d6efd', fontWeight: 'bold' }}
-                      onClick={() => {
-                        setSelectedInquiry(inq);
-                        setInquiryDetailsModal(true);
-                      }}
-                    >
-                      Check Eligibility
-                    </span>
-                  ) : inq.lead_status === "In Review" ? (
-                    <Badge bg="warning text-dark" style={{ fontWeight: "bold" }}>
-                      In Review
-                    </Badge>
-                  ) : inq.lead_status === "Check Eligibility" ? (
-                    <Badge bg="info text-dark" style={{ fontWeight: "bold" }}>
-                      Check Eligibility
-                    </Badge>
-                  ) : inq.lead_status === "Converted to Lead" ? (
-                    <Badge bg="primary" style={{ fontWeight: "bold" }}>
-                      Converted to Lead
-                    </Badge>
-                  ) : inq.lead_status === "Not Eligible" ? (
-                    <Badge bg="danger" style={{ fontWeight: "bold" }}>
-                      Not Eligible
-                    </Badge>
-                  ) : inq.lead_status === "Not Interested" ? (
-                    <Badge bg="secondary" style={{ fontWeight: "bold" }}>
-                      Not Interested
-                    </Badge>
-                  ) : inq.lead_status === "Duplicate" ? (
-                    <Badge style={{ backgroundColor: "#fd7e14", color: "#fff", fontWeight: "bold" }}>
-                      Duplicate
-                    </Badge>
-                  ) : (
-                    <Badge bg="dark" style={{ fontWeight: "bold" }}>-</Badge>
-                  )}
-                </td>
+              {localStorage.getItem("role") === "admin" && (
+  <td>
+    {(inq.lead_status === "0" || inq.lead_status === "New") ? (
+      <span
+        style={{ cursor: 'pointer', color: '#0d6efd', fontWeight: 'bold' }}
+        onClick={() => {
+          setSelectedInquiry(inq);
+          setInquiryDetailsModal(true);
+        }}
+      >
+        Check Eligibility
+      </span>
+    ) : inq.lead_status === "In Review" ? (
+      <Badge bg="warning text-dark" style={{ fontWeight: "bold" }}>
+        In Review
+      </Badge>
+    ) : inq.lead_status === "Check Eligibility" ? (
+      <Badge bg="info text-dark" style={{ fontWeight: "bold" }}>
+        Check Eligibility
+      </Badge>
+    ) : inq.lead_status === "Converted to Lead" ? (
+      <Badge bg="primary" style={{ fontWeight: "bold" }}>
+        Converted to Lead
+      </Badge>
+    ) : inq.lead_status === "Not Eligible" ? (
+      <Badge bg="danger" style={{ fontWeight: "bold" }}>
+        Not Eligible
+      </Badge>
+    ) : inq.lead_status === "Not Interested" ? (
+      <Badge bg="secondary" style={{ fontWeight: "bold" }}>
+        Not Interested
+      </Badge>
+    ) : inq.lead_status === "Duplicate" ? (
+      <Badge style={{ backgroundColor: "#fd7e14", color: "#fff", fontWeight: "bold" }}>
+        Duplicate
+      </Badge>
+    ) : (
+      <Badge bg="dark" style={{ fontWeight: "bold" }}>-</Badge>
+    )}
+  </td>
+)}
+
 
 
                 <td>
@@ -926,26 +927,33 @@ const Inquiry = () => {
                     </Button>
                   )}
 
-                  <Dropdown className="d-inline ms-2">
-                    <Dropdown.Toggle variant="outline-secondary" size="sm">
-                      Action
-                    </Dropdown.Toggle>
+                 <Dropdown className="d-inline ms-2">
+  <Dropdown.Toggle variant="outline-secondary" size="sm">
+    Action
+  </Dropdown.Toggle>
 
-                    <Dropdown.Menu>
-                      <Dropdown.Item onClick={() => handleStatusChangeFromTable(inq.id, "In Review")}>
-                        In Review
-                      </Dropdown.Item>
-                      <Dropdown.Item onClick={() => handleStatusChangeFromTable(inq.id, "Converted to Lead")}>
-                        Convert to Lead
-                      </Dropdown.Item>
-                      <Dropdown.Item onClick={() => handleStatusChangeFromTable(inq.id, "Not Interested")}>
-                        Not Interested
-                      </Dropdown.Item>
-                      <Dropdown.Item onClick={() => handleStatusChangeFromTable(inq.id, "Not Eligible")}>
-                        Not Eligible
-                      </Dropdown.Item>
-                    </Dropdown.Menu>
-                  </Dropdown>
+  <Dropdown.Menu>
+    <Dropdown.Item onClick={() => handleStatusChangeFromTable(inq.id, "In Review")}>
+      In Review
+    </Dropdown.Item>
+
+    {/* Convert to Lead - only visible to admin */}
+    {localStorage.getItem("role") === "admin" && (
+      <Dropdown.Item onClick={() => handleStatusChangeFromTable(inq.id, "Converted to Lead")}>
+        Convert to Lead
+      </Dropdown.Item>
+    )}
+
+    <Dropdown.Item onClick={() => handleStatusChangeFromTable(inq.id, "Not Interested")}>
+      Not Interested
+    </Dropdown.Item>
+
+    <Dropdown.Item onClick={() => handleStatusChangeFromTable(inq.id, "Not Eligible")}>
+      Not Eligible
+    </Dropdown.Item>
+  </Dropdown.Menu>
+</Dropdown>
+
 
                   <a
                     href={`https://wa.me/${inq.phone_number}`}

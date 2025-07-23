@@ -1,20 +1,15 @@
 import { useState, useEffect, useRef } from "react";
-import { Container, Button, Table, Form, Modal,Row,Col, Badge, InputGroup, Dropdown, DropdownButton } from "react-bootstrap";
+import { Container, Button, Table, Form, Modal, Row, Col, Badge, InputGroup, Dropdown, DropdownButton } from "react-bootstrap";
 import { FaSearch, FaPlus, FaEdit, FaTrash, FaEye } from "react-icons/fa";
 import BASE_URL from "../../Config";
 import api from "../../interceptors/axiosInterceptor";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import InvoiceTemplate from "./InvoiceTemplate";
-import {
-  BsUpload,
-  BsWhatsapp,
-  BsArrowRepeat,
-  BsSearch,
-} from "react-icons/bs";
+import { BsUpload, BsWhatsapp, BsArrowRepeat, BsSearch } from "react-icons/bs";
 import AddLead from "./AddLead";
 
-const LeadCouncelor = ({ lead }) => {
+const LeadCounselor = ({ lead }) => {
   const invoiceRef = useRef(null);
   const [leads, setLeads] = useState([]);
   const [convertData, setConvertData] = useState([]);
@@ -38,10 +33,11 @@ const LeadCouncelor = ({ lead }) => {
   const [selectedLeadForInvoice, setSelectedLeadForInvoice] = useState(null);
   const user_id = localStorage.getItem("user_id");
   const [errorMessage, setErrorMessage] = useState("");
+  const [showMoreFields, setShowMoreFields] = useState(false);
 
   // invoice state 
-  const [paymentAmount, setPaymentAmount] = useState();
-  const [tax, setTax] = useState();
+  const [paymentAmount, setPaymentAmount] = useState(0);
+  const [tax, setTax] = useState(0);
   const [total, setTotal] = useState(0);
   const [paymentDate, setPaymentDate] = useState("");
   const [notes, setNotes] = useState("");
@@ -57,6 +53,24 @@ const LeadCouncelor = ({ lead }) => {
     source: "",
     status: "",
     user_id: 1,
+    address: "",
+    education: "",
+    intake: "",
+    course: "",
+    budget: "",
+    passport: "",
+    ielts: "",
+    dob: "",
+    gender: "",
+    father_name: "",
+    mother_name: "",
+    emergency_contact: "",
+    work_experience: "",
+    english_test_type: "",
+    english_test_score: "",
+    previous_visa_refusals: "",
+    marital_status: "",
+    reference: ""
   });
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -116,12 +130,31 @@ const LeadCouncelor = ({ lead }) => {
       source: "",
       status: "",
       user_id: lead.id,
+      address: "",
+      education: "",
+      intake: "",
+      course: "",
+      budget: "",
+      passport: "",
+      ielts: "",
+      dob: "",
+      gender: "",
+      father_name: "",
+      mother_name: "",
+      emergency_contact: "",
+      work_experience: "",
+      english_test_type: "",
+      english_test_score: "",
+      previous_visa_refusals: "",
+      marital_status: "",
+      reference: ""
     });
     setShowModal(true);
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
+    setShowMoreFields(false);
   };
 
   const handleEditLead = (lead) => {
@@ -131,13 +164,31 @@ const LeadCouncelor = ({ lead }) => {
       name: lead.name,
       phone: lead.phone,
       email: lead.email,
-      counselor: lead.counselor.id,
+      counselor: lead.counselor?.id || counsolerId,
       follow_up_date: lead.follow_up_date,
       notes: lead.notes,
       preferred_countries: lead.preferred_countries,
       source: lead.source,
       status: lead.status,
       user_id: 1,
+      address: lead.address || "",
+      education: lead.education || "",
+      intake: lead.intake || "",
+      course: lead.course || "",
+      budget: lead.budget || "",
+      passport: lead.passport || "",
+      ielts: lead.ielts || "",
+      dob: lead.dob || "",
+      gender: lead.gender || "",
+      father_name: lead.father_name || "",
+      mother_name: lead.mother_name || "",
+      emergency_contact: lead.emergency_contact || "",
+      work_experience: lead.work_experience || "",
+      english_test_type: lead.english_test_type || "",
+      english_test_score: lead.english_test_score || "",
+      previous_visa_refusals: lead.previous_visa_refusals || "",
+      marital_status: lead.marital_status || "",
+      reference: lead.reference || ""
     });
     setShowModal(true);
   };
@@ -146,56 +197,56 @@ const LeadCouncelor = ({ lead }) => {
     const { name, value } = e.target;
     setNewLead({
       ...newLead,
-      [name]: name === "counselor" ? value : value,
+      [name]: name === "counselor" ? parseInt(value) : value,
     });
   };
 
   const handleSaveLead = async (e) => {
     e.preventDefault();
-    if (isEditMode) {
-      try {
+    try {
+      if (isEditMode) {
         const response = await api.put(`${BASE_URL}lead/${currentLeadId}`, newLead);
-        fetchLeads();
-      } catch (error) {
-        console.error("Error updating lead:", error);
-      }
-    } else {
-      try {
+        toast.success("Lead updated successfully!");
+      } else {
         const response = await api.post(`${BASE_URL}lead`, newLead);
-        fetchLeads();
-      } catch (error) {
-        console.error("Error adding lead:", error);
+        toast.success("Lead added successfully!");
       }
+      fetchLeads();
+      handleCloseModal();
+    } catch (error) {
+      console.error("Error saving lead:", error);
+      toast.error("Failed to save lead. Please try again.");
     }
-    handleCloseModal();
   };
 
   const handleDeleteLead = async (leadId) => {
-    try {
-      const response = await api.delete(`${BASE_URL}inquiries/${leadId}`);
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    });
 
-      if (response.status === 200) {
-        console.log("Deletion Success:", response.data);
-        setLeads(leads.filter((lead) => lead.id !== leadId));
-        Swal.fire({
-          icon: 'success',
-          title: 'Lead Deleted',
-          text: 'The lead has been deleted successfully!',
-        });
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error Deleting Lead',
-          text: 'Failed to delete the lead on the server.',
-        });
+    if (result.isConfirmed) {
+      try {
+        const response = await api.delete(`${BASE_URL}inquiries/${leadId}`);
+        fetchLeads();
+        Swal.fire(
+          'Deleted!',
+          'The lead has been deleted.',
+          'success'
+        );
+      } catch (error) {
+        Swal.fire(
+          'Error!',
+          'Failed to delete the lead.',
+          'error'
+        );
+        console.error("Error deleting lead:", error);
       }
-    } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Deletion Failed',
-        text: 'Something went wrong while deleting the lead.',
-      });
-      console.error("Error deleting lead:", error);
     }
   };
 
@@ -442,7 +493,7 @@ const LeadCouncelor = ({ lead }) => {
     setPhoto(null);
     setDocuments([]);
     setIsEditing(false);
-    setErrorMessage(""); // Clear any previous error messages
+    setErrorMessage("");
     setShowStudentModal(true);
   };
 
@@ -465,7 +516,7 @@ const LeadCouncelor = ({ lead }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMessage(""); // Clear previous error messages
+    setErrorMessage("");
 
     const formPayload = new FormData();
     for (const key in formData) {
@@ -584,17 +635,17 @@ const LeadCouncelor = ({ lead }) => {
           </div>
         </div>
       </div>
-       <Row className="mt-2 mb-3">
-              <Col md="auto" className="ms-auto">
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  onClick={() => setShowModal(true)}
-                >
-                  Add Lead
-                </Button>
-              </Col>
-            </Row>
+      <Row className="mt-2 mb-3">
+        <Col md="auto" className="ms-auto">
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={handleShowModal}
+          >
+            Add Lead
+          </Button>
+        </Col>
+      </Row>
 
       {/* Leads Table */}
       <Table striped bordered hover className="text-center">
@@ -603,7 +654,6 @@ const LeadCouncelor = ({ lead }) => {
             <th>Name</th>
             <th>Contact</th>
             <th>Assign Counselor</th>
-            {/* <th>Invoice</th> */}
             <th>Payment Status</th>
             <th>Status</th>
             <th>Lead Status</th>
@@ -617,36 +667,10 @@ const LeadCouncelor = ({ lead }) => {
                 <td>{lead?.name}</td>
                 <td>{lead?.phone}</td>
                 <td>{lead?.counselor_name || "Unassigned"}</td>
-                {/* <td>
-                  {lead.is_view === "1" ? (
-                    <Button variant="secondary" size="sm" disabled>
-                      Already Created
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      onClick={() => handleShowInvoiceModal(lead)}
-                    >
-                      Create Invoice
-                    </Button>
-                  )}
-                  <button
-                    className="btn btn-secondary btn-sm ms-3"
-                    onClick={() => {
-                      fetchInvoice(lead);
-                      if (invoiceRef.current) {
-                        invoiceRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-                      }
-                    }}
-                  >
-                    <FaEye />
-                  </button>
-                </td> */}
                 <td>
                   <Form.Control
                     as="select"
-                    value={lead.payment_status}
+                    value={lead.payment_status || "select"}
                     onChange={(e) => handleChangePaymentStatus(lead.id, e.target.value)}
                     className="payment-status-dropdown"
                   >
@@ -659,7 +683,7 @@ const LeadCouncelor = ({ lead }) => {
                   <Form.Control
                     as="select"
                     style={{ fontWeight: "bold", fontSize: "14px", width: "auto", height: "30px", textAlign: "center", marginTop: "4px" }}
-                    value={lead.lead_status}
+                    value={lead.lead_status || "New"}
                     onChange={(e) => handleChangeLeadStatus(lead.id, e.target.value)}
                     className={`${getStatusClass(lead.lead_status)} p-1`}
                   >
@@ -707,7 +731,7 @@ const LeadCouncelor = ({ lead }) => {
                     variant="outline-success"
                     size="sm"
                     className="me-2"
-                    onClick={() => window.open(`https://wa.me/${lead.phone_number}`, '_blank')}
+                    onClick={() => window.open(`https://wa.me/${lead.phone}`, '_blank')}
                   >
                     <BsWhatsapp className="me-1" /> WhatsApp
                   </Button>
@@ -722,7 +746,7 @@ const LeadCouncelor = ({ lead }) => {
             ))
           ) : (
             <tr>
-              <td colSpan="5">No leads found.</td>
+              <td colSpan="7">No leads found.</td>
             </tr>
           )}
         </tbody>
@@ -749,30 +773,59 @@ const LeadCouncelor = ({ lead }) => {
       )}
 
       {/* View Lead Details Modal */}
-      <Modal show={showViewModal} onHide={handleCloseViewModal} centered>
+      <Modal show={showViewModal} onHide={handleCloseViewModal} centered size="lg">
         <Modal.Header closeButton>
           <Modal.Title>Lead Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {selectedLead && (
-            <div>
-              <p><strong>Name:</strong> {selectedLead?.name}</p>
-              <p><strong>Email:</strong> {selectedLead?.email}</p>
-              <p><strong>Phone:</strong> {selectedLead?.phone}</p>
-              <p><strong>counselor:</strong> {selectedLead?.counselor_name}</p>
-              <p><strong>Follow-up Date:</strong> {selectedLead?.follow_up_date}</p>
-              <p><strong>Source:</strong> {selectedLead?.source}</p>
-              <p><strong>Leadstatus:</strong> {selectedLead?.lead_status}</p>
-              <p><strong>Payment Status:</strong> {selectedLead?.payment_status}</p>
-              <p><strong>Preferred Countries:</strong> {selectedLead?.preferred_countries}</p>
-              <p><strong>Notes:</strong> {selectedLead?.notes}</p>
+            <div className="row">
+              <div className="col-md-6">
+                <p><strong>Name:</strong> {selectedLead?.name}</p>
+                <p><strong>Email:</strong> {selectedLead?.email}</p>
+                <p><strong>Phone:</strong> {selectedLead?.phone}</p>
+                <p><strong>Counselor:</strong> {selectedLead?.counselor_name}</p>
+                <p><strong>Follow-up Date:</strong> {selectedLead?.follow_up_date}</p>
+                <p><strong>Source:</strong> {selectedLead?.source}</p>
+                <p><strong>Date of Birth:</strong> {selectedLead?.dob}</p>
+                <p><strong>Gender:</strong> {selectedLead?.gender}</p>
+                <p><strong>Father's Name:</strong> {selectedLead?.father_name}</p>
+                <p><strong>Mother's Name:</strong> {selectedLead?.mother_name}</p>
+                <p><strong>Emergency Contact:</strong> {selectedLead?.emergency_contact}</p>
+              </div>
+              <div className="col-md-6">
+                <p><strong>Lead Status:</strong> {selectedLead?.lead_status}</p>
+                <p><strong>Payment Status:</strong> {selectedLead?.payment_status}</p>
+                <p><strong>Preferred Countries:</strong> {selectedLead?.preferred_countries}</p>
+                <p><strong>Education:</strong> {selectedLead?.education}</p>
+                <p><strong>Intake:</strong> {selectedLead?.intake}</p>
+                <p><strong>Course:</strong> {selectedLead?.course}</p>
+                <p><strong>Address:</strong> {selectedLead?.address}</p>
+                <p><strong>Work Experience:</strong> {selectedLead?.work_experience}</p>
+                <p><strong>English Test Type:</strong> {selectedLead?.english_test_type}</p>
+                <p><strong>English Test Score:</strong> {selectedLead?.english_test_score}</p>
+                <p><strong>Visa Refusals:</strong> {selectedLead?.previous_visa_refusals}</p>
+                <p><strong>Marital Status:</strong> {selectedLead?.marital_status}</p>
+                <p><strong>Reference:</strong> {selectedLead?.reference}</p>
+                <p><strong>Notes:</strong> {selectedLead?.notes}</p>
+              </div>
               {selectedLead.invoice && (
-                <div>
+                <div className="col-12 mt-3">
                   <h5>Invoice Details</h5>
-                  <p><strong>Payment Amount:</strong> ${selectedLead.invoice.amount}</p>
-                  <p><strong>Total:</strong> ${(selectedLead.invoice.amount + (selectedLead.invoice.amount * (selectedLead.invoice.tax / 100))).toFixed(2)}</p>
-                  <p><strong>Fee Date:</strong> {selectedLead.invoice.fee_date}</p>
-                  <p><strong>Description:</strong> {selectedLead.invoice.description}</p>
+                  <div className="row">
+                    <div className="col-md-4">
+                      <p><strong>Payment Amount:</strong> ${selectedLead.invoice.amount}</p>
+                    </div>
+                    <div className="col-md-4">
+                      <p><strong>Total:</strong> ${(selectedLead.invoice.amount + (selectedLead.invoice.amount * (selectedLead.invoice.tax / 100))).toFixed(2)}</p>
+                    </div>
+                    <div className="col-md-4">
+                      <p><strong>Fee Date:</strong> {selectedLead.invoice.fee_date}</p>
+                    </div>
+                    <div className="col-12">
+                      <p><strong>Description:</strong> {selectedLead.invoice.description}</p>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -834,11 +887,73 @@ const LeadCouncelor = ({ lead }) => {
               </div>
               <div className="col-md-6">
                 <Form.Group className="mb-3">
+                  <Form.Label>Date of Birth</Form.Label>
+                  <Form.Control
+                    type="date"
+                    name="dob"
+                    value={newLead.dob}
+                    onChange={handleInputChange}
+                  />
+                </Form.Group>
+              </div>
+              <div className="col-md-6">
+                <Form.Group className="mb-3">
+                  <Form.Label>Gender</Form.Label>
+                  <Form.Select
+                    name="gender"
+                    value={newLead.gender}
+                    onChange={handleInputChange}
+                  >
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </Form.Select>
+                </Form.Group>
+              </div>
+              <div className="col-md-6">
+                <Form.Group className="mb-3">
                   <Form.Label>Follow-up Date</Form.Label>
                   <Form.Control
                     type="date"
                     name="follow_up_date"
                     value={newLead.follow_up_date}
+                    onChange={handleInputChange}
+                  />
+                </Form.Group>
+              </div>
+              <div className="col-md-6">
+                <Form.Group className="mb-3">
+                  <Form.Label>Father's Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter father's name"
+                    name="father_name"
+                    value={newLead.father_name}
+                    onChange={handleInputChange}
+                  />
+                </Form.Group>
+              </div>
+              <div className="col-md-6">
+                <Form.Group className="mb-3">
+                  <Form.Label>Mother's Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter mother's name"
+                    name="mother_name"
+                    value={newLead.mother_name}
+                    onChange={handleInputChange}
+                  />
+                </Form.Group>
+              </div>
+              <div className="col-md-6">
+                <Form.Group className="mb-3">
+                  <Form.Label>Emergency Contact</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter emergency contact"
+                    name="emergency_contact"
+                    value={newLead.emergency_contact}
                     onChange={handleInputChange}
                   />
                 </Form.Group>
@@ -857,6 +972,8 @@ const LeadCouncelor = ({ lead }) => {
                     <option value="Phone Call">Phone Call</option>
                     <option value="Email Inquiry">Email Inquiry</option>
                     <option value="Social Media">Social Media</option>
+                    <option value="Referral">Referral</option>
+                    <option value="Advertisement">Advertisement</option>
                   </Form.Select>
                 </Form.Group>
               </div>
@@ -869,18 +986,187 @@ const LeadCouncelor = ({ lead }) => {
                     onChange={handleInputChange}
                   >
                     <option value="">Select status</option>
+                    <option value="New">New</option>
                     <option value="In Progress">In Progress</option>
                     <option value="Completed">Completed</option>
                     <option value="Pending">Pending</option>
+                    <option value="Converted">Converted</option>
                   </Form.Select>
                 </Form.Group>
               </div>
-              <div className="col-md-6">
+              
+              {showMoreFields && (
+                <>
+                  <div className="col-md-6">
+                    <Form.Group className="mb-3">
+                      <Form.Label>Education</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter education"
+                        name="education"
+                        value={newLead.education}
+                        onChange={handleInputChange}
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="col-md-6">
+                    <Form.Group className="mb-3">
+                      <Form.Label>Intake</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter intake"
+                        name="intake"
+                        value={newLead.intake}
+                        onChange={handleInputChange}
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="col-md-6">
+                    <Form.Group className="mb-3">
+                      <Form.Label>Course</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter course"
+                        name="course"
+                        value={newLead.course}
+                        onChange={handleInputChange}
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="col-md-6">
+                    <Form.Group className="mb-3">
+                      <Form.Label>Budget</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter budget"
+                        name="budget"
+                        value={newLead.budget}
+                        onChange={handleInputChange}
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="col-md-6">
+                    <Form.Group className="mb-3">
+                      <Form.Label>Passport</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter passport status"
+                        name="passport"
+                        value={newLead.passport}
+                        onChange={handleInputChange}
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="col-md-6">
+                    <Form.Group className="mb-3">
+                      <Form.Label>IELTS/English Test</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter test score"
+                        name="ielts"
+                        value={newLead.ielts}
+                        onChange={handleInputChange}
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="col-md-6">
+                    <Form.Group className="mb-3">
+                      <Form.Label>English Test Type</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter test type"
+                        name="english_test_type"
+                        value={newLead.english_test_type}
+                        onChange={handleInputChange}
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="col-md-6">
+                    <Form.Group className="mb-3">
+                      <Form.Label>English Test Score</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter test score"
+                        name="english_test_score"
+                        value={newLead.english_test_score}
+                        onChange={handleInputChange}
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="col-md-6">
+                    <Form.Group className="mb-3">
+                      <Form.Label>Work Experience</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter work experience"
+                        name="work_experience"
+                        value={newLead.work_experience}
+                        onChange={handleInputChange}
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="col-md-6">
+                    <Form.Group className="mb-3">
+                      <Form.Label>Previous Visa Refusals</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter visa refusal details"
+                        name="previous_visa_refusals"
+                        value={newLead.previous_visa_refusals}
+                        onChange={handleInputChange}
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="col-md-6">
+                    <Form.Group className="mb-3">
+                      <Form.Label>Marital Status</Form.Label>
+                      <Form.Select
+                        name="marital_status"
+                        value={newLead.marital_status}
+                        onChange={handleInputChange}
+                      >
+                        <option value="">Select Marital Status</option>
+                        <option value="Single">Single</option>
+                        <option value="Married">Married</option>
+                        <option value="Divorced">Divorced</option>
+                        <option value="Widowed">Widowed</option>
+                      </Form.Select>
+                    </Form.Group>
+                  </div>
+                  <div className="col-md-6">
+                    <Form.Group className="mb-3">
+                      <Form.Label>Reference</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter reference"
+                        name="reference"
+                        value={newLead.reference}
+                        onChange={handleInputChange}
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="col-12">
+                    <Form.Group className="mb-3">
+                      <Form.Label>Address</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={2}
+                        placeholder="Enter address"
+                        name="address"
+                        value={newLead.address}
+                        onChange={handleInputChange}
+                      />
+                    </Form.Group>
+                  </div>
+                </>
+              )}
+              
+              <div className="col-md-12">
                 <Form.Group className="mb-3">
                   <Form.Label>Preferred Countries</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Enter preferred countries"
+                    placeholder="Enter preferred countries (comma separated)"
                     name="preferred_countries"
                     value={newLead.preferred_countries}
                     onChange={handleInputChange}
@@ -901,17 +1187,25 @@ const LeadCouncelor = ({ lead }) => {
                 </Form.Group>
               </div>
             </div>
-            <div className="d-flex justify-content-end">
-              <Button variant="danger" onClick={handleCloseModal}>Cancel</Button>
-              <Button variant="secondary" type="submit">
-                {isEditMode ? "Update Lead" : "Add Lead"}
+            <div className="d-flex justify-content-between">
+              <Button 
+                variant="link" 
+                onClick={() => setShowMoreFields(!showMoreFields)}
+              >
+                {showMoreFields ? 'Show Less Fields' : 'Show More Fields'}
               </Button>
+              <div>
+                <Button variant="danger" onClick={handleCloseModal} className="me-2">Cancel</Button>
+                <Button variant="primary" type="submit">
+                  {isEditMode ? "Update Lead" : "Add Lead"}
+                </Button>
+              </div>
             </div>
           </Form>
         </Modal.Body>
       </Modal>
 
-      {/* invoice model */}
+      {/* Invoice Modal */}
       <Modal show={showInvoiceModal} onHide={() => setShowInvoiceModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Generate Invoice for {selectedLeadForInvoice?.name}</Modal.Title>
@@ -926,6 +1220,16 @@ const LeadCouncelor = ({ lead }) => {
                 value={paymentAmount}
                 onChange={handleInvoiceInputChange}
                 placeholder="Enter payment amount"
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Tax (%)</Form.Label>
+              <Form.Control
+                type="number"
+                name="tax"
+                value={tax}
+                onChange={handleInvoiceInputChange}
+                placeholder="Enter tax percentage"
               />
             </Form.Group>
             <Form.Group className="mb-3">
@@ -950,7 +1254,8 @@ const LeadCouncelor = ({ lead }) => {
             <div>
               <h5>Invoice Summary</h5>
               <p>Payment Amount: ${paymentAmount}</p>
-              <p>Total: ${paymentAmount}</p>
+              <p>Tax: {tax}%</p>
+              <p>Total: ${total.toFixed(2)}</p>
             </div>
             <Modal.Footer>
               <Button variant="secondary" onClick={() => setShowInvoiceModal(false)}>
@@ -1243,4 +1548,4 @@ const LeadCouncelor = ({ lead }) => {
   );
 };
 
-export default LeadCouncelor;
+export default LeadCounselor;
