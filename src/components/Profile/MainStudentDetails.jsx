@@ -165,12 +165,12 @@ const Profile = () => {
           <Card className="mb-4">
             <Card.Body>
               <Row>
-                <Col md={6}>
+                {/* <Col md={6}>
                   <strong>Id no:</strong> {student?.id_no}
                 </Col>
                 <Col md={6}>
                   <strong>Admision No.:</strong> {student?.admission_no}
-                </Col>
+                </Col> */}
                 <Col md={6} className="mt-2">
                   <strong>Date of Birth:</strong> {student?.date_of_birth}
                 </Col>

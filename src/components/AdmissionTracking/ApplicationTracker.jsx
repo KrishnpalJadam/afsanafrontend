@@ -15,14 +15,17 @@ const StudentList = () => {
   const [travelInsuranceStatus, setTravelInsuranceStatus] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const [stepStatus, setStepStatus] = useState(""); // New state
-  const [counselors, setCounselors] = useState([]); // Counselor list
+  const [stepStatus, setStepStatus] = useState("");
+  const [counselors, setCounselors] = useState([]);
+  const [processors, setProcessors] = useState([]);
 
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [selectedCounselor, setSelectedCounselor] = useState(null);
-const [followUpDate, setFollowUpDate] = useState("");
-const [notes, setNotes] = useState("");
+  const [selectedProcessor, setSelectedProcessor] = useState(null);
+  const [followUpDate, setFollowUpDate] = useState("");
+  const [notes, setNotes] = useState("");
+  const [assignType, setAssignType] = useState("counselor"); // 'counselor' or 'processor'
 
   // Fetch data
   const fetchApplications = async () => {
@@ -68,19 +71,13 @@ const [notes, setNotes] = useState("");
       });
     }
 
-    // ✅ Step filter logic
-    // ✅ Step filter logic
     if (stepStatus === "Application") {
       filtered = filtered.filter(app => app.Application_stage === "1");
     } else if (stepStatus === "Interview") {
       filtered = filtered.filter(app => app.Interview === "1");
-    }
-    else if (stepStatus === "Visa") {
+    } else if (stepStatus === "Visa") {
       filtered = filtered.filter(app => app.Visa_process === "1");
     }
-
-
-
 
     setFilteredApplications(filtered);
   }, [selectedUniversity, selectedStudent, travelInsuranceStatus, stepStatus, applications]);
@@ -111,10 +108,7 @@ const [notes, setNotes] = useState("");
       try {
         await api.delete(`/application/${id}`);
         await Swal.fire('Deleted!', 'Your application has been deleted.', 'success');
-
-        // 👇 Refresh the list after successful delete
         fetchApplications();
-
       } catch (error) {
         console.error("Delete error:", error);
         Swal.fire('Error!', 'Something went wrong.', 'error');
@@ -123,6 +117,7 @@ const [notes, setNotes] = useState("");
       Swal.fire('Cancelled', 'Your application is safe :)', 'info');
     }
   };
+
   // Calculate indexes
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -133,106 +128,131 @@ const [notes, setNotes] = useState("");
     try {
       const newStatus = currentStatus === 0 ? 1 : 0;
       await api.patch(`application/${appId}`, { status: newStatus });
-
-      fetchApplications()
+      fetchApplications();
     } catch (error) {
       console.error("Error updating status:", error);
     }
   };
 
-
   useEffect(() => {
     const fetchCounselors = async () => {
       try {
-        const res = await api.get(`${BASE_URL}counselor`);  // Fetch counselor data
-        setCounselors(res.data);  // Update the counselors state with data
-        console.log(selectedCounselor);
+        const res = await api.get(`${BASE_URL}counselor`);
+        setCounselors(res.data);
       } catch (err) {
         console.error("Failed to fetch counselors", err);
       }
     };
-    fetchCounselors();  // Call the function to fetch counselors
-  }, []);  // This runs only once when the component mounts
 
-
-  const handleOpenAssignModal = (application) => {
-    setSelectedApplication(application);
-    setSelectedCounselor(null);
-      setFollowUpDate("");
-  setNotes("");
-    setShowAssignModal(true);
-  };
-  const handleCloseAssignModal = () => {
-    setShowAssignModal(false);
-    setSelectedCounselor(null); // Reset selected counselor when closing modal
-  };
-
-
-
-  const handleAssignCounselor = async () => {
-    if (!selectedCounselor || !selectedApplication) {
-      alert("Please select all fields.");
-      return;
-    }
-
-    const payload = {
-      application_id: selectedApplication.id,
-      counselor_id: selectedCounselor.id,
-   follow_up: followUpDate,
-    notes: notes
+    const fetchProcessors = async () => {
+      try {
+        const res = await api.get(`${BASE_URL}getAllProcessors`);
+        setProcessors(res.data);
+      } catch (err) {
+        console.error("Failed to fetch processors", err);
+      }
     };
 
-    try {
-      const res = await api.patch(`${BASE_URL}assignCounselorapllication`, payload);
-      if (res.status === 200) {
-        Swal.fire("Success", "Counselor assigned successfully!", "success");
-        setShowAssignModal(false);
-        fetchApplications(); // Refresh list
-      }
-    } 
-    catch (error) {
-      console.error("Assignment error:", error);
-      Swal.fire("Error", "Failed to assign counselor.", "error");
-    }
-    try {
-            const res = await api.patch(`${BASE_URL}StudentAssignToProcessor`, payload);
-            
-            if (res.status === 200) {
-              Swal.fire("Success", "Processor assigned successfully!", "success");
-              setShowAssignModal(false);
-              fetchStudents();
-              setSelectedProcessor(null);
-            }
-          } catch (error) {
-            console.error("Assignment error:", error);
-            Swal.fire("Error", "Failed to assign processor", "error");
-          }
+    fetchCounselors();
+    fetchProcessors();
+  }, []);
+
+  const handleOpenAssignModal = (application, type = "counselor") => {
+    setSelectedApplication(application);
+    setAssignType(type);
+    setSelectedCounselor(null);
+    setSelectedProcessor(null);
+    setFollowUpDate("");
+    setNotes("");
+    setShowAssignModal(true);
   };
-const handleDownloadCSV = () => {
-  const csvHeaders = ["ID", "Student Name", "University Name", "Travel Insurance", "Proof of Income", "Counselor", "Status"];
 
-  const csvRows = filteredApplications.map(app => [
-    app.id,
-    app.student_name,
-    app.university_name,
-    app.travel_insurance || "N/A",
-    app.proof_of_income || "N/A",
-    app.counselor_name || "Unassigned",
-    app.status === 1 ? "Verified" : "Pending"
-  ]);
+  const handleCloseAssignModal = () => {
+    setShowAssignModal(false);
+    setSelectedCounselor(null);
+    setSelectedProcessor(null);
+  };
 
-  const csvContent = [csvHeaders, ...csvRows].map(e => e.join(",")).join("\n");
+ const handleAssign = async () => {
+  if (!selectedApplication?.id) {
+    alert("No student/application selected");
+    return;
+  }
 
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-  saveAs(blob, "applications.csv");
+  if (assignType === "counselor" && !selectedCounselor?.id) {
+    alert("Please select a counselor");
+    return;
+  }
+
+  if (assignType === "processor" && !selectedProcessor?.id) {
+    alert("Please select a processor");
+    return;
+  }
+
+  const payload = {
+    ...(assignType === "counselor"
+      ? {
+          student_id: selectedApplication.id,
+          counselor_id: selectedCounselor.id,
+          follow_up: followUpDate,
+          notes: notes
+        }
+      : {
+          application_id: selectedApplication.id,
+        processor_id: selectedProcessor.id
+        })
+  };
+
+  console.log("Payload sent to API:", payload);
+
+  try {
+    const endpoint =
+      assignType === "counselor"
+        ? `${BASE_URL}assignCounselorapllication`
+        : `${BASE_URL}assignassignProcessorapllication`;
+
+    const res = await api.patch(endpoint, payload);
+
+    if (res.status === 200) {
+      Swal.fire(
+        "Success",
+        `${assignType === "counselor" ? "Counselor" : "Processor"} assigned successfully!`,
+        "success"
+      );
+      setShowAssignModal(false);
+      fetchApplications();
+    }
+  } catch (error) {
+    console.error("Assignment error:", error.response?.data || error.message);
+    Swal.fire("Error", `Failed to assign ${assignType}`, "error");
+  }
 };
-const handleResetFilters = () => {
-  setSelectedUniversity("");
-  setSelectedStudent("");
-  setTravelInsuranceStatus("");
-  setStepStatus("");
-};
 
+
+  const handleDownloadCSV = () => {
+    const csvHeaders = ["ID", "Student Name", "University Name", "Travel Insurance", "Proof of Income", "Counselor", "Status"];
+
+    const csvRows = filteredApplications.map(app => [
+      app.id,
+      app.student_name,
+      app.university_name,
+      app.travel_insurance || "N/A",
+      app.proof_of_income || "N/A",
+      app.counselor_name || "Unassigned",
+      app.status === 1 ? "Verified" : "Pending"
+    ]);
+
+    const csvContent = [csvHeaders, ...csvRows].map(e => e.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    saveAs(blob, "applications.csv");
+  };
+
+  const handleResetFilters = () => {
+    setSelectedUniversity("");
+    setSelectedStudent("");
+    setTravelInsuranceStatus("");
+    setStepStatus("");
+  };
 
   return (
     <div className="container mt-4">
@@ -293,17 +313,16 @@ const handleResetFilters = () => {
             <option value="Visa">Visa Process Stage</option>
           </select>
         </div>
-
       </div>
-<div className="d-flex justify-content-between mb-3">
-  <button className="btn btn-outline-secondary" onClick={handleResetFilters}>
-    Reset Filters
-  </button>
 
-  <button className="btn btn-success" onClick={handleDownloadCSV}>
-    Download CSV
-  </button>
-</div>
+      <div className="d-flex justify-content-between mb-3">
+        <button className="btn btn-outline-secondary" onClick={handleResetFilters}>
+          Reset Filters
+        </button>
+        <button className="btn btn-success" onClick={handleDownloadCSV}>
+          Download CSV
+        </button>
+      </div>
 
       {/* Table */}
       <div className="table-responsive">
@@ -313,14 +332,12 @@ const handleResetFilters = () => {
               <th>#</th>
               <th>Student Name</th>
               <th>University Name</th>
-              {/* <th>Registration Fee</th>
-              <th>Application Fee</th> */}
               <th>Travel Insurance</th>
               <th>Proof of Income</th>
               <th>Assign to</th>
+              <th>Processor</th>
               <th>Document Verify</th>
               <th>Status</th>
-             <th>Processor</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -342,7 +359,7 @@ const handleResetFilters = () => {
                     ) : (
                       <button
                         className="btn btn-sm btn-outline-primary"
-                        onClick={() => handleOpenAssignModal(app)}
+                        onClick={() => handleOpenAssignModal(app, "counselor")}
                         disabled={app.counselor_id}
                       >
                         Assign Counselor
@@ -350,23 +367,19 @@ const handleResetFilters = () => {
                     )}
                   </td>
                   <td>
-                  {student.processor_id ? (
-                    <span
-                      className="badge bg-info"
-                      role="button"
-                      onClick={() => handleOpenAssignModal(student, "processor")}
-                    >
-                      {student.processorName || "Assigned"}
-                    </span>
-                  ) : (
-                    <button
-                      className="btn btn-sm btn-outline-primary"
-                      onClick={() => handleOpenAssignModal(student, "processor")}
-                    >
-                      Assign Processor
-                    </button>
-                  )}
-                </td>
+                    {app.processor_id ? (
+                      <span className="badge bg-info">
+                        {app.processor_name || "Assigned"}
+                      </span>
+                    ) : (
+                      <button
+                        className="btn btn-sm btn-outline-primary"
+                        onClick={() => handleOpenAssignModal(app, "processors")}
+                      >
+                        Assign Processor
+                      </button>
+                    )}
+                  </td>
 
                   <td>
                     <Badge bg={app.status === 1 ? "success" : "secondary"}>
@@ -379,17 +392,17 @@ const handleResetFilters = () => {
                       {app.status === 1 ? "Mark Pending" : "Verify"}
                     </button>
                   </td>
-        <td>
-  {app.Visa_process == 1 ? (
-    <span className="badge bg-success">Visa Process</span>
-  ) : app.Interview == 1 ? (
-    <span className="badge bg-warning text-dark">Interview</span>
-  ) : app.Application_stage == 1 ? (
-    <span className="badge bg-info">Application </span>
-  ) : (
-    <span className="badge bg-secondary">Not Started</span>
-  )}
-</td>
+                  <td>
+                    {app.Visa_process == 1 ? (
+                      <span className="badge bg-success">Visa Process</span>
+                    ) : app.Interview == 1 ? (
+                      <span className="badge bg-warning text-dark">Interview</span>
+                    ) : app.Application_stage == 1 ? (
+                      <span className="badge bg-info">Application </span>
+                    ) : (
+                      <span className="badge bg-secondary">Not Started</span>
+                    )}
+                  </td>
 
                   <td>
                     <Link to={`/student/${app.id}`}>
@@ -406,15 +419,15 @@ const handleResetFilters = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="8" className="text-center">
+                <td colSpan="10" className="text-center">
                   No applications found.
                 </td>
               </tr>
             )}
           </tbody>
-
         </table>
       </div>
+
       {totalPages > 1 && (
         <nav className="mt-3">
           <ul className="pagination justify-content-center">
@@ -435,62 +448,73 @@ const handleResetFilters = () => {
         </nav>
       )}
 
-<Modal show={showAssignModal} onHide={() => setShowAssignModal(false)} centered>
-  <Modal.Header closeButton>
-    <Modal.Title>Assign Counselor</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    {selectedApplication && (
-      <>
-        <p><strong>Student:</strong> {selectedApplication.student_name}</p>
-        <p><strong>University:</strong> {selectedApplication.university_name}</p>
+      <Modal show={showAssignModal} onHide={handleCloseAssignModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>{assignType === "counselor" ? "Counselor" : "Processor"} Assignment</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedApplication && (
+            <>
+              <p><strong>Student:</strong> {selectedApplication.student_name}</p>
+              <p><strong>University:</strong> {selectedApplication.university_name}</p>
 
-        <Form.Group className="mb-3">
-          <Form.Label>Select Counselor *</Form.Label>
-          <Form.Select
-            value={selectedCounselor?.id || ""}
-            onChange={(e) => {
-              const selected = counselors.find(c => c.id.toString() === e.target.value);
-              setSelectedCounselor(selected);
-            }}
-          >
-            <option value="">-- Select Counselor --</option>
-            {counselors.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.full_name}
-              </option>
-            ))}
-          </Form.Select>
-        </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Select {assignType === "counselor" ? "Counselor" : "Processor"} *</Form.Label>
+                <Form.Select
+                  value={
+                    assignType === "counselor" 
+                      ? selectedCounselor?.id || "" 
+                      : selectedProcessor?.id || ""
+                  }
+                  onChange={(e) => {
+                    const list = assignType === "counselor" ? counselors : processors;
+                    const selected = list.find(c => c.id.toString() === e.target.value);
+                    if (assignType === "counselor") {
+                      setSelectedCounselor(selected);
+                    } else {
+                      setSelectedProcessor(selected);
+                    }
+                  }}
+                >
+                  <option value="">-- Select {assignType === "counselor" ? "Counselor" : "Processor"} --</option>
+                  {(assignType === "counselor" ? counselors : processors).map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.full_name}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
 
-        <Form.Group className="mb-3">
-          <Form.Label>Follow-Up Date *</Form.Label>
-          <Form.Control
-            type="date"
-            value={followUpDate}
-            onChange={(e) => setFollowUpDate(e.target.value)}
-          />
-        </Form.Group>
+              {assignType === "counselor" && (
+                <>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Follow-Up Date *</Form.Label>
+                    <Form.Control
+                      type="date"
+                      value={followUpDate}
+                      onChange={(e) => setFollowUpDate(e.target.value)}
+                    />
+                  </Form.Group>
 
-        <Form.Group className="mb-3">
-          <Form.Label>Notes</Form.Label>
-          <Form.Control
-            as="textarea"
-            rows={3}
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-          />
-        </Form.Group>
-      </>
-    )}
-  </Modal.Body>
-  <Modal.Footer>
-    <Button variant="secondary" onClick={() => setShowAssignModal(false)}>Cancel</Button>
-    <Button variant="primary" onClick={handleAssignCounselor}>Assign</Button>
-  </Modal.Footer>
-</Modal>
-
-
+                  <Form.Group className="mb-3">
+                    <Form.Label>Notes</Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      rows={3}
+                      value={notes}
+                      onChange={(e) => setNotes(e.target.value)}
+                    />
+                  </Form.Group>
+                </>
+              )}
+            </>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseAssignModal}>Cancel</Button>
+          <Button variant="primary" onClick={handleAssign}>Assign</Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
