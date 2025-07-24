@@ -227,48 +227,63 @@ const StudentDetails = () => {
   const handleAssignSubmit = async () => {
     if (!selectedApplication) return;
     
-    if (assignType === "counselor" && !selectedCounselor) {
-      Swal.fire("Warning", "Please select a counselor", "warning");
-      return;
-    }
-    
-    if (assignType === "processor" && !selectedProcessor) {
-      Swal.fire("Warning", "Please select a processor", "warning");
-      return;
-    }
-    
-    if (!followUpDate) {
-      Swal.fire("Warning", "Please select a follow-up date", "warning");
-      return;
-    }
-
-    const payload = {
-      student_id: selectedApplication.id,
-      [assignType === "counselor" ? "counselor_id" : "processor_id"]: 
-        assignType === "counselor" ? selectedCounselor.id : selectedProcessor.id,
-      follow_up: followUpDate,
-      notes: notes
-    };
-
-    try {
-      const endpoint = assignType === "counselor" 
-        ? `${BASE_URL}auth/StudentAssignToCounselor`
-        : `${BASE_URL}/StudentAssignToProcessor`;
-      
-      const res = await api.patch(endpoint, payload);
-      
-      if (res.status === 200) {
-        Swal.fire(
-          "Success", 
-          `${assignType === "counselor" ? "Counselor" : "Processor"} assigned successfully!`, 
-          "success"
-        );
-        setShowAssignModal(false);
-        fetchStudents();
+    if (assignType === "counselor") {
+      if (!selectedCounselor) {
+        Swal.fire("Warning", "Please select a counselor", "warning");
+        return;
       }
-    } catch (error) {
-      console.error("Assignment error:", error);
-      Swal.fire("Error", "Assignment failed", "error");
+      if (!followUpDate) {
+        Swal.fire("Warning", "Please select a follow-up date", "warning");
+        return;
+      }
+
+      const payload = {
+        student_id: selectedApplication.id,
+        counselor_id: selectedCounselor.id,
+        follow_up: followUpDate,
+        notes: notes
+      };
+
+      try {
+        const res = await api.patch(`${BASE_URL}auth/StudentAssignToCounselor`, payload);
+        
+        if (res.status === 200) {
+          Swal.fire("Success", "Counselor assigned successfully!", "success");
+          setShowAssignModal(false);
+          fetchStudents();
+          setSelectedCounselor(null);
+          setFollowUpDate("");
+          setNotes("");
+        }
+      } catch (error) {
+        console.error("Assignment error:", error);
+        Swal.fire("Error", "Failed to assign counselor", "error");
+      }
+    } else {
+      // Processor assignment
+      if (!selectedProcessor) {
+        Swal.fire("Warning", "Please select a processor", "warning");
+        return;
+      }
+
+      const payload = {
+        student_id: selectedApplication.id,
+        processor_id: selectedProcessor.id
+      };
+
+      try {
+        const res = await api.patch(`${BASE_URL}StudentAssignToProcessor`, payload);
+        
+        if (res.status === 200) {
+          Swal.fire("Success", "Processor assigned successfully!", "success");
+          setShowAssignModal(false);
+          fetchStudents();
+          setSelectedProcessor(null);
+        }
+      } catch (error) {
+        console.error("Assignment error:", error);
+        Swal.fire("Error", "Failed to assign processor", "error");
+      }
     }
   };
 
@@ -372,7 +387,7 @@ const StudentDetails = () => {
               <th>Category</th>
               <th>Mobile Number</th>
               <th>Assign to</th>
-              <th>Staff Processor</th>
+              <th>Processor</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -486,11 +501,9 @@ const StudentDetails = () => {
                   onChange={(e) => {
                     const list = assignType === "counselor" ? counselors : processors;
                     const selected = list.find(c => c.id.toString() === e.target.value);
-                    if (assignType === "counselor") {
-                      setSelectedCounselor(selected);
-                    } else {
-                      setSelectedProcessor(selected);
-                    }
+                    assignType === "counselor" 
+                      ? setSelectedCounselor(selected)
+                      : setSelectedProcessor(selected);
                   }}
                 >
                   <option value="">-- Select {assignType === "counselor" ? "Counselor" : "Processor"} --</option>
@@ -502,25 +515,29 @@ const StudentDetails = () => {
                 </Form.Select>
               </Form.Group>
 
-              <Form.Group className="mb-3">
-                <Form.Label>Follow-Up Date *</Form.Label>
-                <Form.Control
-                  type="date"
-                  value={followUpDate}
-                  onChange={(e) => setFollowUpDate(e.target.value)}
-                  min={new Date().toISOString().split('T')[0]}
-                />
-              </Form.Group>
+              {assignType === "counselor" && (
+                <>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Follow-Up Date *</Form.Label>
+                    <Form.Control
+                      type="date"
+                      value={followUpDate}
+                      onChange={(e) => setFollowUpDate(e.target.value)}
+                      min={new Date().toISOString().split('T')[0]}
+                    />
+                  </Form.Group>
 
-              <Form.Group className="mb-3">
-                <Form.Label>Notes</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  rows={3}
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                />
-              </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Notes</Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      rows={3}
+                      value={notes}
+                      onChange={(e) => setNotes(e.target.value)}
+                    />
+                  </Form.Group>
+                </>
+              )}
             </>
           )}
         </Modal.Body>
@@ -529,7 +546,9 @@ const StudentDetails = () => {
             Cancel
           </Button>
           <Button variant="primary" onClick={handleAssignSubmit}>
-            {selectedCounselor || selectedProcessor ? "Update" : "Assign"}
+            {assignType === "counselor" 
+              ? (selectedCounselor ? "Update Counselor" : "Assign Counselor")
+              : (selectedProcessor ? "Update Processor" : "Assign Processor")}
           </Button>
         </Modal.Footer>
       </Modal>

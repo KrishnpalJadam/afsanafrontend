@@ -21,10 +21,7 @@ const ProcessorsDashboard = () => {
   const [chartData, setChartData] = useState([]);
 
 
-  const processors =[{
-    totalDocument : 5,
-  }
-  ]
+  
   useEffect(() => {
     fetchDashboardData();
   }, []);
@@ -84,7 +81,7 @@ const ProcessorsDashboard = () => {
             }}
           >
             <h5>Total Application</h5>
-            <h2>{totalLeads}</h2>
+            <h2>{5}</h2>
           </div>
         </div>
 

@@ -189,10 +189,24 @@ const [notes, setNotes] = useState("");
         setShowAssignModal(false);
         fetchApplications(); // Refresh list
       }
-    } catch (error) {
+    } 
+    catch (error) {
       console.error("Assignment error:", error);
       Swal.fire("Error", "Failed to assign counselor.", "error");
     }
+    try {
+            const res = await api.patch(`${BASE_URL}StudentAssignToProcessor`, payload);
+            
+            if (res.status === 200) {
+              Swal.fire("Success", "Processor assigned successfully!", "success");
+              setShowAssignModal(false);
+              fetchStudents();
+              setSelectedProcessor(null);
+            }
+          } catch (error) {
+            console.error("Assignment error:", error);
+            Swal.fire("Error", "Failed to assign processor", "error");
+          }
   };
 const handleDownloadCSV = () => {
   const csvHeaders = ["ID", "Student Name", "University Name", "Travel Insurance", "Proof of Income", "Counselor", "Status"];
@@ -306,6 +320,7 @@ const handleResetFilters = () => {
               <th>Assign to</th>
               <th>Document Verify</th>
               <th>Status</th>
+             <th>Processor</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -334,6 +349,24 @@ const handleResetFilters = () => {
                       </button>
                     )}
                   </td>
+                  <td>
+                  {student.processor_id ? (
+                    <span
+                      className="badge bg-info"
+                      role="button"
+                      onClick={() => handleOpenAssignModal(student, "processor")}
+                    >
+                      {student.processorName || "Assigned"}
+                    </span>
+                  ) : (
+                    <button
+                      className="btn btn-sm btn-outline-primary"
+                      onClick={() => handleOpenAssignModal(student, "processor")}
+                    >
+                      Assign Processor
+                    </button>
+                  )}
+                </td>
 
                   <td>
                     <Badge bg={app.status === 1 ? "success" : "secondary"}>
