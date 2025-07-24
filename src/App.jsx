@@ -156,7 +156,7 @@ function App() {
           if (role === "admin") {
             navigate("/dashboard");
           } else if (role === "student") {
-            navigate("/UniversityCards");
+            navigate("/dashboardvisa");
           } else if (role === "counselor") {
             navigate("/councelor");
           } else if (role === "staff") {
