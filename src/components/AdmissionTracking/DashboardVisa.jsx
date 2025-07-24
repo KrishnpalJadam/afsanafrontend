@@ -16,7 +16,6 @@ import Swal from "sweetalert2";
 import { Dash } from "react-bootstrap-icons";
 import Dashboard from "../Profile/Dashboard";
 
-
 const DashboardVisa = () => {
   const [activeStep, setActiveStep] = useState("application");
   const [formData, setFormData] = useState({});
@@ -54,25 +53,25 @@ const DashboardVisa = () => {
         const studentResponse = await api.get(
           `${BASE_URL}auth/getStudentById/${studentId}`
         );
-          Swal.fire({
-                title: "Processing...",
-                html: "Please wait while we submit your data.",
-                allowOutsideClick: false,
-                didOpen: () => {
-                  Swal.showLoading();
-        
-                  // Simulate API call (replace with your actual API call)
-                  setTimeout(() => {
-                    // This is where your API success would be
-                    Swal.fire({
-                      title: "Success!",
-                      text: "Data submitted successfully!",
-                      icon: "success",
-                      confirmButtonText: "OK",
-                    });
-                  },true); // Remove this timeout and replace with your API call
-                },
+        Swal.fire({
+          title: "Processing...",
+          html: "Please wait while we submit your data.",
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+
+            // Simulate API call (replace with your actual API call)
+            setTimeout(() => {
+              // This is where your API success would be
+              Swal.fire({
+                title: "Success!",
+                text: "Data submitted successfully!",
+                icon: "success",
+                confirmButtonText: "OK",
               });
+            }, true); // Remove this timeout and replace with your API call
+          },
+        });
         const studentData = studentResponse.data;
 
         // Check if visa process record exists
@@ -80,25 +79,25 @@ const DashboardVisa = () => {
           const visaProcessResponse = await api.get(
             `${BASE_URL}getVisaProcessByStudentId/VisaProcess/${studentId}`
           );
-            Swal.fire({
-                  title: "Processing...",
-                  html: "Please wait while we submit your data.",
-                  allowOutsideClick: false,
-                  didOpen: () => {
-                    Swal.showLoading();
-          
-                    // Simulate API call (replace with your actual API call)
-                    setTimeout(() => {
-                      // This is where your API success would be
-                      Swal.fire({
-                        title: "Success!",
-                        text: "Data submitted successfully!",
-                        icon: "success",
-                        confirmButtonText: "OK",
-                      });
-                    }, 2000); // Remove this timeout and replace with your API call
-                  },
+          Swal.fire({
+            title: "Processing...",
+            html: "Please wait while we submit your data.",
+            allowOutsideClick: false,
+            didOpen: () => {
+              Swal.showLoading();
+
+              // Simulate API call (replace with your actual API call)
+              setTimeout(() => {
+                // This is where your API success would be
+                Swal.fire({
+                  title: "Success!",
+                  text: "Data submitted successfully!",
+                  icon: "success",
+                  confirmButtonText: "OK",
                 });
+              }, 2000); // Remove this timeout and replace with your API call
+            },
+          });
           // const visaProcessResponse = await api.get(`${BASE_URL}api/getVisaProcessByStudent/${studentId}`);
           const visaData = visaProcessResponse.data;
           console.log(visaData);
@@ -228,25 +227,25 @@ const DashboardVisa = () => {
           }
         );
 
-          Swal.fire({
-                title: "Processing...",
-                html: "Please wait while we submit your data.",
-                allowOutsideClick: false,
-                didOpen: () => {
-                  Swal.showLoading();
-        
-                  // Simulate API call (replace with your actual API call)
-                  setTimeout(() => {
-                    // This is where your API success would be
-                    Swal.fire({
-                      title: "Success!",
-                      text: "Data submitted successfully!",
-                      icon: "success",
-                      confirmButtonText: "OK",
-                    });
-                  }, 2000); // Remove this timeout and replace with your API call
-                },
+        Swal.fire({
+          title: "Processing...",
+          html: "Please wait while we submit your data.",
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+
+            // Simulate API call (replace with your actual API call)
+            setTimeout(() => {
+              // This is where your API success would be
+              Swal.fire({
+                title: "Success!",
+                text: "Data submitted successfully!",
+                icon: "success",
+                confirmButtonText: "OK",
               });
+            }, 2000); // Remove this timeout and replace with your API call
+          },
+        });
 
         if (!response.data.id) {
           throw new Error("No ID returned from server after creation");
@@ -269,25 +268,25 @@ const DashboardVisa = () => {
             },
           }
         );
-          Swal.fire({
-                title: "Processing...",
-                html: "Please wait while we submit your data.",
-                allowOutsideClick: false,
-                didOpen: () => {
-                  Swal.showLoading();
-        
-                  // Simulate API call (replace with your actual API call)
-                  setTimeout(() => {
-                    // This is where your API success would be
-                    Swal.fire({
-                      title: "Success!",
-                      text: "Data submitted successfully!",
-                      icon: "success",
-                      confirmButtonText: "OK",
-                    });
-                  }, 2000); // Remove this timeout and replace with your API call
-                },
+        Swal.fire({
+          title: "Processing...",
+          html: "Please wait while we submit your data.",
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+
+            // Simulate API call (replace with your actual API call)
+            setTimeout(() => {
+              // This is where your API success would be
+              Swal.fire({
+                title: "Success!",
+                text: "Data submitted successfully!",
+                icon: "success",
+                confirmButtonText: "OK",
               });
+            }, 2000); // Remove this timeout and replace with your API call
+          },
+        });
 
         if (!completedSteps.includes(activeStep)) {
           setCompletedSteps((prev) => [...prev, activeStep]);
@@ -354,44 +353,43 @@ const DashboardVisa = () => {
           setSelectedUniversityId(res.data[0].id);
         }
       })
-        
+
       .catch((err) => console.error("Error fetching universities:", err));
   }, []);
 
-
-  
-
   const renderStepper = () => (
-    
     <Card className="mb-4 border-0 shadow-sm">
-      
-     <div className="d-flex justify-content-between align-items-center p-3 ">
-  <h5>Check Application Journey</h5>
-  <Form.Group className="mb-0 d-flex">
-    <Form.Select
-      name="university_id"
-      value={selectedUniversityId}
-      onChange={(e) => setSelectedUniversityId(e.target.value)}
-    >
-      <option value="">-- Select University For Status Check --</option>
-      {universities.map((uni) => (
-        <option key={uni.id} value={uni.id}>
-          {uni.name}
-        </option>
-      ))}
-    </Form.Select>
-  </Form.Group>
-</div>
+      <div className="d-flex justify-content-between align-items-center p-3 ">
+        <h5>Check Application Journey</h5>
+        <Form.Group className="mb-0 d-flex">
+          <Form.Select
+            name="university_id"
+            value={selectedUniversityId}
+            onChange={(e) => setSelectedUniversityId(e.target.value)}
+          >
+            <option value="">-- Select University For Status Check --</option>
+            {universities.map((uni) => (
+              <option key={uni.id} value={uni.id}>
+                {uni.name}
+              </option>
+            ))}
+          </Form.Select>
+        </Form.Group>
+      </div>
 
-
-
-<h2 className="text-center mt-3">
-  {selectedUniversityId
-    ? universities.find((uni) => uni.id.toString() === selectedUniversityId)?.name
-      ? `${universities.find((uni) => uni.id.toString() === selectedUniversityId).name} - Visa Processing CRM Workflow`
-      : 'Select University'
-    : 'Select University'}
-</h2>
+      <h2 className="text-center mt-3">
+        {selectedUniversityId
+          ? universities.find(
+              (uni) => uni.id.toString() === selectedUniversityId
+            )?.name
+            ? `${
+                universities.find(
+                  (uni) => uni.id.toString() === selectedUniversityId
+                ).name
+              } - Visa Processing CRM Workflow`
+            : "Select University"
+          : "Select University"}
+      </h2>
 
       <Card.Body className="p-3">
         <div className="d-flex justify-content-between align-items-center overflow-auto py-2">
@@ -409,7 +407,7 @@ const DashboardVisa = () => {
                 style={{ minWidth: "80px" }}
                 key={step.key}
               >
-                {index !== 0 && (
+                {/* {index !== 0 && (
                   <div
                     className="position-absolute top-50 start-0 translate-middle-y w-100"
                     style={{
@@ -418,7 +416,7 @@ const DashboardVisa = () => {
                       zIndex: 0,
                     }}
                   />
-                )}
+                )} */}
 
                 <div
                   className={`rounded-circle d-flex align-items-center justify-content-center mx-auto ${
@@ -463,16 +461,16 @@ const DashboardVisa = () => {
           })}
         </div>
       </Card.Body>
-      <Dashboard/>
+      <Dashboard />
     </Card>
   );
 
   const renderApplicationSection = () => (
     <Card className="border-0 shadow-sm">
-      <Card.Header className="bg-primary text-white py-3">
+      {/* <Card.Header className="bg-primary text-white py-3">
         <h5 className="mb-0">Student Application Details</h5>
-      </Card.Header>
-      <Card.Body>
+      </Card.Header> */}
+      {/* <Card.Body>
         <Form onSubmit={handleSubmit}>
           {error && <Alert variant="danger">{error}</Alert>}
           {success && <Alert variant="success">{success}</Alert>}
@@ -660,13 +658,13 @@ const DashboardVisa = () => {
             </Button>
           </div>
         </Form>
-      </Card.Body>
+      </Card.Body> */}
     </Card>
   );
 
   const renderInterviewSection = () => (
     <Card className="border-0 shadow-sm">
-      <Card.Header className="bg-primary text-white py-3">
+      {/* <Card.Header className="bg-primary text-white py-3">
         <h5 className="mb-0">Document Upload</h5>
       </Card.Header>
       <Card.Body>
@@ -744,13 +742,13 @@ const DashboardVisa = () => {
             </Button>
           </div>
         </Form>
-      </Card.Body>
+      </Card.Body> */}
     </Card>
   );
 
   const renderVisaProcessSection = () => (
     <Card className="border-0 shadow-sm">
-      <Card.Header className="bg-primary text-white py-3">
+      {/* <Card.Header className="bg-primary text-white py-3">
         <h5 className="mb-0">Embassy Documents Submission</h5>
       </Card.Header>
       <Card.Body>
@@ -907,13 +905,13 @@ const DashboardVisa = () => {
             </Button>
           </div>
         </Form>
-      </Card.Body>
+      </Card.Body> */}
     </Card>
   );
 
   const renderFeePaymentSection = () => (
     <Card className="border-0 shadow-sm">
-      <Card.Header className="bg-primary text-white py-3">
+      {/* <Card.Header className="bg-primary text-white py-3">
         <h5 className="mb-0">Application Fee Payment</h5>
       </Card.Header>
       <Card.Body>
@@ -1043,13 +1041,13 @@ const DashboardVisa = () => {
             </Button>
           </div>
         </Form>
-      </Card.Body>
+      </Card.Body> */}
     </Card>
   );
 
   const renderZoomInterviewForm = () => (
     <Card className="border-0 shadow-sm">
-      <Card.Header className="bg-primary text-white py-3">
+      {/* <Card.Header className="bg-primary text-white py-3">
         <h5 className="mb-0">University Interview Details</h5>
       </Card.Header>
       <Card.Body>
@@ -1247,13 +1245,13 @@ const DashboardVisa = () => {
             </Button>
           </div>
         </Form>
-      </Card.Body>
+      </Card.Body> */}
     </Card>
   );
 
   const renderConditionalOfferLetterForm = () => (
     <Card className="border-0 shadow-sm">
-      <Card.Header className="bg-primary text-white py-3">
+      {/* <Card.Header className="bg-primary text-white py-3">
         <h5 className="mb-0">Conditional Offer Letter</h5>
       </Card.Header>
       <Card.Body>
@@ -1368,13 +1366,13 @@ const DashboardVisa = () => {
             </Button>
           </div>
         </Form>
-      </Card.Body>
+      </Card.Body> */}
     </Card>
   );
 
   const renderTuitionFeePaymentForm = () => (
     <Card className="border-0 shadow-sm">
-      <Card.Header className="bg-primary text-white py-3">
+      {/* <Card.Header className="bg-primary text-white py-3">
         <h5 className="mb-0">Tuition Fee Payment</h5>
       </Card.Header>
       <Card.Body>
@@ -1500,13 +1498,13 @@ const DashboardVisa = () => {
             </Button>
           </div>
         </Form>
-      </Card.Body>
+      </Card.Body> */}
     </Card>
   );
 
   const renderMainOfferLetterForm = () => (
     <Card className="border-0 shadow-sm">
-      <Card.Header className="bg-primary text-white py-3">
+      {/* <Card.Header className="bg-primary text-white py-3">
         <h5 className="mb-0">Main Offer Letter</h5>
       </Card.Header>
       <Card.Body>
@@ -1599,7 +1597,7 @@ const DashboardVisa = () => {
             </Button>
           </div>
         </Form>
-      </Card.Body>
+      </Card.Body> */}
     </Card>
   );
 
@@ -1622,7 +1620,7 @@ const DashboardVisa = () => {
 
     return (
       <Card className="border-0 shadow-sm">
-        <Card.Header className="bg-primary text-white py-3">
+        {/* <Card.Header className="bg-primary text-white py-3">
           <h5 className="mb-0">Embassy Document Preparation</h5>
         </Card.Header>
         <Card.Body>
@@ -1685,14 +1683,13 @@ const DashboardVisa = () => {
               </Button>
             </div>
           </Form>
-        </Card.Body>
+        </Card.Body> */}
       </Card>
     );
   };
-
   const renderEmbassyAppointmentForm = () => (
     <Card className="border-0 shadow-sm">
-      <Card.Header className="bg-primary text-white py-3">
+      {/* <Card.Header className="bg-primary text-white py-3">
         <h5 className="mb-0">Embassy Appointment</h5>
       </Card.Header>
       <Card.Body>
@@ -1803,13 +1800,12 @@ const DashboardVisa = () => {
             </Button>
           </div>
         </Form>
-      </Card.Body>
+      </Card.Body> */}
     </Card>
   );
-
   const renderEmbassyInterviewResultForm = () => (
     <Card className="border-0 shadow-sm">
-      <Card.Header className="bg-primary text-white py-3">
+      {/* <Card.Header className="bg-primary text-white py-3">
         <h5 className="mb-0">Embassy Interview Result</h5>
       </Card.Header>
       <Card.Body>
@@ -1931,13 +1927,12 @@ const DashboardVisa = () => {
             </Button>
           </div>
         </Form>
-      </Card.Body>
+      </Card.Body> */}
     </Card>
   );
-
   const renderVisaStatusForm = () => (
     <Card className="border-0 shadow-sm">
-      <Card.Header className="bg-primary text-white py-3">
+      {/* <Card.Header className="bg-primary text-white py-3">
         <h5 className="mb-0">Visa Status</h5>
       </Card.Header>
       <Card.Body>
@@ -2062,21 +2057,18 @@ const DashboardVisa = () => {
             </Button>
           </div>
         </Form>
-      </Card.Body>
+      </Card.Body> */}
     </Card>
   );
-
   return (
     <div className="py-4 p-5" style={{ backgroundColor: "#f8f9fc" }}>
       {renderStepper()}
-
       {loading && !formData && (
         <div className="text-center py-5">
           <Spinner animation="border" variant="primary" />
           <p className="mt-2">Loading data...</p>
         </div>
       )}
-
       {!loading && (
         <>
           {activeStep === "application" && renderApplicationSection()}
@@ -2099,5 +2091,4 @@ const DashboardVisa = () => {
     </div>
   );
 };
-
 export default DashboardVisa;

@@ -27,7 +27,7 @@ const Login = ({ setLogin }) => {
     if (role === "admin") {
       navigate("/dashboard");
     } else if (role === "student") {
-      navigate("/UniversityCards");
+      navigate("/dashboardvisa");
     } else if (role === "counselor") {
       navigate("/councelor");
     } else if (role === "staff") {
@@ -87,7 +87,7 @@ const Login = ({ setLogin }) => {
           if (role === "admin") {
             navigate("/dashboard");
           } else if (role === "student") {
-            navigate("/UniversityCards");
+            navigate("/dashboardvisa");
           } else if (role === "counselor") {
             navigate("/councelor");
           }
@@ -156,7 +156,7 @@ const Login = ({ setLogin }) => {
 
       // Redirect to Student dashboard
       setTimeout(() => {
-        navigate("/UniversityCards");
+        navigate("/dashboardvisa");
       }, 300);
 
     } catch (error) {
