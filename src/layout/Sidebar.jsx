@@ -675,11 +675,11 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
 
           {/* Processor Menu Items */}
           {login == "processors" && (
-            <li className={`menu-item ${isActive("/tracker") ? "active" : ""}`}>
+            <li className={`menu-item ${isActive("/applicationProcessor") ? "active" : ""}`}>
               <div
                 className="menu-link menu-i"
                 onClick={() => {
-                  navigate("/tracker");
+                  navigate("/applicationProcessor");
                 }}
               >
                 <FileText size={18} className="mr-2" />

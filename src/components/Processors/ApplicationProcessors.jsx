@@ -4,10 +4,10 @@ import { Link } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { Modal, Button, Form, Badge } from "react-bootstrap";
 import { saveAs } from "file-saver";
-
 import BASE_URL from "../../Config";
 
-const StudentList = () => {
+
+const ApplicationProcessors = () => {
   const [applications, setApplications] = useState([]);
   const [filteredApplications, setFilteredApplications] = useState([]);
   const [selectedUniversity, setSelectedUniversity] = useState("");
@@ -28,15 +28,21 @@ const StudentList = () => {
   const [assignType, setAssignType] = useState("counselor"); // 'counselor' or 'processor'
 
   // Fetch data
-  const fetchApplications = async () => {
-    try {
-      const response = await api.get(`application`);
-      setApplications(response.data);
-      setFilteredApplications(response.data);
-    } catch (error) {
-      console.error("Error fetching applications:", error);
-    }
-  };
+ const fetchApplications = async () => {
+  const processor_id = localStorage.getItem("user_id"); // fix: use string key
+
+  try {
+    const response = await api.get(`getAplicationBYProcessorID/${processor_id}`); // fix: add slash
+    console.log(response);
+
+    setApplications(response.data);
+    setFilteredApplications(response.data);
+  } catch (error) {
+    console.error("Error fetching applications:", error);
+  }
+};
+
+ 
 
   useEffect(() => {
     fetchApplications();
@@ -525,4 +531,4 @@ const StudentList = () => {
   );
 };
 
-export default StudentList;
+export default ApplicationProcessors;

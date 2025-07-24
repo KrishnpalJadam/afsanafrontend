@@ -298,17 +298,16 @@ const StudentDetails = () => {
   });
 
   useEffect(() => {
-    if (formData.full_name && formData.date_of_birth) {
-      const dob = new Date(formData.date_of_birth);
-      const month = dob.toLocaleString("default", { month: "short" });
-      const day = String(dob.getDate()).padStart(2, "0");
-      const identifying = `${formData.full_name} ${month}-${day} Deb`;
+    if (formData.full_name && formData.university_id) {
+      const university = universities.find(u => u.id.toString() === formData.university_id.toString());
+      const universityName = university ? university.name : "";
+      const identifying = `${formData.full_name} ${universityName} Deb`;
       setFormData((prev) => ({
         ...prev,
         identifying_name: identifying,
       }));
     }
-  }, [formData.full_name, formData.date_of_birth]);
+  }, [formData.full_name, formData.university_id, universities]);
 
   return (
     <div className="container pt-3">
@@ -386,7 +385,7 @@ const StudentDetails = () => {
               <th>Gender</th>
               <th>Category</th>
               <th>Mobile Number</th>
-              <th>Assign to</th>
+              <th>Counselor</th>
               <th>Processor</th>
               <th>Action</th>
             </tr>
@@ -673,7 +672,7 @@ const StudentDetails = () => {
                   value={formData.identifying_name}
                   className="form-control"
                   onChange={(e) => setFormData({ ...formData, identifying_name: e.target.value })}
-                  placeholder="e.g., Rahim Sep-25 Deb"
+                  placeholder="e.g., Rahim Harvard Deb"
                   required
                 />
               </div>

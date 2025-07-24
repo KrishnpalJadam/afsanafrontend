@@ -290,9 +290,8 @@ const AddProcessor = () => {
                                                 required
                                             />
                                         </div>
-                                      
-                                        {!editingId && (
-                                            <div className="col-md-12">
+                                       {!editingId && (
+                                            <div className="col-md-6">
                                                 <label className="form-label">Password</label>
                                                 <input
                                                     type="password"
@@ -305,6 +304,7 @@ const AddProcessor = () => {
                                                 />
                                             </div>
                                         )}
+                                      
                                     </div>
                                 </div>
                                 <div className="modal-footer">

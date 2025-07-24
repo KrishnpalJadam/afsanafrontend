@@ -110,7 +110,7 @@ const StudentDecisions = () => {
           </Col>
           <Col md={4}>
             <Form.Select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
-              <option value="all">All Statuses</option>
+              <option value="all">All Status</option>
               <option value="accepted">Accepted</option>
               <option value="rejected">Rejected</option>
               <option value="waitlisted">Waitlisted</option>

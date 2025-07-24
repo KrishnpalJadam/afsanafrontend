@@ -53,25 +53,25 @@ const DashboardVisa = () => {
         const studentResponse = await api.get(
           `${BASE_URL}auth/getStudentById/${studentId}`
         );
-        Swal.fire({
-          title: "Processing...",
-          html: "Please wait while we submit your data.",
-          allowOutsideClick: false,
-          didOpen: () => {
-            Swal.showLoading();
+        // Swal.fire({
+        //   title: "Processing...",
+        //   html: "Please wait while we submit your data.",
+        //   allowOutsideClick: false,
+        //   didOpen: () => {
+        //     Swal.showLoading();
 
-            // Simulate API call (replace with your actual API call)
-            setTimeout(() => {
-              // This is where your API success would be
-              Swal.fire({
-                title: "Success!",
-                text: "Data submitted successfully!",
-                icon: "success",
-                confirmButtonText: "OK",
-              });
-            }, true); // Remove this timeout and replace with your API call
-          },
-        });
+        //     // Simulate API call (replace with your actual API call)
+        //     setTimeout(() => {
+        //       // This is where your API success would be
+        //       Swal.fire({
+        //         title: "Success!",
+        //         text: "Data submitted successfully!",
+        //         icon: "success",
+        //         confirmButtonText: "OK",
+        //       });
+        //     }, true); // Remove this timeout and replace with your API call
+        //   },
+        // });
         const studentData = studentResponse.data;
 
         // Check if visa process record exists
@@ -79,25 +79,25 @@ const DashboardVisa = () => {
           const visaProcessResponse = await api.get(
             `${BASE_URL}getVisaProcessByStudentId/VisaProcess/${studentId}`
           );
-          Swal.fire({
-            title: "Processing...",
-            html: "Please wait while we submit your data.",
-            allowOutsideClick: false,
-            didOpen: () => {
-              Swal.showLoading();
+          // Swal.fire({
+          //   title: "Processing...",
+          //   html: "Please wait while we submit your data.",
+          //   allowOutsideClick: false,
+          //   didOpen: () => {
+          //     Swal.showLoading();
 
-              // Simulate API call (replace with your actual API call)
-              setTimeout(() => {
-                // This is where your API success would be
-                Swal.fire({
-                  title: "Success!",
-                  text: "Data submitted successfully!",
-                  icon: "success",
-                  confirmButtonText: "OK",
-                });
-              }, 2000); // Remove this timeout and replace with your API call
-            },
-          });
+          //     // Simulate API call (replace with your actual API call)
+          //     setTimeout(() => {
+          //       // This is where your API success would be
+          //       Swal.fire({
+          //         title: "Success!",
+          //         text: "Data submitted successfully!",
+          //         icon: "success",
+          //         confirmButtonText: "OK",
+          //       });
+          //     }, 2000); // Remove this timeout and replace with your API call
+          //   },
+          // });
           // const visaProcessResponse = await api.get(`${BASE_URL}api/getVisaProcessByStudent/${studentId}`);
           const visaData = visaProcessResponse.data;
           console.log(visaData);

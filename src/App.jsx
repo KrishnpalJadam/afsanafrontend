@@ -87,6 +87,7 @@ import DashboardVisa from "./components/AdmissionTracking/DashboardVisa";
 import ProcessorsDashboard from "./components/Processors/Processors/ProcessorsDashboard";
 import StudentDocument from "./components/Processors/StudentDocument/StudentDocument";
 import AddProcessor from "./components/Processors/AddProvessor/AddProcessor";
+import ApplicationProcessors from "./components/Processors/ApplicationProcessors";
 
 
 
@@ -338,6 +339,7 @@ useEffect(() => {
               <Route path="/processorsDashboard" element={<ProcessorsDashboard />} />
               <Route path="/processorsDocument" element={<StudentDocument/>} />
               <Route path="/addProcessor" element={<AddProcessor/>} />
+              <Route path="/applicationProcessor" element={<ApplicationProcessors/>} />
 
 
 

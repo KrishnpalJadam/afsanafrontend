@@ -901,7 +901,7 @@ const flatData = filteredData?.map(item => ({
                   {String(inq.counselor_id) === "1" ? (
                     <Badge bg="warning">Not Assigned</Badge>
                   ) : (
-                    inq.counselor_name || <Badge bg="secondary">N/A</Badge>
+                    inq.counselor_name || <Badge bg="warning">Not Assigned</Badge>
                   )}
                 </td>
 
