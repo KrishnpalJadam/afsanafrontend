@@ -88,7 +88,7 @@ import ProcessorsDashboard from "./components/Processors/Processors/ProcessorsDa
 import StudentDocument from "./components/Processors/StudentDocument/StudentDocument";
 import AddProcessor from "./components/Processors/AddProvessor/AddProcessor";
 import ApplicationProcessors from "./components/Processors/ApplicationProcessors";
-
+import Chats from "./components/Rehan-chat/Chat";
 
 
 function App() {
@@ -321,6 +321,7 @@ useEffect(() => {
               <Route path="/chat/:receiverId" element={<ChatBox2 userId={user_id} />} />
               <Route path="/chatHistory" element={<ChatHistory userId={user_id} />} />
               <Route path="/chatList" element={<ChatList userId={user_id} />} />
+              <Route path="/chat" element={<Chats/>} />
 
               {/* <Route path="/inquirydemo" element={<Inquirydemo/>} /> */}
               <Route path="/inquryTabledemo" element={<InquryTabledemo />} />

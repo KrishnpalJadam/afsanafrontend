@@ -93,7 +93,7 @@ const handleClearAllNotifications = async () => {
   };
 
   const handleChat = () => {
-    navigate("/chatList");
+    navigate("/chat");
   };
 
   useEffect(() => {
