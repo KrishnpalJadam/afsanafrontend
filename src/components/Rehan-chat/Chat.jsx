@@ -6,7 +6,7 @@ import axios from 'axios';
 import './Chat.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import BASE_URL from '../../Config';
-const Socket_URL = "http://localhost:3009"
+const Socket_URL = "https://afsana-backend-production.up.railway.app"
 const socket = io(Socket_URL, { transports: ['websocket'] });
 
 console.log("Socket_URL", Socket_URL);
