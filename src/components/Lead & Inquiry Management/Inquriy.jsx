@@ -516,7 +516,7 @@ const Inquiry = () => {
           lead_status: status
         }
       );
-      alert("Status updated successfully!");
+     
       await fetchInquiries()
       setInquiryDetailsModal(false);
       console.log(response.data);
@@ -535,7 +535,7 @@ const Inquiry = () => {
       await Promise.all(selectedInquiries.map(async (id) => {
         await api.patch(`fee/update-lesd-status`, { id, lead_status: status });
       }));
-      alert("Bulk status updated successfully!");
+  
       fetchInquiries();
       setSelectedInquiries([]);
     } catch (err) {
@@ -561,7 +561,7 @@ const Inquiry = () => {
           lead_status: status
         }
       );
-      toast.success("Status updated successfully!");
+
       await fetchInquiries(); // data refresh
     } catch (error) {
       console.error("Error updating status:", error);
@@ -795,6 +795,7 @@ const Inquiry = () => {
 
 
       {/* Today's Inquiries */}
+      <div className="table table-responsive">
       <Table striped bordered hover responsive>
         <thead>
           <tr className="text-center">
@@ -1015,7 +1016,7 @@ Study First Info Team`
           )}
         </tbody>
       </Table>
-
+</div>
 
       <Followup />
 

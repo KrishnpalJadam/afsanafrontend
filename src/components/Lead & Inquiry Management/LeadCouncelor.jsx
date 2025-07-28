@@ -431,7 +431,7 @@ const LeadCounselor = ({ lead }) => {
         new_leads: status,
       });
 
-      toast.success("Status updated successfully!");
+     
       fetchLeads();
     } catch (error) {
       console.error("Error updating status:", error);

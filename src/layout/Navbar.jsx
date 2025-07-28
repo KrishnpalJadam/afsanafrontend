@@ -118,11 +118,14 @@ const handleClearAllNotifications = async () => {
         <div className="d-flex align-items-center gap-3" style={{ marginTop: "-20px" }}>
           <img src="/img/logo.png" alt="Logo" height={100} />
           <button
-            className="btn btn-light border"
-            onClick={toggleSidebar}
-          >
-            ☰
-          </button>
+        className="btn btn-light border"
+        onClick={(e) => {
+          e.stopPropagation(); // Prevent bubbling
+          toggleSidebar();     // ✅ Only toggle from here
+        }}
+      >
+        ☰
+      </button>
         </div>
 
         {/* Right Icons */}

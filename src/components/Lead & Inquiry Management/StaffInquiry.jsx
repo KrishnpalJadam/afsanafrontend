@@ -532,7 +532,7 @@ useEffect(() => {
           lead_status: status
         }
       );
-      alert("Status updated successfully!");
+      
       await fetchInquiries()
       setInquiryDetailsModal(false);
       console.log(response.data);
@@ -551,7 +551,7 @@ useEffect(() => {
       await Promise.all(selectedInquiries?.map(async (id) => {
         await api.patch(`fee/update-lesd-status`, { id, lead_status: status });
       }));
-      alert("Bulk status updated successfully!");
+    
       fetchInquiries();
       setSelectedInquiries([]);
     } catch (err) {
@@ -577,7 +577,7 @@ useEffect(() => {
           lead_status: status
         }
       );
-      toast.success("Status updated successfully!");
+     
       await fetchInquiries(); // data refresh
     } catch (error) {
       console.error("Error updating status:", error);

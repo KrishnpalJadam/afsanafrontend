@@ -192,6 +192,7 @@ const Visaprocesing = () => {
       delete submissionData.message;
       delete submissionData.affectedRows;
       delete submissionData.updatedFields;
+      delete submissionData.created_at;
 
       // Remove undefined/null values and prepare FormData
       Object.entries(submissionData).forEach(([key, value]) => {

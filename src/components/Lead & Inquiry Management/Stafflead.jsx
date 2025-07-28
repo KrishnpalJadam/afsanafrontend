@@ -34,11 +34,12 @@ const Stafflead = () => {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState({});
   const [uploadInquiry, setUploadInquiry] = useState(null);
-const [showStudentModal, setShowStudentModal] = useState(false);
-const [isEditing, setIsEditing] = useState(false);   // ye pehle se hai
-const [editStudentId, setEditStudentId] = useState(null);  // pehle se hai
-const [photo, setPhoto] = useState(null);
-const [documents, setDocuments] = useState([]);
+  const [showStudentModal, setShowStudentModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editStudentId, setEditStudentId] = useState(null);
+  const [photo, setPhoto] = useState(null);
+  const [documents, setDocuments] = useState([]);
+  const [universities, setUniversities] = useState([]);
 
   const [filters, setFilters] = useState({
     status: "",
@@ -48,10 +49,13 @@ const [documents, setDocuments] = useState([]);
     search: "",
   });
 
+  const user_id = localStorage.getItem("user_id");
+
   // Load Converted Leads
   useEffect(() => {
     fetchConvertedLeads();
     fetchCounselors();
+    fetchUniversities();
   }, []);
 
   const fetchConvertedLeads = async () => {
@@ -61,6 +65,27 @@ const [documents, setDocuments] = useState([]);
       setFilteredData(response.data);
     } catch (error) {
       console.error("Error fetching converted leads:", error);
+      toast.error("Failed to fetch leads");
+    }
+  };
+
+  const fetchCounselors = async () => {
+    try {
+      const res = await api.get(`${BASE_URL}counselor`);
+      setCounselors(res.data);
+    } catch (err) {
+      console.error("Error fetching counselors:", err);
+      toast.error("Failed to fetch counselors");
+    }
+  };
+
+  const fetchUniversities = async () => {
+    try {
+      const response = await api.get(`${BASE_URL}universities`);
+      setUniversities(response.data);
+    } catch (error) {
+      console.log("Error fetching universities:", error);
+      toast.error("Failed to fetch universities");
     }
   };
 
@@ -70,7 +95,7 @@ const [documents, setDocuments] = useState([]);
         inquiry_id: id,
         new_leads: status,
       });
-      toast.success("Status updated successfully!");
+     
       fetchConvertedLeads();
     } catch (error) {
       console.error("Error updating status:", error);
@@ -101,11 +126,10 @@ const [documents, setDocuments] = useState([]);
     }
   };
 
-  // === FILTER FUNCTION ===
+  // Filter function
   useEffect(() => {
     let data = [...convertData];
 
-    // Global Search
     if (filters.search) {
       const search = filters.search.toLowerCase();
       data = data.filter(
@@ -116,18 +140,14 @@ const [documents, setDocuments] = useState([]);
       );
     }
 
-    // Status
     if (filters.status) {
       data = data.filter((lead) => lead.new_leads === filters.status);
     }
 
-    // Counselor
     if (filters.counselor) {
       data = data.filter((lead) => String(lead.counselor_id) === filters.counselor);
     }
 
-    // Follow-Up Date
-    // Follow-Up Date Filter
     if (filters.followUp) {
       const today = new Date();
       const dateOnly = (d) => new Date(d).toISOString().slice(0, 10);
@@ -143,14 +163,10 @@ const [documents, setDocuments] = useState([]);
             new Date(lead.follow_up_date) <= endOfWeek
         );
       } else if (filters.followUp === "overdue") {
-        data = data.filter(
-          (lead) => new Date(lead.follow_up_date) < today
-        );
+        data = data.filter((lead) => new Date(lead.follow_up_date) < today);
       }
     }
 
-
-    // Country
     if (filters.country) {
       data = data.filter((lead) => lead.country === filters.country);
     }
@@ -158,18 +174,6 @@ const [documents, setDocuments] = useState([]);
     setFilteredData(data);
   }, [filters, convertData]);
 
-
-  // Load Counselors
-  const fetchCounselors = async () => {
-    try {
-      const res = await api.get(`${BASE_URL}counselor`);
-      setCounselors(res.data);
-    } catch (err) {
-      console.error("Error fetching counselors:", err);
-    }
-  };
-
-  // Assign Inquiry API Call
   const handleAssignCounselor = async () => {
     if (!selectedCounselor || !followUpDate) {
       toast.error("Please select counselor & follow-up date.");
@@ -219,12 +223,14 @@ const [documents, setDocuments] = useState([]);
     setShowUploadModal(true);
     setSelectedFiles({});
   };
+
   const handleFileChange = (e, docType) => {
     setSelectedFiles({
       ...selectedFiles,
       [docType]: e.target.files[0],
     });
   };
+
   const handleUploadDocuments = async () => {
     if (!uploadInquiry) return;
 
@@ -246,30 +252,36 @@ const [documents, setDocuments] = useState([]);
     }
   };
 
-  const [universities, setUniversities] = useState([]);
+  const handleConvertToStudent = (lead) => {
+    setFormData({
+      user_id: user_id,
+      full_name: lead.full_name || "",
+      father_name: "",
+      admission_no: "",
+      id_no: "",
+      mobile_number: lead.phone_number || "",
+      university_id: "",
+      date_of_birth: "",
+      gender: "",
+      category: "",
+      address: "",
+      role: "student",
+      password: "",
+      email: lead.email || "",
+    });
+    setPhoto(null);
+    setDocuments([]);
+    setIsEditing(false);
+    setShowStudentModal(true);
+  };
 
-  // Fetch universities
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await api.get(`${BASE_URL}universities`);
-        setUniversities(response.data); // Ensure the data is passed correctly
-      } catch (error) {
-        console.log("Error fetching universities:", error);
-      }
-    };
-    fetchData();
-  }, []);
-  const user_id = localStorage.getItem("user_id")
-
-const handleConvertToStudent = (lead) => {
-  setFormData({
-    user_id: user_id,   // jo aapka user_id hai wo yahi rehne do
-    full_name: lead.full_name || "",
-    father_name: "",  // optional agar lead me nahi hai
+  const [formData, setFormData] = useState({
+    user_id: user_id,
+    full_name: "",
+    father_name: "",
     admission_no: "",
     id_no: "",
-    mobile_number: lead.phone_number || "",
+    mobile_number: "",
     university_id: "",
     date_of_birth: "",
     gender: "",
@@ -277,34 +289,10 @@ const handleConvertToStudent = (lead) => {
     address: "",
     role: "student",
     password: "",
-    email: lead.email || "",
+    email: ""
   });
-  setPhoto(null);
-  setDocuments([]);
-  setIsEditing(false);  
-  setShowStudentModal(true);  // Modal ko show karenge
-};
 
-   const [formData, setFormData] = useState({
-      user_id: user_id,
-      full_name: "",
-      father_name: "",
-      admission_no: "",
-      id_no: "",
-      mobile_number: "",
-      university_id: "",
-      date_of_birth: "",
-      gender: "",
-      category: "",
-      address: "",
-     
-      role: "student",
-      password: "",
-      email: ""
-    });
-
-
-   const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formPayload = new FormData();
@@ -321,7 +309,6 @@ const handleConvertToStudent = (lead) => {
 
     const method = isEditing ? "put" : "post";
 
-
     try {
       const res = await api({
         method,
@@ -330,68 +317,37 @@ const handleConvertToStudent = (lead) => {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      alert(isEditing ? "Student updated" : "Student created");
-      setFormData({
-        user_id: user_id,
-        full_name: "",
-        father_name: "",
-        admission_no: "",
-        id_no: "",
-        mobile_number: "",
-        university_id: "",
-        date_of_birth: "",
-        gender: "",
-        category: "",
-        address: "",
-      
-        role: "student",
-        password: "",
-        email: "",
-      });
-      setPhoto(null);
-      setDocuments([]);
-      setIsEditing(false);
-      setEditStudentId(null);
-      setShow(false);
-      document.getElementById("studentFormModal").classList.remove("show");
-      document.getElementById("studentFormModal").style.display = "none";
-
-      // Reload students
-      const { data } = await api.get(`${BASE_URL}auth/getAllStudents`);
-      setStudentsData(data);
-      window.location.reload(true);
-
+      toast.success(isEditing ? "Student updated" : "Student created");
+      resetForm();
     } catch (err) {
       console.error("Error:", err);
-      alert("Submission failed");
+      toast.error("Submission failed");
     }
   };
 
-
   const resetForm = () => {
-  setFormData({
-    user_id: user_id,
-    full_name: "",
-    father_name: "",
-    admission_no: "",
-    id_no: "",
-    mobile_number: "",
-    university_id: "",
-    date_of_birth: "",
-    gender: "",
-    category: "",
-    address: "",
-    role: "student",
-    password: "",
-    email: "",
-  });
-  setPhoto(null);
-  setDocuments([]);
-  setIsEditing(false);
-  setEditStudentId(null);
-  setShowStudentModal(false);
-};
-
+    setFormData({
+      user_id: user_id,
+      full_name: "",
+      father_name: "",
+      admission_no: "",
+      id_no: "",
+      mobile_number: "",
+      university_id: "",
+      date_of_birth: "",
+      gender: "",
+      category: "",
+      address: "",
+      role: "student",
+      password: "",
+      email: "",
+    });
+    setPhoto(null);
+    setDocuments([]);
+    setIsEditing(false);
+    setEditStudentId(null);
+    setShowStudentModal(false);
+  };
   return (
     <div className="p-2">
       <h3 className="mt-3">Lead Table</h3>

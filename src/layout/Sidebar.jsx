@@ -63,8 +63,9 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
           <a href="#" style={{ position: "relative", right: "12px", top: "30px" }}>
             <RiMenuFold3Line style={{ color: "black" }} />
           </a>
-        </div>}
-      
+        </div>
+        }
+       
       <div className="sidebar">
         <ul className="menu">
           {/* Dashboard Section */}

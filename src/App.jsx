@@ -190,9 +190,9 @@ const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const handleTaskAssign = (task) => {
     setTasks([...tasks, task]);
   };
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const menusidebarcollaps = () => {
-    setIsSidebarCollapsed(true);
+    setIsSidebarCollapsed(false);
   };
 
   const toggleSidebar = () => {
