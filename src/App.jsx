@@ -88,7 +88,12 @@ import ProcessorsDashboard from "./components/Processors/Processors/ProcessorsDa
 import StudentDocument from "./components/Processors/StudentDocument/StudentDocument";
 import AddProcessor from "./components/Processors/AddProvessor/AddProcessor";
 import ApplicationProcessors from "./components/Processors/ApplicationProcessors";
-
+import Chats from "./components/Rehan-chat/Chat";
+import MasterAdminDashboard from "./components/MasterAdmin/MasterAdminDashboard";
+import MasterTable from "./components/MasterAdmin/MasterTable";
+import ChatbotMain from "./components/ChatBot/ChatBot";
+import ForgotPassword from "./authtication/ForgotPassword";
+import ResetPassword from "./authtication/ResetPassword";
 
 
 function App() {
@@ -200,7 +205,7 @@ const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   };
   const location = useLocation();
   const user_id = localStorage.getItem("user_id")
-  const noLayoutPaths = ["/", "/login", "/signup"];
+  const noLayoutPaths = ["/", "/login", "/signup" ,"/forgotpassword" ,"/resetpassword"];
   const hideLayout = noLayoutPaths.includes(location.pathname);
 // Detect screen size on resize
 useEffect(() => {
@@ -219,17 +224,18 @@ useEffect(() => {
       <div className={`main-content ${hideLayout ? "full-width" : ""}`}>
         {!hideLayout && (
           <Sidebar
-  collapsed={isSidebarCollapsed}
-  isMobile={isMobile}
-  menuItemClick={menusidebarcollaps}
-  login={login}
-  toggleSidebar={toggleSidebar}
-/>
-
+            collapsed={isSidebarCollapsed}
+            isMobile={isMobile}
+            menuItemClick={menusidebarcollaps}
+            login={login}
+            toggleSidebar={toggleSidebar}
+          />
         )}
         {/* sidebar end */}
         {/* right side  */}
         <div className={`right-side-content ${hideLayout ? "full-width" : isSidebarCollapsed ? "collapsed" : ""}`} style={hideLayout ? { marginTop: "0", paddingLeft: "0" } : {}}>
+          {/* Show Chatbot for student on all pages except login/signup/home */}
+          {login === "student" && !hideLayout && <ChatbotMain />}
           <LeadProvider>
             <Routes>
               {/* University Routes */}
@@ -242,6 +248,8 @@ useEffect(() => {
               {/* Login & Signup */}
               <Route path="/login" element={<Login login={login} setLogin={setLogin} />} />
               <Route path="/signup" element={<Signup />} />
+             <Route path="/forgotpassword" element={<ForgotPassword/>} />
+             <Route path="/resetpassword" element={<ResetPassword />} />
               <Route path="/" element={<Home />} />
 
               {/* Protected Route for Dashboard */}
@@ -321,6 +329,8 @@ useEffect(() => {
               <Route path="/chat/:receiverId" element={<ChatBox2 userId={user_id} />} />
               <Route path="/chatHistory" element={<ChatHistory userId={user_id} />} />
               <Route path="/chatList" element={<ChatList userId={user_id} />} />
+              <Route path="/chat" element={<Chats/>} />
+              <Route path="/chatbot" element={<ChatbotMain/>} />
 
               {/* <Route path="/inquirydemo" element={<Inquirydemo/>} /> */}
               <Route path="/inquryTabledemo" element={<InquryTabledemo />} />
@@ -340,6 +350,15 @@ useEffect(() => {
               <Route path="/processorsDocument" element={<StudentDocument/>} />
               <Route path="/addProcessor" element={<AddProcessor/>} />
               <Route path="/applicationProcessor" element={<ApplicationProcessors/>} />
+
+
+
+
+
+
+              <Route path="/masterDashboard" element={<MasterAdminDashboard/>} />
+              <Route path="/masterTable" element={<MasterTable/>} />
+         
 
 
 

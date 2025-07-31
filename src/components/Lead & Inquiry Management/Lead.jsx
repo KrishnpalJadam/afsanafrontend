@@ -257,17 +257,18 @@ const LeadTable = ({ show, handleClose }) => {
       user_id: user_id,
       full_name: lead.full_name || "",
       father_name: "",
-      admission_no: "",
-      id_no: "",
+    identifying_name :"",
+      mother_name: "",
       mobile_number: lead.phone_number || "",
       university_id: "",
-      date_of_birth: "",
-      gender: "",
+      date_of_birth:  lead.date_of_birth || "",
+      gender:lead.gender ||"",
       category: "",
-      address: "",
+      address: lead.address ||"",
       role: "student",
       password: "",
       email: lead.email || "",
+
     });
     setPhoto(null);
     setDocuments([]);
@@ -275,12 +276,15 @@ const LeadTable = ({ show, handleClose }) => {
     setShowStudentModal(true);
   };
 
+
+ 
+
   const [formData, setFormData] = useState({
     user_id: user_id,
     full_name: "",
     father_name: "",
-    admission_no: "",
-    id_no: "",
+   mother_name:"",
+    identifying_name: "",
     mobile_number: "",
     university_id: "",
     date_of_birth: "",
@@ -294,8 +298,7 @@ const LeadTable = ({ show, handleClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Processing...");
-
+  
     const formPayload = new FormData();
     for (const key in formData) {
       formPayload.append(key, formData[key]);
@@ -323,7 +326,7 @@ const LeadTable = ({ show, handleClose }) => {
       fetchConvertedLeads();
     } catch (err) {
       console.error("Error:", err);
-      alert("Submission failed");
+      alert("User Already exits");
     }
   };
 
@@ -350,6 +353,19 @@ const LeadTable = ({ show, handleClose }) => {
     setEditStudentId(null);
     setShowStudentModal(false);
   };
+
+
+    useEffect(() => {
+      if (formData.full_name && formData.university_id) {
+        const university = universities.find(u => u.id.toString() === formData.university_id.toString());
+        const universityName = university ? university.name : "";
+        const identifying = `${formData.full_name} ${universityName} Deb`;
+        setFormData((prev) => ({
+          ...prev,
+          identifying_name: identifying,
+        }));
+      }
+    }, [formData.full_name, formData.university_id, universities]);
   return (
     <div className="p-2">
       <h3 className="mt-3">Lead Table</h3>
@@ -661,199 +677,204 @@ const LeadTable = ({ show, handleClose }) => {
 
         {/* Student Form Modal */}
         <Modal 
-          show={showStudentModal} 
-          onHide={resetForm}
-          size="xl"
-          centered
-        >
-          <Modal.Header closeButton>
-            <Modal.Title>Student Information</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form onSubmit={handleSubmit}>
-              <Row className="mb-3">
-                <Col md={6}>
-                  <Form.Group controlId="fullName">
-                    <Form.Label>Student Name</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Enter student name"
-                      value={formData.full_name}
-                      onChange={(e) => setFormData({...formData, full_name: e.target.value})}
-                      required
-                    />
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group controlId="fatherName">
-                    <Form.Label>Father Name</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Enter father name"
-                      value={formData.father_name}
-                      onChange={(e) => setFormData({...formData, father_name: e.target.value})}
-                    />
-                  </Form.Group>
-                </Col>
-              </Row>
+    show={showStudentModal} 
+    onHide={resetForm}
+    size="xl"
+    centered
+  >
+    <Modal.Header closeButton>
+      <Modal.Title>Student Information</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>
+      <Form onSubmit={handleSubmit}>
+        <Row className="mb-3">
+          <Col md={4}>
+            <Form.Group controlId="fullName">
+              <Form.Label>Student Name *</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter student name"
+                value={formData.full_name}
+                onChange={(e) => setFormData({...formData, full_name: e.target.value})}
+                required
+                readOnly // Pre-filled from lead, admin shouldn't change
+              />
+            </Form.Group>
+          </Col>
+          <Col md={4}>
+            <Form.Group controlId="fatherName">
+              <Form.Label>Father Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter father name"
+                value={formData.father_name}
+                onChange={(e) => setFormData({...formData, father_name: e.target.value})}
+              />
+            </Form.Group>
+          </Col>
+          <Col md={4}>
+            <Form.Group controlId="motherName">
+              <Form.Label>Mother Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter mother name"
+                value={formData.mother_name}
+                onChange={(e) => setFormData({...formData, mother_name: e.target.value})}
+              />
+            </Form.Group>
+          </Col>
+        </Row>
 
-              <Row className="mb-3">
-                <Col md={6}>
-                  <Form.Group controlId="email">
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control
-                      type="email"
-                      placeholder="Enter student's email"
-                      value={formData.email}
-                      onChange={(e) => setFormData({...formData, email: e.target.value})}
-                      required
-                    />
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group controlId="password">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Enter password"
-                      value={formData.password}
-                      onChange={(e) => setFormData({...formData, password: e.target.value})}
-                      required={!isEditing}
-                    />
-                  </Form.Group>
-                </Col>
-              </Row>
+        <Row className="mb-3">
+          <Col md={6}>
+            <Form.Group controlId="email">
+              <Form.Label>Email *</Form.Label>
+              <Form.Control
+                type="email"
+                placeholder="Enter student's email"
+                value={formData.email}
+                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                required
+                readOnly // Pre-filled from lead
+              />
+            </Form.Group>
+          </Col>
+          <Col md={6}>
+            <Form.Group controlId="password">
+              <Form.Label>Password *</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter password"
+                value={formData.password}
+                onChange={(e) => setFormData({...formData, password: e.target.value})}
+                required
+              />
+            </Form.Group>
+          </Col>
+        </Row>
 
-              <Row className="mb-3">
-                <Col md={4}>
-                  <Form.Group controlId="admissionNo">
-                    <Form.Label>Admission No</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Enter admission number"
-                      value={formData.admission_no}
-                      onChange={(e) => setFormData({...formData, admission_no: e.target.value})}
-                    />
-                  </Form.Group>
-                </Col>
-                <Col md={4}>
-                  <Form.Group controlId="idNo">
-                    <Form.Label>ID No.</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Enter ID number"
-                      value={formData.id_no}
-                      onChange={(e) => setFormData({...formData, id_no: e.target.value})}
-                    />
-                  </Form.Group>
-                </Col>
-                <Col md={4}>
-                  <Form.Group controlId="mobileNumber">
-                    <Form.Label>Mobile Number</Form.Label>
-                    <Form.Control
-                      type="tel"
-                      placeholder="Enter mobile number"
-                      value={formData.mobile_number}
-                      onChange={(e) => setFormData({...formData, mobile_number: e.target.value})}
-                      required
-                    />
-                  </Form.Group>
-                </Col>
-              </Row>
+        <Row className="mb-3">
+          <Col md={6}>
+            <Form.Group controlId="dob">
+              <Form.Label>Date of Birth</Form.Label>
+              <Form.Control
+                type="date"
+                value={formData.date_of_birth}
+                onChange={(e) => setFormData({...formData, date_of_birth: e.target.value})}
+              />
+            </Form.Group>
+          </Col>
+          <Col md={6}>
+            <Form.Group controlId="mobileNumber">
+              <Form.Label>Mobile Number *</Form.Label>
+              <Form.Control
+                type="tel"
+                placeholder="Enter mobile number"
+                value={formData.mobile_number}
+                onChange={(e) => setFormData({...formData, mobile_number: e.target.value})}
+                required
+                readOnly // Pre-filled from lead
+              />
+            </Form.Group>
+          </Col>
+        </Row>
 
-              <Row className="mb-3">
-                <Col md={6}>
-                  <Form.Group controlId="university">
-                    <Form.Label>University Name</Form.Label>
-                    <Form.Select
-                      value={formData.university_id}
-                      onChange={(e) => setFormData({...formData, university_id: e.target.value})}
-                    >
-                      <option value="">Select university</option>
-                      {universities?.map((uni) => (
-                        <option key={uni.id} value={uni.id}>
-                          {uni.name}
-                        </option>
-                      ))}
-                    </Form.Select>
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group controlId="dob">
-                    <Form.Label>Date of Birth</Form.Label>
-                    <Form.Control
-                      type="date"
-                      value={formData.date_of_birth}
-                      onChange={(e) => setFormData({...formData, date_of_birth: e.target.value})}
-                    />
-                  </Form.Group>
-                </Col>
-              </Row>
+        <Row className="mb-3">
+          <Col md={6}>
+            <Form.Group controlId="university">
+              <Form.Label>University Name</Form.Label>
+              <Form.Select
+                value={formData.university_id}
+                onChange={(e) => setFormData({...formData, university_id: e.target.value})}
+              >
+                <option value="">Select university</option>
+                {universities?.map((uni) => (
+                  <option key={uni.id} value={uni.id}>
+                    {uni.name}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+          </Col>
 
-              <Row className="mb-3">
-                <Col md={6}>
-                  <Form.Group controlId="gender">
-                    <Form.Label>Gender</Form.Label>
-                    <div>
-                      {["Male", "Female", "Other"].map((g) => (
-                        <Form.Check
-                          inline
-                          key={g}
-                          type="radio"
-                          label={g}
-                          name="gender"
-                          value={g}
-                          checked={formData.gender === g}
-                          onChange={(e) => setFormData({...formData, gender: e.target.value})}
-                        />
-                      ))}
-                    </div>
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group controlId="category">
-                    <Form.Label>Category</Form.Label>
-                    <Form.Select
-                      value={formData.category}
-                      onChange={(e) => setFormData({...formData, category: e.target.value})}
-                    >
-                      <option value="">Select category</option>
-                      <option value="General">General</option>
-                      <option value="SC">SC</option>
-                      <option value="ST">ST</option>
-                      <option value="OBC">OBC</option>
-                      <option value="Other">Other</option>
-                    </Form.Select>
-                  </Form.Group>
-                </Col>
-              </Row>
+          <Col md={6}>
+            <Form.Group controlId="identifyingName">
+              <Form.Label>Student Identifying Name *</Form.Label>
+              <Form.Control
+                type="text"
+                value={formData.identifying_name}
+                onChange={(e) => setFormData({...formData, identifying_name: e.target.value})}
+                placeholder="e.g., Rahim Harvard Deb"
+                required
+              />
+            </Form.Group>
+          </Col>
+        </Row>
 
-              <Row className="mb-3">
-                <Col md={12}>
-                  <Form.Group controlId="address">
-                    <Form.Label>Address</Form.Label>
-                    <Form.Control
-                      as="textarea"
-                      rows={3}
-                      placeholder="Enter complete address"
-                      value={formData.address}
-                      onChange={(e) => setFormData({...formData, address: e.target.value})}
-                    />
-                  </Form.Group>
-                </Col>
-              </Row>
-
-              <div className="d-flex justify-content-end mt-3">
-                <Button variant="secondary" onClick={resetForm} className="me-2">
-                  Cancel
-                </Button>
-                <Button variant="primary" type="submit">
-                  {isEditing ? "Update" : "Submit"}
-                </Button>
+        <Row className="mb-3">
+          <Col md={6}>
+            <Form.Group controlId="gender">
+              <Form.Label>Gender</Form.Label>
+              <div>
+                {["Male", "Female", "Other"].map((g) => (
+                  <Form.Check
+                    inline
+                    key={g}
+                    type="radio"
+                    label={g}
+                    name="gender"
+                    value={g}
+                    checked={formData.gender === g}
+                    onChange={(e) => setFormData({...formData, gender: e.target.value})}
+                  />
+                ))}
               </div>
-            </Form>
-          </Modal.Body>
-        </Modal>
+            </Form.Group>
+          </Col>
+          <Col md={6}>
+            <Form.Group controlId="category">
+              <Form.Label>Category</Form.Label>
+              <Form.Select
+                value={formData.category}
+                onChange={(e) => setFormData({...formData, category: e.target.value})}
+              >
+                <option value="">Select category</option>
+                <option value="General">General</option>
+                <option value="SC">SC</option>
+                <option value="ST">ST</option>
+                <option value="OBC">OBC</option>
+                <option value="Other">Other</option>
+              </Form.Select>
+            </Form.Group>
+          </Col>
+        </Row>
+
+        <Row className="mb-3">
+          <Col md={12}>
+            <Form.Group controlId="address">
+              <Form.Label>Address</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                placeholder="Enter complete address"
+                value={formData.address}
+                onChange={(e) => setFormData({...formData, address: e.target.value})}
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+
+        <div className="d-flex justify-content-end mt-3">
+          <Button variant="secondary" onClick={resetForm} className="me-2">
+            Cancel
+          </Button>
+          <Button variant="primary" type="submit">
+            {isEditing ? "Update" : "Submit"}
+          </Button>
+        </div>
+      </Form>
+    </Modal.Body>
+  </Modal>
       </div>
     </div>
   );

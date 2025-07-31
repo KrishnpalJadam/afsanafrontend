@@ -51,25 +51,7 @@ const Visaprocesing = () => {
         const studentResponse = await api.get(
           `${BASE_URL}auth/getStudentById/${studentId}`
         );
-          Swal.fire({
-                title: "Processing...",
-                html: "Please wait while we submit your data.",
-                allowOutsideClick: false,
-                didOpen: () => {
-                  Swal.showLoading();
         
-                  // Simulate API call (replace with your actual API call)
-                  setTimeout(() => {
-                    // This is where your API success would be
-                    Swal.fire({
-                      title: "Success!",
-                      text: "Data submitted successfully!",
-                      icon: "success",
-                      confirmButtonText: "OK",
-                    });
-                  },true); // Remove this timeout and replace with your API call
-                },
-              });
         const studentData = studentResponse.data;
 
         // Check if visa process record exists
@@ -77,25 +59,7 @@ const Visaprocesing = () => {
           const visaProcessResponse = await api.get(
             `${BASE_URL}getVisaProcessByStudentId/VisaProcess/${studentId}`
           );
-            Swal.fire({
-                  title: "Processing...",
-                  html: "Please wait while we submit your data.",
-                  allowOutsideClick: false,
-                  didOpen: () => {
-                    Swal.showLoading();
           
-                    // Simulate API call (replace with your actual API call)
-                    setTimeout(() => {
-                      // This is where your API success would be
-                      Swal.fire({
-                        title: "Success!",
-                        text: "Data submitted successfully!",
-                        icon: "success",
-                        confirmButtonText: "OK",
-                      });
-                    }, 2000); // Remove this timeout and replace with your API call
-                  },
-                });
           // const visaProcessResponse = await api.get(`${BASE_URL}api/getVisaProcessByStudent/${studentId}`);
           const visaData = visaProcessResponse.data;
           console.log(visaData);
@@ -135,7 +99,7 @@ const Visaprocesing = () => {
           date_of_birth: studentData.date_of_birth
             ? studentData.date_of_birth.split("T")[0]
             : "",
-          passport_no: studentData.id_no || "",
+          passport_no: studentData.passport_no || "",
         }));
       } catch (err) {
         console.error("Failed to load initial data:", err);
@@ -226,25 +190,7 @@ const Visaprocesing = () => {
           }
         );
 
-          Swal.fire({
-                title: "Processing...",
-                html: "Please wait while we submit your data.",
-                allowOutsideClick: false,
-                didOpen: () => {
-                  Swal.showLoading();
-        
-                  // Simulate API call (replace with your actual API call)
-                  setTimeout(() => {
-                    // This is where your API success would be
-                    Swal.fire({
-                      title: "Success!",
-                      text: "Data submitted successfully!",
-                      icon: "success",
-                      confirmButtonText: "OK",
-                    });
-                  }, 2000); // Remove this timeout and replace with your API call
-                },
-              });
+         
 
         if (!response.data.id) {
           throw new Error("No ID returned from server after creation");
@@ -267,25 +213,7 @@ const Visaprocesing = () => {
             },
           }
         );
-          Swal.fire({
-                title: "Processing...",
-                html: "Please wait while we submit your data.",
-                allowOutsideClick: false,
-                didOpen: () => {
-                  Swal.showLoading();
-        
-                  // Simulate API call (replace with your actual API call)
-                  setTimeout(() => {
-                    // This is where your API success would be
-                    Swal.fire({
-                      title: "Success!",
-                      text: "Data submitted successfully!",
-                      icon: "success",
-                      confirmButtonText: "OK",
-                    });
-                  }, 2000); // Remove this timeout and replace with your API call
-                },
-              });
+         
 
         if (!completedSteps.includes(activeStep)) {
           setCompletedSteps((prev) => [...prev, activeStep]);
@@ -403,11 +331,7 @@ const Visaprocesing = () => {
                 {index !== 0 && (
                   <div
                     className="position-absolute top-50 start-0 translate-middle-y w-100"
-                    style={{
-                      height: "2px",
-                      backgroundColor: isCompleted ? "#28a745" : "#e9ecef",
-                      zIndex: 0,
-                    }}
+                   
                   />
                 )}
 
@@ -536,7 +460,7 @@ const Visaprocesing = () => {
                   type="text"
                   name="passport_no"
                   onChange={handleChange}
-                  value={formData.passport_no || ""}
+                  value={formData.passport_no }
                   placeholder="Enter passport number or NID"
                   className="border-0 border-bottom rounded-0"
                   required
@@ -1023,7 +947,7 @@ const Visaprocesing = () => {
                     role="status"
                     aria-hidden="true"
                   />
-                  <span className="ms-2">Processing...</span>
+                 
                 </>
               ) : (
                 <>
@@ -1480,7 +1404,7 @@ const Visaprocesing = () => {
                     role="status"
                     aria-hidden="true"
                   />
-                  <span className="ms-2">Processing...</span>
+                 
                 </>
               ) : (
                 <>

@@ -36,6 +36,9 @@ const Login = ({ setLogin }) => {
     else if (role === "processors") {
       navigate("/processorsDashboard");
     }
+     else if (role === "masteradmin") {
+      navigate("/masterDashboard");
+    }
   }
 }, []);
 
@@ -81,23 +84,21 @@ const Login = ({ setLogin }) => {
           text: 'You have logged in successfully.',
           icon: 'success',
           confirmButtonText: 'Ok',
-        });
-
-        setTimeout(() => {
+        }).then(() => {
           if (role === "admin") {
             navigate("/dashboard");
           } else if (role === "student") {
             navigate("/dashboardvisa");
           } else if (role === "counselor") {
             navigate("/councelor");
-          }
-          else if (role === "staff") {
+          } else if (role === "staff") {
             navigate("/staffDashboard");
-          }
-           else if (role === "processors") {
+          } else if (role === "processors") {
             navigate("/processorsDashboard");
+          } else if (role === "masteradmin") {
+            navigate("/masterDashboard");
           }
-        }, 300);
+        });
       } else {
         toast.error("Invalid credentials! Please check your email or password.");
       }
@@ -363,6 +364,11 @@ const Login = ({ setLogin }) => {
             {/* <p style={{ marginTop: "15px" }}>
               Don’t have an account? <a href="#" style={{ color: "#1d4ed8" }}>Sign up Now</a>
             </p> */}
+            <div className="">
+              <Link to="/forgotpassword" >
+              <p className="" style={{color:"blue" , fontSize:"bold" ,cursor:"pointer"}}>Forgot Password</p>
+           </Link>
+            </div>
             <div className="mt-4">
 
 

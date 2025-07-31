@@ -473,29 +473,34 @@ const LeadCounselor = ({ lead }) => {
     }
   };
 
-  const handleConvertToStudent = (lead) => {
-    setFormData({
-      user_id: user_id,
-      full_name: lead.full_name || "",
-      father_name: "",
-      admission_no: "",
-      id_no: "",
-      mobile_number: lead.phone_number || "",
-      university_id: "",
-      date_of_birth: "",
-      gender: "",
-      category: "",
-      address: "",
-      role: "student",
-      password: "",
-      email: lead.email || "",
-    });
-    setPhoto(null);
-    setDocuments([]);
-    setIsEditing(false);
-    setErrorMessage("");
-    setShowStudentModal(true);
-  };
+ const handleConvertToStudent = (lead) => {
+  // Generate a random password
+ 
+
+  setFormData({
+    user_id: user_id,
+    full_name: lead.name || "",
+    father_name: "",
+    mother_name: "",
+    admission_no: "",
+    id_no: "",
+    identifying_name: "",
+    mobile_number: lead.phone || "",
+    university_id: lead.university || "",
+    date_of_birth: lead.date_of_birth || "",
+    gender: lead.gender || "",
+    category: "",
+    address: lead.address || "",
+    role: "student",
+    password: "",
+    email: lead.email || "",
+  });
+  setPhoto(null);
+  setDocuments([]);
+  setIsEditing(false);
+  setErrorMessage("");
+  setShowStudentModal(true);
+};
 
   const [formData, setFormData] = useState({
     user_id: user_id,
@@ -601,16 +606,17 @@ const LeadCounselor = ({ lead }) => {
     setErrorMessage("");
   };
 
-  useEffect(() => {
-    if (formData.full_name && formData.date_of_birth) {
-      const formattedDob = formData.date_of_birth.replace(/-/g, '');
-      const generatedName = `${formData.full_name.trim().replace(/\s+/g, '_')}_${formattedDob}`;
-      setFormData((prev) => ({
-        ...prev,
-        identifying_name: generatedName,
-      }));
-    }
-  }, [formData.full_name, formData.date_of_birth]);
+    useEffect(() => {
+       if (formData.full_name && formData.university_id) {
+         const university = universities.find(u => u.id.toString() === formData.university_id.toString());
+         const universityName = university ? university.name : "";
+         const identifying = `${formData.full_name} ${universityName} Deb`;
+         setFormData((prev) => ({
+           ...prev,
+           identifying_name: identifying,
+         }));
+       }
+     }, [formData.full_name, formData.university_id, universities]);
 
   return (
     <Container fluid className="py-3">
@@ -1425,20 +1431,18 @@ const LeadCounselor = ({ lead }) => {
                       ))}
                     </select>
                   </div>
-                  <div className="col-md-6 student-form-group">
-                    <label htmlFor="admissionNo" className="student-form-label">
-                      Identifying Name
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control student-form-input"
-                      id="admissionNo"
-                      placeholder="Enter admission number"
-                      value={formData.identifying_name}
-                      onChange={(e) => setFormData({ ...formData, identifying_name: e.target.value })}
-                      required
-                    />
-                  </div>
+                  <Col md={6}>
+                             <Form.Group controlId="identifyingName">
+                               <Form.Label>Student Identifying Name *</Form.Label>
+                               <Form.Control
+                                 type="text"
+                                 value={formData.identifying_name}
+                                 onChange={(e) => setFormData({...formData, identifying_name: e.target.value})}
+                                 placeholder="e.g., Rahim Harvard Deb"
+                                 required
+                               />
+                             </Form.Group>
+                           </Col>
                 </div>
                 <div className="row">
                   <div className="col-md-6 student-form-group">

@@ -121,6 +121,19 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
               </div>
             </li>
           )}
+           {login == "masteradmin" && (
+            <li className={`menu-item ${isActive("/masterDashboard") ? "active" : ""}`}>
+              <div
+                className="menu-link menu-i"
+                onClick={() => {
+                  navigate("/masterDashboard");
+                }}
+              >
+                <LayoutDashboard size={18} className="mr-2" />
+                <span className="menu-text">Dashboard</span>
+              </div>
+            </li>
+          )}
 
           {/* Lead & Inquiry Management */}
           {login == "admin" ? (
@@ -225,7 +238,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
             <li className={`menu-item ${isSubmenuActive([
               "/studentDetails",
               "/admission",
-              "/communication",
+              "/chat",
             ]) ? "active" : ""}`}>
               <div
                 className="menu-link menu-i"
@@ -247,9 +260,9 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                     Student Details
                   </li>
                   <li
-                    className={`menu-item submenu-item ${isActive("/communication") ? "active" : ""}`}
+                    className={`menu-item submenu-item ${isActive("/chat") ? "active" : ""}`}
                     onClick={() => {
-                      navigate("/communication");
+                      navigate("/chat");
                     }}
                   >
                     Communication
@@ -263,7 +276,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
             <li className={`menu-item ${isSubmenuActive([
               "/studentDetails",
               "/admission",
-              "/communication",
+              "/chat",
             ]) ? "active" : ""}`}>
               <div
                 className="menu-link menu-i"
@@ -285,9 +298,9 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                     Student Details
                   </li>}
                   {hasPermission("Communication", "view") && <li
-                    className={`menu-item submenu-item ${isActive("/communication") ? "active" : ""}`}
+                    className={`menu-item submenu-item ${isActive("/chat") ? "active" : ""}`}
                     onClick={() => {
-                      navigate("/communication");
+                      navigate("/chat");
                     }}
                   >
                     Communication
@@ -645,6 +658,19 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
               </div>
             </li>
           ) : ""}
+           {/* {login == "student" && hasPermission("Course & University", "view") ? (
+            <li className={`menu-item ${isActive("/chatbot") ? "active" : ""}`}>
+              <div
+                className="menu-link menu-i"
+                onClick={() => {
+                  navigate("/chatbot");
+                }}
+              >
+                <Globe size={18} className="mr-2" />
+                <span className="menu-text">Chat Bot</span>
+              </div>
+            </li>
+          ) : ""} */}
 
           {login == "counselor" && hasPermission("Course & University", "view") ? (
             <li className={`menu-item ${isActive("/councelorTask") ? "active" : ""}`}>
@@ -703,23 +729,24 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
             </li>
           )}
 
-          {/* {login == "processors" && (
-            <li className={`menu-item ${isActive("/visaProcessing") ? "active" : ""}`}>
+          {login == "masteradmin" && (
+            <li className={`menu-item ${isActive("/masterTable") ? "active" : ""}`}>
               <div
                 className="menu-link menu-i"
                 onClick={() => {
-                  navigate("/visaProcessing");
+                  navigate("/masterTable");
                 }}
               >
-                <Globe size={18} className="mr-2" />
-                <span className="menu-text">Visa Processing</span>
+                <File size={18} className="mr-2" />
+                <span className="menu-text">Admin </span>
               </div>
             </li>
-          )} */}
+          )}
+
         </ul>
       </div>
       {isMobile && collapsed === true && (
-        <div className="sidebar-overlay" onClick={toggleSidebar}></div>
+        <div className="sidebar-overlay" ></div>
       )}
     </div>
   );

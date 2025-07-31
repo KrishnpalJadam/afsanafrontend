@@ -4,6 +4,7 @@ import api from "../interceptors/axiosInterceptor"; // your axios setup with int
 
 const MyProfile = () => {
   const loginDetail = JSON.parse(localStorage.getItem("login_detail"));
+const role = loginDetail?.role;
 
   const [showModal, setShowModal] = useState(false);
   const [userData, setUserData] = useState(null);
@@ -15,11 +16,12 @@ const MyProfile = () => {
     gender: "",
     date_of_birth: "",
     father_name: "",
-    admission_no: "",
-    id_no: "",
+    // admission_no: "",
+    // id_no: "",
     category: "",
     role: "",
-    university_name: ""
+    university_name: "",
+    status:""
   });
 
   // ✅ Fetch profile data
@@ -39,11 +41,12 @@ const MyProfile = () => {
           gender: res.data.user.gender || "",
           date_of_birth: res.data.user.date_of_birth ? res.data.user.date_of_birth.split("T")[0] : "",
           father_name: res.data.user.father_name || "",
-          admission_no: res.data.user.admission_no || "",
-          id_no: res.data.user.id_no || "",
+          // admission_no: res.data.user.admission_no || "",
+          // id_no: res.data.user.id_no || "",
           category: res.data.user.category || "",
           role: res.data.user.role || "",
-          // university_name: res.data.user.university_name || ""
+         university_name: res.data.user.university_name || "",
+         status:res.data.user.status || "",
           university_id: res.data.user.university_id || 0
         });
       }
@@ -115,17 +118,29 @@ const MyProfile = () => {
               My Profile
             </Card.Header>
 
-            <ListGroup variant="flush">
-              {renderItem("Full Name", userData?.full_name)}
-              {renderItem("Email", userData?.email)}
-              {renderItem("Phone", userData?.phone)}
-              {renderItem("Gender", userData?.gender)}
-              {renderItem("Date of Birth", userData?.date_of_birth && new Date(userData.date_of_birth).toLocaleDateString())}
-              {renderItem("Address", userData?.address)}
-              {renderItem("Father's Name", userData?.father_name)}
-              {renderItem("Admission No.", userData?.admission_no)}
-              {renderItem("ID No.", userData?.id_no)}
-            </ListGroup>
+           <ListGroup variant="flush">
+  {/* 🔄 Counselor View */}
+  {role === "counselor" ? (
+    <>
+      {renderItem("Status", userData?.status)}
+      {renderItem("University", userData?.university_name)}
+      {renderItem("Phone", userData?.phone)}
+    </>
+  ) : (
+    <>
+      {renderItem("Full Name", userData?.full_name)}
+      {renderItem("Email", userData?.email)}
+      {renderItem("Phone", userData?.phone)}
+      {renderItem("Gender", userData?.gender)}
+      {renderItem("Date of Birth", userData?.date_of_birth && new Date(userData.date_of_birth).toLocaleDateString())}
+      {renderItem("Address", userData?.address)}
+      {renderItem("Father's Name", userData?.father_name)}
+      {renderItem("Admission No.", userData?.admission_no)}
+      {renderItem("ID No.", userData?.id_no)}
+    </>
+  )}
+</ListGroup>
+
 
             <Card.Footer className="text-center bg-light">
               <Button variant="primary" onClick={() => setShowModal(true)}>
@@ -141,106 +156,135 @@ const MyProfile = () => {
         <Modal.Header closeButton>
           <Modal.Title>Update Profile</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          <Form onSubmit={handleUpdateProfile}>
-            <Form.Group className="mb-3">
-              <Form.Label>Full Name</Form.Label>
-              <Form.Control
-                type="text"
-                name="full_name"
-                value={formData.full_name || ""}
-                onChange={handleChange}
-              />
-            </Form.Group>
+       <Modal.Body>
+  <Form onSubmit={handleUpdateProfile}>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type="email"
-                name="email"
-                value={formData.email || ""}
-                onChange={handleChange}
-              />
-            </Form.Group>
+    {/* Full Name (Only Admin & Student) */}
+    {(loginDetail.role === "admin" || loginDetail.role === "student" ) && (
+      <Form.Group className="mb-3">
+        <Form.Label>Full Name</Form.Label>
+        <Form.Control
+          type="text"
+          name="full_name"
+          value={formData.full_name || ""}
+          onChange={handleChange}
+        />
+      </Form.Group>
+    )}
 
-            <Form.Group className="mb-3">
-              <Form.Label>Phone</Form.Label>
-              <Form.Control
-                type="text"
-                name="phone"
-                value={formData.phone || ""}
-                onChange={handleChange}
-              />
-            </Form.Group>
+    {/* Email (Only Admin & Student) */}
+    {(loginDetail.role === "admin" || loginDetail.role === "student") && (
+      <Form.Group className="mb-3">
+        <Form.Label>Email</Form.Label>
+        <Form.Control
+          type="email"
+          name="email"
+          value={formData.email || ""}
+          onChange={handleChange}
+        />
+      </Form.Group>
+    )}
 
-            <Form.Group className="mb-3">
-              <Form.Label>Address</Form.Label>
-              <Form.Control
-                type="text"
-                name="address"
-                value={formData.address || ""}
-                onChange={handleChange}
-              />
-            </Form.Group>
+    {/* Phone (All roles) */}
+    {(loginDetail.role === "admin" || loginDetail.role === "student" || loginDetail.role === "counselor") && (
+      <Form.Group className="mb-3">
+        <Form.Label>Phone</Form.Label>
+        <Form.Control
+          type="text"
+          name="phone"
+          value={formData.phone || ""}
+          onChange={handleChange}
+        />
+      </Form.Group>
+    )}
 
-            <Form.Group className="mb-3">
-              <Form.Label>Gender</Form.Label>
-              <Form.Select
-                name="gender"
-                value={formData.gender || ""}
-                onChange={handleChange}
-              >
-                <option value="">Select Gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </Form.Select>
-            </Form.Group>
+    {/* Address (Only Admin & Student) */}
+    {(loginDetail.role === "admin" || loginDetail.role === "student") && (
+      <Form.Group className="mb-3">
+        <Form.Label>Address</Form.Label>
+        <Form.Control
+          type="text"
+          name="address"
+          value={formData.address || ""}
+          onChange={handleChange}
+        />
+      </Form.Group>
+    )}
 
-            <Form.Group className="mb-3">
-              <Form.Label>Date of Birth</Form.Label>
-              <Form.Control
-                type="date"
-                name="date_of_birth"
-                value={formData.date_of_birth || ""}
-                onChange={handleChange}
-              />
-            </Form.Group>
+    {/* Gender (Only Student) */}
+    {loginDetail.role === "student" && (
+      <Form.Group className="mb-3">
+        <Form.Label>Gender</Form.Label>
+        <Form.Select
+          name="gender"
+          value={formData.gender || ""}
+          onChange={handleChange}
+        >
+          <option value="">Select Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </Form.Select>
+      </Form.Group>
+    )}
 
-            <Form.Group className="mb-3">
-              <Form.Label>Father's Name</Form.Label>
-              <Form.Control
-                type="text"
-                name="father_name"
-                value={formData.father_name || ""}
-                onChange={handleChange}
-              />
-            </Form.Group>
+    {/* DOB (Only Student) */}
+    {loginDetail.role === "student" && (
+      <Form.Group className="mb-3">
+        <Form.Label>Date of Birth</Form.Label>
+        <Form.Control
+          type="date"
+          name="date_of_birth"
+          value={formData.date_of_birth || ""}
+          onChange={handleChange}
+        />
+      </Form.Group>
+    )}
 
-            <Form.Group className="mb-3">
-              <Form.Label>Admission No.</Form.Label>
-              <Form.Control
-                type="text"
-                name="admission_no"
-                value={formData.admission_no || ""}
-                onChange={handleChange}
-              />
-            </Form.Group>
+    {/* Father's Name (Only Student) */}
+    {loginDetail.role === "student" && (
+      <Form.Group className="mb-3">
+        <Form.Label>Father's Name</Form.Label>
+        <Form.Control
+          type="text"
+          name="father_name"
+          value={formData.father_name || ""}
+          onChange={handleChange}
+        />
+      </Form.Group>
+    )}
 
-            <Form.Group className="mb-3">
-              <Form.Label>ID No.</Form.Label>
-              <Form.Control
-                type="text"
-                name="id_no"
-                value={formData.id_no || ""}
-                onChange={handleChange}
-              />
-            </Form.Group>
+    {/* University (Only Counselor & Student) */}
+    {(loginDetail.role === "counselor" || loginDetail.role === "student") && (
+      <Form.Group className="mb-3">
+        <Form.Label>University</Form.Label>
+        <Form.Control
+          type="text"
+          name="university_name"
+          value={formData.university_name || ""}
+          onChange={handleChange}
+        />
+      </Form.Group>
+    )}
 
-            <Button variant="primary" type="submit">
-              Save Changes
-            </Button>
-          </Form>
-        </Modal.Body>
+    {/* Status (Only Counselor) */}
+    {loginDetail.role === "counselor" && (
+      <Form.Group className="mb-3">
+        <Form.Label>Status</Form.Label>
+        <Form.Control
+          type="text"
+          name="status"
+          value={formData.status || ""}
+          onChange={handleChange}
+        />
+      </Form.Group>
+    )}
+
+    <Button variant="primary" type="submit">
+      Save Changes
+    </Button>
+  </Form>
+</Modal.Body>
+
 
       </Modal>
     </Container>
@@ -248,3 +292,7 @@ const MyProfile = () => {
 };
 
 export default MyProfile;
+
+
+
+

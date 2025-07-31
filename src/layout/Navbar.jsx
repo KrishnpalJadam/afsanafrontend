@@ -17,26 +17,20 @@ const Navbar = ({ toggleSidebar }) => {
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
 
-
   const loginDetail = JSON.parse(localStorage.getItem("login_detail"));
-
   const loginName = loginDetail?.full_name;
-
-
+  const userRole = loginDetail?.role; // Assuming role is stored in login_detail
 
   useEffect(() => {
     // Initial fetch
     fetchNotifications();
 
-
     const interval = setInterval(() => {
       fetchNotifications();
     }, 7000);
 
-
     return () => clearInterval(interval);
   }, []);
-
 
   const fetchNotifications = async () => {
     try {
@@ -52,7 +46,13 @@ const Navbar = ({ toggleSidebar }) => {
         type: "inquiry",
       }));
 
-      const allNotifications = [...tasks, ...inquiries];
+      // Combine all notifications initially
+      let allNotifications = [...tasks, ...inquiries];
+      
+      // If user is a student, filter out inquiries
+      if (userRole === "student") {
+        allNotifications = allNotifications.filter(notification => notification.type === "task");
+      }
 
       setNotifications(allNotifications);
     } catch (error) {
@@ -60,31 +60,26 @@ const Navbar = ({ toggleSidebar }) => {
     }
   };
 
+  const handleClearAllNotifications = async () => {
+    // Separate task and inquiry IDs
+    const taskIds = notifications
+      .filter((n) => n.type === "task")
+      .map((n) => n.id);
 
-const handleClearAllNotifications = async () => {
-  // Separate task and inquiry IDs
-  const taskIds = notifications
-    .filter((n) => n.type === "task")
-    .map((n) => n.id);
+    const inquiryIds = notifications
+      .filter((n) => n.type === "inquiry")
+      .map((n) => n.id);
 
-  const inquiryIds = notifications
-    .filter((n) => n.type === "inquiry")
-    .map((n) => n.id);
-
-  try {
-    await api.patch(`notifications/update-status`, {
-      taskIds,
-      inquiryIds,
-    });
-    await fetchNotifications();
-
-  
-  } catch (error) {
-    console.error("Error clearing notifications:", error);
-  }
-};
-
-
+    try {
+      await api.patch(`notifications/update-status`, {
+        taskIds,
+        inquiryIds,
+      });
+      await fetchNotifications();
+    } catch (error) {
+      console.error("Error clearing notifications:", error);
+    }
+  };
 
   const logout = () => {
     localStorage.clear();
@@ -93,7 +88,7 @@ const handleClearAllNotifications = async () => {
   };
 
   const handleChat = () => {
-    navigate("/chatList");
+    navigate("/chat");
   };
 
   useEffect(() => {
@@ -111,21 +106,27 @@ const handleClearAllNotifications = async () => {
     };
   }, [showNotifications]);
 
+  // Filter notifications based on user role before displaying
+  const filteredNotifications = userRole === "student" 
+    ? notifications.filter(n => n.type === "task")
+    : notifications;
+
   return (
     <nav className="navbar  bg-white fixed-top w-100 z-50">
       <div className="container-fluid d-flex justify-content-between align-items-center px-3 py-2">
         {/* Logo + Sidebar Toggle */}
         <div className="d-flex align-items-center gap-3" style={{ marginTop: "-20px" }}>
           <img src="/img/logo.png" alt="Logo" height={100} />
+          {/* <img src="https://kiaantechnology.com/img/kt.png" alt="Logo" height={100} /> */}
           <button
-        className="btn btn-light border"
-        onClick={(e) => {
-          e.stopPropagation(); // Prevent bubbling
-          toggleSidebar();     // ✅ Only toggle from here
-        }}
-      >
-        ☰
-      </button>
+            className="btn btn-light border"
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleSidebar();
+            }}
+          >
+            ☰
+          </button>
         </div>
 
         {/* Right Icons */}
@@ -137,9 +138,9 @@ const handleClearAllNotifications = async () => {
               onClick={() => setShowNotifications(!showNotifications)}
               style={{ cursor: "pointer" }}
             />
-            {notifications.length > 0 && (
+            {filteredNotifications.length > 0 && (
               <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                {notifications.length}
+                {filteredNotifications.length}
               </span>
             )}
             {showNotifications && (
@@ -161,13 +162,13 @@ const handleClearAllNotifications = async () => {
                   className="list-unstyled mb-0"
                   style={{ maxHeight: "200px", overflowY: "auto" }}
                 >
-                  {notifications.filter((n) => n.notification_status === "0").length > 0 ? (
+                  {filteredNotifications.filter((n) => n.notification_status === "0").length > 0 ? (
                     <>
                       {/* Tasks Section */}
-                      {notifications.some((n) => n.type === "task" && n.notification_status === "0") && (
+                      {filteredNotifications.some((n) => n.type === "task" && n.notification_status === "0") && (
                         <li className="text-primary fw-bold pb-1">📝 Tasks</li>
                       )}
-                      {notifications
+                      {filteredNotifications
                         .filter((n) => n.type === "task" && n.notification_status === "0")
                         .map((item, index) => (
                           <li key={`task-${index}`} className="border-bottom py-2">
@@ -178,11 +179,11 @@ const handleClearAllNotifications = async () => {
                           </li>
                         ))}
 
-                      {/* Inquiries Section */}
-                      {notifications.some((n) => n.type === "inquiry" && n.notification_status === "0") && (
+                      {/* Inquiries Section - Only show if user is not a student */}
+                      {userRole !== "student" && filteredNotifications.some((n) => n.type === "inquiry" && n.notification_status === "0") && (
                         <li className="text-success fw-bold pt-3 pb-1">📩 Inquiries</li>
                       )}
-                      {notifications
+                      {userRole !== "student" && filteredNotifications
                         .filter((n) => n.type === "inquiry" && n.notification_status === "0")
                         .map((item, index) => (
                           <li key={`inq-${index}`} className="border-bottom py-2">
@@ -198,11 +199,8 @@ const handleClearAllNotifications = async () => {
                     <li className="text-muted text-center py-2">No new notifications</li>
                   )}
                 </ul>
-
               </div>
-
             )}
-
           </div>
 
           {/* Chat Icon */}
