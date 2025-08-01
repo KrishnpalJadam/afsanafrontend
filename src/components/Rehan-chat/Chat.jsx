@@ -219,29 +219,29 @@ const ChatAppLayout = () => {
         setMessage('');
     };
 
-   const handleCreateGroup = async () => {
-    try {
-        const roleWiseId = getCurrentRoleWiseId();
-        const selectedIds = groupMembers.map(u => u.value);
+    const handleCreateGroup = async () => {
+        try {
+            const roleWiseId = getCurrentRoleWiseId();
+            const selectedIds = groupMembers.map(u => u.value);
 
-        // ✅ Always include admin ID (1)
-        if (!selectedIds.includes(1)) selectedIds.push(1);
+            // ✅ Always include admin ID (1)
+            if (!selectedIds.includes(1)) selectedIds.push(1);
 
-        const payload = {
-            group_name: groupName,
-            user_ids: selectedIds.join(','), // e.g., "1,3,5"
-            created_by: roleWiseId,
-        };
+            const payload = {
+                group_name: groupName,
+                user_ids: selectedIds.join(','), // e.g., "1,3,5"
+                created_by: roleWiseId,
+            };
 
-        await axios.post(`${BASE_URL}creategroup`, payload);
-        setShowGroupModal(false);
-        setGroupName('');
-        setGroupMembers([]);
-        fetchUserDetails();
-    } catch (err) {
-        console.error('Create group failed:', err);
-    }
-};
+            await axios.post(`${BASE_URL}creategroup`, payload);
+            setShowGroupModal(false);
+            setGroupName('');
+            setGroupMembers([]);
+            fetchUserDetails();
+        } catch (err) {
+            console.error('Create group failed:', err);
+        }
+    };
 
 
     const userOptions = users.map(u => ({ value: u.id, label: u.full_name }));
