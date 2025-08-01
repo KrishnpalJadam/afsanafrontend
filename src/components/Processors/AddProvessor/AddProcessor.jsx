@@ -43,30 +43,37 @@ const AddProcessor = () => {
         }));
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+   const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        const payload = {
-            ...formData,
-            role: "processors"  // Changed from "staff" to "processor"
-        };
-
-        try {
-            if (editingId) {
-                await api.put(`${BASE_URL}updateProcessor/${editingId}`, payload);
-                Swal.fire("Success", "Processor updated successfully", "success");
-            } else {
-                await api.post(`${BASE_URL}createprocessor`, payload);
-                Swal.fire("Success", "Processor added successfully", "success");
-            }
-            fetchProcessors();
-            setShowModal(false);
-            resetForm();
-        } catch (err) {
-            Swal.fire("Error", "Operation failed", "error");
-            console.error("API Error:", err);
-        }
+    const payload = {
+        full_name: formData.full_name,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+        role: "processors",
+        user_id: 1  // ✅ Forcefully passing user_id
     };
+
+    console.log("Submitting payload to API:", payload); // ✅ Debug log
+
+    try {
+        if (editingId) {
+            await api.put(`${BASE_URL}updateProcessor/${editingId}`, payload);
+            Swal.fire("Success", "Processor updated successfully", "success");
+        } else {
+            await api.post(`${BASE_URL}createprocessor`, payload);
+            Swal.fire("Success", "Processor added successfully", "success");
+        }
+        fetchProcessors();
+        setShowModal(false);
+        resetForm();
+    } catch (err) {
+        Swal.fire("Error", err?.response?.data?.message || "Operation failed", "error");
+        console.error("API Error:", err);
+    }
+};
+
 
     const handleEdit = async (id) => {
         try {

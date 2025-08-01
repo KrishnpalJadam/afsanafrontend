@@ -194,7 +194,7 @@ const ChatAppLayout = () => {
                                     >
                                         <div>{msg.message}</div>
                                         <div className="timestamp">
-                                            <strong>{msg.sender_id !== currentUserId ? `${msg.sender_name || 'User'}, ` : ''}</strong>
+                                            <strong className='text-black'>{msg.sender_id !== currentUserId ? `${msg.sender_name || 'User'}, ` : ''}</strong>
                                             {new Date(msg.created_at).toLocaleTimeString('en-US', {
                                                 hour: 'numeric',
                                                 minute: '2-digit',
