@@ -261,17 +261,10 @@ const AdminUniversity = ({ university, onDelete, onEdit }) => {
 
   return (
     <animated.div className="col-md-4 mb-4" style={animation}>
-      <div className="card shadow-sm" style={{ height: "450px" }}>
+      <div className="card shadow-sm">
         <div
           className="card-body"
-          style={{
-            maxHeight: "100%",
-            overflowY: "auto",
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-            scrollBehavior: "smooth",
-            WebkitOverflowScrolling: "touch",
-          }}
+         
         >
           <style>
             {`.card-body::-webkit-scrollbar { display: none; }`}

@@ -7,4 +7,3 @@ const BASE_URL = "https://afsana-backend-production.up.railway.app/api/"
 // const BASE_URL = "http://localhost:3009/api/"
 
 export default BASE_URL
-

@@ -5,6 +5,7 @@ import {
   Col,
   Card,
   Button,
+  Form ,
   Modal,
 } from "react-bootstrap";
 import api from "../../interceptors/axiosInterceptor";
@@ -12,6 +13,7 @@ import BASE_URL from "../../Config";
 import { Link, useNavigate } from "react-router-dom";
 import { FaAnglesRight } from "react-icons/fa6";
 import MainStudentDetailTable from "./MainStudentDetailTable";
+import axios from "axios";
 
 const initialApplicant = {
   institute_name: "",
@@ -47,8 +49,18 @@ const Profile = () => {
   const [epts, setEPTs] = useState([initialEPT]);
   const [jobs, setJobs] = useState([initialJob]);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+const [formData, setFormData] = useState({
+  passport_copy_prepared: null,
+  previous_studies_certificates: null,
+  proof_of_income: null,
+  birth_certificate: null,
+  bank_statement: null,
+});
+
 
   const navigate = useNavigate();
+
 
   useEffect(() => {
     const id = localStorage.getItem("student_id");
@@ -125,6 +137,49 @@ const Profile = () => {
   const handleCloseProfileModal = () => {
     setShowProfileModal(false);
   };
+ const handleFileChange = (e) => {
+  const { name, files } = e.target;
+
+  setFormData((prevData) => ({
+    ...prevData,
+    [name]: files[0],
+  }));
+}
+
+
+
+
+const handleUpload = async () => {
+  
+
+  const id = localStorage.getItem("student_id");
+  if (!id) {
+    alert("Student ID not found");
+    return;
+  }
+
+  const data = new FormData();
+  data.append("passport_copy_prepared", formData.passport_copy_prepared);
+  data.append("previous_studies_certificates", formData.previous_studies_certificates);
+  data.append("proof_of_income", formData.proof_of_income);
+  data.append("birth_certificate", formData.birth_certificate);
+  data.append("bank_statement", formData.bank_statement);
+
+  try {
+    const res = await axios.post(`${BASE_URL}postDocuments/${id}`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    console.log("Upload Success:", res.data);
+    alert("Documents uploaded successfully!");
+    setShowModal(false);
+  } catch (err) {
+    console.error("Upload Failed:", err.response || err);
+    alert("Document upload failed");
+  }
+};
 
   return (
     <Container className="mt-4">
@@ -135,6 +190,7 @@ const Profile = () => {
               <h3>{student?.full_name}</h3>
               <p>Email: {student?.email}</p>
               <p>Phone: {student?.mobile_number}</p>
+              <div className="d-flex gap-2 justify-content-center">
               <Button
                 variant="outline-primary"
                 size="sm"
@@ -142,11 +198,56 @@ const Profile = () => {
               >
                 Student Profile
               </Button>
+             <Button variant="outline-primary" size="sm" onClick={() => setShowModal(true)}>
+  Document Upload
+</Button>
+</div>
             </Col>
           </Row>
         </Card.Body>
         <MainStudentDetailTable/>
       </Card>
+<Modal show={showModal} onHide={() => setShowModal(false)} centered>
+  <Modal.Header closeButton>
+    <Modal.Title>Upload Student Documents</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <Form>
+      <Form.Group className="mb-3">
+        <Form.Label>Passport</Form.Label>
+        <Form.Control type="file" name="passport_copy_prepared" onChange={handleFileChange} />
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Certificates</Form.Label>
+        <Form.Control type="file" name="previous_studies_certificates" onChange={handleFileChange} />
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Income</Form.Label>
+        <Form.Control type="file" name="proof_of_income" onChange={handleFileChange} />
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Birth Certificate</Form.Label>
+        <Form.Control type="file" name="birth_certificate" onChange={handleFileChange} />
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Bank Statement</Form.Label>
+        <Form.Control type="file" name="bank_statement" onChange={handleFileChange} />
+      </Form.Group>
+    </Form>
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={() => setShowModal(false)}>
+      Cancel
+    </Button>
+    <Button variant="primary" onClick={handleUpload}>
+      Upload
+    </Button>
+  </Modal.Footer>
+</Modal>
 
   
       <Modal show={showProfileModal} onHide={handleCloseProfileModal} size="lg">

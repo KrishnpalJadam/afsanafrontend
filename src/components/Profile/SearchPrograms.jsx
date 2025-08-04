@@ -102,15 +102,10 @@ const SearchPrograms = () => {
 
             return (
           <animated.div key={index} className="col-md-4 mb-4" style={animation}>
-  <div className="card shadow-sm" style={{ height: "450px" }}>
+  <div className="card shadow-sm" >
     <div
       className="card-body"
-      style={{
-        maxHeight: "100%",
-        overflowY: "scroll",
-        scrollbarWidth: "none", // Firefox
-        msOverflowStyle: "none", // IE 10+
-      }}
+     
     >
       <style>
         {`

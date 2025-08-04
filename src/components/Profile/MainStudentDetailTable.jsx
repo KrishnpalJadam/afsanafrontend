@@ -4,10 +4,13 @@ import api from "../../interceptors/axiosInterceptor";
 import BASE_URL from "../../Config";
 import { Link } from "react-router-dom";
 import { FaAnglesRight } from "react-icons/fa6";
+import { FaFileDownload } from 'react-icons/fa';
+import axios from "axios";
 
 const MainStudentDetailTable = () => {
   const [student, setStudent] = useState(null);
-
+     const [documentsList, setDocumentsList] = useState([]);
+const studentId = localStorage.getItem("student_id");
   useEffect(() => {
     const id = localStorage.getItem("student_id");
     api
@@ -44,6 +47,42 @@ const MainStudentDetailTable = () => {
         ))
       : null;
 
+
+      useEffect(() => {
+  const fetchDocuments = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}getDocuments/${studentId}`);
+      
+      // Ensure data is array
+      if (Array.isArray(res.data)) {
+        setDocumentsList(res.data);
+      } else if (typeof res.data === "object") {
+        setDocumentsList([res.data]); // Single object ko array me convert kare
+      } else {
+        setDocumentsList([]);
+      }
+    } catch (err) {
+      console.error("Error fetching documents:", err);
+    }
+  };
+
+  if (studentId) {
+    fetchDocuments();
+  }
+}, [studentId]);
+
+  const handleDownload = (url) => {
+    if (!url) {
+      alert("Document not available.");
+      return;
+    }
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "document");
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  };
   return (
     <Container className="mt-4">
       <Tabs defaultActiveKey="personal" className="mb-4">
@@ -295,7 +334,50 @@ const MainStudentDetailTable = () => {
             </Card>
           )}
         </Tab>
+      <Tab eventKey="Document" title="Student Document">
+        <div>
+          <div className="table-responsive mt-4">
+      <table className="table table-bordered inquiry-table text-nowrap text-center align-middle">
+        <thead className="table-light">
+          <tr>
+            <th>#</th>
+            <th>Passport</th>
+            <th>Birth Certificate</th>
+            <th>Income</th>
+            <th>Study Certificates</th>
+            <th>Bank Statement</th>
+          </tr>
+        </thead>
+       <tbody>
+  {documentsList.map((doc, index) => (
+    <tr key={index}>
+      <td>{index + 1}</td>
+      <td onClick={() => handleDownload(doc.passport_copy_prepared)} style={{ cursor: "pointer" }}>
+        <FaFileDownload />
+      </td>
+      <td onClick={() => handleDownload(doc.birth_certificate)} style={{ cursor: "pointer" }}>
+        <FaFileDownload />
+      </td>
+      <td onClick={() => handleDownload(doc.proof_of_income)} style={{ cursor: "pointer" }}>
+        <FaFileDownload />
+      </td>
+      <td onClick={() => handleDownload(doc.previous_studies_certificates)} style={{ cursor: "pointer" }}>
+        <FaFileDownload />
+      </td>
+      <td onClick={() => handleDownload(doc.bank_statement)} style={{ cursor: "pointer" }}>
+        <FaFileDownload />
+      </td>
+    </tr>
+  ))}
+</tbody>
+
+      </table>
+    </div>
+        </div>
+      </Tab>
       </Tabs>
+        
+      
       <div className="text-center">
         <Link className="btn btn-primary" to="/myapplication">
           More Details <FaAnglesRight className="ms-2" />

@@ -67,7 +67,7 @@ const statusUpdate = async (payment) => {
       prev.filter((item) => item.id !== payment.id)
     );
 
-    alert("✅ Payment status updated successfully!");
+    
   } catch (error) {
     console.error(error);
     alert("❌ Failed to update payment status.");

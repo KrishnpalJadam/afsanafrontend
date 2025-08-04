@@ -360,21 +360,24 @@ const UniversityStepper = () => {
         return (
           <>
             <Typography variant="h6" gutterBottom>
-              Application Stage
+                
             </Typography>
 
             {/* 1. Registration Fee Payment */}
-            <FormControl fullWidth margin="normal">
-              <InputLabel>Registration Fee Payment</InputLabel>
-              <Select
-                name="registrationFeePayment"
-                value={formData.registrationFeePayment}
-                onChange={handleChange}
-              >
-                <MenuItem value="Paid">Paid</MenuItem>
-                <MenuItem value="Pending">Pending</MenuItem>
-              </Select>
-            </FormControl>
+         <FormControl fullWidth margin="normal">
+  <InputLabel id="registration-fee-label">Registration Fee Payment</InputLabel>
+  <Select
+    labelId="registration-fee-label"
+    label="Registration Fee Payment"
+    name="registrationFeePayment"
+    value={formData.registrationFeePayment}
+    onChange={handleChange}
+  >
+    <MenuItem value="Paid">Paid</MenuItem>
+    <MenuItem value="Pending">Pending</MenuItem>
+  </Select>
+</FormControl>
+
 
             {/* 2. Registration Date */}
             <TextField
@@ -402,8 +405,10 @@ const UniversityStepper = () => {
 
             {/* 4. Application Fee Payment */}
             <FormControl fullWidth margin="normal">
-              <InputLabel>Application Fee Payment</InputLabel>
+              <InputLabel id="Application-fee-Payment">Application Fee Payment</InputLabel>
               <Select
+              labelId="Application-fee-Payment"
+    label="Application Fee Payment"
                 name="applicationFeePayment"
                 value={formData.applicationFeePayment}
                 onChange={handleChange}
@@ -476,8 +481,10 @@ const UniversityStepper = () => {
 
             {/* 2. Interview Outcome */}
             <FormControl fullWidth margin="normal">
-              <InputLabel>University Interview Outcome</InputLabel>
+              <InputLabel id="University-Interview-Outcome">University Interview Outcome</InputLabel>
               <Select
+              labelId="University-Interview-Outcome"
+    label="University Interview Outcome"
                 name="interviewOutcome"
                 value={formData.interviewOutcome}
                 onChange={handleChange}
@@ -652,8 +659,10 @@ const UniversityStepper = () => {
 
             {/* Offer Letter Service Charge Paid */}
             <FormControl fullWidth margin="normal">
-              <InputLabel>Offer Letter Service Charge Paid</InputLabel>
+              <InputLabel id="Offer-Letter-Service-Charge-Paid">Offer Letter Service Charge Paid</InputLabel>
               <Select
+              labelId="Offer-Letter-Service-Charge-Paid"
+    label="Offer Letter Service Charge Paid"
                 name="offerLetterServiceCharge"
                 value={formData.offerLetterServiceCharge}
                 onChange={handleChange}
@@ -664,15 +673,19 @@ const UniversityStepper = () => {
             </FormControl>
 
             {/* University Offer Letter Received */}
-            <TextField
-              label="University Offer Letter Received"
-              name="universityOfferLetterReceived"
-              type="date"
-              fullWidth
-              margin="normal"
-              value={formData.universityOfferLetterReceived || ""}
-              onChange={handleChange}
-            />
+           <TextField
+  label="University Offer Letter Received"
+  name="universityOfferLetterReceived"
+  type="date"
+  fullWidth
+  margin="normal"
+  value={formData.universityOfferLetterReceived || ""}
+  onChange={handleChange}
+  InputLabelProps={{
+    shrink: true, // ⬅️ This is important for type="date"
+  }}
+/>
+
 
             {/* Appendix Form Completed */}
             <Box
@@ -1445,8 +1458,10 @@ const UniversityStepper = () => {
 
             {/* Flight Booking Confirmed */}
             <FormControl fullWidth margin="normal">
-              <InputLabel>Flight Booking Confirmed</InputLabel>
+              <InputLabel id="Offer-Letter-Service-Charge-Paid">Flight Booking Confirmed</InputLabel>
               <Select
+              labelId="Flight-Booking-Confirmed"
+    label="Flight Booking Confirmed"
                 name="flightBookingConfirmed"
                 value={formData.flightBookingConfirmed}
                 onChange={handleChange}
@@ -1458,8 +1473,10 @@ const UniversityStepper = () => {
 
             {/* Online Enrollment Completed */}
             <FormControl fullWidth margin="normal">
-              <InputLabel>Online Enrollment Completed</InputLabel>
+              <InputLabel id="Online-Enrollment-Completed">Online Enrollment Completed</InputLabel>
               <Select
+              labelId="Online-Enrollment-Completed"
+    label="Online Enrollment Completed"
                 name="onlineEnrollmentCompleted"
                 value={formData.onlineEnrollmentCompleted}
                 onChange={handleChange}
@@ -1471,8 +1488,10 @@ const UniversityStepper = () => {
 
             {/* Accommodation Confirmation Received */}
             <FormControl fullWidth margin="normal">
-              <InputLabel>Accommodation Confirmation Received</InputLabel>
+              <InputLabel id="Accommodation-Confirmation-Received">Accommodation Confirmation Received</InputLabel>
               <Select
+              labelId="Accommodation-Confirmation-Received"
+    label="Accommodation Confirmation Received"
                 name="accommodationConfirmationReceived"
                 value={formData.accommodationConfirmationReceived}
                 onChange={handleChange}

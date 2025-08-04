@@ -15,8 +15,8 @@ const MyProfile = () => {
     gender: "",
     date_of_birth: "",
     father_name: "",
-    admission_no: "",
-    id_no: "",
+    // admission_no: "",
+    // id_no: "",
     category: "",
     role: "",
     university_name: ""
@@ -39,8 +39,8 @@ const MyProfile = () => {
           gender: res.data.user.gender || "",
           date_of_birth: res.data.user.date_of_birth ? res.data.user.date_of_birth.split("T")[0] : "",
           father_name: res.data.user.father_name || "",
-          admission_no: res.data.user.admission_no || "",
-          id_no: res.data.user.id_no || "",
+          // admission_no: res.data.user.admission_no || "",
+          // id_no: res.data.user.id_no || "",
           category: res.data.user.category || "",
           role: res.data.user.role || "",
           // university_name: res.data.user.university_name || ""
@@ -123,8 +123,8 @@ const MyProfile = () => {
               {renderItem("Date of Birth", userData?.date_of_birth && new Date(userData.date_of_birth).toLocaleDateString())}
               {renderItem("Address", userData?.address)}
               {renderItem("Father's Name", userData?.father_name)}
-              {renderItem("Admission No.", userData?.admission_no)}
-              {renderItem("ID No.", userData?.id_no)}
+              {/* {renderItem("Admission No.", userData?.admission_no)}
+              {renderItem("ID No.", userData?.id_no)} */}
             </ListGroup>
 
             <Card.Footer className="text-center bg-light">
@@ -215,7 +215,7 @@ const MyProfile = () => {
                 onChange={handleChange}
               />
             </Form.Group>
-
+{/* 
             <Form.Group className="mb-3">
               <Form.Label>Admission No.</Form.Label>
               <Form.Control
@@ -234,7 +234,7 @@ const MyProfile = () => {
                 value={formData.id_no || ""}
                 onChange={handleChange}
               />
-            </Form.Group>
+            </Form.Group> */}
 
             <Button variant="primary" type="submit">
               Save Changes

@@ -12,31 +12,35 @@ import {
 import axios from "axios";
 import BASE_URL from "../../../Config";
 
-
 ChartJS.register(BarElement, CategoryScale, LinearScale, ArcElement, Tooltip, Legend);
 
 const ProcessorsDashboard = () => {
-  const [totalLeads, setTotalLeads] = useState(0);
-  const [totalInquiries, setTotalInquiries] = useState(0);
+  const [totalApplications, setTotalApplications] = useState(0);
   const [chartData, setChartData] = useState([]);
+  const [totaldocumentCount, setTotalDocumentCount] = useState(0);
 
+  const processorId = localStorage.getItem("user_id"); // Or get it from props
+console.log(processorId);
 
-  
   useEffect(() => {
-    fetchDashboardData();
-  }, []);
+    if (processorId) {
+      fetchDashboardData(processorId);
+    }
+  }, [processorId]);
 
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = async (id) => {
     try {
-      const res = await axios.get(`${BASE_URL}sataffdashboard`);
+      const res = await axios.get(`${BASE_URL}processordashboard/${id}`);
+      console.log(res);
       if (res.data.success) {
-        const { total_leads, total_inquiries, chart_data } = res.data.data;
-        setTotalLeads(total_leads);
-        setTotalInquiries(total_inquiries);
+        const { totalapplication,totaldocumentCount, chart_data } = res.data.data;
+        setTotalApplications(totalapplication);
+        setTotalDocumentCount(totaldocumentCount);
+
         setChartData(chart_data);
       }
     } catch (error) {
-      console.error("Error fetching dashboard data:", error);
+      console.error("Error fetching processor dashboard data:", error);
     }
   };
 
@@ -80,8 +84,8 @@ const ProcessorsDashboard = () => {
               height: "100%",
             }}
           >
-            <h5>Total Application</h5>
-            <h2>{5}</h2>
+            <h5>Total Applications</h5>
+            <h2>{totalApplications}</h2>
           </div>
         </div>
 
@@ -96,8 +100,8 @@ const ProcessorsDashboard = () => {
               height: "100%",
             }}
           >
-            <h5>Total Document</h5>
-            <h2>{totalInquiries}</h2>
+            <h5>Total Documents</h5>
+            <h2>{totaldocumentCount}</h2>
           </div>
         </div>
       </div>

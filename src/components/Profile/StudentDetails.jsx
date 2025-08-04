@@ -372,7 +372,7 @@ const StudentDetails = () => {
       </ul>
 
       <div className="table-responsive mt-3">
-        <table className="table table-striped table-bordered text-center">
+        <table className="table table-striped table-bordered text-center " onClick={(e) => e.stopPropagation()}>
           <thead className="table-light text-nowrap">
             <tr>
               <th>#</th>

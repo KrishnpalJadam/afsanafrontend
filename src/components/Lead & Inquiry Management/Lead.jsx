@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import {
   Table,
@@ -17,8 +16,6 @@ import {
   BsSearch,
 } from "react-icons/bs";
 import api from "../../interceptors/axiosInterceptor";
-
-import { toast } from "react-toastify";
 import "./Lead.css";
 import AddLead from "./AddLead";
 import BASE_URL from "../../Config";
@@ -37,11 +34,12 @@ const LeadTable = ({ show, handleClose }) => {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState({});
   const [uploadInquiry, setUploadInquiry] = useState(null);
-const [showStudentModal, setShowStudentModal] = useState(false);
-const [isEditing, setIsEditing] = useState(false);   // ye pehle se hai
-const [editStudentId, setEditStudentId] = useState(null);  // pehle se hai
-const [photo, setPhoto] = useState(null);
-const [documents, setDocuments] = useState([]);
+  const [showStudentModal, setShowStudentModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editStudentId, setEditStudentId] = useState(null);
+  const [photo, setPhoto] = useState(null);
+  const [documents, setDocuments] = useState([]);
+  const [universities, setUniversities] = useState([]);
 
   const [filters, setFilters] = useState({
     status: "",
@@ -51,10 +49,13 @@ const [documents, setDocuments] = useState([]);
     search: "",
   });
 
-  // Load Converted Leads
+  const user_id = localStorage.getItem("user_id");
+
+  // Load data on component mount
   useEffect(() => {
     fetchConvertedLeads();
     fetchCounselors();
+    fetchUniversities();
   }, []);
 
   const fetchConvertedLeads = async () => {
@@ -64,6 +65,27 @@ const [documents, setDocuments] = useState([]);
       setFilteredData(response.data);
     } catch (error) {
       console.error("Error fetching converted leads:", error);
+      alert("Failed to fetch leads");
+    }
+  };
+
+  const fetchCounselors = async () => {
+    try {
+      const res = await api.get(`${BASE_URL}counselor`);
+      setCounselors(res.data);
+    } catch (err) {
+      console.error("Error fetching counselors:", err);
+      alert("Failed to fetch counselors");
+    }
+  };
+
+  const fetchUniversities = async () => {
+    try {
+      const response = await api.get(`${BASE_URL}universities`);
+      setUniversities(response.data);
+    } catch (error) {
+      console.log("Error fetching universities:", error);
+      alert("Failed to fetch universities");
     }
   };
 
@@ -73,11 +95,11 @@ const [documents, setDocuments] = useState([]);
         inquiry_id: id,
         new_leads: status,
       });
-      toast.success("Status updated successfully!");
+      alert("Status updated successfully!");
       fetchConvertedLeads();
     } catch (error) {
       console.error("Error updating status:", error);
-      toast.error("Failed to update status.");
+      alert("Failed to update status.");
     }
   };
 
@@ -104,11 +126,10 @@ const [documents, setDocuments] = useState([]);
     }
   };
 
-  // === FILTER FUNCTION ===
+  // Filter function
   useEffect(() => {
     let data = [...convertData];
 
-    // Global Search
     if (filters.search) {
       const search = filters.search.toLowerCase();
       data = data.filter(
@@ -119,18 +140,14 @@ const [documents, setDocuments] = useState([]);
       );
     }
 
-    // Status
     if (filters.status) {
       data = data.filter((lead) => lead.new_leads === filters.status);
     }
 
-    // Counselor
     if (filters.counselor) {
       data = data.filter((lead) => String(lead.counselor_id) === filters.counselor);
     }
 
-    // Follow-Up Date
-    // Follow-Up Date Filter
     if (filters.followUp) {
       const today = new Date();
       const dateOnly = (d) => new Date(d).toISOString().slice(0, 10);
@@ -146,14 +163,10 @@ const [documents, setDocuments] = useState([]);
             new Date(lead.follow_up_date) <= endOfWeek
         );
       } else if (filters.followUp === "overdue") {
-        data = data.filter(
-          (lead) => new Date(lead.follow_up_date) < today
-        );
+        data = data.filter((lead) => new Date(lead.follow_up_date) < today);
       }
     }
 
-
-    // Country
     if (filters.country) {
       data = data.filter((lead) => lead.country === filters.country);
     }
@@ -161,21 +174,9 @@ const [documents, setDocuments] = useState([]);
     setFilteredData(data);
   }, [filters, convertData]);
 
-
-  // Load Counselors
-  const fetchCounselors = async () => {
-    try {
-      const res = await api.get(`${BASE_URL}counselor`);
-      setCounselors(res.data);
-    } catch (err) {
-      console.error("Error fetching counselors:", err);
-    }
-  };
-
-  // Assign Inquiry API Call
   const handleAssignCounselor = async () => {
     if (!selectedCounselor || !followUpDate) {
-      toast.error("Please select counselor & follow-up date.");
+      alert("Please select counselor & follow-up date.");
       return;
     }
 
@@ -189,14 +190,14 @@ const [documents, setDocuments] = useState([]);
     try {
       const res = await api.post(`${BASE_URL}assign-inquiry`, payload);
       if (res.status === 200) {
-        toast.success("Counselor assigned successfully.");
+        alert("Counselor assigned successfully.");
         setShowAssignModal(false);
         fetchConvertedLeads();
         resetAssignModal();
       }
     } catch (err) {
       console.error("Error assigning counselor:", err);
-      toast.error("Failed to assign counselor.");
+      alert("Failed to assign counselor.");
     }
   };
 
@@ -222,12 +223,14 @@ const [documents, setDocuments] = useState([]);
     setShowUploadModal(true);
     setSelectedFiles({});
   };
+
   const handleFileChange = (e, docType) => {
     setSelectedFiles({
       ...selectedFiles,
       [docType]: e.target.files[0],
     });
   };
+
   const handleUploadDocuments = async () => {
     if (!uploadInquiry) return;
 
@@ -240,39 +243,49 @@ const [documents, setDocuments] = useState([]);
     try {
       const res = await api.post(`${BASE_URL}upload-inquiry-documents`, formData);
       if (res.status === 200) {
-        toast.success("Documents uploaded successfully.");
+        alert("Documents uploaded successfully.");
         setShowUploadModal(false);
       }
     } catch (err) {
       console.error("Error uploading documents:", err);
-      toast.error("Failed to upload.");
+      alert("Failed to upload.");
     }
   };
 
-  const [universities, setUniversities] = useState([]);
+  const handleConvertToStudent = (lead) => {
+    setFormData({
+      user_id: user_id,
+      full_name: lead.full_name || "",
+      father_name: "",
+    identifying_name :"",
+      mother_name: "",
+      mobile_number: lead.phone_number || "",
+      university_id: "",
+      date_of_birth:  lead.date_of_birth || "",
+      gender:lead.gender ||"",
+      category: "",
+      address: lead.address ||"",
+      role: "student",
+      password: "",
+      email: lead.email || "",
 
-  // Fetch universities
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await api.get(`${BASE_URL}universities`);
-        setUniversities(response.data); // Ensure the data is passed correctly
-      } catch (error) {
-        console.log("Error fetching universities:", error);
-      }
-    };
-    fetchData();
-  }, []);
-  const user_id = localStorage.getItem("user_id")
+    });
+    setPhoto(null);
+    setDocuments([]);
+    setIsEditing(false);
+    setShowStudentModal(true);
+  };
 
-const handleConvertToStudent = (lead) => {
-  setFormData({
-    user_id: user_id,   // jo aapka user_id hai wo yahi rehne do
-    full_name: lead.full_name || "",
-    father_name: "",  // optional agar lead me nahi hai
-    admission_no: "",
-    id_no: "",
-    mobile_number: lead.phone_number || "",
+
+ 
+
+  const [formData, setFormData] = useState({
+    user_id: user_id,
+    full_name: "",
+    father_name: "",
+   mother_name:"",
+    identifying_name: "",
+    mobile_number: "",
     university_id: "",
     date_of_birth: "",
     gender: "",
@@ -280,36 +293,12 @@ const handleConvertToStudent = (lead) => {
     address: "",
     role: "student",
     password: "",
-    email: lead.email || "",
+    email: ""
   });
-  setPhoto(null);
-  setDocuments([]);
-  setIsEditing(false);  
-  setShowStudentModal(true);  // Modal ko show karenge
-};
 
-   const [formData, setFormData] = useState({
-      user_id: user_id,
-      full_name: "",
-      father_name: "",
-      admission_no: "",
-      id_no: "",
-      mobile_number: "",
-      university_id: "",
-      date_of_birth: "",
-      gender: "",
-      category: "",
-      address: "",
-     
-      role: "student",
-      password: "",
-      email: ""
-    });
-
-
-   const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const formPayload = new FormData();
     for (const key in formData) {
       formPayload.append(key, formData[key]);
@@ -324,7 +313,6 @@ const handleConvertToStudent = (lead) => {
 
     const method = isEditing ? "put" : "post";
 
-
     try {
       const res = await api({
         method,
@@ -333,68 +321,51 @@ const handleConvertToStudent = (lead) => {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      alert(isEditing ? "Student updated" : "Student created");
-      setFormData({
-        user_id: user_id,
-        full_name: "",
-        father_name: "",
-        admission_no: "",
-        id_no: "",
-        mobile_number: "",
-        university_id: "",
-        date_of_birth: "",
-        gender: "",
-        category: "",
-        address: "",
-      
-        role: "student",
-        password: "",
-        email: "",
-      });
-      setPhoto(null);
-      setDocuments([]);
-      setIsEditing(false);
-      setEditStudentId(null);
-      setShow(false);
-      document.getElementById("studentFormModal").classList.remove("show");
-      document.getElementById("studentFormModal").style.display = "none";
-
-      // Reload students
-      const { data } = await api.get(`${BASE_URL}auth/getAllStudents`);
-      setStudentsData(data);
-      window.location.reload(true);
-
+      alert(isEditing ? "Student updated successfully" : "Student created successfully");
+      resetForm();
+      fetchConvertedLeads();
     } catch (err) {
       console.error("Error:", err);
-      alert("Submission failed");
+      alert("User Already exits");
     }
   };
 
-
   const resetForm = () => {
-  setFormData({
-    user_id: user_id,
-    full_name: "",
-    father_name: "",
-    admission_no: "",
-    id_no: "",
-    mobile_number: "",
-    university_id: "",
-    date_of_birth: "",
-    gender: "",
-    category: "",
-    address: "",
-    role: "student",
-    password: "",
-    email: "",
-  });
-  setPhoto(null);
-  setDocuments([]);
-  setIsEditing(false);
-  setEditStudentId(null);
-  setShowStudentModal(false);
-};
+    setFormData({
+      user_id: user_id,
+      full_name: "",
+      father_name: "",
+      admission_no: "",
+      id_no: "",
+      mobile_number: "",
+      university_id: "",
+      date_of_birth: "",
+      gender: "",
+      category: "",
+      address: "",
+      role: "student",
+      password: "",
+      email: "",
+    });
+    setPhoto(null);
+    setDocuments([]);
+    setIsEditing(false);
+    setEditStudentId(null);
+    setShowStudentModal(false);
+  };
 
+
+    useEffect(() => {
+      if (formData.full_name && formData.university_id) {
+        const university = universities.find(u => u.id.toString() === formData.university_id.toString());
+        const universityName = university ? university.name : "";
+        const identifying = `${formData.full_name} ${universityName} Deb`;
+        setFormData((prev) => ({
+          ...prev,
+          identifying_name: identifying,
+        }));
+      }
+    }, [formData.full_name, formData.university_id, universities]);
   return (
     <div className="p-2">
       <h3 className="mt-3">Lead Table</h3>
@@ -447,7 +418,6 @@ const handleConvertToStudent = (lead) => {
               <option value="today">Today</option>
               <option value="thisWeek">This Week</option>
               <option value="overdue">Overdue</option>
-
             </Form.Select>
           </Col>
 
@@ -486,49 +456,46 @@ const handleConvertToStudent = (lead) => {
             <Button
               size="sm"
               variant="secondary"
-              onClick={() =>
+              onClick={() => {
                 setFilters({
                   status: "",
                   counselor: "",
                   followUp: "",
                   country: "",
                   search: "",
-                })
-              }
+                });
+                toast.dismiss(); // Clear any filter-related toasts
+              }}
             >
               Reset
             </Button>
-            
           </Col>
-          
         </Row>
-  <Row className="mt-2">
-        <Col md="auto" className="ms-auto">
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={() => setShowModal(true)}
-          >
-            Add Lead
-          </Button>
-        </Col>
-      </Row>
- <Modal
-        show={showModal}
-        onHide={() => setShowModal(false)}
-        backdrop="static"
-        size="lg"
-        centered
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Add Lead</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <AddLead />
-        </Modal.Body>
-      </Modal>
-      
-
+        <Row className="mt-2">
+          <Col md="auto" className="ms-auto">
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => setShowModal(true)}
+            >
+              Add Lead
+            </Button>
+          </Col>
+        </Row>
+        <Modal
+          show={showModal}
+          onHide={() => setShowModal(false)}
+          backdrop="static"
+          size="lg"
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Add Lead</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <AddLead />
+          </Modal.Body>
+        </Modal>
       </div>
 
       {/* === TABLE SECTION === */}
@@ -565,7 +532,6 @@ const handleConvertToStudent = (lead) => {
                   </span>
                 </td>
 
-
                 <td>
                   {lead.counselor_name ? (
                     lead.counselor_name
@@ -583,7 +549,6 @@ const handleConvertToStudent = (lead) => {
 
                 <td>{lead.follow_up_date?.slice(0, 10) || "N/A"}</td>
                 <td className="d-flex">
-
                   <Form.Select
                     size="sm"
                     className="me-2"
@@ -600,22 +565,17 @@ const handleConvertToStudent = (lead) => {
                     <option value="Registered">Registered</option>
                     <option value="Dropped">Dropped</option>
                   </Form.Select>
-                 {/* {lead.new_leads === "Registered" && (
-  <Button  
-    variant="outline-primary" 
-    size="sm" 
-    className="ms-2 me-2"
-    onClick={() => handleConvertToStudent(lead)}  // <-- New Function
-  >
-    <BsArrowRepeat className="me-1" /> Convert to Student
-  </Button>
-)} */}
 
-
-                  {/* <Button variant="outline-secondary" size="sm" className="me-2" onClick={() => handleOpenUploadModal(lead)}>
-                    <BsUpload className="me-1" /> Upload Docs
-                  </Button> */}
-
+                  {lead.new_leads === "Registered" && (
+                    <Button  
+                      variant="outline-primary" 
+                      size="sm" 
+                      className="ms-2 me-2"
+                      onClick={() => handleConvertToStudent(lead)}
+                    >
+                      <BsArrowRepeat className="me-1" /> Convert to Student
+                    </Button>
+                  )}
 
                   <Button
                     variant="outline-success"
@@ -624,16 +584,11 @@ const handleConvertToStudent = (lead) => {
                   >
                     <BsWhatsapp className="me-1" /> WhatsApp
                   </Button>
-
-
-
                 </td>
               </tr>
             ))}
-
           </tbody>
         </Table>
-
 
         {/* Assign Modal */}
         <Modal show={showAssignModal} onHide={handleCloseAssignModal} centered>
@@ -689,318 +644,240 @@ const handleConvertToStudent = (lead) => {
             <Button variant="primary" onClick={handleAssignCounselor}>Assign</Button>
           </Modal.Footer>
         </Modal>
-      </div>
 
-      <Modal show={showUploadModal} onHide={() => setShowUploadModal(false)} centered>
-        <Modal.Header closeButton><Modal.Title>Upload Documents</Modal.Title></Modal.Header>
-        <Modal.Body>
-          <Form.Group className="mb-3">
-            <Form.Label>Passport</Form.Label>
-            <Form.Control type="file" onChange={(e) => handleFileChange(e, "passport")} />
-          </Form.Group>
+        {/* Upload Documents Modal */}
+        <Modal show={showUploadModal} onHide={() => setShowUploadModal(false)} centered>
+          <Modal.Header closeButton><Modal.Title>Upload Documents</Modal.Title></Modal.Header>
+          <Modal.Body>
+            <Form.Group className="mb-3">
+              <Form.Label>Passport</Form.Label>
+              <Form.Control type="file" onChange={(e) => handleFileChange(e, "passport")} />
+            </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Certificates</Form.Label>
-            <Form.Control type="file" onChange={(e) => handleFileChange(e, "certificates")} />
-          </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Certificates</Form.Label>
+              <Form.Control type="file" onChange={(e) => handleFileChange(e, "certificates")} />
+            </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label>IELTS</Form.Label>
-            <Form.Control type="file" onChange={(e) => handleFileChange(e, "ielts")} />
-          </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>IELTS</Form.Label>
+              <Form.Control type="file" onChange={(e) => handleFileChange(e, "ielts")} />
+            </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label>SOP</Form.Label>
-            <Form.Control type="file" onChange={(e) => handleFileChange(e, "sop")} />
-          </Form.Group>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowUploadModal(false)}>Cancel</Button>
-          <Button variant="primary" onClick={handleUploadDocuments}>Upload</Button>
-        </Modal.Footer>
-      </Modal>
-  <>
-        {/* Modal */}
-       <div
-  className={`modal fade ${showStudentModal ? 'show d-block' : ''}`}
-  id="studentFormModal"
-  tabIndex={-1}
-  aria-labelledby="studentFormModalLabel"
-  aria-hidden={!showStudentModal}
->
+            <Form.Group className="mb-3">
+              <Form.Label>SOP</Form.Label>
+              <Form.Control type="file" onChange={(e) => handleFileChange(e, "sop")} />
+            </Form.Group>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowUploadModal(false)}>Cancel</Button>
+            <Button variant="primary" onClick={handleUploadDocuments}>Upload</Button>
+          </Modal.Footer>
+        </Modal>
 
-          <div className="modal-dialog modal-xl">
-            <div className="modal-content student-form-container">
-              <div className="modal-header">
-                <h5
-                  className="modal-title student-form-title"
-                  id="studentFormModalLabel"
-                >
-                  Student Information
-                </h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                  onClick={resetForm}
+        {/* Student Form Modal */}
+        <Modal 
+    show={showStudentModal} 
+    onHide={resetForm}
+    size="xl"
+    centered
+  >
+    <Modal.Header closeButton>
+      <Modal.Title>Student Information</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>
+      <Form onSubmit={handleSubmit}>
+        <Row className="mb-3">
+          <Col md={4}>
+            <Form.Group controlId="fullName">
+              <Form.Label>Student Name *</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter student name"
+                value={formData.full_name}
+                onChange={(e) => setFormData({...formData, full_name: e.target.value})}
+                required
+                readOnly // Pre-filled from lead, admin shouldn't change
+              />
+            </Form.Group>
+          </Col>
+          <Col md={4}>
+            <Form.Group controlId="fatherName">
+              <Form.Label>Father Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter father name"
+                value={formData.father_name}
+                onChange={(e) => setFormData({...formData, father_name: e.target.value})}
+              />
+            </Form.Group>
+          </Col>
+          <Col md={4}>
+            <Form.Group controlId="motherName">
+              <Form.Label>Mother Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter mother name"
+                value={formData.mother_name}
+                onChange={(e) => setFormData({...formData, mother_name: e.target.value})}
+              />
+            </Form.Group>
+          </Col>
+        </Row>
 
-                />
+        <Row className="mb-3">
+          <Col md={6}>
+            <Form.Group controlId="email">
+              <Form.Label>Email *</Form.Label>
+              <Form.Control
+                type="email"
+                placeholder="Enter student's email"
+                value={formData.email}
+                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                required
+                readOnly // Pre-filled from lead
+              />
+            </Form.Group>
+          </Col>
+          <Col md={6}>
+            <Form.Group controlId="password">
+              <Form.Label>Password *</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter password"
+                value={formData.password}
+                onChange={(e) => setFormData({...formData, password: e.target.value})}
+                required
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+
+        <Row className="mb-3">
+          <Col md={6}>
+            <Form.Group controlId="dob">
+              <Form.Label>Date of Birth</Form.Label>
+              <Form.Control
+                type="date"
+                value={formData.date_of_birth}
+                onChange={(e) => setFormData({...formData, date_of_birth: e.target.value})}
+              />
+            </Form.Group>
+          </Col>
+          <Col md={6}>
+            <Form.Group controlId="mobileNumber">
+              <Form.Label>Mobile Number *</Form.Label>
+              <Form.Control
+                type="tel"
+                placeholder="Enter mobile number"
+                value={formData.mobile_number}
+                onChange={(e) => setFormData({...formData, mobile_number: e.target.value})}
+                required
+                readOnly // Pre-filled from lead
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+
+        <Row className="mb-3">
+          <Col md={6}>
+            <Form.Group controlId="university">
+              <Form.Label>University Name</Form.Label>
+              <Form.Select
+                value={formData.university_id}
+                onChange={(e) => setFormData({...formData, university_id: e.target.value})}
+              >
+                <option value="">Select university</option>
+                {universities?.map((uni) => (
+                  <option key={uni.id} value={uni.id}>
+                    {uni.name}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+          </Col>
+
+          <Col md={6}>
+            <Form.Group controlId="identifyingName">
+              <Form.Label>Student Identifying Name *</Form.Label>
+              <Form.Control
+                type="text"
+                value={formData.identifying_name}
+                onChange={(e) => setFormData({...formData, identifying_name: e.target.value})}
+                placeholder="e.g., Rahim Harvard Deb"
+                required
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+
+        <Row className="mb-3">
+          <Col md={6}>
+            <Form.Group controlId="gender">
+              <Form.Label>Gender</Form.Label>
+              <div>
+                {["Male", "Female", "Other"].map((g) => (
+                  <Form.Check
+                    inline
+                    key={g}
+                    type="radio"
+                    label={g}
+                    name="gender"
+                    value={g}
+                    checked={formData.gender === g}
+                    onChange={(e) => setFormData({...formData, gender: e.target.value})}
+                  />
+                ))}
               </div>
-              <div className="modal-body">
-                <form className="student-form" onSubmit={handleSubmit} encType="multipart/form-data">
-                  <div className="row">
-                    <div className="col-md-6 student-form-group">
-                      <label htmlFor="studentName" className="student-form-label">
-                        Student Name
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control student-form-input"
-                        id="studentName"
-                        placeholder="Enter student name"
-                        value={formData.full_name}
-                        onChange={(e) =>
-                          setFormData({ ...formData, full_name: e.target.value, full_name: e.target.value })
-                        }
-                      />
-                    </div>
-                    <div className="col-md-6 student-form-group">
-                      <label htmlFor="fatherName" className="student-form-label">
-                        Father Name
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control student-form-input"
-                        id="fatherName"
-                        placeholder="Enter father name"
-                        value={formData.father_name}
-                        onChange={(e) => setFormData({ ...formData, father_name: e.target.value })}
-                      />
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div className="col-md-6 student-form-group">
-                      <label htmlFor="studentName" className="student-form-label">
-                        Email
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control student-form-input"
-                        id="email"
-                        placeholder="Enter student's email"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      />
-                    </div>
-                    <div className="col-md-6 student-form-group">
-                      <label htmlFor="fatherName" className="student-form-label">
-                        Enter Pasword
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control student-form-input"
-                        id="password"
-                        placeholder="Enter Password"
-                        value={formData.password}
-                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      />
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div className="col-md-4 student-form-group">
-                      <label htmlFor="admissionNo" className="student-form-label">
-                        Admission No
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control student-form-input"
-                        id="admissionNo"
-                        placeholder="Enter admission number"
-                        value={formData.admission_no}
-                        onChange={(e) => setFormData({ ...formData, admission_no: e.target.value })}
-                      />
-                    </div>
-                    <div className="col-md-4 student-form-group">
-                      <label htmlFor="idNo" className="student-form-label">
-                        ID No.
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control student-form-input"
-                        id="idNo"
-                        placeholder="Enter ID number"
-                        value={formData.id_no}
-                        onChange={(e) => setFormData({ ...formData, id_no: e.target.value })}
-                      />
-                    </div>
-                    <div className="col-md-4 student-form-group">
-                      <label htmlFor="mobileNumber" className="student-form-label">
-                        Mobile Number
-                      </label>
-                      <input
-                        type="tel"
-                        className="form-control student-form-input"
-                        id="mobileNumber"
-                        placeholder="Enter mobile number"
-                        value={formData.mobile_number}
-                        onChange={(e) => setFormData({ ...formData, mobile_number: e.target.value })}
-                      />
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div className="col-md-6 student-form-group">
-                      <label htmlFor="university" className="student-form-label">
-                        University Name
-                      </label>
-                      <select
-                        className="form-select student-form-select"
-                        id="university"
-                        value={formData.university_id}
-                        onChange={(e) => setFormData({ ...formData, university_id: e.target.value })}
-                      >
-                        <option value="" disabled>
+            </Form.Group>
+          </Col>
+          <Col md={6}>
+            <Form.Group controlId="category">
+              <Form.Label>Category</Form.Label>
+              <Form.Select
+                value={formData.category}
+                onChange={(e) => setFormData({...formData, category: e.target.value})}
+              >
+                <option value="">Select category</option>
+                <option value="General">General</option>
+                <option value="SC">SC</option>
+                <option value="ST">ST</option>
+                <option value="OBC">OBC</option>
+                <option value="Other">Other</option>
+              </Form.Select>
+            </Form.Group>
+          </Col>
+        </Row>
 
-                          Select university
-                        </option>
-                        {universities?.map((uni) => (
-                          <option key={uni.id} value={uni.id}>
-                            {uni.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="col-md-6 student-form-group">
-                      <label htmlFor="dob" className="student-form-label">
-                        Date of Birth
-                      </label>
-                      <input
-                        type="date"
-                        className="form-control student-form-input"
-                        id="dob"
-                        value={formData.date_of_birth}
-                        onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
-                      />
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div className="col-md-6 student-form-group">
-                      <label className="student-form-label">Gender</label>
-                      <div>
+        <Row className="mb-3">
+          <Col md={12}>
+            <Form.Group controlId="address">
+              <Form.Label>Address</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                placeholder="Enter complete address"
+                value={formData.address}
+                onChange={(e) => setFormData({...formData, address: e.target.value})}
+              />
+            </Form.Group>
+          </Col>
+        </Row>
 
-                        {["Male", "Female", "Other"].map((g) => (
-                          <div key={g} className="form-check form-check-inline">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="gender"
-                              value={g}
-                              checked={formData.gender === g}
-                              onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-                            />
-                            <label className="form-check-label">{g}</label>
-                          </div>
-                        ))}
-
-                      </div>
-                    </div>
-                    <div className="col-md-6 student-form-group">
-                      <label htmlFor="category" className="student-form-label">
-                        Category
-                      </label>
-                      <select
-                        className="form-select student-form-select"
-                        id="category"
-                        value={formData.category}
-                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                      >
-                        <option selected="" disabled="">
-                          Select category
-                        </option>
-                        <option value="General">General</option>
-                        <option value="SC">SC</option>
-                        <option value="ST">ST</option>
-                        <option value="OBC">OBC</option>
-                        <option value="Other">Other</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div className="col-md-12 student-form-group">
-                      <label htmlFor="address" className="student-form-label">
-                        Address
-                      </label>
-                      <textarea
-                        className="form-control student-form-input"
-                        id="address"
-                        rows={3}
-                        placeholder="Enter complete address"
-                        value={formData.address}
-                        onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                      />
-                    </div>
-                  </div>
-                  {/* <div className="row">
-                    <div className="col-md-6 student-form-group">
-                      <label htmlFor="photo" className="student-form-label">
-                        Upload Photo
-                      </label>
-                      <input
-                        type="file"
-                        className="form-control student-form-input"
-                        id="photo"
-                        onChange={(e) => setPhoto(e.target.files[0])}
-                      />
-                    </div>
-                    <div className="col-md-6 student-form-group">
-                      <label htmlFor="documents" className="student-form-label">
-                        Upload Documents
-                      </label>
-                      <input
-                        type="file"
-                        className="form-control student-form-input"
-                        id="documents"
-                        multiple
-                        onChange={(e) => setDocuments(Array.from(e.target.files))}
-                      />
-                      <div className="form-text">
-                        You can upload multiple documents
-                      </div>
-                    </div>
-                  </div> */}
-                  <div className="student-form-actions d-flex justify-content-end">
-
-                    <div>
-                      <button
-                        type="button"
-                        className="btn student-form-btn student-form-btn-secondary"
-                        data-bs-dismiss="modal"
-                        onClick={resetForm}
-                      >
-                        Cancel
-                      </button>
-                      {isEditing == true ? <button
-                        type="submit"
-                        className="btn student-form-btn btn-primary"
-                      >
-                        update
-                      </button> : <button
-                        type="submit"
-                        className="btn student-form-btn btn-primary"
-                      >
-                        Submit
-                      </button>}
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
+        <div className="d-flex justify-content-end mt-3">
+          <Button variant="secondary" onClick={resetForm} className="me-2">
+            Cancel
+          </Button>
+          <Button variant="primary" type="submit">
+            {isEditing ? "Update" : "Submit"}
+          </Button>
         </div>
-      </>
+      </Form>
+    </Modal.Body>
+  </Modal>
+      </div>
     </div>
   );
 };
 
 export default LeadTable;
-
