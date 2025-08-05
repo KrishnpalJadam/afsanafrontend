@@ -10,7 +10,7 @@ import {
 } from "react-bootstrap";
 import api from "../../interceptors/axiosInterceptor";
 import BASE_URL from "../../Config";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { FaAnglesRight } from "react-icons/fa6";
 import MainStudentDetailTable from "./MainStudentDetailTable";
 import axios from "axios";
@@ -43,6 +43,8 @@ const initialJob = {
 };
 
 const Profile = () => {
+  
+
   const [student, setStudent] = useState(null);
   const [form, setForm] = useState({});
   const [applicants, setApplicants] = useState([initialApplicant]);

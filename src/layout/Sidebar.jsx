@@ -192,7 +192,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
           {login == "counselor" ? (
             <li className={`menu-item ${isSubmenuActive([
               "/LeadInquiryManagement",
-              "/inquiry",
+              "/  inquiry",
               "//leadCouncelor",
               "/deal",
               "/contract",
@@ -217,7 +217,7 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                       navigate("/inquiry");
                     }}
                   >
-                    Inquiry
+                  All  Inquiry
                   </li>
 
                   {hasPermission("Lead", "view") && <li
@@ -226,7 +226,8 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
                       navigate("/leadCouncelor");
                     }}
                   >
-                    Lead
+                    Assign Inquiry / Lead
+                    
                   </li>}
                 </ul>
               )}
@@ -685,6 +686,19 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
               </div>
             </li>
           ) : ""}
+            {login == "counselor" && hasPermission("Course & University", "view") ? (
+            <li className={`menu-item ${isActive("/counselorDetailsTable") ? "active" : ""}`}>
+              <div
+                className="menu-link menu-i"
+                onClick={() => {
+                  navigate("/counselorDetailsTable");
+                }}
+              >
+                <Globe size={18} className="mr-2" />
+                <span className="menu-text">Assign Student</span>
+              </div>
+            </li>
+          ) : ""}
 
           {login == "counselor" && hasPermission("Course & University", "view") ? (
             <li className={`menu-item ${isActive("/applicationtracking") ? "active" : ""}`}>
@@ -725,6 +739,19 @@ const Sidebar = ({ login, collapsed, menuItemClick, toggleSidebar }) => {
               >
                 <File size={18} className="mr-2" />
                 <span className="menu-text">Student Documents</span>
+              </div>
+            </li>
+          )}
+            {login == "processors" && (
+            <li className={`menu-item ${isActive("/processordetails") ? "active" : ""}`}>
+              <div
+                className="menu-link menu-i"
+                onClick={() => {
+                  navigate("/processordetails");
+                }}
+              >
+                <File size={18} className="mr-2" />
+                <span className="menu-text">Student Details</span>
               </div>
             </li>
           )}
