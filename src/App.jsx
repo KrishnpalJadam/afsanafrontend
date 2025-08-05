@@ -94,6 +94,11 @@ import MasterTable from "./components/MasterAdmin/MasterTable";
 import ChatbotMain from "./components/ChatBot/ChatBot";
 import ForgotPassword from "./authtication/ForgotPassword";
 import ResetPassword from "./authtication/ResetPassword";
+import ProcessorStudentDetails from "./components/Processors/StudentDetails/StudentDetails";
+import ProcessorStudentDetailsTable from "./components/ProcessorStudentDetails/ProcessorStudentDetails";
+import ProcessorProfile from "./components/ProcessorStudentDetails/ProcessordetailsPage";
+import CounselorProfile from "./components/CounseloDetailsPage/CounselorProfile";
+import CounselorStudentDetails from "./components/CounseloDetailsPage/CounselorstudentDetails";
 
 
 function App() {
@@ -358,6 +363,14 @@ useEffect(() => {
 
               <Route path="/masterDashboard" element={<MasterAdminDashboard/>} />
               <Route path="/masterTable" element={<MasterTable/>} />
+              <Route path="/processordetails" element={<ProcessorStudentDetails/>} />
+              <Route path="/processorDetailsTable/:id" element={<ProcessorProfile/>} />
+             
+             
+             <Route path="/counselorDetailsTable" element={<CounselorStudentDetails/>} />
+             
+              <Route path="/counselorDetailsTable/:id" element={<CounselorProfile/>} />
+
          
 
 
