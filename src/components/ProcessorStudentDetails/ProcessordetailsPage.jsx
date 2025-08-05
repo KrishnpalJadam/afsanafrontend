@@ -12,8 +12,9 @@ import api from "../../interceptors/axiosInterceptor";
 import BASE_URL from "../../Config";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { FaAnglesRight } from "react-icons/fa6";
-import MainStudentDetailTable from "./MainStudentDetailTable";
+
 import axios from "axios";
+import ProcessorStudentForm from "./ProcessorStudentDetails";
 
 const initialApplicant = {
   institute_name: "",
@@ -42,8 +43,8 @@ const initialJob = {
   employment_duration: "",
 };
 
-const Profile = () => {
-  
+const ProcessorProfile = () => {
+  const { id } = useParams();
 
   const [student, setStudent] = useState(null);
   const [form, setForm] = useState({});
@@ -52,6 +53,7 @@ const Profile = () => {
   const [jobs, setJobs] = useState([initialJob]);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
+
 const [formData, setFormData] = useState({
   passport_copy_prepared: null,
   previous_studies_certificates: null,
@@ -63,9 +65,9 @@ const [formData, setFormData] = useState({
 
   const navigate = useNavigate();
 
+    
 
   useEffect(() => {
-    const id = localStorage.getItem("student_id");
     api
       .get(`${BASE_URL}auth/getStudentById/${id}`)
       .then((response) => {
@@ -114,7 +116,7 @@ const [formData, setFormData] = useState({
   // Save/Update Profile
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const id = localStorage.getItem("student_id");
+    // const id = localStorage.getItem("student_id");
     const {email,...restForm} = form; // Exclude email from the payload
     const payload = {
       ...restForm,
@@ -207,7 +209,7 @@ const handleUpload = async () => {
             </Col>
           </Row>
         </Card.Body>
-        <MainStudentDetailTable/>
+        <ProcessorStudentForm/>
       </Card>
 <Modal show={showModal} onHide={() => setShowModal(false)} centered>
   <Modal.Header closeButton>
@@ -1183,4 +1185,4 @@ const handleUpload = async () => {
   );
 };
 
-export default Profile;
+export default ProcessorProfile;
