@@ -917,59 +917,61 @@ const Inquiry = () => {
 
 
 
-                  <td>
-                    {(inq.status === "0" && (inq.lead_status !== "0" && inq.lead_status !== "New")) ? (
-                      <Button variant="info" size="sm" onClick={() => handleOpenAssignModal(inq)}>
-                        Assign Counselor
-                      </Button>
-                    ) : (
-                      <Button variant="info" size="sm" disabled>
-                        Assign Counselor
-                      </Button>
-                    )}
+                 <td>
+  {/* Assign Counselor Button - Only for Admin */}
+  {localStorage.getItem("role") === "admin" && (
+    (inq.status === "0" && inq.lead_status !== "0" && inq.lead_status !== "New") ? (
+      <Button variant="info" size="sm" onClick={() => handleOpenAssignModal(inq)}>
+        Assign Counselor
+      </Button>
+    ) : (
+      <Button variant="info" size="sm" disabled>
+        Assign Counselor
+      </Button>
+    )
+  )}
 
-                    <Dropdown className="d-inline ms-2">
-                      <Dropdown.Toggle variant="outline-secondary" size="sm">
-                        Action
-                      </Dropdown.Toggle>
+  <Dropdown className="d-inline ms-2">
+    <Dropdown.Toggle variant="outline-secondary" size="sm">
+      Action
+    </Dropdown.Toggle>
 
-                      <Dropdown.Menu>
-                        <Dropdown.Item onClick={() => handleStatusChangeFromTable(inq.id, "In Review")}>
-                          In Review
-                        </Dropdown.Item>
+    <Dropdown.Menu>
+      <Dropdown.Item onClick={() => handleStatusChangeFromTable(inq.id, "In Review")}>
+        In Review
+      </Dropdown.Item>
 
-                        {/* Convert to Lead - only visible to admin */}
-                        {localStorage.getItem("role") === "admin" && (
-                          <Dropdown.Item onClick={() => handleStatusChangeFromTable(inq.id, "Converted to Lead")}>
-                            Convert to Lead
-                          </Dropdown.Item>
-                        )}
+      {/* Convert to Lead - only visible to admin */}
+      {localStorage.getItem("role") === "admin" && (
+        <Dropdown.Item onClick={() => handleStatusChangeFromTable(inq.id, "Converted to Lead")}>
+          Convert to Lead
+        </Dropdown.Item>
+      )}
 
-                        <Dropdown.Item onClick={() => handleStatusChangeFromTable(inq.id, "Not Interested")}>
-                          Not Interested
-                        </Dropdown.Item>
+      <Dropdown.Item onClick={() => handleStatusChangeFromTable(inq.id, "Not Interested")}>
+        Not Interested
+      </Dropdown.Item>
 
-                        <Dropdown.Item onClick={() => handleStatusChangeFromTable(inq.id, "Not Eligible")}>
-                          Not Eligible
-                        </Dropdown.Item>
-                      </Dropdown.Menu>
-                    </Dropdown>
+      <Dropdown.Item onClick={() => handleStatusChangeFromTable(inq.id, "Not Eligible")}>
+        Not Eligible
+      </Dropdown.Item>
+    </Dropdown.Menu>
+  </Dropdown>
 
+  <a
+    href={`https://wa.me/${inq.phone_number}`}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="ms-2"
+  >
+    <button className="btn btn-sm btn-outline-success me-2">
+      <i className="bi bi-whatsapp"></i>
+    </button>
+  </a>
 
-                    <a
-                      href={`https://wa.me/${inq.phone_number}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="ms-2"
-                    >
-                      <button className="btn btn-sm btn-outline-success me-2">
-                        <i className="bi bi-whatsapp"></i>
-                      </button>
-                    </a>
-
-                    <a
-                      href={`https://mail.google.com/mail/?view=cm&fs=1&to=${inq.email}&su=Regarding Your Inquiry&body=${encodeURIComponent(
-                        `Dear ${inq.full_name},
+  <a
+    href={`https://mail.google.com/mail/?view=cm&fs=1&to=${inq.email}&su=Regarding Your Inquiry&body=${encodeURIComponent(
+      `Dear ${inq.full_name},
 
 Here are your inquiry details:
 
@@ -988,25 +990,24 @@ Thank you for your interest.
 
 Regards,
 Study First Info Team`
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn-sm btn-outline-dark ms-2"
-                    >
-                      <i className="bi bi-envelope"></i>
-                    </a>
+    )}`}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="btn btn-sm btn-outline-dark ms-2"
+  >
+    <i className="bi bi-envelope"></i>
+  </a>
 
+  <Button
+    variant="danger"
+    size="sm"
+    onClick={() => handleDeleteInquiry(inq.id)}
+    className="ms-2"
+  >
+    <MdDelete />
+  </Button>
+</td>
 
-
-
-                    {/* Delete Button */}
-                    <Button variant="danger"
-                      size="sm"
-                      onClick={() => handleDeleteInquiry(inq.id)}
-                      className="ms-2">
-                      <MdDelete /> {/* MdDelete icon for delete button */}
-                    </Button>
-                  </td>
                 </tr>
               ))
             ) : (
